@@ -1,0 +1,33 @@
+{
+  "total": 100,
+  "bySource": {
+    "fahasa": 50,
+    "phuongnam": 50
+  },
+  "byCategory": {
+    "Văn Học": 47,
+    "Kinh Tế": 3,
+    "Văn học hiện đại": 28,
+    "Tâm Lý - Giáo Dục": 1,
+    "Ngôn Ngữ, Thuật Ngữ Học": 1,
+    "Văn Học Tuổi Mới Lớn": 1,
+    "Truyện Ngắn, Tạp Văn": 1,
+    "Văn Học Thiếu Nhi": 1,
+    "Truyện ngắn, Tạp văn": 3,
+    "Truyện cổ tích - Ngụ ngôn": 1,
+    "Văn hóa tâm linh": 1,
+    "Truyện tranh tuổi mới lớn": 2,
+    "Tâm lý - Giáo dục": 1,
+    "Tô màu người lớn": 2,
+    "Văn học tuổi mới lớn": 2,
+    "Văn học cổ điển": 1,
+    "Tiểu thuyết": 1,
+    "Văn học thiếu nhi": 3
+  },
+  "withImage": 100,
+  "withAuthor": 100,
+  "withDesc": 100,
+  "scrapedAt": "2026-07-23T10:17:41.572Z",
+  "durationMs": 419505,
+  "durationFormatted": "420s"
+}
