@@ -7,6 +7,10 @@
 const mongoose = require('mongoose');
 
 const publisherSchema = new mongoose.Schema({
+  _id: {
+    type: String,
+    trim: true
+  },
   maNXB: {
     type: String,
     required: [true, 'Mã nhà xuất bản là bắt buộc'],
@@ -27,8 +31,18 @@ const publisherSchema = new mongoose.Schema({
   soDienThoai: {
     type: String,
     trim: true,
-    match: [/^(0[3|5|7|8|9])+([0-9]{8})$/, 'Số điện thoại không hợp lệ (định dạng Việt Nam: 10 chữ số)']
+    match: [/^(0[35789])([0-9]{8})$/, 'Số điện thoại không hợp lệ (định dạng Việt Nam: 10 chữ số)']
   }
 }, { timestamps: true });
+
+publisherSchema.pre('validate', async function(next) {
+  if (this.isNew && !this._id) {
+    const { nextCode } = require('../services/codeService');
+    const code = await nextCode('publisher');
+    this._id = code;
+    this.maNXB = code;
+  }
+  next();
+});
 
 module.exports = mongoose.model('Publisher', publisherSchema);

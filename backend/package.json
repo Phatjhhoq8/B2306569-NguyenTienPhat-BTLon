@@ -1,0 +1,19 @@
+{
+  "name": "book-borrowing-backend",
+  "version": "1.0.0",
+  "description": "Backend Core for Book Borrowing Online System",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "test": "node src/tests/concurrency.test.js",
+    "seed": "node src/scripts/seedFromScrapedBooks.js",
+    "verify": "node src/scripts/verifyBackend.js",
+    "mark-overdue": "node src/scripts/markOverdueReceipts.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "mongoose": "^8.3.1"
+  }
+}

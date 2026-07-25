@@ -1,4 +1,5 @@
 const path = require('path');
+const config = require('../config');
 const { connectDatabase } = require('../config/database');
 const { Reader, Staff, MembershipPlan, BookTitle } = require('../models');
 const { nextCode } = require('../services/codeService');
@@ -58,11 +59,18 @@ const seedBooks = async () => {
     const existed = await BookTitle.findOne({ $or: [{ isbn: book.isbn || '' }, { tenSach: book.tenSach }] });
     if (existed) return { ...summary, skipped: summary.skipped + 1 };
 
+    const randomBorrowCount = Math.floor(Math.random() * 196) + 5; // 5 - 200
+    const randomRating = Number((Math.random() * 1.0 + 4.0).toFixed(1)); // 4.0 - 5.0
+    const randomReviewsCount = Math.floor(Math.random() * 78) + 3; // 3 - 80
+
     await createBookTitle({
       ...book,
-      tongSoLuong: 3,
+      tongSoLuong: config.app.defaultBookCopiesCount,
       hinhAnh: book.hinhAnhLocal ? path.posix.join('/uploads/books', book.hinhAnhLocal) : '',
-      tuKhoa: [book.theLoai, book.nguon, ...(book.tacGia || [])].filter(Boolean)
+      tuKhoa: [book.theLoai, book.nguon, ...(book.tacGia || [])].filter(Boolean),
+      soLuotMuon: randomBorrowCount,
+      rating: randomRating,
+      soLuotDanhGia: randomReviewsCount
     });
 
     if ((index + 1) % 10 === 0) console.log(`Đã seed ${index + 1}/${books.length} sách`);

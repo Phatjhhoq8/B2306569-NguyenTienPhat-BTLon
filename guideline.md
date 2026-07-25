@@ -75,6 +75,26 @@ flowchart TD
 6. **Báo cáo sau mỗi tính năng**: Mỗi tính năng hoàn thành phải có `report/feature_<ten_tinh_nang>.md`.
 7. **Agent tách rõ Agent - Skill - Tool**: Orchestrator chỉ điều phối, không tự xử lý toàn bộ nghiệp vụ.
 
+### 3.1. Quy Ước Bắt Buộc Về Ràng Buộc Và Trigger Backend
+
+Các bước phát triển backend sau này phải tuân thủ các quy ước sau để không làm sai lệch ràng buộc/trigger hiện có:
+
+1. **Không bypass Mongoose hook nghiệp vụ**: Không dùng trực tiếp `findByIdAndUpdate()`, `updateOne()`, `updateMany()`, `insertMany()` hoặc `deleteMany()` cho các nghiệp vụ có trigger nếu chưa có service kiểm soát riêng.
+2. **Ưu tiên service nghiệp vụ**: Luồng mượn/trả/hủy phiếu/ngừng phục vụ/xóa mềm đầu sách/thêm bản sao sách phải đi qua service trong `backend/src/services/`, không cập nhật model trực tiếp từ controller.
+3. **Mượn sách phải khóa bản sao vật lý**: Chỉ được mượn `BookCopy.tinhTrang = 'CHO_MUON'` và `isDeleted = false`; khi mượn thành công phải đổi sang `DA_MUON` bằng điều kiện atomically để tránh 2 người mượn cùng một cuốn.
+4. **Trả sách phải giải phóng đúng trạng thái**: Nếu đầu sách còn `ACTIVE` và chưa xóa thì bản sao quay về `CHO_MUON`; nếu đầu sách `DISCONTINUED` hoặc `isDeleted = true` thì bản sao chuyển sang `BAO_TRI` và bị xóa mềm.
+5. **Không xóa mềm đầu sách khi còn sách đang mượn**: `BookTitle.isDeleted = true` phải bị chặn nếu còn `BookCopy.tinhTrang = 'DA_MUON'` và `isDeleted = false`.
+6. **Ngừng phục vụ dùng drain strategy**: `BookTitle.trangThai = 'DISCONTINUED'` vẫn được phép khi còn sách đang mượn; sách rảnh bị thu hồi ngay, sách đang mượn sẽ bị thu hồi khi trả.
+7. **Không hủy phiếu sau khi đã giao sách**: Trạng thái `HUY` chỉ dùng cho phiếu chưa phát sinh sách đang mượn; phiếu đã giao sách phải kết thúc bằng luồng trả sách `DA_TRA`.
+8. **Trả từng cuốn được hỗ trợ**: `BorrowReceipt.chiTietMuon[].daTraChua` là trạng thái theo từng cuốn; chỉ khi tất cả sách đã trả thì phiếu mới chuyển sang `DA_TRA`.
+9. **Phiếu quá hạn cần job riêng**: Hàm/script cập nhật `DANG_MUON` sang `QUA_HAN` phải được gọi định kỳ, ví dụ bằng `npm run mark-overdue` hoặc scheduler khi deploy.
+10. **Độc giả mượn sách phải hợp lệ**: Chỉ cho mượn nếu `Reader.trangThai = 'ACTIVE'`, `isDeleted = false`, có `Subscription.trangThai = 'DANG_HIEU_LUC'`, còn hạn, không vượt `soSachToiDa`, không vượt `soNgayMuonToiDa`, và không còn phiếu phạt chưa thanh toán.
+11. **Ràng buộc số lượng phải giữ đúng ý nghĩa**: `BookTitle.tongSoLuong` là tổng bản sao từng nhập; `soLuongDangQuanLy` là số bản sao chưa xóa mềm; `soLuongKhaDung` là số bản sao có thể cho mượn.
+12. **Ràng buộc tham chiếu phải được kiểm tra**: Các ref chính như `Reader`, `Staff`, `BookTitle`, `BookCopy`, `Author`, `Publisher`, `Category`, `MembershipPlan`, `BorrowReceipt` phải kiểm tra tồn tại ở model/service; không chỉ dựa vào ObjectId hợp lệ.
+13. **Mật khẩu không lưu plain text**: `Reader` và `Staff` phải hash mật khẩu bằng cơ chế có salt; không quay lại SHA256 tĩnh.
+14. **Mã giảm giá phải dùng atomically**: Khi áp dụng `DiscountCode`, phải kiểm tra còn hạn, đơn tối thiểu, `soLuotDaDung < soLuongMaToiDa`, và tăng lượt dùng bằng update nguyên tử.
+15. **Test sau khi chỉnh ràng buộc/trigger**: Mọi thay đổi vào model/service nghiệp vụ phải chạy `cd backend && npm test`; nếu thêm service mới, cần bổ sung test tương ứng khi có thời gian.
+
 ---
 
 ## 4. Chi Tiết Các Bước Thực Hiện
@@ -448,6 +468,10 @@ Yêu cầu bắt buộc:
 8. Frontend phải có giao diện Public và Admin tách route rõ ràng.
 9. Smart AI Orchestrator phải tách rõ Agent, Skill, Tool và có khả năng điều phối giữa ChitChatAgent, SemanticBookSearchAgent và BorrowingAgent.
 10. SemanticBookSearchAgent phải tìm được sách khi người dùng không nhớ tên sách, chỉ mô tả cốt truyện, nhân vật, bối cảnh hoặc chủ đề.
+11. Khi chỉnh backend, phải tuân thủ mục `3.1. Quy Ước Bắt Buộc Về Ràng Buộc Và Trigger Backend` trong `guideline.md`.
+12. Không cập nhật trực tiếp model bằng `findByIdAndUpdate`, `updateMany`, `insertMany` cho nghiệp vụ có trigger nếu chưa có service kiểm soát riêng.
+13. Các luồng mượn/trả/hủy phiếu/ngừng phục vụ/xóa mềm đầu sách/thêm bản sao phải đi qua service nghiệp vụ và giữ đúng tồn kho, trạng thái sách, phiếu phạt, subscription.
+14. Sau khi chỉnh model/service liên quan ràng buộc hoặc trigger, phải chạy `cd backend && npm test`.
 ```
 
 ---

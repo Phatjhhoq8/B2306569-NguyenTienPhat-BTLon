@@ -5,12 +5,13 @@
  */
 
 const mongoose = require('mongoose');
+const config = require('./index');
 
 // Tắt cảnh báo strictQuery của Mongoose
 mongoose.set('strictQuery', false);
 
 const connectDatabase = async () => {
-  const uri = process.env.MONGODB_URI || 'mongodb://localhost:27017/book_borrowing';
+  const uri = config.db.uri;
   
   // Tránh kết nối lại nếu đã có kết nối sẵn (hữu ích khi chạy test nhiều lần)
   if (mongoose.connection.readyState >= 1) {
