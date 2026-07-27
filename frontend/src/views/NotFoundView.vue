@@ -169,7 +169,7 @@
       <div class="pt-4">
         <router-link 
           to="/" 
-          class="inline-block bg-green-600 hover:bg-green-700 text-white font-bold py-3.5 px-8 rounded-lg text-xs md:text-sm tracking-wider uppercase transition-all shadow-md active:scale-95 hover:shadow-lg"
+          class="inline-block bg-primary hover:bg-primary-dark text-white font-bold py-3.5 px-8 rounded-lg text-xs md:text-sm tracking-wider uppercase transition-all shadow-md active:scale-95 hover:shadow-lg"
         >
           Trở về Trang Chủ
         </router-link>
