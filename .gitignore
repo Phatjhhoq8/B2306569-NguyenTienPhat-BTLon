@@ -51,3 +51,4 @@ Thumbs.db
 # Project exclusions
 report/
 ux-ui-agent-skills-main/
+.agents/
