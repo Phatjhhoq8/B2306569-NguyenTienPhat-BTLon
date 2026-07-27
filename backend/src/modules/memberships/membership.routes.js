@@ -14,6 +14,7 @@ router.get('/memberships/plans', membershipController.getPlans);
 // Độc giả: đăng ký gói và xem subscription cá nhân
 router.post('/memberships/subscribe', authMiddleware.authenticate, authMiddleware.authorize('READER'), membershipController.subscribePlan);
 router.get('/memberships/my-subscriptions', authMiddleware.authenticate, authMiddleware.authorize('READER'), membershipController.getMySubscription);
+router.post('/memberships/join-family', authMiddleware.authenticate, authMiddleware.authorize('READER'), membershipController.linkFamilyInvite);
 
 // Admin: CRUD gói hội viên
 router.post('/memberships/plans', authMiddleware.authenticate, authMiddleware.authorize('STAFF'), membershipController.createPlan);

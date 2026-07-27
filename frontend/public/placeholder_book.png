@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 270" width="100%" height="100%">
+  <rect width="200" height="270" fill="#f8fafc" rx="12"/>
+  <rect x="8" y="8" width="184" height="254" fill="none" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="5 5" rx="8"/>
+  <g transform="translate(65, 80)" fill="#0f4c81" opacity="0.15">
+    <path d="M 0 0 L 70 0 L 70 80 L 0 80 Z"/>
+    <path d="M 10 -10 L 60 -10 L 60 0 L 10 0 Z"/>
+  </g>
+  <text x="100" y="195" font-family="'Playfair Display', serif" font-size="14" font-weight="bold" fill="#0f4c81" text-anchor="middle">CTU eLibrary</text>
+  <text x="100" y="215" font-family="sans-serif" font-size="11" fill="#94a3b8" text-anchor="middle">Ảnh bìa chưa sẵn sàng</text>
+</svg>

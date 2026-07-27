@@ -97,11 +97,80 @@ const getMySubscription = async (req, res, next) => {
     if (!req.user || req.user.role === 'STAFF') {
       return resultResponse.err(res, 'Chỉ độc giả mới có thể xem subscription', 403);
     }
-    const subscriptions = await Subscription.find({ docGia: req.user._id })
+    // Tìm gói do bản thân đăng ký HOẶC gói được mời tham gia nhóm gia đình
+    const subscriptions = await Subscription.find({
+      $or: [
+        { docGia: req.user._id },
+        { nguoiDuocMoi: req.user._id }
+      ]
+    })
       .populate('goiDocGia')
       .sort({ createdAt: -1 });
     return resultResponse.ok(res, subscriptions);
   } catch (error) { next(error); }
+};
+
+/**
+ * Độc giả liên kết tham gia vào nhóm gia đình của một độc giả khác
+ */
+const linkFamilyInvite = async (req, res, next) => {
+  try {
+    if (!req.user || req.user.role === 'STAFF') {
+      return resultResponse.err(res, 'Chỉ độc giả mới có thể tham gia nhóm gia đình', 403);
+    }
+
+    const { maDocGiaMoi } = req.body;
+    if (!maDocGiaMoi) {
+      return resultResponse.err(res, 'Mã độc giả người mời là bắt buộc', 400);
+    }
+
+    const targetCode = maDocGiaMoi.trim().toUpperCase();
+
+    if (req.user._id === targetCode) {
+      return resultResponse.err(res, 'Bạn không thể tự tham gia nhóm của chính mình', 400);
+    }
+
+    // Tìm gói hội viên đang hiệu lực của người mời
+    const inviterSub = await Subscription.findOne({
+      docGia: targetCode,
+      trangThai: 'DANG_HIEU_LUC'
+    }).populate('goiDocGia');
+
+    if (!inviterSub) {
+      return resultResponse.err(res, 'Không tìm thấy gói hội viên đang kích hoạt của độc giả này', 404);
+    }
+
+    const planName = inviterSub.goiDocGia?.tenGoi || '';
+    if (!planName.toLowerCase().includes('gold') && !planName.toLowerCase().includes('vàng') && !planName.toLowerCase().includes('family')) {
+      return resultResponse.err(res, 'Chỉ gói Vàng (Family) mới hỗ trợ chia sẻ thành viên nhóm gia đình', 400);
+    }
+
+    if (inviterSub.nguoiDuocMoi.includes(req.user._id)) {
+      return resultResponse.err(res, 'Bạn đã ở trong nhóm gia đình của độc giả này rồi', 400);
+    }
+
+    // 1 chính + tối đa 2 người được thêm (nguoiDuocMoi.length < 2)
+    if (inviterSub.nguoiDuocMoi.length >= 2) {
+      return resultResponse.err(res, 'Nhóm gia đình của độc giả này đã đạt số lượng tối đa (3 người gồm 1 chính + 2 mời)', 400);
+    }
+
+    // Hủy các gói đang kích hoạt của người tham gia nếu có
+    await Subscription.updateMany(
+      { docGia: req.user._id, trangThai: 'DANG_HIEU_LUC' },
+      { $set: { trangThai: 'HUY' } }
+    );
+
+    // Thêm người dùng vào danh sách thành viên phụ
+    inviterSub.nguoiDuocMoi.push(req.user._id);
+    await inviterSub.save();
+
+    return resultResponse.ok(res, {
+      message: `Tham gia nhóm gia đình của độc giả ${targetCode} thành công!`,
+      subscription: inviterSub
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
 module.exports = {
@@ -110,5 +179,6 @@ module.exports = {
   createPlan,
   updatePlan,
   deletePlan,
-  getMySubscription
+  getMySubscription,
+  linkFamilyInvite
 };

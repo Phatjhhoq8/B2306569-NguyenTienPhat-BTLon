@@ -45,6 +45,11 @@ const subscriptionSchema = new mongoose.Schema({
     type: String,
     enum: ['DANG_HIEU_LUC', 'HET_HAN', 'HUY'],
     default: 'DANG_HIEU_LUC'
+  },
+  nguoiDuocMoi: {
+    type: [String],
+    ref: 'Reader',
+    default: []
   }
 }, { timestamps: true });
 

@@ -30,10 +30,10 @@ Kế hoạch đã được điều chỉnh dựa trên:
 | Dữ liệu scrape 100 sách demo | `[ĐÃ LÀM - DỮ LIỆU]` | `backend/src/scripts/output/scraped_books.json`, `scrape_stats.json` |
 | Script Seeding dữ liệu mẫu | `[ĐÃ LÀM - CODE]` | `backend/src/scripts/seedFromScrapedBooks.js` |
 | Backend RESTful API | `[ĐÃ LÀM - CODE]` | 5 modules (users, books, borrowing, memberships, discounts), 40+ endpoints, 18/18 test pass |
-| Frontend Vue 3 + Tailwind | `[CHƯA LÀM - KẾ HOẠCH]` | Chưa khởi tạo dự án frontend |
-| Membership API/UI | `[ĐÃ LÀM - API]` | API đầy đủ: CRUD gói, đăng ký, xem subscription. UI chưa làm |
+| Frontend Vue 3 + Tailwind | `[ĐÃ LÀM - CODE]` | 16 views (Độc giả + Admin), 100% build pass, VietQR payment simulator |
+| Membership API/UI | `[ĐÃ LÀM - CODE]` | API CRUD & đăng ký gói, giao diện đăng ký kèm widget QR Pay |
 | Smart AI Orchestrator Agent | `[CHƯA LÀM - KẾ HOẠCH]` | Chưa triển khai |
-| Báo cáo tính năng | `[ĐANG THỰC HIỆN]` | 14 báo cáo trong `report/` |
+| Báo cáo tính năng | `[ĐANG THỰC HIỆN]` | 15 báo cáo trong `report/` |
 
 Checklist tổng quan:
 
@@ -45,8 +45,8 @@ Checklist tổng quan:
 - [x] Cào đủ 100 sách demo và lưu output JSON.
 - [x] Viết mã nguồn script seed dữ liệu từ file JSON cào được.
 - [x] Xây dựng backend RESTful API core theo kiến trúc modular.
-- [ ] Triển khai frontend Public Website và Admin Portal bằng Vue 3 + Tailwind CSS.
-- [x] Triển khai membership package API.
+- [x] Triển khai frontend Public Website và Admin Portal bằng Vue 3 + Tailwind CSS.
+- [x] Triển khai membership package API & UI.
 - [ ] Triển khai Smart AI Orchestrator Agent API & UI widget.
 
 ---
@@ -497,13 +497,13 @@ Các báo cáo đã có:
 | `report/feature_security_and_error_triggers.md` | `[ĐÃ CÓ]` |
 | `report/feature_global_config_env.md` | `[ĐÃ CÓ]` |
 | `report/feature_admin_crud_apis.md` | `[ĐÃ CÓ]` |
+| `report/feature_frontend_vite_vue.md` | `[ĐÃ CÓ]` |
 
 Báo cáo cần tạo tiếp:
 
-- [ ] `report/feature_frontend_public.md`
-- [ ] `report/feature_frontend_admin.md`
 - [ ] `report/feature_ai_orchestrator.md`
 - [ ] `report/feature_semantic_book_search_agent.md`
+
 
 Lệnh kiểm tra hiện có (Crawler):
 

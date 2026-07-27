@@ -66,9 +66,9 @@ router.post('/admin/readers/:id/toggle-status', authMiddleware.authenticate, aut
 router.delete('/admin/readers/:id', authMiddleware.authenticate, authMiddleware.authorize('STAFF'), userController.softDeleteReader);
 
 // ==================== ADMIN: Quản lý Nhân viên ====================
-router.get('/admin/staffs', authMiddleware.authenticate, authMiddleware.authorize('STAFF'), userController.getStaffs);
-router.post('/admin/staffs', authMiddleware.authenticate, authMiddleware.authorize('STAFF'), userController.createStaff);
-router.put('/admin/staffs/:id', authMiddleware.authenticate, authMiddleware.authorize('STAFF'), userController.updateStaff);
-router.delete('/admin/staffs/:id', authMiddleware.authenticate, authMiddleware.authorize('STAFF'), userController.softDeleteStaff);
+router.get('/admin/staffs', authMiddleware.authenticate, authMiddleware.authorizeRootAdmin, userController.getStaffs);
+router.post('/admin/staffs', authMiddleware.authenticate, authMiddleware.authorizeRootAdmin, userController.createStaff);
+router.put('/admin/staffs/:id', authMiddleware.authenticate, authMiddleware.authorizeRootAdmin, userController.updateStaff);
+router.delete('/admin/staffs/:id', authMiddleware.authenticate, authMiddleware.authorizeRootAdmin, userController.softDeleteStaff);
 
 module.exports = router;

@@ -89,9 +89,12 @@ const resolveCategory = async (categoryInput, session = null) => {
     return category._id;
   }
 
-  // Tìm theo tên
+  // Tìm theo tên (không phân biệt chữ hoa chữ thường để tránh trùng lặp)
   const name = String(categoryInput).trim();
-  let category = await Category.findOne({ tenTheLoai: name }).session(session);
+  let category = await Category.findOne({
+    tenTheLoai: { $regex: new RegExp('^' + name.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&') + '$', 'i') }
+  }).session(session);
+
   if (!category) {
     const maTheLoai = await nextCode('category');
     [category] = await Category.create([{

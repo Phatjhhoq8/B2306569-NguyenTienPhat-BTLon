@@ -109,8 +109,21 @@ const authorize = (...allowedRoles) => {
   };
 };
 
+const authorizeRootAdmin = (req, res, next) => {
+  if (!req.user) {
+    return resultResponse.err(res, 'Người dùng chưa được xác thực', 401);
+  }
+  const maSoNV = req.user.maSoNV || null;
+  if (maSoNV === 'NV001') {
+    next();
+  } else {
+    return resultResponse.err(res, 'Chỉ tài khoản Admin Root mới có quyền quản lý nhân viên', 403);
+  }
+};
+
 module.exports = {
   parseCookies,
   authenticate,
-  authorize
+  authorize,
+  authorizeRootAdmin
 };

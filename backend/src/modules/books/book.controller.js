@@ -31,11 +31,12 @@ const createCategory = async (req, res, next) => {
 };
 
 /**
- * Lấy danh sách Thể Loại Sách
+ * Lấy danh sách Thể Loại Sách (Chỉ lấy các thể loại thực sự có đầu sách đang hoạt động)
  */
 const getCategories = async (req, res, next) => {
   try {
-    const categories = await Category.find({});
+    const usedCategoryIds = await BookTitle.distinct('theLoai', { isDeleted: false });
+    const categories = await Category.find({ _id: { $in: usedCategoryIds } });
     return resultResponse.ok(res, categories);
   } catch (error) {
     next(error);
