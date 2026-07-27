@@ -7,7 +7,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Be Vietnam Pro', 'Roboto', 'system-ui', 'sans-serif'],
+        sans: ['Plus Jakarta Sans', 'Roboto', 'system-ui', 'sans-serif'],
         serif: ['Lora', 'Georgia', 'serif'],
       },
       colors: {

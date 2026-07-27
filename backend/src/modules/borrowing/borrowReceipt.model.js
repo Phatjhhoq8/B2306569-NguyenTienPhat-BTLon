@@ -281,7 +281,7 @@ borrowReceiptSchema.pre('save', async function (next) {
       for (const item of this.chiTietMuon) {
         const copy = await BookCopy.findById(item.sach).populate('dauSach').session(session);
         if (copy && copy.dauSach) {
-          calculatedDeposit += copy.dauSach.giaBia || 0;
+          calculatedDeposit += (copy.dauSach.giaBia || 0) * 0.5;
         }
       }
       this.tienCoc = calculatedDeposit;

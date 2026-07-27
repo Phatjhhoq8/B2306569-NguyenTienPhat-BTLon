@@ -2,7 +2,7 @@
   <div class="space-y-10 pb-16 font-sans">
     
     <!-- 1. Catalog Hero Banner -->
-    <section class="bg-gradient-to-r from-primary via-blue-900 to-indigo-900 py-16 px-4 text-white relative overflow-hidden shadow-inner">
+    <section class="bg-gradient-to-r from-primary via-blue-900 to-indigo-900 py-16 px-4 text-white relative shadow-inner">
       <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between relative z-10">
         <div class="space-y-4 max-w-2xl">
           <div class="text-xs font-bold text-secondary flex items-center space-x-2">
@@ -10,22 +10,57 @@
             <span>/</span>
             <span>Danh mục sách</span>
           </div>
-          <h1 class="font-sans text-3xl md:text-4xl font-extrabold tracking-tight uppercase">Danh mục tài liệu & Kho sách</h1>
+          <h1 class="font-sans text-3xl md:text-4xl font-extrabold tracking-tight uppercase">
+            {{ catalogSettings.heroTitle || 'Danh mục tài liệu & Kho sách' }}
+          </h1>
           <p class="text-slate-200 text-xs md:text-sm leading-relaxed max-w-xl">
-            Tra cứu giáo trình môn học, công trình nghiên cứu, tài liệu khoa học, tiểu thuyết đang có sẵn tại các chi nhánh thư viện CTU eLibrary.
+            {{ catalogSettings.heroSubtitle || 'Tra cứu giáo trình môn học, công trình nghiên cứu, tài liệu khoa học, tiểu thuyết đang có sẵn tại các chi nhánh thư viện CTU eLibrary.' }}
           </p>
           
           <!-- Search Bar -->
-          <div class="flex items-center space-x-2 bg-white px-3 py-2 rounded-2xl border border-slate-100 max-w-md shadow-md text-slate-800">
+          <div class="flex items-center space-x-2 bg-white px-3 py-2 rounded-2xl border border-slate-100 max-w-md shadow-md text-slate-800 relative z-30">
             <Search class="h-4 w-4 text-slate-400 flex-shrink-0" />
-            <input 
-              v-model="searchQuery" 
-              type="text" 
-              placeholder="Tìm tên sách, tác giả hoặc từ khóa..." 
-              class="w-full focus:outline-none text-xs bg-transparent font-medium"
-              @input="handleQueryChange"
-            />
-            <button @click="fetchBooks" class="bg-primary hover:bg-primary-dark text-white font-bold text-xs px-4 py-1.5 rounded-lg transition-colors">Lọc</button>
+            <div class="relative flex-grow">
+              <input 
+                v-model="searchQuery" 
+                type="text" 
+                placeholder="Tìm tên sách, tác giả hoặc từ khóa..." 
+                class="w-full focus:outline-none text-xs md:text-sm font-semibold bg-transparent"
+                @input="fetchSuggestions"
+                @focus="showSuggestions = true"
+                @blur="setTimeout(() => { showSuggestions = false; activeSuggestionIndex = -1; }, 200)"
+                @keydown.down.prevent="onKeyDown"
+                @keydown.up.prevent="onKeyUp"
+                @keydown.enter.prevent="onKeyEnter"
+                @keydown.esc="showSuggestions = false"
+              />
+              
+              <!-- Suggestions Dropdown -->
+              <div 
+                v-if="showSuggestions && suggestions.length > 0" 
+                class="absolute left-0 right-0 mt-3 bg-white border border-slate-200 rounded-xl shadow-xl z-50 max-h-60 overflow-y-auto"
+              >
+                <div 
+                  v-for="(item, idx) in suggestions" 
+                  :key="item.id + item.type"
+                  class="px-3 py-2.5 hover:bg-slate-50 cursor-pointer text-xs md:text-sm font-bold text-slate-700 flex items-center justify-between border-b border-slate-50 last:border-b-0"
+                  :class="{ 'bg-slate-100': activeSuggestionIndex === idx }"
+                  @mousedown="selectSuggestion(item)"
+                >
+                  <div class="flex items-center space-x-2">
+                    <span 
+                      class="text-[10px] md:text-xs font-extrabold px-2 py-0.5 rounded-full uppercase"
+                      :class="item.type === 'book' ? 'bg-blue-100 text-blue-700' : item.type === 'author' ? 'bg-amber-100 text-amber-700' : 'bg-purple-100 text-purple-700'"
+                    >
+                      {{ item.type === 'book' ? 'Sách' : item.type === 'author' ? 'Tác giả' : 'NXB' }}
+                    </span>
+                    <span class="truncate max-w-[200px]">{{ item.text }}</span>
+                  </div>
+                  <span class="text-[9px] text-slate-400 font-semibold">Tìm kiếm</span>
+                </div>
+              </div>
+            </div>
+            <button @click="executeSearch" class="bg-primary hover:bg-primary-dark text-white font-bold text-xs px-4 py-1.5 rounded-lg transition-colors flex-shrink-0">Lọc</button>
           </div>
         </div>
         
@@ -42,33 +77,147 @@
       <div class="flex flex-col md:flex-row gap-8">
         
         <!-- Left Sidebar: Filter Panel -->
-        <aside class="w-full md:w-64 flex-shrink-0 space-y-6">
-          <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-            <h3 class="font-bold text-slate-900 border-b border-slate-100 pb-2 flex items-center text-sm uppercase tracking-wider">
-              <Filter class="h-4 w-4 mr-2 text-primary" /> Bộ lọc thể loại
-            </h3>
+        <aside class="w-full md:w-64 flex-shrink-0">
+          <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden divide-y divide-slate-100">
             
-            <div class="space-y-1">
+            <!-- 1. Category Filter Section -->
+            <div class="p-5 space-y-3">
               <button 
-                @click="filterCategory(null)"
-                class="w-full text-left py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-between"
-                :class="!selectedCatId ? 'bg-primary text-white shadow-sm' : 'hover:bg-slate-50 text-slate-700'"
+                @click="isCategoryOpen = !isCategoryOpen"
+                class="w-full flex items-center justify-between font-bold text-slate-800 text-xs uppercase tracking-wider focus:outline-none"
               >
-                <span>Tất cả thể loại</span>
-                <Check v-if="!selectedCatId" class="h-3.5 w-3.5" />
+                <span class="flex items-center">
+                  <Filter class="h-4 w-4 mr-2 text-primary" /> Thể loại
+                </span>
+                <ChevronDown v-if="!isCategoryOpen" class="h-4 w-4 text-slate-400" />
+                <ChevronUp v-else class="h-4 w-4 text-slate-400" />
               </button>
               
-              <button 
-                v-for="cat in categories" 
-                :key="cat._id"
-                @click="filterCategory(cat._id)"
-                class="w-full text-left py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-between truncate"
-                :class="selectedCatId === cat._id ? 'bg-primary text-white shadow-sm' : 'hover:bg-slate-50 text-slate-700'"
-              >
-                <span>{{ cat.tenTheLoai }}</span>
-                <Check v-if="selectedCatId === cat._id" class="h-3.5 w-3.5" />
-              </button>
+              <div v-show="isCategoryOpen" class="space-y-3 pt-2">
+                <!-- Quick Search Input -->
+                <input 
+                  v-model="categorySearch" 
+                  type="text" 
+                  placeholder="Tìm nhanh thể loại..." 
+                  class="w-full px-2.5 py-1.5 text-xs border border-slate-200 rounded-lg focus:outline-none focus:border-primary/50 bg-slate-50/50" 
+                />
+                
+                <div class="max-h-48 overflow-y-auto space-y-1 pr-1 scrollbar-thin">
+                  <button 
+                    @click="filterCategory(null)"
+                    class="w-full text-left py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-between"
+                    :class="!selectedCatId ? 'bg-primary text-white shadow-sm' : 'hover:bg-slate-50 text-slate-700'"
+                  >
+                    <span>Tất cả thể loại</span>
+                    <Check v-if="!selectedCatId" class="h-3.5 w-3.5" />
+                  </button>
+                  
+                  <button 
+                    v-for="cat in filteredCategories" 
+                    :key="cat._id"
+                    @click="filterCategory(cat._id)"
+                    class="w-full text-left py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-between truncate"
+                    :class="selectedCatId === cat._id ? 'bg-primary text-white shadow-sm' : 'hover:bg-slate-50 text-slate-700'"
+                  >
+                    <span>{{ cat.tenTheLoai }}</span>
+                    <Check v-if="selectedCatId === cat._id" class="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              </div>
             </div>
+
+            <!-- 2. Author Filter Section -->
+            <div class="p-5 space-y-3">
+              <button 
+                @click="isAuthorOpen = !isAuthorOpen"
+                class="w-full flex items-center justify-between font-bold text-slate-800 text-xs uppercase tracking-wider focus:outline-none"
+              >
+                <span class="flex items-center">
+                  <User class="h-4 w-4 mr-2 text-primary" /> Tác giả
+                </span>
+                <ChevronDown v-if="!isAuthorOpen" class="h-4 w-4 text-slate-400" />
+                <ChevronUp v-else class="h-4 w-4 text-slate-400" />
+              </button>
+              
+              <div v-show="isAuthorOpen" class="space-y-3 pt-2">
+                <!-- Quick Search Input -->
+                <input 
+                  v-model="authorSearch" 
+                  type="text" 
+                  placeholder="Tìm nhanh tác giả..." 
+                  class="w-full px-2.5 py-1.5 text-xs border border-slate-200 rounded-lg focus:outline-none focus:border-primary/50 bg-slate-50/50" 
+                />
+                
+                <div class="max-h-48 overflow-y-auto space-y-1 pr-1 scrollbar-thin">
+                  <button 
+                    @click="filterAuthor(null)"
+                    class="w-full text-left py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-between"
+                    :class="!selectedAuthorId ? 'bg-primary text-white shadow-sm' : 'hover:bg-slate-50 text-slate-700'"
+                  >
+                    <span>Tất cả tác giả</span>
+                    <Check v-if="!selectedAuthorId" class="h-3.5 w-3.5" />
+                  </button>
+                  
+                  <button 
+                    v-for="author in filteredAuthors" 
+                    :key="author._id"
+                    @click="filterAuthor(author._id)"
+                    class="w-full text-left py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-between truncate"
+                    :class="selectedAuthorId === author._id ? 'bg-primary text-white shadow-sm' : 'hover:bg-slate-50 text-slate-700'"
+                  >
+                    <span>{{ author.tenTacGia }}</span>
+                    <Check v-if="selectedAuthorId === author._id" class="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- 3. Publisher Filter Section -->
+            <div class="p-5 space-y-3">
+              <button 
+                @click="isPublisherOpen = !isPublisherOpen"
+                class="w-full flex items-center justify-between font-bold text-slate-800 text-xs uppercase tracking-wider focus:outline-none"
+              >
+                <span class="flex items-center">
+                  <BookOpen class="h-4 w-4 mr-2 text-primary" /> Nhà xuất bản
+                </span>
+                <ChevronDown v-if="!isPublisherOpen" class="h-4 w-4 text-slate-400" />
+                <ChevronUp v-else class="h-4 w-4 text-slate-400" />
+              </button>
+              
+              <div v-show="isPublisherOpen" class="space-y-3 pt-2">
+                <!-- Quick Search Input -->
+                <input 
+                  v-model="publisherSearch" 
+                  type="text" 
+                  placeholder="Tìm nhanh nhà xuất bản..." 
+                  class="w-full px-2.5 py-1.5 text-xs border border-slate-200 rounded-lg focus:outline-none focus:border-primary/50 bg-slate-50/50" 
+                />
+                
+                <div class="max-h-48 overflow-y-auto space-y-1 pr-1 scrollbar-thin">
+                  <button 
+                    @click="filterPublisher(null)"
+                    class="w-full text-left py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-between"
+                    :class="!selectedPublisherId ? 'bg-primary text-white shadow-sm' : 'hover:bg-slate-50 text-slate-700'"
+                  >
+                    <span>Tất cả NXB</span>
+                    <Check v-if="!selectedPublisherId" class="h-3.5 w-3.5" />
+                  </button>
+                  
+                  <button 
+                    v-for="pub in filteredPublishers" 
+                    :key="pub._id"
+                    @click="filterPublisher(pub._id)"
+                    class="w-full text-left py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-between truncate"
+                    :class="selectedPublisherId === pub._id ? 'bg-primary text-white shadow-sm' : 'hover:bg-slate-50 text-slate-700'"
+                  >
+                    <span>{{ pub.tenNXB }}</span>
+                    <Check v-if="selectedPublisherId === pub._id" class="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              </div>
+            </div>
+
           </div>
         </aside>
 
@@ -146,8 +295,8 @@
                   <span class="text-slate-500 truncate max-w-[100px]">
                     {{ book.tacGia?.map(t => t.tenTacGia).join(', ') || 'Tác giả' }}
                   </span>
-                  <span class="font-bold text-slate-900">
-                    {{ formatCurrency(book.giaBia) }}
+                  <span class="font-bold text-slate-900 text-[10px]">
+                    {{ formatCurrency(book.giaBia) }} <span class="text-slate-300 font-normal">/</span> <span class="text-primary font-extrabold">{{ formatCurrency(book.giaBia * 0.02) }}</span>
                   </span>
                 </div>
               </div>
@@ -184,20 +333,54 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, watch, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import api from '../services/api';
-import { Search, BookOpen, Filter, Check } from '@lucide/vue';
+import { Search, BookOpen, Filter, Check, User, ChevronDown, ChevronUp } from '@lucide/vue';
 
 const route = useRoute();
 const router = useRouter();
 
 const categories = ref([]);
+const authors = ref([]);
+const publishers = ref([]);
 const books = ref([]);
 const totalCount = ref(0);
 const loading = ref(false);
 
+const isCategoryOpen = ref(true);
+const isAuthorOpen = ref(false);
+const isPublisherOpen = ref(false);
+
+const categorySearch = ref('');
+const authorSearch = ref('');
+const publisherSearch = ref('');
+
+const suggestions = ref([]);
+const showSuggestions = ref(false);
+const activeSuggestionIndex = ref(-1);
+
+const filteredCategories = computed(() => {
+  const q = categorySearch.value.trim().toLowerCase();
+  if (!q) return categories.value;
+  return categories.value.filter(c => c.tenTheLoai.toLowerCase().includes(q));
+});
+
+const filteredAuthors = computed(() => {
+  const q = authorSearch.value.trim().toLowerCase();
+  if (!q) return authors.value;
+  return authors.value.filter(a => a.tenTacGia.toLowerCase().includes(q));
+});
+
+const filteredPublishers = computed(() => {
+  const q = publisherSearch.value.trim().toLowerCase();
+  if (!q) return publishers.value;
+  return publishers.value.filter(p => p.tenNXB.toLowerCase().includes(q));
+});
+
 const selectedCatId = ref(route.query.category || null);
+const selectedAuthorId = ref(route.query.author || null);
+const selectedPublisherId = ref(route.query.publisher || null);
 const searchQuery = ref(route.query.q || '');
 const currentPage = ref(parseInt(route.query.page || '1', 10));
 const sortType = ref('popular');
@@ -221,7 +404,81 @@ const filterCategory = (catId) => {
   updateRouter();
 };
 
-const handleQueryChange = () => {
+const filterAuthor = (authorId) => {
+  selectedAuthorId.value = authorId;
+  currentPage.value = 1;
+  updateRouter();
+};
+
+const filterPublisher = (pubId) => {
+  selectedPublisherId.value = pubId;
+  currentPage.value = 1;
+  updateRouter();
+};
+
+let searchTimeout = null;
+const fetchSuggestions = () => {
+  if (searchTimeout) clearTimeout(searchTimeout);
+  
+  const query = searchQuery.value?.trim();
+  if (!query) {
+    suggestions.value = [];
+    return;
+  }
+  
+  searchTimeout = setTimeout(async () => {
+    try {
+      const res = await api.get(`/books/search-suggestions?q=${encodeURIComponent(query)}`);
+      if (res.success) {
+        suggestions.value = res.data;
+      }
+    } catch (error) {
+      console.error('Fetch suggestions error:', error);
+    }
+  }, 200);
+};
+
+const onKeyDown = () => {
+  if (suggestions.value.length === 0) return;
+  activeSuggestionIndex.value = (activeSuggestionIndex.value + 1) % suggestions.value.length;
+};
+
+const onKeyUp = () => {
+  if (suggestions.value.length === 0) return;
+  activeSuggestionIndex.value = (activeSuggestionIndex.value - 1 + suggestions.value.length) % suggestions.value.length;
+};
+
+const onKeyEnter = () => {
+  if (showSuggestions.value && activeSuggestionIndex.value !== -1 && activeSuggestionIndex.value < suggestions.value.length) {
+    selectSuggestion(suggestions.value[activeSuggestionIndex.value]);
+  } else {
+    executeSearch();
+  }
+};
+
+const selectSuggestion = (item) => {
+  showSuggestions.value = false;
+  activeSuggestionIndex.value = -1;
+  
+  if (item.type === 'book') {
+    searchQuery.value = item.text;
+    router.push({ name: 'book-detail', params: { id: item.id } });
+  } else if (item.type === 'author') {
+    searchQuery.value = ''; // Reset searchQuery để tránh so khớp nhầm tên sách vs tên tác giả
+    selectedAuthorId.value = item.id;
+    currentPage.value = 1;
+    updateRouter();
+  } else if (item.type === 'publisher') {
+    searchQuery.value = ''; // Reset searchQuery để tránh so khớp nhầm tên sách vs tên NXB
+    selectedPublisherId.value = item.id;
+    currentPage.value = 1;
+    updateRouter();
+  }
+};
+
+const executeSearch = () => {
+  showSuggestions.value = false;
+  activeSuggestionIndex.value = -1;
   currentPage.value = 1;
   updateRouter();
 };
@@ -240,6 +497,8 @@ const changePage = (page) => {
 const updateRouter = () => {
   const query = {};
   if (selectedCatId.value) query.category = selectedCatId.value;
+  if (selectedAuthorId.value) query.author = selectedAuthorId.value;
+  if (selectedPublisherId.value) query.publisher = selectedPublisherId.value;
   if (searchQuery.value.trim()) query.q = searchQuery.value.trim();
   if (currentPage.value > 1) query.page = currentPage.value;
   router.push({ name: 'books', query });
@@ -250,6 +509,8 @@ const fetchBooks = async () => {
   try {
     let url = `/books?page=${currentPage.value}&limit=${limit}`;
     if (selectedCatId.value) url += `&category=${selectedCatId.value}`;
+    if (selectedAuthorId.value) url += `&author=${selectedAuthorId.value}`;
+    if (selectedPublisherId.value) url += `&publisher=${selectedPublisherId.value}`;
     if (searchQuery.value.trim()) url += `&q=${encodeURIComponent(searchQuery.value.trim())}`;
     
     const res = await api.get(url);
@@ -278,12 +539,33 @@ const viewBook = (bookId) => {
   router.push({ name: 'book-detail', params: { id: bookId } });
 };
 
+const catalogSettings = ref({
+  heroTitle: "Danh mục tài liệu & Kho sách",
+  heroSubtitle: "Tra cứu giáo trình môn học, công trình nghiên cứu, tài liệu khoa học, tiểu thuyết đang có sẵn tại các chi nhánh thư viện CTU eLibrary."
+});
+
 onMounted(async () => {
+  // Tải cấu hình trang danh mục sách
   try {
-    const res = await api.get('/categories');
-    if (res.success) categories.value = res.data;
+    const settingRes = await api.get('/settings/catalogpage');
+    if (settingRes.success && settingRes.data && Object.keys(settingRes.data).length > 0) {
+      catalogSettings.value = { ...catalogSettings.value, ...settingRes.data };
+    }
+  } catch (err) {
+    console.error('Fetch catalog settings failed:', err);
+  }
+
+  try {
+    const [catRes, authorRes, publisherRes] = await Promise.all([
+      api.get('/categories'),
+      api.get('/authors'),
+      api.get('/publishers')
+    ]);
+    if (catRes.success) categories.value = catRes.data;
+    if (authorRes.success) authors.value = authorRes.data;
+    if (publisherRes.success) publishers.value = publisherRes.data;
   } catch (error) {
-    console.error('Categories load error:', error);
+    console.error('Categories, Authors, Publishers load error:', error);
   }
   fetchBooks();
 });
@@ -292,6 +574,8 @@ watch(
   () => route.query,
   (newQuery) => {
     selectedCatId.value = newQuery.category || null;
+    selectedAuthorId.value = newQuery.author || null;
+    selectedPublisherId.value = newQuery.publisher || null;
     searchQuery.value = newQuery.q || '';
     currentPage.value = parseInt(newQuery.page || '1', 10);
     fetchBooks();

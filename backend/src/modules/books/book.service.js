@@ -201,6 +201,7 @@ const createBookTitle = async (bookData) => withTransactionFallback(async (sessi
       soLuotMuon: bookData.soLuotMuon || 0,
       rating: bookData.rating !== undefined ? bookData.rating : 5.0,
       soLuotDanhGia: bookData.soLuotDanhGia || 0,
+      moTa: bookData.moTa || '',
       trangThai: 'ACTIVE',
       isDeleted: false
     });

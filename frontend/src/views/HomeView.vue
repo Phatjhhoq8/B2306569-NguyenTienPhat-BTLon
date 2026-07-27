@@ -3,30 +3,62 @@
     
     <!-- 1. HERO SLIDER BANNER -->
     <section 
-      class="relative bg-primary text-white py-24 px-4 shadow-inner overflow-hidden bg-cover bg-center"
-      style="background-image: linear-gradient(rgba(15, 76, 129, 0.8), rgba(9, 45, 77, 0.9)), url('/hero_banner.png')"
+      class="relative bg-primary text-white py-24 px-4 shadow-inner bg-cover bg-center bg-no-repeat"
+      :style="{ backgroundImage: `linear-gradient(rgba(15, 76, 129, 0.8), rgba(9, 45, 77, 0.9)), url(${homepageSettings.heroBanner || '/hero_banner.png'})` }"
     >
-
       <div class="max-w-5xl mx-auto text-center space-y-8 relative z-10">
         <span class="bg-secondary/20 text-secondary border border-secondary/30 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider inline-block">Học thuật & Kết nối Tri thức</span>
         <h1 class="font-sans text-3xl md:text-5xl font-extrabold tracking-tight leading-tight uppercase">
-          Khám phá thế giới tri thức tại CTU
+          {{ homepageSettings.heroTitle || 'Khám phá thế giới tri thức tại CTU' }}
         </h1>
         <p class="text-slate-200 text-sm md:text-base max-w-2xl mx-auto font-light leading-relaxed">
-          Tìm kiếm nhanh giáo trình môn học, công trình nghiên cứu khoa học và đăng ký mượn sách giấy trực tuyến dễ dàng tại Đại học Cần Thơ.
+          {{ homepageSettings.heroSubtitle || 'Tìm kiếm nhanh giáo trình môn học, công trình nghiên cứu khoa học và đăng ký mượn sách giấy trực tuyến dễ dàng tại Đại học Cần Thơ.' }}
         </p>
 
         <!-- Search Bar (Giao diện giống TiemChung) -->
-        <div class="max-w-3xl mx-auto bg-white rounded-2xl shadow-2xl p-2 flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-2 text-slate-800 border border-slate-100">
-          <div class="flex items-center space-x-2 w-full md:w-2/3 px-3 py-2 border-b md:border-b-0 md:border-r border-slate-100">
+        <div class="max-w-3xl mx-auto bg-white rounded-2xl shadow-2xl p-2 flex flex-col md:flex-row items-center space-y-2 md:space-y-0 md:space-x-2 text-slate-800 border border-slate-100 relative z-30">
+          <div class="flex items-center space-x-2 w-full md:w-2/3 px-3 py-2 border-b md:border-b-0 md:border-r border-slate-100 relative">
             <Search class="text-slate-400 h-5 w-5 flex-shrink-0" />
-            <input 
-              v-model="searchQuery" 
-              type="text" 
-              placeholder="Nhập tên sách, tác giả hoặc chủ đề học tập..." 
-              class="w-full focus:outline-none text-sm font-semibold bg-transparent"
-              @keyup.enter="handleSearch"
-            />
+            <div class="relative flex-grow">
+              <input 
+                v-model="searchQuery" 
+                type="text" 
+                placeholder="Nhập tên sách, tác giả hoặc chủ đề học tập..." 
+                class="w-full focus:outline-none text-sm md:text-base font-semibold bg-transparent"
+                @keydown.down.prevent="onKeyDown"
+                @keydown.up.prevent="onKeyUp"
+                @keydown.enter.prevent="onKeyEnter"
+                @keydown.esc="showSuggestions = false"
+                @input="fetchSuggestions"
+                @focus="showSuggestions = true"
+                @blur="setTimeout(() => { showSuggestions = false; activeSuggestionIndex = -1; }, 200)"
+              />
+              
+              <!-- Suggestions Dropdown -->
+              <div 
+                v-if="showSuggestions && suggestions.length > 0" 
+                class="absolute left-0 right-0 mt-3 bg-white border border-slate-200 rounded-2xl shadow-xl z-50 max-h-64 overflow-y-auto"
+              >
+                <div 
+                  v-for="(item, idx) in suggestions" 
+                  :key="item.id + item.type"
+                  class="px-4 py-2.5 hover:bg-slate-50 cursor-pointer text-sm font-bold text-slate-700 flex items-center justify-between border-b border-slate-50 last:border-b-0"
+                  :class="{ 'bg-slate-100': activeSuggestionIndex === idx }"
+                  @mousedown="selectSuggestion(item)"
+                >
+                  <div class="flex items-center space-x-2">
+                    <span 
+                      class="text-[10px] md:text-xs font-extrabold px-2.5 py-0.5 rounded-full uppercase"
+                      :class="item.type === 'book' ? 'bg-blue-100 text-blue-700' : item.type === 'author' ? 'bg-amber-100 text-amber-700' : 'bg-purple-100 text-purple-700'"
+                    >
+                      {{ item.type === 'book' ? 'Sách' : item.type === 'author' ? 'Tác giả' : 'NXB' }}
+                    </span>
+                    <span class="truncate max-w-[280px]">{{ item.text }}</span>
+                  </div>
+                  <span class="text-[9px] text-slate-400 font-semibold font-mono">Tìm kiếm</span>
+                </div>
+              </div>
+            </div>
           </div>
           <button 
             @click="handleSearch"
@@ -169,8 +201,8 @@
               <span class="text-slate-500 truncate max-w-[100px]">
                 {{ book.tacGia?.map(t => t.tenTacGia).join(', ') || 'Tác giả' }}
               </span>
-              <span class="font-bold text-slate-900">
-                {{ formatCurrency(book.giaBia) }}
+              <span class="font-bold text-slate-900 text-[10px]">
+                {{ formatCurrency(book.giaBia) }} <span class="text-slate-300 font-normal">/</span> <span class="text-primary font-extrabold">{{ formatCurrency(book.giaBia * 0.02) }}</span>
               </span>
             </div>
           </div>
@@ -212,12 +244,13 @@
             ]"
           >
             <div class="shrink-0 w-16 h-16 bg-primary text-white rounded-2xl font-black text-xl flex items-center justify-center shadow-md border-4 border-white z-10 relative">1</div>
-            <div class="flex-1 bg-white rounded-2xl p-5 shadow-sm hover:shadow-md transition-all duration-200 border border-slate-100">
+            <div class="flex-1 bg-white rounded-2xl p-5 shadow-sm hover:shadow-md transition-all duration-200 border border-slate-100 relative overflow-hidden group">
+              <div class="absolute left-0 top-0 bottom-0 w-[4px] bg-primary scale-y-0 group-hover:scale-y-100 transition-transform origin-top duration-300"></div>
               <div class="flex items-center gap-3 mb-2">
                 <Search class="w-5 h-5 text-primary" />
-                <h4 class="font-bold text-slate-900 text-base">Tìm kiếm & Chọn sách</h4>
+                <h4 class="font-bold text-slate-900 text-base">{{ homepageSettings.step1Title || 'Tìm kiếm & Chọn sách' }}</h4>
               </div>
-              <p class="text-sm text-slate-600 leading-relaxed">Tra cứu đầu sách mong muốn trên hệ thống cổng thư viện điện tử CTU eLibrary với bộ lọc thông minh.</p>
+              <p class="text-sm text-slate-600 leading-relaxed">{{ homepageSettings.step1Desc || 'Tra cứu đầu sách mong muốn trên hệ thống cổng thư viện điện tử CTU eLibrary với bộ lọc thông minh.' }}</p>
             </div>
           </div>
 
@@ -229,12 +262,13 @@
             ]"
           >
             <div class="shrink-0 w-16 h-16 bg-primary text-white rounded-2xl font-black text-xl flex items-center justify-center shadow-md border-4 border-white z-10 relative">2</div>
-            <div class="flex-1 bg-white rounded-2xl p-5 shadow-sm hover:shadow-md transition-all duration-200 border border-slate-100">
+            <div class="flex-1 bg-white rounded-2xl p-5 shadow-sm hover:shadow-md transition-all duration-200 border border-slate-100 relative overflow-hidden group">
+              <div class="absolute left-0 top-0 bottom-0 w-[4px] bg-primary scale-y-0 group-hover:scale-y-100 transition-transform origin-top duration-300"></div>
               <div class="flex items-center gap-3 mb-2">
                 <ShoppingBag class="w-5 h-5 text-primary" />
-                <h4 class="font-bold text-slate-900 text-base">Thêm vào giỏ mượn</h4>
+                <h4 class="font-bold text-slate-900 text-base">{{ homepageSettings.step2Title || 'Thêm vào giỏ mượn' }}</h4>
               </div>
-              <p class="text-sm text-slate-600 leading-relaxed">Đưa các cuốn sách cần mượn vào giỏ trực tuyến và xác nhận thời hạn cùng chi nhánh nhận sách mong muốn.</p>
+              <p class="text-sm text-slate-600 leading-relaxed">{{ homepageSettings.step2Desc || 'Đưa các cuốn sách cần mượn vào giỏ trực tuyến và xác nhận thời hạn cùng chi nhánh nhận sách mong muốn.' }}</p>
             </div>
           </div>
 
@@ -246,12 +280,13 @@
             ]"
           >
             <div class="shrink-0 w-16 h-16 bg-primary text-white rounded-2xl font-black text-xl flex items-center justify-center shadow-md border-4 border-white z-10 relative">3</div>
-            <div class="flex-1 bg-white rounded-2xl p-5 shadow-sm hover:shadow-md transition-all duration-200 border border-slate-100">
+            <div class="flex-1 bg-white rounded-2xl p-5 shadow-sm hover:shadow-md transition-all duration-200 border border-slate-100 relative overflow-hidden group">
+              <div class="absolute left-0 top-0 bottom-0 w-[4px] bg-primary scale-y-0 group-hover:scale-y-100 transition-transform origin-top duration-300"></div>
               <div class="flex items-center gap-3 mb-2">
                 <CalendarRange class="w-5 h-5 text-primary" />
-                <h4 class="font-bold text-slate-900 text-base">Nhận mã phiếu hẹn</h4>
+                <h4 class="font-bold text-slate-900 text-base">{{ homepageSettings.step3Title || 'Nhận mã phiếu hẹn' }}</h4>
               </div>
-              <p class="text-sm text-slate-600 leading-relaxed">Hệ thống cấp ngay mã phiếu hẹn điện tử ghi rõ hạn giữ sách và gửi thông tin xác nhận trực tiếp.</p>
+              <p class="text-sm text-slate-600 leading-relaxed">{{ homepageSettings.step3Desc || 'Hệ thống cấp ngay mã phiếu hẹn điện tử ghi rõ hạn giữ sách và gửi thông tin xác nhận trực tiếp.' }}</p>
             </div>
           </div>
 
@@ -263,12 +298,13 @@
             ]"
           >
             <div class="shrink-0 w-16 h-16 bg-primary text-white rounded-2xl font-black text-xl flex items-center justify-center shadow-md border-4 border-white z-10 relative">4</div>
-            <div class="flex-1 bg-white rounded-2xl p-5 shadow-sm hover:shadow-md transition-all duration-200 border border-slate-100">
+            <div class="flex-1 bg-white rounded-2xl p-5 shadow-sm hover:shadow-md transition-all duration-200 border border-slate-100 relative overflow-hidden group">
+              <div class="absolute left-0 top-0 bottom-0 w-[4px] bg-primary scale-y-0 group-hover:scale-y-100 transition-transform origin-top duration-300"></div>
               <div class="flex items-center gap-3 mb-2">
                 <UserCheck class="w-5 h-5 text-primary" />
-                <h4 class="font-bold text-slate-900 text-base">Đến nhận sách giấy</h4>
+                <h4 class="font-bold text-slate-900 text-base">{{ homepageSettings.step4Title || 'Đến nhận sách giấy' }}</h4>
               </div>
-              <p class="text-sm text-slate-600 leading-relaxed">Độc giả xuất trình mã phiếu hẹn tại quầy thủ thư chi nhánh đã chọn để nhận sách giấy trong 5 phút.</p>
+              <p class="text-sm text-slate-600 leading-relaxed">{{ homepageSettings.step4Desc || 'Độc giả xuất trình mã phiếu hẹn tại quầy thủ thư chi nhánh đã chọn để nhận sách giấy trong 5 phút.' }}</p>
             </div>
           </div>
         </div>
@@ -308,7 +344,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import api from '../services/api';
 import { 
@@ -326,6 +362,9 @@ import {
 
 const router = useRouter();
 const searchQuery = ref('');
+const suggestions = ref([]);
+const showSuggestions = ref(false);
+const activeSuggestionIndex = ref(-1);
 const categories = ref([]);
 const newBooks = ref([]);
 const activeTab = ref('all');
@@ -333,6 +372,14 @@ const isExpanded = ref(false);
 const isBooksExpanded = ref(false);
 const timelineRef = ref(null);
 const isVisible = ref(false);
+const windowWidth = ref(typeof window !== 'undefined' ? window.innerWidth : 1024);
+
+const itemsPerRow = computed(() => {
+  if (windowWidth.value >= 1024) return 5; // lg
+  if (windowWidth.value >= 768) return 4;  // md
+  if (windowWidth.value >= 640) return 3;  // sm
+  return 2;                                // Mobile
+});
 
 const visibleCategories = computed(() => {
   // 6 phần tử tương ứng với 1 hàng trên giao diện desktop (md:grid-cols-6)
@@ -340,32 +387,16 @@ const visibleCategories = computed(() => {
 });
 
 const visibleBooks = computed(() => {
-  // 5 phần tử tương ứng với 1 hàng trên giao diện desktop (lg:grid-cols-5)
-  return isBooksExpanded.value ? filteredBooks.value : filteredBooks.value.slice(0, 5);
+  const cols = itemsPerRow.value;
+  if (isBooksExpanded.value) {
+    const total = filteredBooks.value.length;
+    const maxAllowed = Math.floor(total / cols) * cols;
+    return filteredBooks.value.slice(0, maxAllowed || cols);
+  }
+  return filteredBooks.value.slice(0, cols);
 });
 
-const faqs = ref([
-  {
-    question: 'Thời gian mượn tối đa cho mỗi lần là bao lâu?',
-    answer: 'Mỗi lần mượn sách, độc giả được giữ sách tối đa là 14 ngày. Nếu có nhu cầu gia hạn thêm, độc giả cần liên hệ trực tiếp quầy thủ thư hoặc gia hạn trên cổng thông tin.',
-    open: false
-  },
-  {
-    question: 'Tôi có thể mượn tối đa bao nhiêu cuốn sách cùng lúc?',
-    answer: 'Số lượng sách tối đa phụ thuộc vào gói hội viên của bạn. Gói STUDENT (Tiêu chuẩn) cho phép mượn tối đa 5 cuốn cùng lúc. Gói SILVER/GOLD cho phép mượn nhiều hơn từ 8-15 cuốn.',
-    open: false
-  },
-  {
-    question: 'Trễ hạn trả sách có bị phạt tiền không?',
-    answer: 'Có. Để đảm bảo quyền lợi mượn sách của các độc giả khác, sách trả trễ hạn sẽ bị áp dụng mức phí phạt nhỏ là 5.000 VND/ngày cho mỗi cuốn sách trễ hạn.',
-    open: false
-  },
-  {
-    question: 'Làm thế nào để đăng ký tài khoản độc giả mới?',
-    answer: 'Sinh viên và cán bộ giảng viên có thể nhấn nút "Đăng ký" ở góc phải màn hình, điền thông tin MSSV/Mã số CB cùng email chính thức của trường để được phê duyệt tự động.',
-    open: false
-  }
-]);
+const faqs = ref([]);
 
 const getImageUrl = (path) => {
   if (!path) return '/placeholder_book.png';
@@ -378,8 +409,65 @@ const formatCurrency = (val) => {
   return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(val || 0);
 };
 
+let searchTimeout = null;
+const fetchSuggestions = () => {
+  if (searchTimeout) clearTimeout(searchTimeout);
+  
+  const query = searchQuery.value?.trim();
+  if (!query) {
+    suggestions.value = [];
+    activeSuggestionIndex.value = -1;
+    return;
+  }
+  
+  searchTimeout = setTimeout(async () => {
+    try {
+      const res = await api.get(`/books/search-suggestions?q=${encodeURIComponent(query)}`);
+      if (res.success) {
+        suggestions.value = res.data;
+        activeSuggestionIndex.value = -1; // Reset selection index
+      }
+    } catch (error) {
+      console.error('Fetch suggestions error:', error);
+    }
+  }, 200);
+};
+
+const onKeyDown = () => {
+  if (suggestions.value.length === 0) return;
+  activeSuggestionIndex.value = (activeSuggestionIndex.value + 1) % suggestions.value.length;
+};
+
+const onKeyUp = () => {
+  if (suggestions.value.length === 0) return;
+  activeSuggestionIndex.value = (activeSuggestionIndex.value - 1 + suggestions.value.length) % suggestions.value.length;
+};
+
+const onKeyEnter = () => {
+  if (showSuggestions.value && activeSuggestionIndex.value !== -1 && activeSuggestionIndex.value < suggestions.value.length) {
+    selectSuggestion(suggestions.value[activeSuggestionIndex.value]);
+  } else {
+    handleSearch();
+  }
+};
+
+const selectSuggestion = (item) => {
+  searchQuery.value = item.text;
+  showSuggestions.value = false;
+  activeSuggestionIndex.value = -1;
+  if (item.type === 'book') {
+    router.push({ name: 'book-detail', params: { id: item.id } });
+  } else if (item.type === 'author') {
+    router.push({ name: 'books', query: { author: item.id } });
+  } else if (item.type === 'publisher') {
+    router.push({ name: 'books', query: { publisher: item.id } });
+  }
+};
+
 const handleSearch = () => {
   if (!searchQuery.value.trim()) return;
+  showSuggestions.value = false;
+  activeSuggestionIndex.value = -1;
   router.push({ name: 'books', query: { q: searchQuery.value.trim() } });
 };
 
@@ -399,7 +487,28 @@ const filteredBooks = computed(() => {
   return [...newBooks.value].reverse();
 });
 
+const homepageSettings = ref({
+  heroTitle: "KHÁM PHÁ THẾ GIỚI TRI THỨC TẠI CTU",
+  heroSubtitle: "Tìm kiếm nhanh giáo trình môn học, công trình nghiên cứu khoa học và đăng ký mượn sách giấy trực tuyến dễ dàng tại Đại học Cần Thơ.",
+  heroBanner: "/hero_banner.png",
+  step1Title: "1. Chọn sách & Đăng ký",
+  step1Desc: "Tìm kiếm cuốn sách cần thiết trong kho tài liệu số khổng lồ, nhấn nút đăng ký và lựa chọn gói dịch vụ phù hợp nhất.",
+  step2Title: "2. Nhận mã xác nhận",
+  step2Desc: "Hệ thống sẽ tự động phê duyệt nhanh chóng và gửi mã vạch xác nhận mượn sách trực tiếp qua thư điện tử/SMS.",
+  step3Title: "3. Đến quầy thủ thư",
+  step3Desc: "Mang mã xác nhận (hoặc thẻ độc giả) đến quầy thư viện trung tâm để nhận sách giấy trong thời gian hoạt động.",
+  step4Title: "4. Trả sách đúng hẹn",
+  step4Desc: "Độc giả trả sách tại quầy hoặc thùng trả tự động trước khi hết hạn để tránh phát sinh chi phí phạt không đáng có.",
+  faqs: []
+});
+
+const handleResize = () => {
+  windowWidth.value = window.innerWidth;
+};
+
 onMounted(async () => {
+  window.addEventListener('resize', handleResize);
+
   // Tạo IntersectionObserver để kích hoạt hiệu ứng xuất hiện (fade-right) khi cuộn đến timeline
   const observer = new IntersectionObserver((entries) => {
     entries.forEach((entry) => {
@@ -414,6 +523,19 @@ onMounted(async () => {
     observer.observe(timelineRef.value);
   }
 
+  // Tải cấu hình trang chủ động từ API
+  try {
+    const settingRes = await api.get('/settings/homepage');
+    if (settingRes.success && settingRes.data && Object.keys(settingRes.data).length > 0) {
+      homepageSettings.value = { ...homepageSettings.value, ...settingRes.data };
+    }
+  } catch (err) {
+    console.error('Fetch homepage settings failed:', err);
+  }
+
+  // Khởi tạo faqs động đồng bộ 100% với API settings
+  faqs.value = (homepageSettings.value.faqs || []).map(f => ({ ...f, open: false }));
+
   try {
     const [catRes, bookRes] = await Promise.all([
       api.get('/categories'),
@@ -424,6 +546,10 @@ onMounted(async () => {
   } catch (error) {
     console.error('Home load error:', error);
   }
+});
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize);
 });
 </script>
 

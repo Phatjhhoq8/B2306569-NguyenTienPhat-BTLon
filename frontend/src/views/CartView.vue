@@ -27,12 +27,12 @@
           <div class="flex-grow min-w-0 space-y-1">
             <h3 class="font-bold text-sm text-slate-800 truncate">{{ book.tenSach }}</h3>
             <p class="text-xs text-slate-500 truncate">Tác giả: {{ book.tacGia?.map(t => t.tenTacGia).join(', ') }}</p>
-            <p class="text-xs font-bold text-slate-700">Trị giá: {{ formatCurrency(book.giaBia) }}</p>
+            <p class="text-xs font-bold text-slate-700">Giá gốc / Thuê: {{ formatCurrency(book.giaBia) }} <span class="text-slate-300 font-normal">/</span> <span class="text-primary">{{ formatCurrency(book.giaBia * 0.02) }}</span></p>
           </div>
 
           <!-- Actions -->
           <button 
-            @click="cartStore.removeBook(book._id)"
+            @click="confirmRemove(book)"
             class="text-red-500 hover:text-red-700 p-2 hover:bg-red-50 rounded-full transition-all"
             title="Xóa khỏi giỏ"
           >
@@ -115,6 +115,8 @@
         </button>
       </aside>
     </div>
+    <!-- Custom Confirm Dialog -->
+    <ConfirmModal ref="confirmModal" />
   </div>
 </template>
 
@@ -125,10 +127,14 @@ import { useCartStore } from '../stores/cart';
 import { useAuthStore } from '../stores/auth';
 import api from '../services/api';
 import { ShoppingBag, Trash2, Calendar } from '@lucide/vue';
+import { useToastStore } from '../stores/toast';
+import ConfirmModal from '../components/ConfirmModal.vue';
 
 const router = useRouter();
 const cartStore = useCartStore();
 const authStore = useAuthStore();
+const toast = useToastStore();
+const confirmModal = ref(null);
 
 const ngayHenTra = ref('');
 const couponCode = ref('');
@@ -148,9 +154,9 @@ const formatCurrency = (val) => {
   return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(val || 0);
 };
 
-// Phí mượn tạm tính = 10% giá trị bìa sách
+// Phí mượn tạm tính = 2% giá trị bìa sách
 const phiMuon = computed(() => {
-  return cartStore.items.reduce((acc, item) => acc + (item.giaBia * 0.1), 0);
+  return cartStore.items.reduce((acc, item) => acc + (item.giaBia * 0.02), 0);
 });
 
 const soTienGiam = computed(() => {
@@ -202,11 +208,32 @@ const applyCoupon = async () => {
   }
 };
 
+const confirmRemove = async (book) => {
+  const ok = await confirmModal.value.ask({
+    title: 'Xóa sách khỏi giỏ',
+    message: `Bạn có chắc chắn muốn xóa cuốn sách "${book.tenSach}" ra khỏi giỏ mượn không?`,
+    confirmText: 'Xóa bỏ',
+    cancelText: 'Hủy'
+  });
+  if (ok) {
+    cartStore.removeBook(book._id);
+    toast.show('Đã xóa sách khỏi giỏ mượn.', 'success');
+  }
+};
+
 const submitBorrowRequest = async () => {
   if (!ngayHenTra.value) {
-    alert('Vui lòng chọn ngày hẹn trả sách!');
+    toast.show('Vui lòng chọn ngày hẹn trả sách!', 'warning');
     return;
   }
+
+  const ok = await confirmModal.value.ask({
+    title: 'Xác nhận đăng ký mượn',
+    message: `Bạn có chắc chắn muốn đăng ký mượn ${cartStore.totalItems} cuốn sách này không? Tổng chi phí mượn là ${formatCurrency(tongTienThanhToan.value)}.`,
+    confirmText: 'Đăng ký',
+    cancelText: 'Quay lại'
+  });
+  if (!ok) return;
   
   submitting.value = true;
   try {
@@ -227,12 +254,12 @@ const submitBorrowRequest = async () => {
 
     const res = await api.post('/borrowing/receipts', payload);
     if (res.success) {
-      alert('Đăng ký phiếu mượn sách thành công! Vui lòng đến thư viện nhận sách.');
+      toast.show('Đăng ký phiếu mượn sách thành công! Vui lòng đến thư viện nhận sách.', 'success');
       cartStore.clearCart();
       router.push('/profile');
     }
   } catch (error) {
-    alert(error.message || 'Gặp lỗi trong quá trình tạo phiếu mượn.');
+    toast.show(error.message || 'Gặp lỗi trong quá trình tạo phiếu mượn.', 'error');
   } finally {
     submitting.value = false;
   }

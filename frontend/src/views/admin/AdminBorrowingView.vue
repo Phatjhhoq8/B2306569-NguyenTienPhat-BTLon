@@ -3,7 +3,7 @@
     <!-- Header -->
     <div class="flex justify-between items-center border-b pb-3">
       <div>
-        <h1 class="font-serif text-3xl font-bold text-slate-900">Quản Lý Mượn / Trả Sách</h1>
+        <h1 class="font-sans text-3xl font-extrabold text-slate-900">Quản Lý Mượn / Trả Sách</h1>
         <p class="text-sm text-slate-500 font-medium">Phê duyệt phiếu mượn, xác nhận trả sách và theo dõi quá hạn</p>
       </div>
     </div>
@@ -87,13 +87,18 @@
     </div>
 
     <!-- Return Details Modal (Partial Return handling) -->
-    <div v-if="activeReceipt" class="fixed inset-0 bg-slate-900 bg-opacity-65 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-      <div class="bg-white rounded-3xl max-w-xl w-full p-6 md:p-8 space-y-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+    <Teleport to="body">
+      <div 
+        v-if="activeReceipt" 
+        class="fixed inset-0 bg-slate-900 bg-opacity-65 z-[9999] overflow-y-auto p-4 md:py-8 flex items-start justify-center backdrop-blur-sm"
+        @click.self="activeReceipt = null"
+      >
+      <div class="bg-white rounded-3xl max-w-xl w-full p-6 md:p-8 space-y-6 shadow-2xl relative my-auto">
         <button @click="activeReceipt = null" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
           <X class="h-6 w-6" />
         </button>
 
-        <h2 class="font-serif text-2xl font-bold text-slate-900 border-b pb-2">XÁC NHẬN TRẢ SÁCH</h2>
+        <h2 class="font-sans text-2xl font-extrabold text-slate-900 border-b pb-2">XÁC NHẬN TRẢ SÁCH</h2>
         
         <div class="space-y-4 text-sm text-slate-600 font-medium">
           <div class="flex justify-between">
@@ -170,6 +175,10 @@
         </button>
       </div>
     </div>
+    </Teleport>
+    
+    <!-- Custom Confirm Dialog -->
+    <ConfirmModal ref="confirmModal" />
   </div>
 </template>
 
@@ -177,7 +186,11 @@
 import { ref, onMounted } from 'vue';
 import api from '../../services/api';
 import { X } from '@lucide/vue';
+import ConfirmModal from '../../components/ConfirmModal.vue';
+import { useToastStore } from '../../stores/toast';
 
+const confirmModal = ref(null);
+const toast = useToastStore();
 const receipts = ref([]);
 const selectedStatus = ref('');
 const activeReceipt = ref(null);
@@ -257,6 +270,8 @@ const openReturnModal = (receipt) => {
 
 const submitReturn = async () => {
   if (!activeReceipt.value || submitting.value) return;
+  const ok = await confirmModal.value.ask({ message: 'Bạn có chắc chắn muốn ghi nhận trả sách cho phiếu mượn này không?' });
+  if (!ok) return;
   submitting.value = true;
   try {
     // Chỉ gửi các cuốn sách được đánh dấu trả
@@ -271,27 +286,28 @@ const submitReturn = async () => {
     });
 
     if (res.success) {
-      alert('Ghi nhận trả sách thành công!');
+      toast.show('Ghi nhận trả sách thành công!');
       activeReceipt.value = null;
       fetchReceipts();
     }
   } catch (error) {
-    alert(error.message || 'Lỗi khi ghi nhận trả sách');
+    toast.show(error.message || 'Lỗi khi ghi nhận trả sách', 'error');
   } finally {
     submitting.value = false;
   }
 };
 
 const cancelReceipt = async (id) => {
-  if (!confirm('Bạn có chắc chắn muốn hủy phiếu mượn này không?')) return;
+  const ok = await confirmModal.value.ask({ message: 'Bạn có chắc chắn muốn hủy phiếu mượn này không?' });
+  if (!ok) return;
   try {
     const res = await api.post(`/borrowing/receipts/${id}/cancel`);
     if (res.success) {
-      alert('Đã hủy phiếu mượn thành công.');
+      toast.show('Đã hủy phiếu mượn thành công.');
       fetchReceipts();
     }
   } catch (error) {
-    alert(error.message || 'Lỗi khi hủy phiếu mượn');
+    toast.show(error.message || 'Lỗi khi hủy phiếu mượn', 'error');
   }
 };
 

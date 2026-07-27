@@ -3,7 +3,7 @@
     <!-- Header -->
     <div class="flex justify-between items-center border-b pb-3">
       <div>
-        <h1 class="font-serif text-3xl font-bold text-slate-900">Quản Lý Độc Giả</h1>
+        <h1 class="font-sans text-3xl font-extrabold text-slate-900">Quản Lý Độc Giả</h1>
         <p class="text-sm text-slate-500 font-medium">Xem danh sách độc giả, đổi trạng thái hoạt động hoặc xóa tài khoản độc giả</p>
       </div>
     </div>
@@ -12,15 +12,40 @@
     <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm space-y-6">
       <div class="flex flex-col sm:flex-row gap-4 items-center justify-between">
         <!-- Search -->
-        <div class="flex items-center space-x-2 bg-slate-50 px-3 py-2 rounded-xl border border-slate-200 w-full sm:w-80 shadow-inner">
-          <Search class="h-4 w-4 text-slate-400" />
-          <input 
-            v-model="searchQuery" 
-            type="text" 
-            placeholder="Tìm theo tên hoặc email..." 
-            class="w-full focus:outline-none text-sm bg-transparent"
-            @input="fetchReaders"
-          />
+        <div class="flex items-center space-x-2 bg-slate-50 px-3 py-2 rounded-xl border border-slate-200 w-full sm:w-80 shadow-inner relative z-30">
+          <Search class="h-4 w-4 text-slate-400 flex-shrink-0" />
+          <div class="relative flex-grow">
+            <input 
+              v-model="searchQuery" 
+              type="text" 
+              placeholder="Tìm theo tên, email, sđt..." 
+              class="w-full focus:outline-none text-sm bg-transparent font-medium"
+              @input="[fetchReaders(), fetchReaderSuggestions()]"
+              @focus="showReaderSuggestions = true"
+              @blur="setTimeout(() => { showReaderSuggestions = false; activeSuggestionIndex = -1; }, 200)"
+              @keydown.down.prevent="onKeyDown"
+              @keydown.up.prevent="onKeyUp"
+              @keydown.enter.prevent="onKeyEnter"
+              @keydown.esc="showReaderSuggestions = false"
+            />
+            
+            <!-- Suggestions Dropdown -->
+            <div 
+              v-if="showReaderSuggestions && readerSuggestions.length > 0" 
+              class="absolute left-0 right-0 mt-3 bg-white border border-slate-200 rounded-xl shadow-xl z-50 max-h-48 overflow-y-auto w-64 sm:w-72"
+            >
+              <div 
+                v-for="(item, idx) in readerSuggestions" 
+                :key="item.id"
+                class="px-4 py-2.5 hover:bg-slate-50 cursor-pointer text-sm font-bold text-slate-700 flex items-center justify-between border-b border-slate-50 last:border-b-0"
+                :class="{ 'bg-slate-100': activeSuggestionIndex === idx }"
+                @mousedown="selectReaderSuggestion(item)"
+              >
+                <span class="truncate max-w-[180px] sm:max-w-[200px]">{{ item.text }}</span>
+                <span class="text-[10px] md:text-xs text-slate-400 font-semibold font-mono">Độc giả</span>
+              </div>
+            </div>
+          </div>
         </div>
         
         <!-- Filter status -->
@@ -106,6 +131,9 @@
         </button>
       </div>
     </div>
+    
+    <!-- Custom Confirm Dialog -->
+    <ConfirmModal ref="confirmModal" />
   </div>
 </template>
 
@@ -113,10 +141,17 @@
 import { ref, onMounted } from 'vue';
 import api from '../../services/api';
 import { Search } from '@lucide/vue';
+import ConfirmModal from '../../components/ConfirmModal.vue';
+import { useToastStore } from '../../stores/toast';
 
+const confirmModal = ref(null);
+const toast = useToastStore();
 const readers = ref([]);
 const totalCount = ref(0);
 const searchQuery = ref('');
+const readerSuggestions = ref([]);
+const showReaderSuggestions = ref(false);
+const activeSuggestionIndex = ref(-1);
 const selectedStatus = ref('');
 const currentPage = ref(1);
 const totalPages = ref(1);
@@ -125,6 +160,57 @@ const limit = 10;
 const formatDate = (dateStr) => {
   if (!dateStr) return '';
   return new Date(dateStr).toLocaleDateString('vi-VN');
+};
+
+let searchTimeout = null;
+const fetchReaderSuggestions = () => {
+  if (searchTimeout) clearTimeout(searchTimeout);
+  
+  const query = searchQuery.value?.trim();
+  if (!query) {
+    readerSuggestions.value = [];
+    activeSuggestionIndex.value = -1;
+    return;
+  }
+  
+  searchTimeout = setTimeout(async () => {
+    try {
+      const res = await api.get(`/admin/readers/search-suggestions?q=${encodeURIComponent(query)}`);
+      if (res.success) {
+        readerSuggestions.value = res.data;
+        activeSuggestionIndex.value = -1;
+      }
+    } catch (error) {
+      console.error('Fetch reader suggestions error:', error);
+    }
+  }, 200);
+};
+
+const selectReaderSuggestion = (item) => {
+  searchQuery.value = item.code || item.name;
+  showReaderSuggestions.value = false;
+  activeSuggestionIndex.value = -1;
+  fetchReaders();
+};
+
+const onKeyDown = () => {
+  if (readerSuggestions.value.length === 0) return;
+  activeSuggestionIndex.value = (activeSuggestionIndex.value + 1) % readerSuggestions.value.length;
+};
+
+const onKeyUp = () => {
+  if (readerSuggestions.value.length === 0) return;
+  activeSuggestionIndex.value = (activeSuggestionIndex.value - 1 + readerSuggestions.value.length) % readerSuggestions.value.length;
+};
+
+const onKeyEnter = () => {
+  if (showReaderSuggestions.value && activeSuggestionIndex.value !== -1 && activeSuggestionIndex.value < readerSuggestions.value.length) {
+    selectReaderSuggestion(readerSuggestions.value[activeSuggestionIndex.value]);
+  } else {
+    showReaderSuggestions.value = false;
+    activeSuggestionIndex.value = -1;
+    fetchReaders();
+  }
 };
 
 const fetchReaders = async () => {
@@ -151,26 +237,30 @@ const changePage = (page) => {
 };
 
 const toggleStatus = async (id) => {
+  const ok = await confirmModal.value.ask({ message: 'Bạn có chắc chắn muốn thay đổi trạng thái (khóa/mở khóa) tài khoản độc giả này không?' });
+  if (!ok) return;
   try {
     const res = await api.post(`/admin/readers/${id}/toggle-status`);
     if (res.success) {
+      toast.show('Chuyển đổi trạng thái tài khoản thành công!');
       fetchReaders();
     }
   } catch (error) {
-    alert(error.message || 'Lỗi khi chuyển đổi trạng thái');
+    toast.show(error.message || 'Lỗi khi chuyển đổi trạng thái', 'error');
   }
 };
 
 const deleteReader = async (id) => {
-  if (!confirm('Bạn có chắc muốn xóa độc giả này khỏi hệ thống? (Xóa mềm)')) return;
+  const ok = await confirmModal.value.ask({ message: 'Bạn có chắc chắn muốn xóa độc giả này khỏi hệ thống không?' });
+  if (!ok) return;
   try {
     const res = await api.delete(`/admin/readers/${id}`);
     if (res.success) {
-      alert('Đã xóa độc giả thành công.');
+      toast.show('Đã xóa độc giả thành công.');
       fetchReaders();
     }
   } catch (error) {
-    alert(error.message || 'Lỗi khi xóa độc giả');
+    toast.show(error.message || 'Lỗi khi xóa độc giả', 'error');
   }
 };
 

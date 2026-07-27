@@ -16,6 +16,7 @@ const Subscription = require('../modules/memberships/subscription.model');
 const BorrowReceipt = require('../modules/borrowing/borrowReceipt.model');
 const PenaltyTicket = require('../modules/borrowing/penaltyTicket.model');
 const DiscountCode = require('../modules/discounts/discountCode.model');
+const SystemSetting = require('../modules/settings/systemSetting.model');
 
 module.exports = {
   Counter,
@@ -30,5 +31,6 @@ module.exports = {
   Subscription,
   BorrowReceipt,
   PenaltyTicket,
-  DiscountCode
+  DiscountCode,
+  SystemSetting
 };

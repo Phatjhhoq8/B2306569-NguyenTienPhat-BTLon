@@ -90,6 +90,35 @@ const bookTitleSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
+  moTa: {
+    type: String,
+    default: ''
+  },
+  binhLuan: [{
+    docGia: {
+      type: String,
+      ref: 'Reader',
+      required: true
+    },
+    hoTen: {
+      type: String,
+      required: true
+    },
+    soSao: {
+      type: Number,
+      required: true,
+      min: 1,
+      max: 5
+    },
+    noiDung: {
+      type: String,
+      default: ''
+    },
+    ngayTao: {
+      type: Date,
+      default: Date.now
+    }
+  }],
   trangThai: {
     type: String,
     enum: ['ACTIVE', 'DISCONTINUED'],

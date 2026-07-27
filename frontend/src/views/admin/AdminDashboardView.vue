@@ -2,7 +2,7 @@
   <div class="space-y-8">
     <div class="flex justify-between items-center border-b pb-3">
       <div>
-        <h1 class="font-serif text-3xl font-bold text-slate-900">Dashboard</h1>
+        <h1 class="font-sans text-3xl font-extrabold text-slate-900">Dashboard</h1>
         <p class="text-sm text-slate-500 font-medium">Chào mừng, {{ authStore.user?.hoTenNV }}</p>
       </div>
       <span class="text-xs text-slate-400 font-bold">Cập nhật lần cuối: {{ currentTime }}</span>
@@ -27,7 +27,7 @@
 
     <!-- Main Grid: Recent Activities -->
     <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm space-y-6">
-      <h2 class="font-serif text-xl font-bold text-slate-800 border-b pb-2 flex items-center">
+      <h2 class="font-sans text-xl font-extrabold text-slate-800 border-b pb-2 flex items-center">
         <Sparkles class="h-5 w-5 mr-2 text-yellow-500" /> Hoạt Động Mượn Sách Mới Nhất
       </h2>
 

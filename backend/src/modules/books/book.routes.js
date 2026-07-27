@@ -10,10 +10,14 @@ const authMiddleware = require('../../middlewares/auth.middleware');
 
 // ==================== Public: Catalog ====================
 router.get('/books', bookController.getBooks);
+router.get('/books/search-suggestions', bookController.getSearchSuggestions);
 router.get('/books/:id', bookController.getBookById);
 router.get('/categories', bookController.getCategories);
 router.get('/authors', bookController.getAuthors);
 router.get('/publishers', bookController.getPublishers);
+
+// ==================== Độc giả: Đánh giá & Bình luận ====================
+router.post('/books/:id/reviews', authMiddleware.authenticate, bookController.addBookReview);
 
 // ==================== Admin: Category ====================
 router.post('/categories', authMiddleware.authenticate, authMiddleware.authorize('STAFF'), bookController.createCategory);

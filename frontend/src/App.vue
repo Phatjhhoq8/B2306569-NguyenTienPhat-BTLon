@@ -10,6 +10,9 @@
 
     <!-- Hiển thị Footer nếu không nằm trong trang Admin -->
     <Footer v-if="!isAdminRoute" />
+    
+    <!-- Toast Notification Global -->
+    <ToastNotification />
   </div>
 </template>
 
@@ -18,6 +21,7 @@ import { computed } from 'vue';
 import { useRoute } from 'vue-router';
 import Header from './components/ui/Header.vue';
 import Footer from './components/ui/Footer.vue';
+import ToastNotification from './components/ToastNotification.vue';
 
 const route = useRoute();
 const isAdminRoute = computed(() => route.path.startsWith('/admin'));

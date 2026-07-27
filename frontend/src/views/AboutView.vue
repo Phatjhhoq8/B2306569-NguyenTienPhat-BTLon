@@ -12,10 +12,10 @@
       <div class="space-y-6 max-w-2xl relative z-10">
         <span class="bg-white/10 text-secondary border border-white/20 px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider inline-block">Về Chúng Tôi</span>
         <h1 class="font-sans text-3xl md:text-5xl font-extrabold tracking-tight leading-tight">
-          Hệ Thống Thư Viện Điện Tử CTU eLibrary
+          {{ aboutSettings.title || 'Hệ Thống Thư Viện Điện Tử CTU eLibrary' }}
         </h1>
         <p class="text-slate-200 text-sm md:text-base leading-relaxed">
-          Đơn vị thư viện học thuật uy tín hàng đầu chuyên cung cấp giải pháp tra cứu sách giấy, giáo trình, nghiên cứu khoa học chất lượng cao cho sinh viên và cán bộ giảng viên Trường Đại học Cần Thơ.
+          {{ aboutSettings.description || 'Đơn vị thư viện học thuật uy tín hàng đầu chuyên cung cấp giải pháp tra cứu sách giấy, giáo trình, nghiên cứu khoa học chất lượng cao cho sinh viên và cán bộ giảng viên Trường Đại học Cần Thơ.' }}
         </p>
         <router-link to="/books" class="bg-secondary hover:bg-opacity-90 text-slate-900 font-bold px-6 py-3 rounded-xl inline-flex items-center space-x-2 transition-all shadow-md text-sm">
           <BookOpen class="h-4 w-4" />
@@ -47,23 +47,29 @@
     <section class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
       <div class="space-y-6">
         <span class="text-xs font-bold text-primary uppercase tracking-wider block">Câu chuyện CTU eLibrary</span>
-        <h2 class="font-sans text-3xl font-extrabold text-slate-900 leading-tight">Hành trình Kết nối Tri thức & Phát triển Tương lai</h2>
-        <p class="text-slate-600 text-sm leading-relaxed">
-          Được phát triển nhằm nâng cao năng lực tự học và nghiên cứu của sinh viên Trường Đại học Cần Thơ, CTU eLibrary bắt đầu sứ mệnh mang đến trải nghiệm mượn sách giấy online tiện lợi, minh bạch và nhanh chóng. Trải qua thời gian dài nâng cấp, chúng tôi tự hào đồng hành cùng hàng chục ngàn sinh viên trên con đường học vấn.
-        </p>
+        <h2 class="font-sans text-3xl font-extrabold text-slate-900 leading-tight">
+          {{ aboutSettings.historyTitle || 'Hành trình Kết nối Tri thức & Phát triển Tương lai' }}
+        </h2>
+        
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm relative overflow-hidden group">
+          <div class="absolute left-0 top-0 bottom-0 w-[4px] bg-primary scale-y-0 group-hover:scale-y-100 transition-transform origin-top duration-300"></div>
+          <p class="text-slate-600 text-sm leading-relaxed">
+            {{ aboutSettings.historyContent || 'Được phát triển nhằm nâng cao năng lực tự học và nghiên cứu của sinh viên Trường Đại học Cần Thơ, CTU eLibrary bắt đầu sứ mệnh mang đến trải nghiệm mượn sách giấy online tiện lợi, minh bạch và nhanh chóng. Trải qua thời gian dài nâng cấp, chúng tôi tự hào đồng hành cùng hàng chục ngàn sinh viên trên con đường học vấn.' }}
+          </p>
+        </div>
 
         <!-- Stats Container -->
         <div class="grid grid-cols-3 gap-4">
           <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm text-center">
-            <div class="text-2xl font-black text-primary">10+</div>
+            <div class="text-2xl font-black text-primary">{{ aboutSettings.stats?.years || '10+' }}</div>
             <div class="text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-1">Năm Kinh Nghiệm</div>
           </div>
           <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm text-center">
-            <div class="text-2xl font-black text-primary">50,000+</div>
+            <div class="text-2xl font-black text-primary">{{ aboutSettings.stats?.readers || '50,000+' }}</div>
             <div class="text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-1">Độc giả Tin Tưởng</div>
           </div>
           <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm text-center">
-            <div class="text-2xl font-black text-primary">02</div>
+            <div class="text-2xl font-black text-primary">{{ aboutSettings.stats?.branches || '02' }}</div>
             <div class="text-[10px] text-slate-500 font-bold uppercase tracking-wider mt-1">Chi Nhánh Thư Viện</div>
           </div>
         </div>
@@ -116,29 +122,31 @@
       </div>
 
       <div class="space-y-6">
-        <span class="text-xs font-bold text-primary uppercase tracking-wider block">Sứ Mệnh & Tầm Nhìn</span>
+        <span class="text-xs font-bold text-primary uppercase tracking-wider block">Sứ Mệnh và Tầm Nhìn</span>
         <h2 class="font-sans text-3xl font-extrabold text-slate-900 leading-tight">Đồng Hành Phát Triển Năng Lực Học Thuật</h2>
         
-        <div class="flex items-start space-x-4 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+        <div class="flex items-start space-x-4 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm relative overflow-hidden group">
+          <div class="absolute left-0 top-0 bottom-0 w-[4px] bg-primary scale-y-0 group-hover:scale-y-100 transition-transform origin-top duration-300"></div>
           <div class="bg-primary/10 text-primary p-3 rounded-xl flex-shrink-0">
             <Target class="h-6 w-6" />
           </div>
           <div>
             <h3 class="text-base font-bold text-slate-900">Sứ Mệnh Của Chúng Tôi</h3>
             <p class="text-slate-600 text-xs mt-1.5 leading-relaxed">
-              Cung cấp giải pháp tra cứu và đăng ký mượn sách giấy trực tuyến nhanh gọn, khoa học và hoàn toàn minh bạch. Hỗ trợ sinh viên tối ưu hóa thời gian nghiên cứu và tiếp cận nguồn tri thức chính thống giá trị.
+              {{ aboutSettings.mission || 'Cung cấp giải pháp tra cứu và đăng ký mượn sách giấy trực tuyến nhanh gọn, khoa học và hoàn toàn minh bạch. Hỗ trợ sinh viên tối ưu hóa thời gian nghiên cứu và tiếp cận nguồn tri thức chính thống giá trị.' }}
             </p>
           </div>
         </div>
 
-        <div class="flex items-start space-x-4 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+        <div class="flex items-start space-x-4 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm relative overflow-hidden group">
+          <div class="absolute left-0 top-0 bottom-0 w-[4px] bg-primary scale-y-0 group-hover:scale-y-100 transition-transform origin-top duration-300"></div>
           <div class="bg-secondary/25 text-secondary-dark p-3 rounded-xl flex-shrink-0">
             <Eye class="h-6 w-6" />
           </div>
           <div>
             <h3 class="text-base font-bold text-slate-900">Tầm Nhìn Chiến Lược</h3>
             <p class="text-slate-600 text-xs mt-1.5 leading-relaxed">
-              Trở thành hệ thống cổng thông tin thư viện điện tử kết hợp mượn trả sách giấy tự động hiện đại nhất khu vực Đồng bằng sông Cửu Long, tiên phong áp dụng công nghệ số và hệ thống quản lý thẻ hội viên thông minh.
+              {{ aboutSettings.vision || 'Trở thành hệ thống cổng thông tin thư viện điện tử kết hợp mượn trả sách giấy tự động hiện đại nhất khu vực Đồng bằng sông Cửu Long, tiên phong áp dụng công nghệ số và hệ thống quản lý thẻ hội viên thông minh.' }}
             </p>
           </div>
         </div>
@@ -151,13 +159,14 @@
         <span class="text-xs font-bold text-primary uppercase tracking-wider">Cam Kết Từ CTU eLibrary</span>
         <h2 class="font-sans text-3xl font-extrabold text-slate-900">Sáu Giá Trị Cốt Lõi Vàng</h2>
         <p class="text-slate-500 text-xs">
-          Mọi hoạt động quản lý sách và hỗ trợ độc giả của thư viện đều được chuẩn hóa nghiêm ngặt để mang lại sự tiện lợi tốt nhất cho sinh viên.
+          {{ aboutSettings.values || 'Mọi hoạt động quản lý sách và hỗ trợ độc giả của thư viện đều được chuẩn hóa nghiêm ngặt để mang lại sự tiện lợi tốt nhất cho sinh viên.' }}
         </p>
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         <!-- Value 1 -->
-        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all space-y-4">
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all space-y-4 relative overflow-hidden group">
+          <div class="absolute left-0 top-0 bottom-0 w-[4px] bg-primary scale-y-0 group-hover:scale-y-100 transition-transform origin-top duration-300"></div>
           <div class="bg-primary/10 text-primary h-12 w-12 rounded-xl flex items-center justify-center">
             <ShieldCheck class="h-6 w-6" />
           </div>
@@ -168,7 +177,8 @@
         </div>
 
         <!-- Value 2 -->
-        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all space-y-4">
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all space-y-4 relative overflow-hidden group">
+          <div class="absolute left-0 top-0 bottom-0 w-[4px] bg-primary scale-y-0 group-hover:scale-y-100 transition-transform origin-top duration-300"></div>
           <div class="bg-primary/10 text-primary h-12 w-12 rounded-xl flex items-center justify-center">
             <Layers class="h-6 w-6" />
           </div>
@@ -179,7 +189,8 @@
         </div>
 
         <!-- Value 3 -->
-        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all space-y-4">
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all space-y-4 relative overflow-hidden group">
+          <div class="absolute left-0 top-0 bottom-0 w-[4px] bg-primary scale-y-0 group-hover:scale-y-100 transition-transform origin-top duration-300"></div>
           <div class="bg-primary/10 text-primary h-12 w-12 rounded-xl flex items-center justify-center">
             <Heart class="h-6 w-6" />
           </div>
@@ -190,7 +201,8 @@
         </div>
 
         <!-- Value 4 -->
-        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all space-y-4">
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all space-y-4 relative overflow-hidden group">
+          <div class="absolute left-0 top-0 bottom-0 w-[4px] bg-primary scale-y-0 group-hover:scale-y-100 transition-transform origin-top duration-300"></div>
           <div class="bg-primary/10 text-primary h-12 w-12 rounded-xl flex items-center justify-center">
             <Coffee class="h-6 w-6" />
           </div>
@@ -201,7 +213,8 @@
         </div>
 
         <!-- Value 5 -->
-        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all space-y-4">
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all space-y-4 relative overflow-hidden group">
+          <div class="absolute left-0 top-0 bottom-0 w-[4px] bg-primary scale-y-0 group-hover:scale-y-100 transition-transform origin-top duration-300"></div>
           <div class="bg-primary/10 text-primary h-12 w-12 rounded-xl flex items-center justify-center">
             <Smartphone class="h-6 w-6" />
           </div>
@@ -212,7 +225,8 @@
         </div>
 
         <!-- Value 6 -->
-        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all space-y-4">
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all space-y-4 relative overflow-hidden group">
+          <div class="absolute left-0 top-0 bottom-0 w-[4px] bg-primary scale-y-0 group-hover:scale-y-100 transition-transform origin-top duration-300"></div>
           <div class="bg-primary/10 text-primary h-12 w-12 rounded-xl flex items-center justify-center">
             <Award class="h-6 w-6" />
           </div>
@@ -227,61 +241,68 @@
     <!-- Meet Our Team -->
     <section class="space-y-8 pt-10 border-t border-slate-100">
       <div class="text-center max-w-2xl mx-auto space-y-3">
-        <span class="text-xs font-bold text-primary uppercase tracking-wider">CTU eLibrary Staff</span>
-        <h2 class="font-sans text-3xl font-extrabold text-slate-900">Ban Giám Đốc & Thủ Thư Chuyên Nghiệp</h2>
+        <h2 class="font-sans text-3xl font-extrabold text-slate-900">Ban Giám Đốc và Thủ Thư</h2>
         <p class="text-slate-500 text-xs">Đội ngũ lãnh đạo và nhân viên giàu kinh nghiệm, tận tụy quản lý và vận hành hệ thống kết nối tri thức.</p>
       </div>
 
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-        <!-- Member 1 -->
-        <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm text-center p-5 space-y-3">
-          <div class="h-20 w-20 rounded-full bg-primary/10 text-primary flex items-center justify-center mx-auto text-xl font-bold">
-            P
+      <div class="flex flex-wrap justify-center gap-6">
+        <template v-if="aboutSettings.teamMembers && aboutSettings.teamMembers.length > 0">
+          <div 
+            v-for="(member, idx) in aboutSettings.teamMembers" 
+            :key="idx" 
+            class="w-full sm:w-[220px] bg-white rounded-3xl border-2 border-slate-300 shadow-sm text-center p-6 space-y-4 hover:-translate-y-2 hover:shadow-xl hover:border-primary transition-all duration-300 flex flex-col justify-between relative overflow-hidden group"
+          >
+            <div>
+              <div v-if="member.avatar" class="h-20 w-20 rounded-full overflow-hidden mx-auto border-2 border-slate-100 group-hover:border-primary group-hover:scale-105 transition-all duration-300 shadow-inner mb-3">
+                <img :src="getImageUrl(member.avatar)" class="h-full w-full object-cover" />
+              </div>
+              <div v-else class="h-20 w-20 rounded-full bg-primary/10 text-primary flex items-center justify-center mx-auto text-xl font-bold uppercase mb-3 border-2 border-transparent group-hover:border-primary group-hover:scale-105 transition-all duration-300">
+                {{ member.avatarText || member.name?.charAt(0) || 'T' }}
+              </div>
+              <h4 class="font-extrabold text-sm text-slate-800 group-hover:text-primary transition-colors duration-300 line-clamp-1">{{ member.name }}</h4>
+            </div>
+            <p class="text-[9px] text-slate-400 font-extrabold uppercase tracking-wider mt-1 line-clamp-2 group-hover:text-slate-500 transition-colors duration-300">{{ member.role }}</p>
           </div>
-          <div>
-            <h4 class="font-bold text-sm text-slate-900">Nguyễn Tiến Phát</h4>
-            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-0.5">Giám đốc Thư viện</p>
+        </template>
+        <template v-else>
+          <!-- Fallback default team -->
+          <div class="w-full sm:w-[220px] bg-white rounded-3xl border-2 border-slate-300 shadow-sm text-center p-6 space-y-4 hover:-translate-y-2 hover:shadow-xl hover:border-primary transition-all duration-300 flex flex-col justify-between relative overflow-hidden group">
+            <div>
+              <div class="h-20 w-20 rounded-full bg-primary/10 text-primary flex items-center justify-center mx-auto text-xl font-bold mb-3 border-2 border-transparent group-hover:border-primary group-hover:scale-105 transition-all duration-300">P</div>
+              <h4 class="font-extrabold text-sm text-slate-800 group-hover:text-primary transition-colors duration-300">Nguyễn Tiến Phát</h4>
+            </div>
+            <p class="text-[9px] text-slate-400 font-extrabold uppercase tracking-wider mt-1 group-hover:text-slate-500 transition-colors duration-300">Giám đốc Thư viện</p>
           </div>
-        </div>
-
-        <!-- Member 2 -->
-        <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm text-center p-5 space-y-3">
-          <div class="h-20 w-20 rounded-full bg-primary/10 text-primary flex items-center justify-center mx-auto text-xl font-bold">
-            M
+          <div class="w-full sm:w-[220px] bg-white rounded-3xl border-2 border-slate-300 shadow-sm text-center p-6 space-y-4 hover:-translate-y-2 hover:shadow-xl hover:border-primary transition-all duration-300 flex flex-col justify-between relative overflow-hidden group">
+            <div>
+              <div class="h-20 w-20 rounded-full bg-primary/10 text-primary flex items-center justify-center mx-auto text-xl font-bold mb-3 border-2 border-transparent group-hover:border-primary group-hover:scale-105 transition-all duration-300">M</div>
+              <h4 class="font-extrabold text-sm text-slate-800 group-hover:text-primary transition-colors duration-300">Trần Thị Minh</h4>
+            </div>
+            <p class="text-[9px] text-slate-400 font-extrabold uppercase tracking-wider mt-1 group-hover:text-slate-500 transition-colors duration-300">Phó Giám đốc điều hành</p>
           </div>
-          <div>
-            <h4 class="font-bold text-sm text-slate-900">Trần Thị Minh</h4>
-            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-0.5">Phó Giám đốc điều hành</p>
+          <div class="w-full sm:w-[220px] bg-white rounded-3xl border-2 border-slate-300 shadow-sm text-center p-6 space-y-4 hover:-translate-y-2 hover:shadow-xl hover:border-primary transition-all duration-300 flex flex-col justify-between relative overflow-hidden group">
+            <div>
+              <div class="h-20 w-20 rounded-full bg-primary/10 text-primary flex items-center justify-center mx-auto text-xl font-bold mb-3 border-2 border-transparent group-hover:border-primary group-hover:scale-105 transition-all duration-300">H</div>
+              <h4 class="font-extrabold text-sm text-slate-800 group-hover:text-primary transition-colors duration-300">Lê Văn Hùng</h4>
+            </div>
+            <p class="text-[9px] text-slate-400 font-extrabold uppercase tracking-wider mt-1 group-hover:text-slate-500 transition-colors duration-300">Trưởng phòng Quản lý Sách</p>
           </div>
-        </div>
-
-        <!-- Member 3 -->
-        <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm text-center p-5 space-y-3">
-          <div class="h-20 w-20 rounded-full bg-primary/10 text-primary flex items-center justify-center mx-auto text-xl font-bold">
-            H
+          <div class="w-full sm:w-[220px] bg-white rounded-3xl border-2 border-slate-300 shadow-sm text-center p-6 space-y-4 hover:-translate-y-2 hover:shadow-xl hover:border-primary transition-all duration-300 flex flex-col justify-between relative overflow-hidden group">
+            <div>
+              <div class="h-20 w-20 rounded-full bg-primary/10 text-primary flex items-center justify-center mx-auto text-xl font-bold mb-3 border-2 border-transparent group-hover:border-primary group-hover:scale-105 transition-all duration-300">V</div>
+              <h4 class="font-extrabold text-sm text-slate-800 group-hover:text-primary transition-colors duration-300">Phạm Thị Vy</h4>
+            </div>
+            <p class="text-[9px] text-slate-400 font-extrabold uppercase tracking-wider mt-1 group-hover:text-slate-500 transition-colors duration-300">Thủ thư Trưởng chi nhánh</p>
           </div>
-          <div>
-            <h4 class="font-bold text-sm text-slate-900">Lê Văn Hùng</h4>
-            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-0.5">Trưởng phòng Quản lý Sách</p>
-          </div>
-        </div>
-
-        <!-- Member 4 -->
-        <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm text-center p-5 space-y-3">
-          <div class="h-20 w-20 rounded-full bg-primary/10 text-primary flex items-center justify-center mx-auto text-xl font-bold">
-            V
-          </div>
-          <div>
-            <h4 class="font-bold text-sm text-slate-900">Phạm Thị Vy</h4>
-            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-0.5">Thủ thư Trưởng chi nhánh</p>
-          </div>
-        </div>
+        </template>
       </div>
     </section>
   </div>
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue';
+import api from '../services/api';
 import { 
   BookOpen, 
   Target, 
@@ -293,4 +314,32 @@ import {
   Smartphone, 
   Award 
 } from '@lucide/vue';
+
+const getImageUrl = (path) => {
+  if (!path) return '';
+  if (path.startsWith('http') || path.startsWith('data:image')) return path;
+  const cleanPath = path.startsWith('/') ? path : `/${path}`;
+  return `http://localhost:3000${cleanPath}`;
+};
+
+const aboutSettings = ref({
+  title: "Hệ Thống Thư Viện Điện Tử CTU eLibrary",
+  description: "Đơn vị thư viện học thuật uy tín hàng đầu chuyên cung cấp giải pháp tra cứu sách giấy, giáo trình, nghiên cứu khoa học chất lượng cao cho sinh viên và cán bộ giảng viên Trường Đại học Cần Thơ.",
+  historyTitle: "Hành trình Kết nối Tri thức & Phát triển Tương lai",
+  historyContent: "Được phát triển nhằm nâng cao năng lực tự học và nghiên cứu của sinh viên Trường Đại học Cần Thơ, CTU eLibrary bắt đầu sứ mệnh mang đến trải nghiệm mượn sách giấy online tiện lợi, minh bạch và nhanh chóng. Trải qua thời gian dài nâng cấp, chúng tôi tự hào đồng hành cùng hàng chục ngàn sinh viên trên con đường học vấn.",
+  vision: "Trở thành hệ thống cổng thông tin thư viện điện tử kết hợp mượn trả sách giấy tự động hiện đại nhất khu vực Đồng bằng sông Cửu Long, tiên phong áp dụng công nghệ số và hệ thống quản lý thẻ hội viên thông minh.",
+  mission: "Cung cấp giải pháp tra cứu và đăng ký mượn sách giấy trực tuyến nhanh gọn, khoa học và hoàn toàn minh bạch. Hỗ trợ sinh viên tối ưu hóa thời gian nghiên cứu và tiếp cận nguồn tri thức chính thống giá trị.",
+  values: "Mọi hoạt động quản lý sách và hỗ trợ độc giả của thư viện đều được chuẩn hóa nghiêm ngặt để mang lại sự tiện lợi tốt nhất cho sinh viên."
+});
+
+onMounted(async () => {
+  try {
+    const res = await api.get('/settings/aboutpage');
+    if (res.success && res.data && Object.keys(res.data).length > 0) {
+      aboutSettings.value = { ...aboutSettings.value, ...res.data };
+    }
+  } catch (err) {
+    console.error('Fetch about settings failed:', err);
+  }
+});
 </script>

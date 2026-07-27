@@ -43,12 +43,14 @@ const bookRoutes = require('./modules/books/book.routes');
 const borrowRoutes = require('./modules/borrowing/borrow.routes');
 const membershipRoutes = require('./modules/memberships/membership.routes');
 const discountRoutes = require('./modules/discounts/discount.routes');
+const settingRoutes = require('./modules/settings/systemSetting.routes');
 
 app.use('/api', userRoutes);
 app.use('/api', bookRoutes);
 app.use('/api', borrowRoutes);
 app.use('/api', membershipRoutes);
 app.use('/api', discountRoutes);
+app.use('/api', settingRoutes);
 
 // Route chào mừng cơ bản
 app.get('/', (req, res) => {

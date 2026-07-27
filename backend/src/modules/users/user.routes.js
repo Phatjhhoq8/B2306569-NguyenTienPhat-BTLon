@@ -60,12 +60,14 @@ router.put(
 );
 
 // ==================== ADMIN: Quản lý Độc giả ====================
+router.get('/admin/readers/search-suggestions', authMiddleware.authenticate, authMiddleware.authorize('STAFF'), userController.getReaderSuggestions);
 router.get('/admin/readers', authMiddleware.authenticate, authMiddleware.authorize('STAFF'), userController.getReaders);
 router.get('/admin/readers/:id', authMiddleware.authenticate, authMiddleware.authorize('STAFF'), userController.getReaderById);
 router.post('/admin/readers/:id/toggle-status', authMiddleware.authenticate, authMiddleware.authorize('STAFF'), userController.toggleReaderStatus);
 router.delete('/admin/readers/:id', authMiddleware.authenticate, authMiddleware.authorize('STAFF'), userController.softDeleteReader);
 
 // ==================== ADMIN: Quản lý Nhân viên ====================
+router.get('/admin/staffs/search-suggestions', authMiddleware.authenticate, authMiddleware.authorizeRootAdmin, userController.getStaffSuggestions);
 router.get('/admin/staffs', authMiddleware.authenticate, authMiddleware.authorizeRootAdmin, userController.getStaffs);
 router.post('/admin/staffs', authMiddleware.authenticate, authMiddleware.authorizeRootAdmin, userController.createStaff);
 router.put('/admin/staffs/:id', authMiddleware.authenticate, authMiddleware.authorizeRootAdmin, userController.updateStaff);

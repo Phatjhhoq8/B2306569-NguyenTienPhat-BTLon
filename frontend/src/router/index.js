@@ -115,7 +115,7 @@ const routes = [
   {
     path: '/:pathMatch(.*)*',
     name: 'not-found',
-    redirect: '/'
+    component: () => import('../views/NotFoundView.vue')
   }
 ];
 
@@ -124,6 +124,8 @@ const router = createRouter({
   routes,
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) return savedPosition;
+    // Nếu chỉ thay đổi query parameters trên cùng một page, giữ nguyên vị trí cuộn
+    if (to.path === from.path) return false;
     return { top: 0 };
   }
 });

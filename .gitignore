@@ -47,3 +47,7 @@ Thumbs.db
 # Temporary storage / media artifacts
 .tempmediaStorage/
 **/C\:/Users/Admin/.gemini/antigravity-ide/brain/
+
+# Project exclusions
+report/
+ux-ui-agent-skills-main/

@@ -165,6 +165,8 @@
         </div>
       </div>
     </div>
+    <!-- Custom Confirm Dialog -->
+    <ConfirmModal ref="confirmModal" />
   </div>
 </template>
 
@@ -173,8 +175,12 @@ import { ref, onMounted } from 'vue';
 import { useAuthStore } from '../stores/auth';
 import api from '../services/api';
 import { User, Mail, Phone, MapPin, Calendar, Award, BookOpen, AlertTriangle } from '@lucide/vue';
+import { useToastStore } from '../stores/toast';
+import ConfirmModal from '../components/ConfirmModal.vue';
 
 const authStore = useAuthStore();
+const toast = useToastStore();
+const confirmModal = ref(null);
 
 const activeSub = ref(null);
 const receipts = ref([]);
@@ -219,15 +225,18 @@ const getReceiptStatusClass = (status) => {
 };
 
 const payPenalty = async (ticket) => {
+  const ok = await confirmModal.value.ask({
+    title: 'Xác nhận thanh toán phạt',
+    message: `Bạn muốn gửi xác nhận mô phỏng thanh toán số tiền ${formatCurrency(ticket.soTienPhat)} cho phiếu phạt ${ticket.maPhieuPhat}?`,
+    confirmText: 'Mô phỏng thanh toán',
+    cancelText: 'Hủy bỏ'
+  });
+  if (!ok) return;
+
   try {
-    // Chỉ có nhân viên mới xác nhận được thanh toán theo api backend: POST /borrowing/penalties/:id/pay
-    // Nhưng để thuận tiện demo, chúng ta gọi trực tiếp hoặc gửi thông báo.
-    // Vì endpoint này bảo vệ bởi STAFF, độc giả gọi sẽ bị 403.
-    // Nên chúng ta simulate báo cho người dùng hoặc gọi API.
-    // Thực tế để sinh viên demo, thủ thư sẽ click xác nhận trên Dashboard.
-    alert(`Vui lòng liên hệ Thủ thư và cung cấp mã ${ticket.maPhieuPhat} để xác nhận thanh toán số tiền ${formatCurrency(ticket.soTienPhat)}.`);
+    toast.show(`Yêu cầu đang chờ phê duyệt. Vui lòng cung cấp mã ${ticket.maPhieuPhat} cho Thủ thư để hoàn tất.`, 'warning');
   } catch (error) {
-    alert(error.message);
+    toast.show(error.message, 'error');
   }
 };
 

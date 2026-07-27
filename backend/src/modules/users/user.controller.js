@@ -161,11 +161,27 @@ const getReaders = async (req, res, next) => {
   try {
     const { q, status, page = 1, limit = 20 } = req.query;
     const filter = { isDeleted: false };
-    if (q) filter.$or = [
-      { hoLot: { $regex: q, $options: 'i' } },
-      { ten: { $regex: q, $options: 'i' } },
-      { email: { $regex: q, $options: 'i' } }
-    ];
+    if (q) {
+      const cleanQ = q.trim();
+      filter.$or = [
+        { hoLot: { $regex: cleanQ, $options: 'i' } },
+        { ten: { $regex: cleanQ, $options: 'i' } },
+        { email: { $regex: cleanQ, $options: 'i' } },
+        { dienThoai: { $regex: cleanQ, $options: 'i' } },
+        { maDocGia: { $regex: cleanQ, $options: 'i' } }
+      ];
+      if (cleanQ.includes(' ')) {
+        filter.$or.push({
+          $expr: {
+            $regexMatch: {
+              input: { $concat: ['$hoLot', ' ', '$ten'] },
+              regex: cleanQ,
+              options: 'i'
+            }
+          }
+        });
+      }
+    }
     if (status) filter.trangThai = status;
 
     const skip = (parseInt(page, 10) - 1) * parseInt(limit, 10);
@@ -223,7 +239,16 @@ const softDeleteReader = async (req, res, next) => {
  */
 const getStaffs = async (req, res, next) => {
   try {
-    const staffs = await Staff.find({ isDeleted: false }).select('-matKhau').sort({ createdAt: -1 });
+    const { q } = req.query;
+    const filter = { isDeleted: false };
+    if (q) {
+      filter.$or = [
+        { hoTenNV: { $regex: q, $options: 'i' } },
+        { soDienThoai: { $regex: q, $options: 'i' } },
+        { maSoNV: { $regex: q, $options: 'i' } }
+      ];
+    }
+    const staffs = await Staff.find(filter).select('-matKhau').sort({ createdAt: -1 });
     return resultResponse.ok(res, staffs);
   } catch (error) { next(error); }
 };
@@ -273,6 +298,67 @@ const softDeleteStaff = async (req, res, next) => {
   } catch (error) { next(error); }
 };
 
+/**
+ * Gợi ý tìm kiếm độc giả (Staff/Admin only)
+ */
+const getReaderSuggestions = async (req, res, next) => {
+  try {
+    const { q } = req.query;
+    if (!q || !q.trim()) return resultResponse.ok(res, []);
+    const keyword = q.trim();
+    const regex = new RegExp(keyword, 'i');
+    
+    const readers = await Reader.find({
+      isDeleted: false,
+      $or: [
+        { ten: regex },
+        { hoLot: regex },
+        { dienThoai: regex },
+        { maDocGia: regex }
+      ]
+    }).limit(10).select('hoLot ten dienThoai maDocGia');
+    
+    const suggestions = readers.map(r => ({
+      id: r._id,
+      text: `${r.hoLot} ${r.ten} (${r.maDocGia}) - ${r.dienThoai}`,
+      name: `${r.hoLot} ${r.ten}`,
+      code: r.maDocGia
+    }));
+    
+    return resultResponse.ok(res, suggestions);
+  } catch (error) { next(error); }
+};
+
+/**
+ * Gợi ý tìm kiếm nhân viên (Quản lý only)
+ */
+const getStaffSuggestions = async (req, res, next) => {
+  try {
+    const { q } = req.query;
+    if (!q || !q.trim()) return resultResponse.ok(res, []);
+    const keyword = q.trim();
+    const regex = new RegExp(keyword, 'i');
+    
+    const staffs = await Staff.find({
+      isDeleted: false,
+      $or: [
+        { hoTenNV: regex },
+        { soDienThoai: regex },
+        { maSoNV: regex }
+      ]
+    }).limit(10).select('hoTenNV soDienThoai maSoNV');
+    
+    const suggestions = staffs.map(s => ({
+      id: s._id,
+      text: `${s.hoTenNV} (${s.maSoNV}) - ${s.soDienThoai}`,
+      name: s.hoTenNV,
+      code: s.maSoNV
+    }));
+    
+    return resultResponse.ok(res, suggestions);
+  } catch (error) { next(error); }
+};
+
 module.exports = {
   registerReader,
   loginReader,
@@ -286,9 +372,11 @@ module.exports = {
   getReaderById,
   toggleReaderStatus,
   softDeleteReader,
+  getReaderSuggestions,
   // Admin: Quản lý Nhân viên
   getStaffs,
   createStaff,
   updateStaff,
-  softDeleteStaff
+  softDeleteStaff,
+  getStaffSuggestions
 };

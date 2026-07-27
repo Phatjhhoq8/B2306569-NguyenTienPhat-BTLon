@@ -13,7 +13,7 @@
           </div>
         </div>
         
-        <h2 class="font-serif text-2xl font-bold tracking-wide text-white uppercase pt-2">CỔNG QUẢN TRỊ VIÊN</h2>
+        <h2 class="font-sans text-2xl font-extrabold tracking-wide text-white uppercase pt-2">CỔNG QUẢN TRỊ VIÊN</h2>
         <p class="text-xs text-slate-400 font-medium">Hệ thống mượn sách CTU eLibrary</p>
       </div>
 

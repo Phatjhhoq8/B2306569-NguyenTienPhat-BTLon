@@ -5,11 +5,11 @@
         <!-- Logo -->
         <router-link to="/" class="flex items-center space-x-2 text-white hover:opacity-90">
           <img src="/src/assets/logo.jpg" alt="Logo" class="h-8 w-8 rounded-lg object-cover border border-slate-700 bg-white" />
-          <span class="font-serif text-xl font-bold tracking-wide">CTU eLibrary</span>
+          <span class="font-serif text-base md:text-lg font-bold tracking-wide">CTU eLibrary</span>
         </router-link>
 
         <!-- Navigation Links -->
-        <nav class="hidden md:flex space-x-8 text-sm font-bold tracking-wide">
+        <nav class="hidden md:flex space-x-4 lg:space-x-8 text-[13px] lg:text-sm font-bold tracking-wide">
           <router-link to="/" class="hover:text-secondary transition-all py-1.5 border-b-2 border-transparent hover:border-secondary/30" exact-active-class="text-secondary !border-secondary">Trang chủ</router-link>
           <router-link to="/about" class="hover:text-secondary transition-all py-1.5 border-b-2 border-transparent hover:border-secondary/30" exact-active-class="text-secondary !border-secondary">Giới thiệu</router-link>
           <router-link to="/books" class="hover:text-secondary transition-all py-1.5 border-b-2 border-transparent hover:border-secondary/30" active-class="text-secondary !border-secondary">Danh mục sách</router-link>
@@ -36,9 +36,9 @@
 
           <!-- User Menu -->
           <div v-if="authStore.isAuthenticated" class="relative group">
-            <button class="flex items-center space-x-2 bg-primary-dark px-3.5 py-2 rounded-xl hover:bg-opacity-80 transition-all border border-slate-600 shadow-sm">
+            <button class="flex items-center space-x-2 bg-primary-dark px-2 lg:px-3.5 py-1.5 lg:py-2 rounded-xl hover:bg-opacity-80 transition-all border border-slate-600 shadow-sm">
               <User class="h-4 w-4 text-secondary" />
-              <span class="hidden sm:inline text-xs font-bold text-white">{{ authStore.user?.ten || authStore.user?.hoTenNV }}</span>
+              <span class="hidden sm:inline text-[11px] lg:text-xs font-bold text-white">{{ authStore.user?.ten || authStore.user?.hoTenNV }}</span>
             </button>
             
             <!-- Dropdown Menu Wrapper (Giải quyết khoảng hở mất hover) -->
@@ -82,34 +82,106 @@
           <div v-else class="flex items-center space-x-3">
             <router-link 
               to="/login" 
-              class="px-4 py-2 text-sm font-bold text-white hover:text-secondary hover:bg-white/5 rounded-xl transition-all"
+              class="px-2.5 lg:px-4 py-2 text-[13px] lg:text-sm font-bold text-white hover:text-secondary hover:bg-white/5 rounded-xl transition-all"
             >
               Đăng nhập
             </router-link>
             <router-link 
               to="/register" 
-              class="bg-secondary hover:bg-amber-100 text-primary-dark font-extrabold px-5 py-2 text-sm rounded-xl hover:scale-105 active:scale-95 transition-all shadow-md shadow-secondary/10"
+              class="bg-secondary hover:bg-amber-100 text-primary-dark font-extrabold px-3.5 lg:px-5 py-1.5 lg:py-2 text-[13px] lg:text-sm rounded-xl hover:scale-105 active:scale-95 transition-all shadow-md shadow-secondary/10"
             >
               Đăng ký
             </router-link>
           </div>
+
+          <!-- Hamburger Button (Mobile Only) -->
+          <button 
+            @click="isMobileMenuOpen = !isMobileMenuOpen"
+            class="md:hidden p-2 hover:bg-primary-dark rounded-xl transition-colors text-white focus:outline-none"
+            title="Menu di động"
+          >
+            <Menu v-if="!isMobileMenuOpen" class="h-6 w-6 text-white" />
+            <X v-else class="h-6 w-6 text-white" />
+          </button>
         </div>
       </div>
     </div>
+
+    <!-- Mobile Menu Dropdown (Hiển thị khi click nút Hamburger ở màn hình < md) -->
+    <div 
+      v-if="isMobileMenuOpen" 
+      class="md:hidden bg-primary-dark border-t border-slate-700/80 px-4 py-3 space-y-1.5 shadow-inner"
+    >
+      <router-link 
+        to="/" 
+        class="block py-2.5 px-4 rounded-xl text-sm font-bold text-white hover:bg-white/10 hover:text-secondary transition-all"
+        exact-active-class="bg-white/10 text-secondary"
+        @click="isMobileMenuOpen = false"
+      >
+        Trang chủ
+      </router-link>
+      <router-link 
+        to="/about" 
+        class="block py-2.5 px-4 rounded-xl text-sm font-bold text-white hover:bg-white/10 hover:text-secondary transition-all"
+        exact-active-class="bg-white/10 text-secondary"
+        @click="isMobileMenuOpen = false"
+      >
+        Giới thiệu
+      </router-link>
+      <router-link 
+        to="/books" 
+        class="block py-2.5 px-4 rounded-xl text-sm font-bold text-white hover:bg-white/10 hover:text-secondary transition-all"
+        active-class="bg-white/10 text-secondary"
+        @click="isMobileMenuOpen = false"
+      >
+        Danh mục sách
+      </router-link>
+      <router-link 
+        to="/memberships" 
+        class="block py-2.5 px-4 rounded-xl text-sm font-bold text-white hover:bg-white/10 hover:text-secondary transition-all"
+        active-class="bg-white/10 text-secondary"
+        @click="isMobileMenuOpen = false"
+      >
+        Gói hội viên
+      </router-link>
+      <router-link 
+        to="/contact" 
+        class="block py-2.5 px-4 rounded-xl text-sm font-bold text-white hover:bg-white/10 hover:text-secondary transition-all"
+        exact-active-class="bg-white/10 text-secondary"
+        @click="isMobileMenuOpen = false"
+      >
+        Liên hệ
+      </router-link>
+    </div>
+    <!-- Custom Confirm Dialog -->
+    <ConfirmModal ref="confirmModal" />
   </header>
 </template>
 
 <script setup>
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '../../stores/auth';
 import { useCartStore } from '../../stores/cart';
-import { BookOpen, ShoppingBag, User, LogOut, LayoutDashboard, UserCheck } from '@lucide/vue';
+import { BookOpen, ShoppingBag, User, LogOut, LayoutDashboard, UserCheck, Menu, X } from '@lucide/vue';
+import ConfirmModal from '../ConfirmModal.vue';
 
 const router = useRouter();
 const authStore = useAuthStore();
 const cartStore = useCartStore();
 
+const isMobileMenuOpen = ref(false);
+const confirmModal = ref(null);
+
 const handleLogout = async () => {
+  const ok = await confirmModal.value.ask({
+    title: 'Đăng xuất tài khoản',
+    message: 'Bạn có chắc chắn muốn đăng xuất khỏi hệ thống thư viện không?',
+    confirmText: 'Đăng xuất',
+    cancelText: 'Hủy bỏ'
+  });
+  if (!ok) return;
+
   await authStore.logout();
   cartStore.clearCart(); // Xóa sạch giỏ mượn khi đăng xuất
   router.push('/login');

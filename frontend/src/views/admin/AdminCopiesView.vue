@@ -3,7 +3,7 @@
     <!-- Header -->
     <div class="flex justify-between items-center border-b pb-3">
       <div>
-        <h1 class="font-serif text-3xl font-bold text-slate-900">Quản Lý Bản Sao Vật Lý</h1>
+        <h1 class="font-sans text-3xl font-extrabold text-slate-900">Quản Lý Bản Sao Vật Lý</h1>
         <p class="text-sm text-slate-500 font-medium">Đầu sách: <span class="text-primary font-bold">{{ bookTitle?.tenSach }}</span></p>
       </div>
       <router-link to="/admin/books" class="text-xs font-semibold text-primary hover:underline flex items-center">
@@ -63,6 +63,9 @@
       </div>
       <div v-else class="text-center py-12 text-sm text-slate-400 font-medium">Chưa có bản sao vật lý nào cho đầu sách này.</div>
     </div>
+    
+    <!-- Custom Confirm Dialog -->
+    <ConfirmModal ref="confirmModal" />
   </div>
 </template>
 
@@ -71,7 +74,11 @@ import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import api from '../../services/api';
 import { ArrowLeft } from '@lucide/vue';
+import ConfirmModal from '../../components/ConfirmModal.vue';
+import { useToastStore } from '../../stores/toast';
 
+const confirmModal = ref(null);
+const toast = useToastStore();
 const route = useRoute();
 const bookTitle = ref(null);
 const copies = ref([]);
@@ -89,31 +96,37 @@ const loadData = async () => {
 };
 
 const updateCopy = async (copy) => {
+  const ok = await confirmModal.value.ask({ message: 'Bạn có chắc chắn muốn cập nhật thông tin bản sao sách này không?' });
+  if (!ok) {
+    loadData(); // Revert
+    return;
+  }
   try {
     const res = await api.put(`/book-copies/${copy._id}`, {
       viTriKe: copy.viTriKe,
       tinhTrang: copy.tinhTrang
     });
     if (res.success) {
-      // Load lại thông tin để cập nhật đồng bộ
+      toast.show('Cập nhật bản sao thành công!');
       loadData();
     }
   } catch (error) {
-    alert(error.message || 'Lỗi khi cập nhật bản sao');
+    toast.show(error.message || 'Lỗi khi cập nhật bản sao', 'error');
     loadData(); // Revert
   }
 };
 
 const deleteCopy = async (copy) => {
-  if (!confirm(`Bạn có chắc chắn muốn xóa bản sao ${copy.maSach} ra khỏi hệ thống?`)) return;
+  const ok = await confirmModal.value.ask({ message: `Bạn có chắc chắn muốn xóa bản sao ${copy.maSach} ra khỏi hệ thống không?` });
+  if (!ok) return;
   try {
     const res = await api.delete(`/book-copies/${copy._id}`);
     if (res.success) {
-      alert('Đã xóa bản sao thành công.');
+      toast.show('Đã xóa bản sao thành công.');
       loadData();
     }
   } catch (error) {
-    alert(error.message || 'Lỗi khi xóa bản sao');
+    toast.show(error.message || 'Lỗi khi xóa bản sao', 'error');
   }
 };
 

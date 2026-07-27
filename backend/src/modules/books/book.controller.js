@@ -106,10 +106,17 @@ const createBookTitle = async (req, res, next) => {
  */
 const getBooks = async (req, res, next) => {
   try {
-    const { q, category, page = 1, limit = 10 } = req.query;
+    const { q, category, author, publisher, page = 1, limit = 10 } = req.query;
     const filter = { isDeleted: false };
-    if (q) filter.tenSach = { $regex: String(q), $options: 'i' };
+    if (q) {
+      filter.$or = [
+        { tenSach: { $regex: String(q), $options: 'i' } },
+        { maDauSach: { $regex: String(q), $options: 'i' } }
+      ];
+    }
     if (category) filter.theLoai = category;
+    if (author) filter.tacGia = author;
+    if (publisher) filter.nhaXuatBan = publisher;
 
     const skip = (parseInt(page, 10) - 1) * parseInt(limit, 10);
     const [books, totalCount] = await Promise.all([
@@ -128,9 +135,30 @@ const getBookById = async (req, res, next) => {
   try {
     const book = await BookTitle.findById(req.params.id).populate('tacGia').populate('nhaXuatBan').populate('theLoai');
     if (!book || book.isDeleted) return resultResponse.err(res, 'Đầu sách không tồn tại hoặc đã bị xóa', 404);
+    
     // Lấy bản sao vật lý của đầu sách
     const copies = await BookCopy.find({ dauSach: book._id, isDeleted: false });
-    return resultResponse.ok(res, { book, copies });
+
+    // Lấy sách tương tự (cùng thể loại, loại trừ sách hiện tại, giới hạn 5 cuốn)
+    let relatedBooks = await BookTitle.find({
+      theLoai: book.theLoai?._id || book.theLoai,
+      _id: { $ne: book._id },
+      isDeleted: false,
+      trangThai: 'ACTIVE'
+    }).populate('tacGia').limit(5);
+
+    // Nếu không đủ 5 cuốn sách tương tự, lấy thêm các sách nổi bật khác
+    if (relatedBooks.length < 5) {
+      const excludedIds = [book._id, ...relatedBooks.map(b => b._id)];
+      const extraBooks = await BookTitle.find({
+        _id: { $nin: excludedIds },
+        isDeleted: false,
+        trangThai: 'ACTIVE'
+      }).populate('tacGia').limit(5 - relatedBooks.length);
+      relatedBooks = [...relatedBooks, ...extraBooks];
+    }
+
+    return resultResponse.ok(res, { book, copies, relatedBooks });
   } catch (error) { next(error); }
 };
 
@@ -256,6 +284,95 @@ const updatePublisher = async (req, res, next) => {
   } catch (error) { next(error); }
 };
 
+/**
+ * Thêm / cập nhật đánh giá và bình luận cho đầu sách
+ */
+const addBookReview = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { soSao, noiDung } = req.body;
+
+    if (soSao === undefined || soSao === null) {
+      return resultResponse.err(res, 'Số sao đánh giá là bắt buộc', 400);
+    }
+
+    const ratingNum = parseInt(soSao, 10);
+    if (isNaN(ratingNum) || ratingNum < 1 || ratingNum > 5) {
+      return resultResponse.err(res, 'Số sao phải từ 1 đến 5', 400);
+    }
+
+    const book = await BookTitle.findById(id);
+    if (!book || book.isDeleted) {
+      return resultResponse.err(res, 'Đầu sách không tồn tại hoặc đã bị xóa', 404);
+    }
+
+    if (!book.binhLuan) {
+      book.binhLuan = [];
+    }
+
+    const readerFullName = `${req.user.hoLot || ''} ${req.user.ten || ''}`.trim() || 'Độc giả';
+    const existingReviewIdx = book.binhLuan.findIndex(r => r.docGia === req.user._id);
+
+    if (existingReviewIdx > -1) {
+      // Cập nhật đánh giá cũ
+      book.binhLuan[existingReviewIdx].soSao = ratingNum;
+      book.binhLuan[existingReviewIdx].noiDung = noiDung || '';
+      book.binhLuan[existingReviewIdx].hoTen = readerFullName; // Cập nhật luôn họ tên chính xác
+      book.binhLuan[existingReviewIdx].ngayTao = new Date();
+    } else {
+      // Thêm đánh giá mới
+      book.binhLuan.push({
+        docGia: req.user._id,
+        hoTen: readerFullName,
+        soSao: ratingNum,
+        noiDung: noiDung || ''
+      });
+    }
+
+    // Tính toán lại rating trung bình và tổng số lượt đánh giá
+    const totalReviews = book.binhLuan.length;
+    const sumStars = book.binhLuan.reduce((sum, r) => sum + r.soSao, 0);
+    book.rating = parseFloat((sumStars / totalReviews).toFixed(1));
+    book.soLuotDanhGia = totalReviews;
+
+    await book.save();
+
+    return resultResponse.ok(res, {
+      rating: book.rating,
+      soLuotDanhGia: book.soLuotDanhGia,
+      binhLuan: book.binhLuan
+    }, 200, 'Đánh giá sách thành công');
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getSearchSuggestions = async (req, res, next) => {
+  try {
+    const { q } = req.query;
+    if (!q || !q.trim()) {
+      return resultResponse.ok(res, []);
+    }
+    const keyword = q.trim();
+    const regex = new RegExp(keyword, 'i');
+
+    const [books, authors, publishers] = await Promise.all([
+      BookTitle.find({ tenSach: regex, isDeleted: false }).limit(5).select('tenSach maDauSach'),
+      Author.find({ tenTacGia: regex }).limit(3).select('tenTacGia'),
+      Publisher.find({ tenNXB: regex }).limit(3).select('tenNXB')
+    ]);
+
+    const suggestions = [];
+    books.forEach(b => suggestions.push({ type: 'book', text: b.tenSach, id: b._id, code: b.maDauSach }));
+    authors.forEach(a => suggestions.push({ type: 'author', text: a.tenTacGia, id: a._id }));
+    publishers.forEach(p => suggestions.push({ type: 'publisher', text: p.tenNXB, id: p._id }));
+
+    return resultResponse.ok(res, suggestions.slice(0, 10));
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   createCategory,
   getCategories,
@@ -266,6 +383,8 @@ module.exports = {
   getBookById,
   updateBookTitle,
   softDeleteBookTitle,
+  addBookReview,
+  getSearchSuggestions,
   // BookCopy
   getBookCopies,
   updateBookCopy,
