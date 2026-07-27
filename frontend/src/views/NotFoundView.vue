@@ -1,9 +1,9 @@
 <template>
-  <div class="min-h-screen bg-white flex items-center justify-center p-4 font-sans select-none overflow-hidden relative">
+  <div class="min-h-[65vh] md:min-h-[70vh] bg-white flex items-center justify-center p-4 font-sans select-none overflow-hidden relative">
     <!-- Ambient background gradient -->
     <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(56,189,248,0.06)_0%,transparent_70%)]"></div>
     
-    <div class="max-w-2xl w-full text-center space-y-4 py-8 relative z-10">
+    <div class="max-w-2xl w-full text-center space-y-4 pt-2 pb-6 relative z-10">
       
       <!-- 404 Serif Text on Top -->
       <h1 class="text-7xl md:text-8xl font-serif font-bold text-slate-900 tracking-tight leading-none">404</h1>
