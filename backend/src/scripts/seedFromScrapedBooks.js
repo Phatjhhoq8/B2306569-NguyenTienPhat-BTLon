@@ -14,7 +14,6 @@ const seedStaff = async () => {
   return Staff.create({
     maSoNV: await nextCode('staff'),
     hoTenNV: 'Quản lý hệ thống',
-    email: 'admin@library.local',
     matKhau: 'admin123',
     chucVu: 'QUAN_LY',
     diachi: 'Thư viện trung tâm',

@@ -25,15 +25,15 @@ Kế hoạch đã được điều chỉnh dựa trên:
 | Phân tích ERD/yêu cầu CSDL gốc | `[ĐÃ LÀM - TÀI LIỆU]` | `document/Quanlymuonsach.pdf`, `document/erd.cdm` |
 | Thiết kế CSDL MongoDB 12 collections | `[ĐÃ LÀM - TÀI LIỆU]` | `document/database_schema.md` |
 | Quy chuẩn sinh mã tự động cho 12 collections | `[ĐÃ LÀM - TÀI LIỆU]` | `document/database_schema.md`, `report/feature_auto_generate_code_schema.md` |
-| Soft delete và drain strategy khi ngừng phục vụ đầu sách | `[ĐÃ LÀM - TÀI LIỆU]` | `document/database_schema.md` |
+| Soft delete và drain strategy khi ngừng phục vụ đầu sách | `[ĐÃ LÀM - CODE]` | `book.service.js → softDeleteBookTitle()` |
 | Tool cào dữ liệu sách | `[ĐÃ LÀM - CODE]` | `backend/src/scripts/scrapeBooks.js` và `backend/src/scripts/scrapers/` |
 | Dữ liệu scrape 100 sách demo | `[ĐÃ LÀM - DỮ LIỆU]` | `backend/src/scripts/output/scraped_books.json`, `scrape_stats.json` |
-| Script Seeding dữ liệu mẫu | `[ĐÃ LÀM - CODE]` | `backend/src/scripts/seedFromScrapedBooks.js` (cần backend models để chạy) |
-| Backend RESTful API | `[CHƯA LÀM - KẾ HOẠCH]` | Chưa khởi tạo framework Express, models, controllers, routes |
+| Script Seeding dữ liệu mẫu | `[ĐÃ LÀM - CODE]` | `backend/src/scripts/seedFromScrapedBooks.js` |
+| Backend RESTful API | `[ĐÃ LÀM - CODE]` | 5 modules (users, books, borrowing, memberships, discounts), 40+ endpoints, 18/18 test pass |
 | Frontend Vue 3 + Tailwind | `[CHƯA LÀM - KẾ HOẠCH]` | Chưa khởi tạo dự án frontend |
-| Membership API/UI | `[CHƯA LÀM - KẾ HOẠCH]` | Chưa triển khai |
+| Membership API/UI | `[ĐÃ LÀM - API]` | API đầy đủ: CRUD gói, đăng ký, xem subscription. UI chưa làm |
 | Smart AI Orchestrator Agent | `[CHƯA LÀM - KẾ HOẠCH]` | Chưa triển khai |
-| Báo cáo tính năng | `[ĐANG THỰC HIỆN]` | Đã có báo cáo schema và scraper trong `report/` |
+| Báo cáo tính năng | `[ĐANG THỰC HIỆN]` | 14 báo cáo trong `report/` |
 
 Checklist tổng quan:
 
@@ -44,9 +44,9 @@ Checklist tổng quan:
 - [x] Xây dựng tool cào dữ liệu sách từ Fahasa và Nhà sách Phương Nam.
 - [x] Cào đủ 100 sách demo và lưu output JSON.
 - [x] Viết mã nguồn script seed dữ liệu từ file JSON cào được.
-- [ ] Xây dựng backend RESTful API core theo kiến trúc modular.
+- [x] Xây dựng backend RESTful API core theo kiến trúc modular.
 - [ ] Triển khai frontend Public Website và Admin Portal bằng Vue 3 + Tailwind CSS.
-- [ ] Triển khai membership package API & UI.
+- [x] Triển khai membership package API.
 - [ ] Triển khai Smart AI Orchestrator Agent API & UI widget.
 
 ---
@@ -125,10 +125,10 @@ Mô hình CSDL hiện tại gồm 12 collections:
 | `discount_codes` | `DiscountCode` | `KM202607001` | `[ĐÃ THIẾT KẾ]` |
 
 Cần làm tiếp ở backend:
-- [ ] Tạo Mongoose models tương ứng trong `backend/src/models/`.
-- [ ] Tạo Counter/Sequence service để sinh mã tự động an toàn khi nhiều request đồng thời.
-- [ ] Áp dụng validation chính theo tài liệu schema.
-- [ ] Triển khai soft delete và drain strategy trong service quản lý đầu sách.
+- [x] Tạo Mongoose models tương ứng trong `backend/src/modules/` (12 models đầy đủ).
+- [x] Tạo Counter/Sequence service để sinh mã tự động an toàn khi nhiều request đồng thời (`codeService.js`).
+- [x] Áp dụng validation chính theo tài liệu schema.
+- [x] Triển khai soft delete và drain strategy trong service quản lý đầu sách (`book.service.js → softDeleteBookTitle`).
 
 ---
 
@@ -169,16 +169,16 @@ node src/scripts/scrapeBooks.js --source=phuongnam
 
 Cần làm tiếp:
 - [x] Viết script seed MongoDB từ `scraped_books.json` (Đã phát triển trong `seedFromScrapedBooks.js`).
-- [ ] Thực thi seeding dữ liệu (Chờ cài đặt backend models).
-- [ ] Mapping dữ liệu scrape sang `BookTitle`, `Author`, `Publisher`, `Category`.
-- [ ] Tự tạo nhiều `BookCopy` vật lý cho mỗi `BookTitle`.
+- [x] Thực thi seeding dữ liệu (Backend models đã sẵn sàng, chạy `npm run seed`).
+- [x] Mapping dữ liệu scrape sang `BookTitle`, `Author`, `Publisher`, `Category`.
+- [x] Tự tạo nhiều `BookCopy` vật lý cho mỗi `BookTitle`.
 - [ ] Bổ sung các field hỗ trợ Agent tìm sách ngữ nghĩa: `nhanVat`, `tuKhoa`, `embedding` nếu dùng vector search.
 
 ---
 
 ### Bước 3: Backend RESTful API
 
-Trạng thái: `[CHƯA LÀM - KẾ HOẠCH]`
+Trạng thái: `[ĐÃ LÀM - CODE]`
 
 Công nghệ:
 - Node.js
@@ -209,17 +209,18 @@ Nhóm API cần triển khai:
 
 | Nhóm API | Trạng thái | Ghi chú |
 | :--- | :--- | :--- |
-| Auth độc giả | `[CHƯA LÀM]` | Đăng ký, đăng nhập, JWT |
-| Auth nhân viên | `[CHƯA LÀM]` | Đăng nhập, tạo nhân viên qua staff auth |
-| Public book catalog | `[CHƯA LÀM]` | Danh sách, tìm kiếm, chi tiết sách |
-| Admin book title | `[CHƯA LÀM]` | CRUD cơ bản, soft delete/drain strategy |
-| Admin book copy | `[CHƯA LÀM]` | CRUD quản lý bản vật lý |
-| Borrow receipt | `[CHƯA LÀM]` | Tạo phiếu mượn, trả, cập nhật tồn kho |
-| Reader management | `[CHƯA LÀM]` | Quản lý độc giả |
-| Staff management | `[CHƯA LÀM]` | CRUD danh sách nhân viên, cấp tài khoản |
-| Membership | `[CHƯA LÀM]` | Gói hội viên và đăng ký subscription |
-| Penalty ticket | `[CHƯA LÀM]` | Lập phiếu phạt, xử lý vi phạm |
-| Discount code | `[CHƯA LÀM]` | Quản lý mã giảm giá |
+| Auth độc giả | `[ĐÃ LÀM]` | Đăng ký, đăng nhập, JWT HTTP-Only Cookie, `/auth/me`, cập nhật profile & mật khẩu |
+| Auth nhân viên | `[ĐÃ LÀM]` | Đăng nhập bằng maSoNV + mật khẩu, tạo nhân viên mới (Admin) |
+| Public book catalog | `[ĐÃ LÀM]` | Danh sách (phân trang + totalCount), tìm kiếm, chi tiết sách kèm bản sao |
+| Admin book title | `[ĐÃ LÀM]` | CRUD đầy đủ, soft delete/drain strategy, cập nhật thông tin |
+| Admin book copy | `[ĐÃ LÀM]` | Danh sách theo đầu sách, cập nhật tình trạng/vị trí kệ, xóa mềm |
+| Borrow receipt | `[ĐÃ LÀM]` | Tạo phiếu mượn, trả từng cuốn/toàn bộ, hủy phiếu, chi tiết phiếu theo ID |
+| Reader management | `[ĐÃ LÀM]` | Danh sách (phân trang), chi tiết, khóa/mở khóa, xóa mềm |
+| Staff management | `[ĐÃ LÀM]` | Tạo mới (tự sinh mã), danh sách, cập nhật, xóa mềm |
+| Membership | `[ĐÃ LÀM]` | CRUD gói hội viên (Admin), đăng ký subscription (Reader), xem subscription cá nhân |
+| Penalty ticket | `[ĐÃ LÀM]` | Tự động sinh phiếu phạt khi trả trễ, danh sách phạt, thanh toán phạt |
+| Discount code | `[ĐÃ LÀM]` | CRUD mã giảm giá (Admin), validate mã (Reader) |
+| Author & Publisher CRUD | `[ĐÃ LÀM]` | Danh sách (Public), tạo/cập nhật (Staff) cho cả Tác giả và NXB |
 | Agent API | `[CHƯA LÀM]` | Chat endpoint cho Smart AI Orchestrator |
 
 Quy tắc nghiệp vụ quan trọng:
@@ -289,17 +290,17 @@ Admin Portal cần có:
 
 ### Bước 5: Membership Packages
 
-Trạng thái: `[CHƯA LÀM - KẾ HOẠCH]`
+Trạng thái: `[ĐÃ LÀM - API]`
 
 Đã có thiết kế schema:
 - `MembershipPlan`
 - `Subscription`
 
 Cần triển khai:
-- [ ] API tạo gói hội viên.
-- [ ] API độc giả đăng ký gói.
-- [ ] Kiểm tra `Subscription.trangThai = 'DANG_HIEU_LUC'` khi mượn sách.
-- [ ] Áp dụng `soSachToiDa`, `soNgayMuonToiDa`, `mienTienCoc`.
+- [x] API tạo gói hội viên (Admin CRUD: tạo/sửa/xóa).
+- [x] API độc giả đăng ký gói.
+- [x] Kiểm tra `Subscription.trangThai = 'DANG_HIEU_LUC'` khi mượn sách.
+- [x] Áp dụng `soSachToiDa`, `soNgayMuonToiDa`, `mienTienCoc`.
 - [ ] Giao diện danh sách gói hội viên ở frontend.
 - [ ] Badge hội viên trong profile độc giả.
 
@@ -484,14 +485,21 @@ Các báo cáo đã có:
 | :--- | :--- |
 | `report/feature_auto_generate_code_schema.md` | `[ĐÃ CÓ]` |
 | `report/feature_scrape_books.md` | `[ĐÃ CÓ]` |
+| `report/feature_backend_models.md` | `[ĐÃ CÓ]` |
+| `report/feature_backend_core_modular.md` | `[ĐÃ CÓ]` |
+| `report/feature_concurrency_code_safety.md` | `[ĐÃ CÓ]` |
+| `report/feature_concurrency_race_condition_safety.md` | `[ĐÃ CÓ]` |
+| `report/feature_custom_primary_keys_migration.md` | `[ĐÃ CÓ]` |
+| `report/feature_database_triggers.md` | `[ĐÃ CÓ]` |
+| `report/feature_advanced_db_triggers.md` | `[ĐÃ CÓ]` |
+| `report/feature_integrity_and_cascade_triggers.md` | `[ĐÃ CÓ]` |
+| `report/feature_membership_cascade_triggers.md` | `[ĐÃ CÓ]` |
+| `report/feature_security_and_error_triggers.md` | `[ĐÃ CÓ]` |
+| `report/feature_global_config_env.md` | `[ĐÃ CÓ]` |
+| `report/feature_admin_crud_apis.md` | `[ĐÃ CÓ]` |
 
 Báo cáo cần tạo tiếp:
 
-- [ ] `report/feature_backend_models.md`
-- [ ] `report/feature_backend_auth.md`
-- [ ] `report/feature_book_catalog_api.md`
-- [ ] `report/feature_borrow_receipt_api.md`
-- [ ] `report/feature_membership.md`
 - [ ] `report/feature_frontend_public.md`
 - [ ] `report/feature_frontend_admin.md`
 - [ ] `report/feature_ai_orchestrator.md`

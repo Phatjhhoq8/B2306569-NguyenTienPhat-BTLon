@@ -26,5 +26,15 @@ module.exports = {
   app: {
     defaultShelfLocation: process.env.DEFAULT_SHELF_LOCATION || 'KE-A1',
     defaultBookCopiesCount: parseInt(process.env.DEFAULT_BOOK_COPIES_COUNT, 10) || 3
+  },
+  
+  cors: {
+    publicOrigin: process.env.PUBLIC_ORIGIN || 'http://localhost:5173',
+    adminOrigin: process.env.ADMIN_ORIGIN || 'http://localhost:5174'
+  },
+
+  cookie: {
+    maxAge: parseInt(process.env.COOKIE_MAX_AGE, 10) || 7 * 24 * 60 * 60 * 1000,
+    domain: process.env.COOKIE_DOMAIN || undefined
   }
 };

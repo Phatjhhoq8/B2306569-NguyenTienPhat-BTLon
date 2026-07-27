@@ -1,21 +1,21 @@
 /**
- * Chức năng: Điểm xuất khẩu tập trung (Entry Point) của toàn bộ Mongoose Models trong hệ thống
- * Lý do tạo: Giúp các module khác trong backend import dễ dàng bằng cú pháp gom cụm
+ * Chức năng: Điểm xuất khẩu tập trung (Entry Point) của toàn bộ Mongoose Models
+ * Lý do tạo: Tái cấu trúc sang Modular Design nhưng vẫn giữ nguyên proxy để tương thích ngược với các file tests/scripts cũ
  */
 
-const Counter = require('./counter.model');
-const Publisher = require('./publisher.model');
-const Author = require('./author.model');
-const Category = require('./category.model');
-const BookTitle = require('./bookTitle.model');
-const BookCopy = require('./bookCopy.model');
-const Reader = require('./reader.model');
-const Staff = require('./staff.model');
-const MembershipPlan = require('./membershipPlan.model');
-const Subscription = require('./subscription.model');
-const BorrowReceipt = require('./borrowReceipt.model');
-const PenaltyTicket = require('./penaltyTicket.model');
-const DiscountCode = require('./discountCode.model');
+const Counter = require('./counter.model'); // Counter giữ nguyên tại thư mục models/
+const Publisher = require('../modules/books/publisher.model');
+const Author = require('../modules/books/author.model');
+const Category = require('../modules/books/category.model');
+const BookTitle = require('../modules/books/bookTitle.model');
+const BookCopy = require('../modules/books/bookCopy.model');
+const Reader = require('../modules/users/reader.model');
+const Staff = require('../modules/users/staff.model');
+const MembershipPlan = require('../modules/memberships/membershipPlan.model');
+const Subscription = require('../modules/memberships/subscription.model');
+const BorrowReceipt = require('../modules/borrowing/borrowReceipt.model');
+const PenaltyTicket = require('../modules/borrowing/penaltyTicket.model');
+const DiscountCode = require('../modules/discounts/discountCode.model');
 
 module.exports = {
   Counter,
