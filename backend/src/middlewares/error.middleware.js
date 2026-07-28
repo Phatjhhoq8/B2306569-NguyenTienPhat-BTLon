@@ -19,7 +19,8 @@ const errorMiddleware = (err, req, res, next) => {
   // 1. Xử lý lỗi validation của Mongoose Schema
   if (err.name === 'ValidationError') {
     statusCode = 400;
-    errorPayload.message = 'Dữ liệu không hợp lệ';
+    const messages = Object.keys(err.errors).map(key => err.errors[key].message);
+    errorPayload.message = messages.join('. ') || 'Dữ liệu không hợp lệ';
     errorPayload.details = Object.keys(err.errors).reduce((acc, key) => {
       acc[key] = err.errors[key].message;
       return acc;

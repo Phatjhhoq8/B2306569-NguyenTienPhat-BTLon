@@ -198,57 +198,64 @@ const linkFamilyInvite = async (req, res, next) => {
   try {
     const userRole = req.user.role || (req.user.chucVu ? 'STAFF' : 'READER');
     if (!req.user || userRole === 'STAFF') {
-      return resultResponse.err(res, 'Chỉ độc giả mới có thể tham gia nhóm gia đình', 403);
+      return resultResponse.err(res, 'Chỉ độc giả mới có thể quản lý nhóm gia đình', 403);
     }
 
     const { maDocGiaMoi } = req.body;
     if (!maDocGiaMoi) {
-      return resultResponse.err(res, 'Mã độc giả người mời là bắt buộc', 400);
+      return resultResponse.err(res, 'Mã độc giả thành viên được mời là bắt buộc', 400);
     }
 
     const targetCode = maDocGiaMoi.trim().toUpperCase();
 
     if (req.user._id === targetCode) {
-      return resultResponse.err(res, 'Bạn không thể tự tham gia nhóm của chính mình', 400);
+      return resultResponse.err(res, 'Bạn không thể tự mời chính mình vào nhóm', 400);
     }
 
-    // Tìm gói hội viên đang hiệu lực của người mời
-    const inviterSub = await Subscription.findOne({
-      docGia: targetCode,
+    // 1. Kiểm tra độc giả được mời có tồn tại và đang hoạt động không
+    const Reader = mongoose.model('Reader');
+    const targetReader = await Reader.findById(targetCode);
+    if (!targetReader || targetReader.isDeleted || targetReader.trangThai !== 'ACTIVE') {
+      return resultResponse.err(res, 'Độc giả được mời không tồn tại hoặc tài khoản đã bị khóa/xóa', 404);
+    }
+
+    // 2. Tìm gói hội viên đang hiệu lực của CHỦ NHÓM (người gửi request)
+    const ownerSub = await Subscription.findOne({
+      docGia: req.user._id,
       trangThai: 'DANG_HIEU_LUC'
     }).populate('goiDocGia');
 
-    if (!inviterSub) {
-      return resultResponse.err(res, 'Không tìm thấy gói hội viên đang kích hoạt của độc giả này', 404);
+    if (!ownerSub) {
+      return resultResponse.err(res, 'Bạn chưa kích hoạt gói hội viên nào có hỗ trợ chia sẻ nhóm gia đình', 400);
     }
 
-    const planName = inviterSub.goiDocGia?.tenGoi || '';
+    const planName = ownerSub.goiDocGia?.tenGoi || '';
     if (!planName.toLowerCase().includes('gold') && !planName.toLowerCase().includes('vàng') && !planName.toLowerCase().includes('family')) {
-      return resultResponse.err(res, 'Chỉ gói Vàng (Family) mới hỗ trợ chia sẻ thành viên nhóm gia đình', 400);
+      return resultResponse.err(res, 'Gói hội viên hiện tại của bạn không hỗ trợ tính năng chia sẻ nhóm gia đình', 400);
     }
 
-    if (inviterSub.nguoiDuocMoi.includes(req.user._id)) {
-      return resultResponse.err(res, 'Bạn đã ở trong nhóm gia đình của độc giả này rồi', 400);
+    if (ownerSub.nguoiDuocMoi.includes(targetCode)) {
+      return resultResponse.err(res, 'Độc giả này đã nằm trong nhóm gia đình của bạn', 400);
     }
 
-    // 1 chính + tối đa 2 người được thêm (nguoiDuocMoi.length < 2)
-    if (inviterSub.nguoiDuocMoi.length >= 2) {
-      return resultResponse.err(res, 'Nhóm gia đình của độc giả này đã đạt số lượng tối đa (3 người gồm 1 chính + 2 mời)', 400);
+    // 3. 1 chính + tối đa 2 người được thêm (nguoiDuocMoi.length < 2)
+    if (ownerSub.nguoiDuocMoi.length >= 2) {
+      return resultResponse.err(res, 'Nhóm gia đình của bạn đã đạt số lượng tối đa (3 người gồm 1 chủ nhóm + 2 thành viên phụ)', 400);
     }
 
-    // Hủy các gói đang kích hoạt của người tham gia nếu có
+    // 4. Hủy các gói đang kích hoạt của người được mời nếu có
     await Subscription.updateMany(
-      { docGia: req.user._id, trangThai: 'DANG_HIEU_LUC' },
+      { docGia: targetCode, trangThai: 'DANG_HIEU_LUC' },
       { $set: { trangThai: 'HUY' } }
     );
 
-    // Thêm người dùng vào danh sách thành viên phụ
-    inviterSub.nguoiDuocMoi.push(req.user._id);
-    await inviterSub.save();
+    // 5. Thêm người dùng vào danh sách thành viên phụ của chủ nhóm
+    ownerSub.nguoiDuocMoi.push(targetCode);
+    await ownerSub.save();
 
     return resultResponse.ok(res, {
-      message: `Tham gia nhóm gia đình của độc giả ${targetCode} thành công!`,
-      subscription: inviterSub
+      message: `Đã thêm độc giả ${targetCode} vào nhóm gia đình của bạn thành công!`,
+      subscription: ownerSub
     });
   } catch (error) {
     next(error);

@@ -35,6 +35,26 @@ const registerReader = async (readerData) => {
 
   const reader = new Reader(readerData);
   await reader.save();
+
+  // Tự động tạo đăng ký gói Tiêu chuẩn mặc định
+  const MembershipPlan = mongoose.model('MembershipPlan');
+  const Subscription = mongoose.model('Subscription');
+  const standardPlan = await MembershipPlan.findOne({ tenGoi: 'Tiêu chuẩn' });
+  if (standardPlan) {
+    const ngayBatDau = new Date();
+    const ngayKetThuc = new Date(ngayBatDau.getTime() + standardPlan.soNgayHieuLuc * 24 * 60 * 60 * 1000);
+    const sub = new Subscription({
+      docGia: reader._id,
+      goiDocGia: standardPlan._id,
+      ngayBatDau,
+      ngayKetThuc,
+      tongTien: 0,
+      trangThai: 'DANG_HIEU_LUC',
+      phuongThucThanhToan: 'VIETQR'
+    });
+    await sub.save();
+  }
+
   return reader;
 };
 

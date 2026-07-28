@@ -198,6 +198,7 @@ const createBookTitle = async (bookData) => withTransactionFallback(async (sessi
       soLuongKhaDung: 0,
       giaBia: bookData.giaBia || 0,
       hinhAnh: bookData.hinhAnh || '',
+      viTriKe: bookData.viTriKe || 'KE-A1',
       soLuotMuon: bookData.soLuotMuon || 0,
       rating: bookData.rating !== undefined ? bookData.rating : 5.0,
       soLuotDanhGia: bookData.soLuotDanhGia || 0,

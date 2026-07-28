@@ -647,16 +647,16 @@
       </div>
     </div>
 
-    <!-- Join Family Group Form (Nếu là Độc giả và chưa đăng ký gói Vàng riêng) -->
+    <!-- Join/Manage Family Group Form (Nếu là Độc giả và có liên quan đến nhóm gia đình) -->
     <div 
-      v-if="authStore.isAuthenticated && authStore.isReader" 
+      v-if="authStore.isAuthenticated && authStore.isReader && activeSub && (activeSub.docGia !== authStore.user?._id || activeSub.goiDocGia?.chiaSeNhomGiaDinh)" 
       class="max-w-md mx-auto mt-16 bg-gradient-to-br from-slate-50 to-white rounded-3xl border border-slate-200 p-8 space-y-6 shadow-sm text-center"
     >
       <div class="space-y-2">
         <Users class="h-8 w-8 text-primary mx-auto" />
-        <h3 class="font-sans text-lg font-bold text-slate-900">Tham Gia Nhóm Gia Đình</h3>
+        <h3 class="font-sans text-lg font-bold text-slate-900">Quản Lý Nhóm Gia Đình</h3>
         <p class="text-xs text-slate-500 font-medium">
-          Bạn được người thân mời gia nhập nhóm gia đình? Hãy nhập mã độc giả của họ (Ví dụ: DG00024) bên dưới để cùng gia nhập nhóm (tối đa 2 thành viên phụ).
+          Dành riêng cho độc giả đăng ký Gói Gia Đình (Family) chia sẻ quyền lợi mượn sách.
         </p>
       </div>
 
@@ -665,42 +665,42 @@
         v-if="activeSub && activeSub.docGia !== authStore.user?._id" 
         class="bg-primary-light/50 border border-primary-light text-primary-dark text-xs font-semibold p-4 rounded-2xl"
       >
-        🎉 Bạn đang dùng chung gói {{ activeSub.goiDocGia?.tenGoi || 'VIP' }} chia sẻ từ chủ nhóm: <span class="font-bold text-primary">{{ activeSub.docGia }}</span>
+        🎉 Bạn đang sử dụng gói hội viên dùng chung chia sẻ từ chủ nhóm: <span class="font-bold text-primary">{{ activeSub.docGia }}</span>
       </div>
 
       <!-- Hiển thị nếu là chủ nhóm gói Vàng/Family -->
       <div 
         v-else-if="activeSub && activeSub.goiDocGia?.chiaSeNhomGiaDinh" 
-        class="bg-green-50 border border-green-100 text-green-800 text-xs font-semibold p-4 rounded-2xl space-y-1"
+        class="space-y-4"
       >
-        <p class="font-bold">👑 Bạn là chủ nhóm Gói {{ activeSub.goiDocGia?.tenGoi || 'VIP' }}</p>
-        <p class="text-[10px] text-green-650">
-          Mã của bạn: <span class="font-bold text-slate-900">{{ authStore.user?._id }}</span> (Gửi mã này cho bạn bè)
-        </p>
-        <p class="text-[10px] text-green-650" v-if="activeSub.nguoiDuocMoi?.length > 0">
-          Thành viên đã thêm: <span class="font-bold text-slate-900">{{ activeSub.nguoiDuocMoi.join(', ') }}</span>
-        </p>
-        <p class="text-[10px] text-slate-400" v-else>Chưa có thành viên nào tham gia</p>
-      </div>
-
-      <!-- Form nhập mã gia đình nếu không phải chủ nhóm và chưa join nhóm nào -->
-      <div v-else class="space-y-4">
-        <div class="relative rounded-xl shadow-sm">
-          <input 
-            v-model="inviterCode" 
-            type="text" 
-            placeholder="Nhập mã độc giả người mời (Ví dụ: DG00024)" 
-            class="block w-full px-4 py-3 text-xs font-semibold border border-slate-200 rounded-xl focus:ring-primary focus:border-primary uppercase placeholder-slate-400 text-slate-800 bg-white"
-          />
+        <div class="bg-green-50 border border-green-100 text-green-800 text-xs font-semibold p-4 rounded-2xl space-y-1">
+          <p class="font-bold">👑 Bạn là chủ nhóm Gói {{ activeSub.goiDocGia?.tenGoi || 'Family' }}</p>
+          <p class="text-[10px] text-green-650" v-if="activeSub.nguoiDuocMoi?.length > 0">
+            Thành viên đã thêm: <span class="font-bold text-slate-900">{{ activeSub.nguoiDuocMoi.join(', ') }}</span>
+          </p>
+          <p class="text-[10px] text-slate-400" v-else>Chưa có thành viên nào trong nhóm</p>
         </div>
 
-        <button 
-          @click="joinFamily" 
-          :disabled="joining"
-          class="w-full bg-slate-900 hover:bg-primary hover:text-white text-white font-bold py-3 px-6 rounded-xl text-xs transition-all shadow-md flex items-center justify-center space-x-1"
-        >
-          <span>{{ joining ? 'Đang liên kết nhóm...' : 'Xác nhận tham gia nhóm' }}</span>
-        </button>
+        <!-- Form để chủ nhóm thêm thành viên phụ -->
+        <div v-if="!activeSub.nguoiDuocMoi || activeSub.nguoiDuocMoi.length < 2" class="space-y-3 pt-2 text-left">
+          <label class="text-xs font-bold text-slate-600 uppercase">Thêm thành viên phụ (Tối đa 2 người)</label>
+          <div class="flex space-x-2">
+            <input 
+              v-model="inviterCode" 
+              type="text" 
+              placeholder="Nhập mã độc giả cần thêm (Ví dụ: DG00024)" 
+              class="flex-grow px-3 py-2 text-xs font-semibold border border-slate-200 rounded-xl focus:ring-primary focus:border-primary uppercase placeholder-slate-400 text-slate-800 bg-white"
+            />
+            <button 
+              @click="joinFamily" 
+              :disabled="joining"
+              class="bg-slate-900 hover:bg-primary hover:text-white text-white font-bold px-4 py-2 text-xs rounded-xl transition-all shadow-sm flex-shrink-0"
+            >
+              <span>{{ joining ? 'Đang thêm...' : 'Thêm thành viên' }}</span>
+            </button>
+          </div>
+        </div>
+        <p v-else class="text-[10px] text-slate-400 font-bold mt-2">⚠️ Nhóm của bạn đã đạt số lượng thành viên tối đa.</p>
       </div>
     </div>
     <!-- Custom Confirm Dialog -->

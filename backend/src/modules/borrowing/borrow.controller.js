@@ -23,9 +23,44 @@ const createReceipt = async (req, res, next) => {
       return resultResponse.err(res, 'Thông tin mượn sách và ngày hẹn trả là bắt buộc', 400);
     }
 
+    const BookCopy = mongoose.model('BookCopy');
+    const BookTitle = mongoose.model('BookTitle');
+
+    const formattedChiTietMuon = [];
+    for (const item of chiTietMuon) {
+      let copy = await BookCopy.findOne({ _id: item.sach, isDeleted: false });
+      
+      if (!copy) {
+        // Tìm bản sao khả dụng đầu tiên của BookTitle
+        copy = await BookCopy.findOne({ 
+          dauSach: item.sach, 
+          tinhTrang: 'CHO_MUON', 
+          isDeleted: false 
+        });
+        
+        if (!copy) {
+          const title = await BookTitle.findById(item.sach);
+          const bookName = title ? `"${title.tenSach}"` : `ID ${item.sach}`;
+          return resultResponse.err(res, `Đầu sách ${bookName} hiện đã hết bản sao khả dụng để mượn`, 400);
+        }
+      } else {
+        if (copy.tinhTrang !== 'CHO_MUON') {
+          const title = await BookTitle.findById(copy.dauSach);
+          const bookName = title ? `"${title.tenSach}"` : `Mã sách ${copy._id}`;
+          return resultResponse.err(res, `Cuốn sách ${bookName} hiện đang bận hoặc bảo trì`, 400);
+        }
+      }
+
+      formattedChiTietMuon.push({
+        sach: copy._id,
+        tinhTrangLucMuon: item.tinhTrangLucMuon || copy.ghiChu || 'Tốt',
+        daTraChua: false
+      });
+    }
+
     const receipt = await borrowService.createBorrowReceipt({
       docGia: req.user._id,
-      chiTietMuon,
+      chiTietMuon: formattedChiTietMuon,
       ngayMuon: new Date(),
       ngayHenTra,
       phiMuon: phiMuon || 0,

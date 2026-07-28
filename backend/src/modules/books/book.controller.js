@@ -125,7 +125,27 @@ const getBooks = async (req, res, next) => {
       BookTitle.countDocuments(filter)
     ]);
 
-    return resultResponse.ok(res, { books, totalCount, page: parseInt(page, 10), limit: parseInt(limit, 10) });
+    const booksWithShelf = await Promise.all(books.map(async (b) => {
+      const bObj = b.toObject();
+      const copies = await BookCopy.find({ dauSach: b._id, isDeleted: false, tinhTrang: 'CHO_MUON' });
+      let shelfLocationStr = '';
+      if (copies.length > 0) {
+        const shelfMap = {};
+        copies.forEach(c => {
+          const shelf = c.viTriKe || 'Chưa xếp kệ';
+          shelfMap[shelf] = (shelfMap[shelf] || 0) + 1;
+        });
+        shelfLocationStr = Object.keys(shelfMap)
+          .map(shelf => `${shelf} (${shelfMap[shelf]} cuốn)`)
+          .join(', ');
+      } else {
+        shelfLocationStr = 'Hết sách khả dụng';
+      }
+      bObj.viTriKe = shelfLocationStr;
+      return bObj;
+    }));
+
+    return resultResponse.ok(res, { books: booksWithShelf, totalCount, page: parseInt(page, 10), limit: parseInt(limit, 10) });
   } catch (error) { next(error); }
 };
 
@@ -189,7 +209,24 @@ const getBookById = async (req, res, next) => {
       relatedBooks = [...relatedBooks, ...extraBooks];
     }
 
-    return resultResponse.ok(res, { book, copies, relatedBooks });
+    const bookObj = book.toObject();
+    const availableCopies = copies.filter(c => c.tinhTrang === 'CHO_MUON' && !c.isDeleted);
+    let shelfLocationStr = '';
+    if (availableCopies.length > 0) {
+      const shelfMap = {};
+      availableCopies.forEach(c => {
+        const shelf = c.viTriKe || 'Chưa xếp kệ';
+        shelfMap[shelf] = (shelfMap[shelf] || 0) + 1;
+      });
+      shelfLocationStr = Object.keys(shelfMap)
+        .map(shelf => `${shelf} (${shelfMap[shelf]} cuốn)`)
+        .join(', ');
+    } else {
+      shelfLocationStr = 'Hết sách khả dụng';
+    }
+    bookObj.viTriKe = shelfLocationStr;
+
+    return resultResponse.ok(res, { book: bookObj, copies, relatedBooks });
   } catch (error) { next(error); }
 };
 
@@ -202,7 +239,7 @@ const updateBookTitle = async (req, res, next) => {
     if (!book || book.isDeleted) return resultResponse.err(res, 'Đầu sách không tồn tại', 404);
 
     const oldStatus = book.trangThai;
-    const allowedUpdates = ['tenSach', 'namSanXuat', 'giaBia', 'hinhAnh', 'moTa', 'tuKhoa', 'trangThai'];
+    const allowedUpdates = ['tenSach', 'namSanXuat', 'giaBia', 'hinhAnh', 'moTa', 'tuKhoa', 'trangThai', 'viTriKe'];
     allowedUpdates.forEach((f) => { if (req.body[f] !== undefined) book[f] = req.body[f]; });
 
     // Nếu khôi phục trạng thái từ DISCONTINUED -> ACTIVE (Mở lại phục vụ)

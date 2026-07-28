@@ -232,10 +232,27 @@ const seedBooks = async () => {
       normalizedCategory = 'Khác';
     }
 
+    // Phân bổ vị trí kệ phù hợp theo thể loại
+    let viTriKe = 'KE-F1';
+    if (normalizedCategory === 'Truyện Dài' || normalizedCategory === 'Truyện Ngắn') {
+      viTriKe = `KE-A${Math.floor(Math.random() * 5) + 1}`; // KE-A1 đến KE-A5
+    } else if (normalizedCategory === 'Tiểu Thuyết' || normalizedCategory === 'Văn Học' || normalizedCategory.includes('Văn Học')) {
+      viTriKe = `KE-B${Math.floor(Math.random() * 5) + 1}`; // KE-B1 đến KE-B5
+    } else if (normalizedCategory === 'Kinh Tế') {
+      viTriKe = `KE-C${Math.floor(Math.random() * 5) + 1}`; // KE-C1 đến KE-C5
+    } else if (normalizedCategory === 'Tâm Lý - Kỹ Năng') {
+      viTriKe = `KE-D${Math.floor(Math.random() * 5) + 1}`; // KE-D1 đến KE-D5
+    } else if (normalizedCategory === 'Giáo Dục' || normalizedCategory === 'Khoa Học & Công Nghệ') {
+      viTriKe = `KE-E${Math.floor(Math.random() * 5) + 1}`; // KE-E1 đến KE-E5
+    } else {
+      viTriKe = `KE-F${Math.floor(Math.random() * 5) + 1}`; // KE-F1 đến KE-F5
+    }
+
     await createBookTitle({
       ...normalizedBook,
       theLoai: normalizedCategory,
       tongSoLuong: config.app.defaultBookCopiesCount,
+      viTriKe: viTriKe,
       hinhAnh: normalizedBook.hinhAnhLocal ? path.posix.join('/uploads/books', normalizedBook.hinhAnhLocal) : '',
       tuKhoa: [normalizedCategory, normalizedBook.nguon, ...(normalizedBook.tacGia || [])].filter(Boolean).map(s => s.normalize('NFC')),
       soLuotMuon: randomBorrowCount,
@@ -394,9 +411,26 @@ const run = async () => {
   console.log('Đã làm sạch toàn bộ cơ sở dữ liệu (Clean Database và Counters).');
 
   await seedStaff();
-  await seedReader();
+  const reader = await seedReader();
   await seedMembershipPlans();
   await seedSystemSettings();
+
+  // Tạo đăng ký (Subscription) gói Tiêu chuẩn hoạt động cho reader mẫu
+  const standardPlan = await MembershipPlan.findOne({ tenGoi: 'Tiêu chuẩn' });
+  if (standardPlan && reader) {
+    const ngayBatDau = new Date();
+    const ngayKetThuc = new Date(ngayBatDau.getTime() + standardPlan.soNgayHieuLuc * 24 * 60 * 60 * 1000);
+    await Subscription.create({
+      docGia: reader._id,
+      goiDocGia: standardPlan._id,
+      ngayBatDau,
+      ngayKetThuc,
+      tongTien: 0,
+      trangThai: 'DANG_HIEU_LUC',
+      phuongThucThanhToan: 'VIETQR'
+    });
+  }
+
   const bookStats = await seedBooks();
 
   console.log('Seed hoàn tất:', {

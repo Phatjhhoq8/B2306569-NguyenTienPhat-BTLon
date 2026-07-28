@@ -25,8 +25,8 @@ const bookCopySchema = new mongoose.Schema({
   },
   viTriKe: {
     type: String,
-    required: [true, 'Vị trí kệ sách là bắt buộc'],
-    trim: true
+    trim: true,
+    default: ''
   },
   tinhTrang: {
     type: String,

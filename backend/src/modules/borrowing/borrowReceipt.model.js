@@ -132,7 +132,7 @@ borrowReceiptSchema.path('chiTietMuon').validate(async function (value) {
   const session = this.$session ? this.$session() : null;
   const count = await BookCopy.countDocuments({ _id: { $in: ids } }).session(session);
   return count === new Set(ids.map(id => String(id))).size;
-}, 'Danh sách cuốn sách mượn có tham chiếu không tồn tại');
+}, 'Một hoặc nhiều mã cuốn sách đăng ký mượn không tồn tại trong hệ thống thư viện');
 
 // Trigger tự sinh mã maPhieu trước khi validate
 borrowReceiptSchema.pre('validate', async function (next) {

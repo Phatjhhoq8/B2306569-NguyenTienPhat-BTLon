@@ -124,6 +124,11 @@ const bookTitleSchema = new mongoose.Schema({
     ref: 'Reader',
     default: []
   }],
+  viTriKe: {
+    type: String,
+    trim: true,
+    default: ''
+  },
   trangThai: {
     type: String,
     enum: ['ACTIVE', 'DISCONTINUED'],
