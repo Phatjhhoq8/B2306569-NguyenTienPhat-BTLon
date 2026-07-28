@@ -106,7 +106,7 @@ const createBookTitle = async (req, res, next) => {
  */
 const getBooks = async (req, res, next) => {
   try {
-    const { q, category, author, publisher, page = 1, limit = 10 } = req.query;
+    const { q, category, author, publisher, status, page = 1, limit = 10 } = req.query;
     const filter = { isDeleted: false };
     if (q) {
       filter.$or = [
@@ -117,6 +117,7 @@ const getBooks = async (req, res, next) => {
     if (category) filter.theLoai = category;
     if (author) filter.tacGia = author;
     if (publisher) filter.nhaXuatBan = publisher;
+    if (status) filter.trangThai = status;
 
     const skip = (parseInt(page, 10) - 1) * parseInt(limit, 10);
     const [books, totalCount] = await Promise.all([
@@ -139,22 +140,52 @@ const getBookById = async (req, res, next) => {
     // Lấy bản sao vật lý của đầu sách
     const copies = await BookCopy.find({ dauSach: book._id, isDeleted: false });
 
-    // Lấy sách tương tự (cùng thể loại, loại trừ sách hiện tại, giới hạn 5 cuốn)
-    let relatedBooks = await BookTitle.find({
-      theLoai: book.theLoai?._id || book.theLoai,
-      _id: { $ne: book._id },
-      isDeleted: false,
-      trangThai: 'ACTIVE'
-    }).populate('tacGia').limit(5);
+    // Tính toán số lượt mượn thực tế từ các phiếu mượn đã được duyệt (không tính CHO_DUYET và HUY)
+    const mongoose = require('mongoose');
+    const copiesIds = copies.map(c => c._id);
+    const actualBorrowCount = await mongoose.model('BorrowReceipt').countDocuments({
+      'chiTietMuon.sach': { $in: copiesIds },
+      trangThai: { $nin: ['CHO_DUYET', 'HUY'] }
+    });
 
-    // Nếu không đủ 5 cuốn sách tương tự, lấy thêm các sách nổi bật khác
-    if (relatedBooks.length < 5) {
+    if (book.soLuotMuon !== actualBorrowCount) {
+      book.soLuotMuon = actualBorrowCount;
+      await book.save();
+    }
+
+    const authorIds = book.tacGia ? book.tacGia.map(t => t._id || t) : [];
+    let relatedBooks = [];
+    
+    // 1. Ưu tiên sách của cùng tác giả (loại trừ sách hiện tại, giới hạn 10 cuốn)
+    if (authorIds.length > 0) {
+      relatedBooks = await BookTitle.find({
+        tacGia: { $in: authorIds },
+        _id: { $ne: book._id },
+        isDeleted: false,
+        trangThai: 'ACTIVE'
+      }).populate('tacGia').limit(10);
+    }
+
+    // 2. Nếu không đủ 10 cuốn, lấy thêm sách cùng thể loại
+    if (relatedBooks.length < 10) {
+      const excludedIds = [book._id, ...relatedBooks.map(b => b._id)];
+      const categoryRelated = await BookTitle.find({
+        theLoai: book.theLoai?._id || book.theLoai,
+        _id: { $nin: excludedIds },
+        isDeleted: false,
+        trangThai: 'ACTIVE'
+      }).populate('tacGia').limit(10 - relatedBooks.length);
+      relatedBooks = [...relatedBooks, ...categoryRelated];
+    }
+
+    // 3. Nếu vẫn không đủ 10 cuốn, lấy thêm các sách nổi bật khác
+    if (relatedBooks.length < 10) {
       const excludedIds = [book._id, ...relatedBooks.map(b => b._id)];
       const extraBooks = await BookTitle.find({
         _id: { $nin: excludedIds },
         isDeleted: false,
         trangThai: 'ACTIVE'
-      }).populate('tacGia').limit(5 - relatedBooks.length);
+      }).populate('tacGia').limit(10 - relatedBooks.length);
       relatedBooks = [...relatedBooks, ...extraBooks];
     }
 
@@ -169,8 +200,20 @@ const updateBookTitle = async (req, res, next) => {
   try {
     const book = await BookTitle.findById(req.params.id);
     if (!book || book.isDeleted) return resultResponse.err(res, 'Đầu sách không tồn tại', 404);
-    const allowedUpdates = ['tenSach', 'namSanXuat', 'giaBia', 'hinhAnh', 'moTa', 'tuKhoa'];
+
+    const oldStatus = book.trangThai;
+    const allowedUpdates = ['tenSach', 'namSanXuat', 'giaBia', 'hinhAnh', 'moTa', 'tuKhoa', 'trangThai'];
     allowedUpdates.forEach((f) => { if (req.body[f] !== undefined) book[f] = req.body[f]; });
+
+    // Nếu khôi phục trạng thái từ DISCONTINUED -> ACTIVE (Mở lại phục vụ)
+    if (oldStatus === 'DISCONTINUED' && book.trangThai === 'ACTIVE') {
+      // Khôi phục các bản sao trước đó bị thu hồi (BAO_TRI / isDeleted)
+      await BookCopy.updateMany(
+        { dauSach: book._id, tinhTrang: 'BAO_TRI', isDeleted: true },
+        { $set: { tinhTrang: 'CHO_MUON', isDeleted: false, deletedAt: null } }
+      );
+    }
+
     await book.save();
     return resultResponse.ok(res, book);
   } catch (error) { next(error); }
@@ -221,6 +264,21 @@ const softDeleteBookCopy = async (req, res, next) => {
     const copy = await BookCopy.findById(req.params.id);
     if (!copy || copy.isDeleted) return resultResponse.err(res, 'Bản sao không tồn tại', 404);
     if (copy.tinhTrang === 'DA_MUON') return resultResponse.err(res, 'Không thể xóa bản sao đang được mượn', 400);
+
+    // Kiểm tra xem bản sao này đã từng được mượn trong phiếu mượn nào chưa
+    const mongoose = require('mongoose');
+    const BorrowReceipt = mongoose.model('BorrowReceipt');
+    const hasBeenBorrowed = await BorrowReceipt.exists({
+      'chiTietMuon.sach': copy._id
+    });
+
+    if (!hasBeenBorrowed) {
+      // Chưa từng được mượn -> Xóa cứng bản sao khỏi CSDL
+      await BookCopy.deleteOne({ _id: copy._id });
+      return resultResponse.ok(res, { message: 'Đã xóa cứng bản sao thành công (do chưa từng được mượn)' });
+    }
+
+    // Đã từng được mượn -> Xóa mềm bản sao
     copy.isDeleted = true;
     copy.deletedAt = new Date();
     await copy.save();
@@ -311,7 +369,7 @@ const addBookReview = async (req, res, next) => {
     }
 
     const readerFullName = `${req.user.hoLot || ''} ${req.user.ten || ''}`.trim() || 'Độc giả';
-    const existingReviewIdx = book.binhLuan.findIndex(r => r.docGia === req.user._id);
+    const existingReviewIdx = book.binhLuan.findIndex(r => r.docGia?.toString() === req.user._id?.toString());
 
     if (existingReviewIdx > -1) {
       // Cập nhật đánh giá cũ
@@ -342,6 +400,88 @@ const addBookReview = async (req, res, next) => {
       soLuotDanhGia: book.soLuotDanhGia,
       binhLuan: book.binhLuan
     }, 200, 'Đánh giá sách thành công');
+  } catch (error) {
+    next(error);
+  }
+};
+
+const deleteBookReview = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const book = await BookTitle.findById(id);
+    if (!book || book.isDeleted) {
+      return resultResponse.err(res, 'Đầu sách không tồn tại hoặc đã bị xóa', 404);
+    }
+
+    if (!book.binhLuan) {
+      book.binhLuan = [];
+    }
+
+    const reviewIdx = book.binhLuan.findIndex(r => r.docGia?.toString() === req.user._id?.toString());
+    if (reviewIdx === -1) {
+      return resultResponse.err(res, 'Bạn chưa đánh giá cuốn sách này', 400);
+    }
+
+    // Xóa đánh giá khỏi mảng
+    book.binhLuan.splice(reviewIdx, 1);
+
+    // Tính toán lại rating trung bình và tổng số lượt đánh giá
+    const totalReviews = book.binhLuan.length;
+    if (totalReviews === 0) {
+      book.rating = 0;
+      book.soLuotDanhGia = 0;
+    } else {
+      const sumStars = book.binhLuan.reduce((sum, r) => sum + r.soSao, 0);
+      book.rating = parseFloat((sumStars / totalReviews).toFixed(1));
+      book.soLuotDanhGia = totalReviews;
+    }
+
+    await book.save();
+
+    return resultResponse.ok(res, {
+      rating: book.rating,
+      soLuotDanhGia: book.soLuotDanhGia,
+      binhLuan: book.binhLuan
+    }, 200, 'Xóa đánh giá thành công');
+  } catch (error) {
+    next(error);
+  }
+};
+
+
+const toggleLikeBook = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const book = await BookTitle.findById(id);
+    if (!book || book.isDeleted) {
+      return resultResponse.err(res, 'Đầu sách không tồn tại hoặc đã bị xóa', 404);
+    }
+
+    if (!book.yeuThich) {
+      book.yeuThich = [];
+    }
+
+    const readerId = req.user._id;
+    const idx = book.yeuThich.indexOf(readerId);
+    let isLiked = false;
+
+    if (idx > -1) {
+      // Đã thích -> Bỏ thích
+      book.yeuThich.splice(idx, 1);
+    } else {
+      // Chưa thích -> Thích
+      book.yeuThich.push(readerId);
+      isLiked = true;
+    }
+
+    await book.save();
+
+    return resultResponse.ok(res, {
+      isLiked,
+      likesCount: book.yeuThich.length,
+      yeuThich: book.yeuThich
+    }, 200, isLiked ? 'Đã thích sách thành công' : 'Đã bỏ thích sách thành công');
   } catch (error) {
     next(error);
   }
@@ -384,6 +524,8 @@ module.exports = {
   updateBookTitle,
   softDeleteBookTitle,
   addBookReview,
+  deleteBookReview,
+  toggleLikeBook,
   getSearchSuggestions,
   // BookCopy
   getBookCopies,

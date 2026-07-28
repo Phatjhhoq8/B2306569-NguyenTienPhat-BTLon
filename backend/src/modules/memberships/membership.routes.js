@@ -15,8 +15,10 @@ router.get('/memberships/plans', membershipController.getPlans);
 router.post('/memberships/subscribe', authMiddleware.authenticate, authMiddleware.authorize('READER'), membershipController.subscribePlan);
 router.get('/memberships/my-subscriptions', authMiddleware.authenticate, authMiddleware.authorize('READER'), membershipController.getMySubscription);
 router.post('/memberships/join-family', authMiddleware.authenticate, authMiddleware.authorize('READER'), membershipController.linkFamilyInvite);
+router.post('/memberships/cancel-auto-renew', authMiddleware.authenticate, authMiddleware.authorize('READER'), membershipController.cancelAutoRenew);
 
-// Admin: CRUD gói hội viên
+// Admin: CRUD gói hội viên và xem tất cả đăng ký gói
+router.get('/memberships/subscriptions', authMiddleware.authenticate, authMiddleware.authorize('STAFF'), membershipController.getAllSubscriptions);
 router.post('/memberships/plans', authMiddleware.authenticate, authMiddleware.authorize('STAFF'), membershipController.createPlan);
 router.put('/memberships/plans/:id', authMiddleware.authenticate, authMiddleware.authorize('STAFF'), membershipController.updatePlan);
 router.delete('/memberships/plans/:id', authMiddleware.authenticate, authMiddleware.authorize('STAFF'), membershipController.deletePlan);

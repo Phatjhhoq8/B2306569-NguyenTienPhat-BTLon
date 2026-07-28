@@ -159,7 +159,10 @@ test.describe('Backend Core & Concurrency Safety Tests', () => {
       soNgayHieuLuc: 30,
       soSachToiDa: 5,
       soNgayMuonToiDa: 7,
-      mienTienCoc: true
+      mienTienCoc: true,
+      phiPhatTreHan: 5000,
+      phiMuonSachGiay: 0,
+      tienDatCoc: 0
     });
     await Subscription.create({
       maDangKy: await nextCode('subscription'),
@@ -343,7 +346,10 @@ test.describe('Backend Core & Concurrency Safety Tests', () => {
       soNgayHieuLuc: 30,
       soSachToiDa: 5,
       soNgayMuonToiDa: 7,
-      mienTienCoc: false
+      mienTienCoc: false,
+      tienDatCoc: 100000,
+      phiMuonSachGiay: 3000,
+      phiPhatTreHan: 3000
     });
 
     // 2. Tạo độc giả A (gói VIP)
@@ -437,8 +443,8 @@ test.describe('Backend Core & Concurrency Safety Tests', () => {
     borrowNormal.tienCoc = 0; // Gán bằng 0 để xem backend có tự động ghi đè thành giá bìa không
     await borrowNormal.save();
     
-    const expectedDeposit = bookTitle.giaBia * 2; // vì mượn 2 cuốn cùng đầu sách Kính Vạn Hoa
-    assert.strictEqual(borrowNormal.tienCoc, expectedDeposit, `Tiền cọc của hội viên Normal phải tự động tính bằng tổng giá bìa (${expectedDeposit})`);
+    const expectedDeposit = 100000; // Tiêu chuẩn/Normal Member cọc cố định 100k
+    assert.strictEqual(borrowNormal.tienCoc, expectedDeposit, `Tiền cọc của hội viên Normal phải tự động tính bằng 100.000 ₫`);
   });
 
   test('9. Kiểm tra Cascade Soft-delete/Discontinue đầu sách ảnh hưởng đến sách vật lý', async () => {

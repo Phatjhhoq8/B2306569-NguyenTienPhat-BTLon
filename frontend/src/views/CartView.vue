@@ -27,7 +27,13 @@
           <div class="flex-grow min-w-0 space-y-1">
             <h3 class="font-bold text-sm text-slate-800 truncate">{{ book.tenSach }}</h3>
             <p class="text-xs text-slate-500 truncate">Tác giả: {{ book.tacGia?.map(t => t.tenTacGia).join(', ') }}</p>
-            <p class="text-xs font-bold text-slate-700">Giá gốc / Thuê: {{ formatCurrency(book.giaBia) }} <span class="text-slate-300 font-normal">/</span> <span class="text-primary">{{ formatCurrency(book.giaBia * 0.02) }}</span></p>
+            <p class="text-[11px] font-bold text-slate-750 flex flex-wrap gap-x-2 gap-y-1 items-center">
+              <span>Giá gốc: {{ formatCurrency(book.giaBia) }}</span>
+              <span class="text-slate-300">|</span>
+              <span>Phí mượn: <span class="text-emerald-600 font-extrabold">{{ getBookBorrowFee(book, authStore.user?.subscriptionPlan) > 0 ? formatCurrency(getBookBorrowFee(book, authStore.user?.subscriptionPlan)) : 'Miễn phí' }}</span></span>
+              <span class="text-slate-300">|</span>
+              <span>Phạt trễ: <span class="text-red-655 font-extrabold">{{ formatCurrency(getBookOverdueFee(authStore.user?.subscriptionPlan)) }}/ngày</span></span>
+            </p>
           </div>
 
           <!-- Actions -->
@@ -94,6 +100,10 @@
             <span>Phí mượn tạm tính</span>
             <span>{{ formatCurrency(phiMuon) }}</span>
           </div>
+          <div class="flex justify-between text-slate-600">
+            <span>Tiền đặt cọc tạm tính</span>
+            <span :class="tienCoc === 0 ? 'text-emerald-600 font-extrabold' : ''">{{ tienCoc > 0 ? formatCurrency(tienCoc) : 'Miễn cọc' }}</span>
+          </div>
           <div class="flex justify-between text-green-600">
             <span>Số tiền được giảm</span>
             <span>- {{ formatCurrency(soTienGiam) }}</span>
@@ -154,9 +164,36 @@ const formatCurrency = (val) => {
   return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(val || 0);
 };
 
-// Phí mượn tạm tính = 2% giá trị bìa sách
+const getBookBorrowFee = (book, plan) => {
+  if (!plan) return 5000;
+  
+  // Nhận diện Giáo trình
+  const name = (book.tenSach || '').toLowerCase();
+  const categoryName = (book.theLoai?.tenTheLoai || book.theLoai || '').toString().toLowerCase();
+  const isGiaoTrinh = categoryName.includes('giáo dục') || 
+                       categoryName.includes('ngoại ngữ') || 
+                       categoryName.includes('khoa học') ||
+                       name.includes('giáo trình') || 
+                       name.includes('bài tập') ||
+                       name.includes('sách giáo khoa') ||
+                       name.includes('tài liệu học tập');
+                       
+  if (isGiaoTrinh) return 0;
+  return plan.phiMuonSachGiay !== undefined ? plan.phiMuonSachGiay : 5000;
+};
+
+const getBookOverdueFee = (plan) => {
+  if (!plan) return 5000;
+  return plan.phiPhatTreHan !== undefined ? plan.phiPhatTreHan : 5000;
+};
+
 const phiMuon = computed(() => {
-  return cartStore.items.reduce((acc, item) => acc + (item.giaBia * 0.02), 0);
+  return cartStore.items.reduce((sum, item) => sum + getBookBorrowFee(item, authStore.user?.subscriptionPlan), 0);
+});
+
+const tienCoc = computed(() => {
+  if (!authStore.user || !authStore.user.subscriptionPlan) return 100000;
+  return authStore.user.subscriptionPlan.tienDatCoc !== undefined ? authStore.user.subscriptionPlan.tienDatCoc : 0;
 });
 
 const soTienGiam = computed(() => {
@@ -229,7 +266,7 @@ const submitBorrowRequest = async () => {
 
   const ok = await confirmModal.value.ask({
     title: 'Xác nhận đăng ký mượn',
-    message: `Bạn có chắc chắn muốn đăng ký mượn ${cartStore.totalItems} cuốn sách này không? Tổng chi phí mượn là ${formatCurrency(tongTienThanhToan.value)}.`,
+    message: `Bạn có chắc chắn muốn đăng ký mượn ${cartStore.totalItems} cuốn sách này không? Mượn sách hoàn toàn miễn phí.`,
     confirmText: 'Đăng ký',
     cancelText: 'Quay lại'
   });

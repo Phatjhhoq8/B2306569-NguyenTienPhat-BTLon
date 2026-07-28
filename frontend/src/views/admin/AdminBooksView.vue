@@ -2,7 +2,7 @@
   <div class="space-y-8">
     <!-- Header -->
     <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 border-b pb-3">
-      <div>
+      <div class="space-y-1.5">
         <h1 class="font-sans text-3xl font-extrabold text-slate-900">Quản Lý Đầu Sách</h1>
         <p class="text-sm text-slate-500 font-medium">Thêm, sửa đổi thông tin và ngừng phục vụ các đầu sách</p>
       </div>
@@ -17,40 +17,90 @@
 
     <!-- Search / List Table -->
     <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm space-y-6">
-      <div class="flex items-center space-x-2 bg-slate-50 px-3 py-2 rounded-xl border border-slate-200 w-full md:w-80 shadow-inner relative z-30">
-        <Search class="h-4 w-4 text-slate-400 flex-shrink-0" />
-        <div class="relative flex-grow">
-          <input 
-            v-model="searchQuery" 
-            type="text" 
-            placeholder="Tìm tên sách..." 
-            class="w-full focus:outline-none text-sm bg-transparent font-medium"
-            @input="[fetchBooks(), fetchBookSuggestions()]"
-            @focus="showBookSuggestions = true"
-            @blur="setTimeout(() => { showBookSuggestions = false; activeSuggestionIndex = -1; }, 200)"
-            @keydown.down.prevent="onKeyDown"
-            @keydown.up.prevent="onKeyUp"
-            @keydown.enter.prevent="onKeyEnter"
-            @keydown.esc="showBookSuggestions = false"
-          />
-          
-          <!-- Suggestions Dropdown -->
-          <div 
-            v-if="showBookSuggestions && bookSuggestions.length > 0" 
-            class="absolute left-0 right-0 mt-3 bg-white border border-slate-200 rounded-xl shadow-xl z-50 max-h-48 overflow-y-auto w-64 md:w-72"
-          >
+      <div class="flex flex-wrap items-center gap-4">
+        <!-- Search Input -->
+        <div class="flex items-center space-x-2 bg-slate-50 px-3 py-2 rounded-xl border border-slate-200 w-full md:w-80 shadow-inner relative z-30">
+          <Search class="h-4 w-4 text-slate-400 flex-shrink-0" />
+          <div class="relative flex-grow">
+            <input 
+              v-model="searchQuery" 
+              type="text" 
+              placeholder="Tìm tên hoặc mã sách..." 
+              class="w-full focus:outline-none text-sm bg-transparent font-medium"
+              @input="[fetchBooks(), fetchBookSuggestions()]"
+              @focus="showBookSuggestions = true"
+              @blur="setTimeout(() => { showBookSuggestions = false; activeSuggestionIndex = -1; }, 200)"
+              @keydown.down.prevent="onKeyDown"
+              @keydown.up.prevent="onKeyUp"
+              @keydown.enter.prevent="onKeyEnter"
+              @keydown.esc="showBookSuggestions = false"
+            />
+            
+            <!-- Suggestions Dropdown -->
             <div 
-              v-for="(item, idx) in bookSuggestions" 
-              :key="item.id"
-              class="px-4 py-2.5 hover:bg-slate-50 cursor-pointer text-sm font-bold text-slate-700 flex items-center justify-between border-b border-slate-50 last:border-b-0"
-              :class="{ 'bg-slate-100': activeSuggestionIndex === idx }"
-              @mousedown="selectBookSuggestion(item)"
+              v-if="showBookSuggestions && bookSuggestions.length > 0" 
+              class="absolute left-0 right-0 mt-3 bg-white border border-slate-200 rounded-xl shadow-xl z-50 max-h-48 overflow-y-auto w-64 md:w-72"
             >
-              <span class="truncate max-w-[180px] md:max-w-[220px]">{{ item.text }}</span>
-              <span class="text-[10px] md:text-xs text-slate-400 font-semibold font-mono">Đầu sách</span>
+              <div 
+                v-for="(item, idx) in bookSuggestions" 
+                :key="item.id"
+                class="px-4 py-2.5 hover:bg-slate-50 cursor-pointer text-sm font-bold text-slate-700 flex items-center justify-between border-b border-slate-50 last:border-b-0"
+                :class="{ 'bg-slate-100': activeSuggestionIndex === idx }"
+                @mousedown="selectBookSuggestion(item)"
+              >
+                <span class="truncate max-w-[180px] md:max-w-[220px]">{{ item.text }}</span>
+                <span class="text-[10px] md:text-xs text-slate-400 font-semibold font-mono">Đầu sách</span>
+              </div>
             </div>
           </div>
         </div>
+
+        <!-- Filter Category -->
+        <div class="w-full sm:w-44">
+          <select 
+            v-model="filterCategory" 
+            @change="[currentPage = 1, fetchBooks()]"
+            class="w-full bg-slate-50 px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-650 focus:outline-none"
+          >
+            <option value="">Tất cả thể loại</option>
+            <option v-for="cat in allCategories" :key="cat._id" :value="cat._id">{{ cat.tenTheLoai }}</option>
+          </select>
+        </div>
+
+        <!-- Filter Publisher -->
+        <div class="w-full sm:w-44">
+          <select 
+            v-model="filterPublisher" 
+            @change="[currentPage = 1, fetchBooks()]"
+            class="w-full bg-slate-50 px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-650 focus:outline-none"
+          >
+            <option value="">Tất cả nhà xuất bản</option>
+            <option v-for="pub in allPublishers" :key="pub._id" :value="pub._id">{{ pub.tenNXB }}</option>
+          </select>
+        </div>
+
+        <!-- Filter Status -->
+        <div class="w-full sm:w-44">
+          <select 
+            v-model="filterStatus" 
+            @change="[currentPage = 1, fetchBooks()]"
+            class="w-full bg-slate-50 px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-650 focus:outline-none"
+          >
+            <option value="">Tất cả trạng thái</option>
+            <option value="ACTIVE">Đang phục vụ</option>
+            <option value="DISCONTINUED">Ngừng phục vụ</option>
+          </select>
+        </div>
+
+        <!-- Reset Button -->
+        <button 
+          v-if="filterCategory || filterPublisher || filterStatus || searchQuery"
+          @click="resetFilters"
+          class="text-xs font-bold text-primary hover:underline flex items-center space-x-1"
+        >
+          <XIcon class="h-4 w-4" />
+          <span>Đặt lại</span>
+        </button>
       </div>
 
       <div class="overflow-x-auto">
@@ -105,11 +155,26 @@
                 </button>
                 <button 
                   v-if="book.trangThai === 'ACTIVE'"
-                  @click="handleDrain(book._id)"
-                  class="text-xs font-bold text-red-600 hover:text-red-800 transition-colors"
-                  title="Ngừng phục vụ gối đầu (Drain Strategy)"
+                  @click="handleToggleStatus(book, 'DISCONTINUED')"
+                  class="text-xs font-bold text-amber-600 hover:text-amber-800 transition-colors"
+                  title="Ngừng phục vụ đầu sách này"
                 >
                   Ngừng phục vụ
+                </button>
+                <button 
+                  v-else
+                  @click="handleToggleStatus(book, 'ACTIVE')"
+                  class="text-xs font-bold text-emerald-600 hover:text-emerald-800 transition-colors"
+                  title="Mở lại phục vụ đầu sách này"
+                >
+                  Mở lại
+                </button>
+                <button 
+                  @click="handleDelete(book._id)"
+                  class="text-xs font-bold text-red-600 hover:text-red-800 transition-colors"
+                  title="Xóa đầu sách (Xóa cứng/Xóa mềm theo lịch sử mượn)"
+                >
+                  Xóa
                 </button>
               </td>
             </tr>
@@ -118,7 +183,14 @@
       </div>
 
       <!-- Pagination -->
-      <div v-if="totalPages > 1" class="flex justify-center items-center space-x-2 pt-4">
+      <div v-if="totalPages > 1" class="flex justify-center items-center space-x-1.5 pt-4">
+        <button 
+          @click="changePage(1)" 
+          :disabled="currentPage === 1"
+          class="px-2.5 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 disabled:opacity-50 text-xs font-semibold transition-colors"
+        >
+          Đầu
+        </button>
         <button 
           @click="changePage(currentPage - 1)" 
           :disabled="currentPage === 1"
@@ -126,13 +198,34 @@
         >
           Trước
         </button>
-        <span class="text-xs font-bold text-slate-500">Trang {{ currentPage }} / {{ totalPages }}</span>
+
+        <template v-for="(page, idx) in visiblePages" :key="idx">
+          <span v-if="page === '...'" class="px-1 text-xs font-bold text-slate-400">...</span>
+          <button 
+            v-else
+            @click="changePage(page)"
+            class="w-7 h-7 rounded-lg border text-xs font-bold transition-all"
+            :class="page === currentPage 
+              ? 'bg-primary text-white border-primary shadow-sm' 
+              : 'border-slate-200 hover:bg-slate-50 text-slate-600'"
+          >
+            {{ page }}
+          </button>
+        </template>
+
         <button 
           @click="changePage(currentPage + 1)" 
           :disabled="currentPage === totalPages"
           class="px-2.5 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 disabled:opacity-50 text-xs font-semibold transition-colors"
         >
           Sau
+        </button>
+        <button 
+          @click="changePage(totalPages)" 
+          :disabled="currentPage === totalPages"
+          class="px-2.5 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 disabled:opacity-50 text-xs font-semibold transition-colors"
+        >
+          Cuối
         </button>
       </div>
     </div>
@@ -269,6 +362,15 @@
             <input v-model="form.viTriKe" type="text" placeholder="Kệ A1" class="w-full bg-slate-50 px-3 py-2 rounded-xl border border-slate-200 focus:outline-none" />
           </div>
 
+          <!-- Trạng thái (Chỉ khi sửa) -->
+          <div v-if="isEdit" class="space-y-1">
+            <label class="text-xs font-bold text-slate-600 uppercase">Trạng thái phục vụ</label>
+            <select v-model="form.trangThai" class="w-full bg-slate-50 px-3 py-2.5 rounded-xl border border-slate-200 focus:outline-none text-xs font-semibold text-slate-700">
+              <option value="ACTIVE">Đang phục vụ (ACTIVE)</option>
+              <option value="DISCONTINUED">Ngừng phục vụ (DISCONTINUED)</option>
+            </select>
+          </div>
+
           <div class="space-y-1.5">
             <label class="text-xs font-bold text-slate-600 uppercase">Hình ảnh đầu sách</label>
             <div class="flex space-x-2">
@@ -330,7 +432,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue';
 import api from '../../services/api';
-import { Plus, Search, X } from '@lucide/vue';
+import { Plus, Search, X as XIcon } from '@lucide/vue';
 import ConfirmModal from '../../components/ConfirmModal.vue';
 import { useToastStore } from '../../stores/toast';
 
@@ -345,6 +447,44 @@ const activeSuggestionIndex = ref(-1);
 const currentPage = ref(1);
 const totalPages = ref(1);
 const limit = 10;
+
+const filterCategory = ref('');
+const filterPublisher = ref('');
+const filterStatus = ref('');
+
+const resetFilters = () => {
+  searchQuery.value = '';
+  filterCategory.value = '';
+  filterPublisher.value = '';
+  filterStatus.value = '';
+  currentPage.value = 1;
+  fetchBooks();
+};
+
+const visiblePages = computed(() => {
+  const pages = [];
+  const range = 1;
+  for (let i = 1; i <= totalPages.value; i++) {
+    if (
+      i === 1 ||
+      i === totalPages.value ||
+      (i >= currentPage.value - range && i <= currentPage.value + range)
+    ) {
+      pages.push(i);
+    } else if (
+      (i === 2 && currentPage.value - range > 2) ||
+      (i === totalPages.value - 1 && currentPage.value + range < totalPages.value - 1)
+    ) {
+      pages.push('...');
+    }
+  }
+  return pages.filter((item, index, self) => {
+    if (item === '...') {
+      return self[index - 1] !== '...';
+    }
+    return true;
+  });
+});
 
 const showModal = ref(false);
 const isEdit = ref(false);
@@ -483,6 +623,9 @@ const fetchBooks = async () => {
   try {
     let url = `/books?page=${currentPage.value}&limit=${limit}`;
     if (searchQuery.value.trim()) url += `&q=${encodeURIComponent(searchQuery.value.trim())}`;
+    if (filterCategory.value) url += `&category=${encodeURIComponent(filterCategory.value)}`;
+    if (filterPublisher.value) url += `&publisher=${encodeURIComponent(filterPublisher.value)}`;
+    if (filterStatus.value) url += `&status=${encodeURIComponent(filterStatus.value)}`;
     
     const res = await api.get(url);
     if (res.success) {
@@ -515,7 +658,8 @@ const openAddModal = () => {
     tongSoLuong: 3,
     viTriKe: 'Kệ A1',
     hinhAnh: '',
-    moTa: ''
+    moTa: '',
+    trangThai: 'ACTIVE'
   };
   showModal.value = true;
 };
@@ -533,7 +677,8 @@ const openEditModal = (book) => {
     giaBia: book.giaBia,
     viTriKe: book.viTriKe,
     hinhAnh: book.hinhAnh,
-    moTa: book.moTa
+    moTa: book.moTa,
+    trangThai: book.trangThai
   };
   showModal.value = true;
 };
@@ -566,18 +711,41 @@ const saveBook = async () => {
   }
 };
 
-const handleDrain = async (bookId) => {
-  const ok = await confirmModal.value.ask({ message: 'Bạn có chắc chắn muốn ngừng phục vụ đầu sách này? Hệ thống sẽ thu hồi các bản sao rảnh ngay lập tức (Drain Strategy).' });
+const handleDelete = async (bookId) => {
+  const ok = await confirmModal.value.ask({ 
+    message: 'Bạn có chắc chắn muốn xóa đầu sách này? Hệ thống sẽ xóa cứng hoàn toàn khỏi cơ sở dữ liệu nếu chưa từng được mượn, hoặc tự động chuyển sang Ngừng phục vụ (Drain Strategy) để bảo vệ lịch sử nếu đã từng được mượn.',
+    isDestructive: true 
+  });
   if (!ok) return;
   try {
     const res = await api.delete(`/books/${bookId}`);
     if (res.success) {
       toast.show(res.data.message);
       fetchBooks();
-      loadSuggestions(); // Tải lại gợi ý sau khi ngừng phục vụ
+      loadSuggestions();
     }
   } catch (error) {
-    toast.show(error.message || 'Lỗi khi thực hiện ngừng phục vụ', 'error');
+    toast.show(error.message || 'Lỗi khi thực hiện xóa đầu sách', 'error');
+  }
+};
+
+const handleToggleStatus = async (book, newStatus) => {
+  const actionText = newStatus === 'ACTIVE' ? 'mở lại phục vụ' : 'ngừng phục vụ';
+  const confirmMsg = newStatus === 'ACTIVE'
+    ? `Bạn có chắc chắn muốn mở lại phục vụ đầu sách "${book.tenSach}"? Hệ thống sẽ khôi phục lại trạng thái của các bản sao bị thu hồi trước đó.`
+    : `Bạn có chắc chắn muốn ngừng phục vụ đầu sách "${book.tenSach}"? Hệ thống sẽ thu hồi các bản sao rảnh ngay lập tức (Drain Strategy).`;
+
+  const ok = await confirmModal.value.ask({ message: confirmMsg });
+  if (!ok) return;
+
+  try {
+    const res = await api.put(`/books/${book._id}`, { trangThai: newStatus });
+    if (res.success) {
+      toast.show(`Đã ${actionText} đầu sách thành công!`);
+      fetchBooks();
+    }
+  } catch (error) {
+    toast.show(error.message || `Lỗi khi ${actionText} đầu sách`, 'error');
   }
 };
 

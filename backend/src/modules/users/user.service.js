@@ -18,7 +18,7 @@ const registerReader = async (readerData) => {
   const dienThoai = String(readerData.dienThoai || '').trim();
 
   // Kiểm tra trùng lặp email
-  const existingEmail = await Reader.findOne({ email, isDeleted: false });
+  const existingEmail = await Reader.findOne({ email });
   if (existingEmail) {
     const error = new Error('Email đã được đăng ký bởi độc giả khác');
     error.status = 409;
@@ -26,7 +26,7 @@ const registerReader = async (readerData) => {
   }
 
   // Kiểm tra trùng lặp điện thoại
-  const existingPhone = await Reader.findOne({ dienThoai, isDeleted: false });
+  const existingPhone = await Reader.findOne({ dienThoai });
   if (existingPhone) {
     const error = new Error('Số điện thoại đã được đăng ký bởi độc giả khác');
     error.status = 409;
@@ -44,12 +44,19 @@ const registerReader = async (readerData) => {
  * @param {string} matKhau - Mật khẩu plain text
  * @returns {Promise<object>} { reader, token }
  */
-const loginReader = async (email, matKhau) => {
-  const normalizedEmail = String(email || '').trim().toLowerCase();
+const loginReader = async (identifier, matKhau) => {
+  const input = String(identifier || '').trim();
 
-  const reader = await Reader.findOne({ email: normalizedEmail, isDeleted: false });
+  const reader = await Reader.findOne({
+    $or: [
+      { email: input.toLowerCase() },
+      { dienThoai: input }
+    ],
+    isDeleted: false
+  });
+
   if (!reader) {
-    const error = new Error('Email hoặc mật khẩu không chính xác');
+    const error = new Error('Tài khoản hoặc mật khẩu không chính xác');
     error.status = 401;
     throw error;
   }
@@ -62,7 +69,7 @@ const loginReader = async (email, matKhau) => {
 
   const isMatch = await passwordService.verifyPassword(matKhau, reader.matKhau);
   if (!isMatch) {
-    const error = new Error('Email hoặc mật khẩu không chính xác');
+    const error = new Error('Tài khoản hoặc mật khẩu không chính xác');
     error.status = 401;
     throw error;
   }

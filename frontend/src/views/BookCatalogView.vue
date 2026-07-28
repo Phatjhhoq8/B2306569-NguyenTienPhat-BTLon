@@ -2,9 +2,9 @@
   <div class="space-y-10 pb-16 font-sans">
     
     <!-- 1. Catalog Hero Banner -->
-    <section class="bg-gradient-to-r from-primary via-blue-900 to-indigo-900 py-16 px-4 text-white relative shadow-inner">
+    <section class="bg-gradient-to-r from-primary via-primary-dark to-slate-900 py-16 px-4 text-white relative shadow-inner">
       <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between relative z-10">
-        <div class="space-y-4 max-w-2xl">
+        <div class="space-y-4 max-w-4xl">
           <div class="text-xs font-bold text-secondary flex items-center space-x-2">
             <router-link to="/" class="hover:text-white transition-colors">Trang chủ</router-link>
             <span>/</span>
@@ -50,7 +50,7 @@
                   <div class="flex items-center space-x-2">
                     <span 
                       class="text-[10px] md:text-xs font-extrabold px-2 py-0.5 rounded-full uppercase"
-                      :class="item.type === 'book' ? 'bg-blue-100 text-blue-700' : item.type === 'author' ? 'bg-amber-100 text-amber-700' : 'bg-purple-100 text-purple-700'"
+                      :class="item.type === 'book' ? 'bg-primary-light text-primary-dark' : item.type === 'author' ? 'bg-amber-100 text-amber-700' : 'bg-purple-100 text-purple-700'"
                     >
                       {{ item.type === 'book' ? 'Sách' : item.type === 'author' ? 'Tác giả' : 'NXB' }}
                     </span>
@@ -295,8 +295,8 @@
                   <span class="text-slate-500 truncate max-w-[100px]">
                     {{ book.tacGia?.map(t => t.tenTacGia).join(', ') || 'Tác giả' }}
                   </span>
-                  <span class="font-bold text-slate-900 text-[10px]">
-                    {{ formatCurrency(book.giaBia) }} <span class="text-slate-300 font-normal">/</span> <span class="text-primary font-extrabold">{{ formatCurrency(book.giaBia * 0.02) }}</span>
+                  <span class="font-extrabold text-primary text-xs">
+                    Miễn phí
                   </span>
                 </div>
               </div>
@@ -309,21 +309,49 @@
           </div>
 
           <!-- Pagination -->
-          <div v-if="totalPages > 1" class="flex justify-center items-center space-x-2 pt-6">
+          <div v-if="totalPages > 1" class="flex justify-center items-center space-x-1.5 pt-6">
+            <button 
+              @click="changePage(1)" 
+              :disabled="currentPage === 1"
+              class="px-3 py-1.5 rounded-xl border border-slate-200 hover:bg-slate-50 disabled:opacity-50 text-xs font-bold transition-colors"
+            >
+              Đầu
+            </button>
             <button 
               @click="changePage(currentPage - 1)" 
               :disabled="currentPage === 1"
-              class="px-4 py-2 rounded-xl border border-slate-200 hover:bg-slate-50 disabled:opacity-50 text-xs font-bold transition-colors"
+              class="px-3 py-1.5 rounded-xl border border-slate-200 hover:bg-slate-50 disabled:opacity-50 text-xs font-bold transition-colors"
             >
               Trước
             </button>
-            <span class="text-xs font-bold text-slate-500">Trang {{ currentPage }} / {{ totalPages }}</span>
+            
+            <template v-for="(page, idx) in visiblePages" :key="idx">
+              <span v-if="page === '...'" class="px-1.5 text-xs font-bold text-slate-400">...</span>
+              <button 
+                v-else
+                @click="changePage(page)"
+                class="w-8 h-8 rounded-xl border text-xs font-bold transition-all"
+                :class="page === currentPage 
+                  ? 'bg-primary text-white border-primary shadow-sm' 
+                  : 'border-slate-200 hover:bg-slate-50 text-slate-700'"
+              >
+                {{ page }}
+              </button>
+            </template>
+
             <button 
               @click="changePage(currentPage + 1)" 
               :disabled="currentPage === totalPages"
-              class="px-4 py-2 rounded-xl border border-slate-200 hover:bg-slate-50 disabled:opacity-50 text-xs font-bold transition-colors"
+              class="px-3 py-1.5 rounded-xl border border-slate-200 hover:bg-slate-50 disabled:opacity-50 text-xs font-bold transition-colors"
             >
               Sau
+            </button>
+            <button 
+              @click="changePage(totalPages)" 
+              :disabled="currentPage === totalPages"
+              class="px-3 py-1.5 rounded-xl border border-slate-200 hover:bg-slate-50 disabled:opacity-50 text-xs font-bold transition-colors"
+            >
+              Cuối
             </button>
           </div>
         </section>
@@ -386,6 +414,31 @@ const currentPage = ref(parseInt(route.query.page || '1', 10));
 const sortType = ref('popular');
 const limit = 12;
 const totalPages = ref(1);
+
+const visiblePages = computed(() => {
+  const pages = [];
+  const range = 1;
+  for (let i = 1; i <= totalPages.value; i++) {
+    if (
+      i === 1 ||
+      i === totalPages.value ||
+      (i >= currentPage.value - range && i <= currentPage.value + range)
+    ) {
+      pages.push(i);
+    } else if (
+      (i === 2 && currentPage.value - range > 2) ||
+      (i === totalPages.value - 1 && currentPage.value + range < totalPages.value - 1)
+    ) {
+      pages.push('...');
+    }
+  }
+  return pages.filter((item, index, self) => {
+    if (item === '...') {
+      return self[index - 1] !== '...';
+    }
+    return true;
+  });
+});
 
 const getImageUrl = (path) => {
   if (!path) return '/placeholder_book.png';

@@ -3,6 +3,7 @@
  * Lý do tạo: Tiếp nhận thông tin từ router, xác thực dữ liệu, gọi service nghiệp vụ và phản hồi JSON
  */
 
+const mongoose = require('mongoose');
 const BorrowReceipt = require('./borrowReceipt.model');
 const PenaltyTicket = require('./penaltyTicket.model');
 const borrowService = require('./borrow.service');
@@ -97,7 +98,7 @@ const getMyReceipts = async (req, res, next) => {
  */
 const getReceipts = async (req, res, next) => {
   try {
-    const { status, readerId } = req.query;
+    const { status, readerId, q } = req.query;
     const filter = {};
 
     if (status) {
@@ -105,6 +106,26 @@ const getReceipts = async (req, res, next) => {
     }
     if (readerId) {
       filter.docGia = readerId;
+    }
+
+    if (q) {
+      const Reader = mongoose.model('Reader');
+      const matchingReaders = await Reader.find({
+        $or: [
+          { hoLot: { $regex: String(q), $options: 'i' } },
+          { ten: { $regex: String(q), $options: 'i' } },
+          { email: { $regex: String(q), $options: 'i' } },
+          { dienThoai: { $regex: String(q), $options: 'i' } },
+          { maDocGia: { $regex: String(q), $options: 'i' } }
+        ],
+        isDeleted: false
+      });
+      const matchingReaderIds = matchingReaders.map(r => r._id);
+
+      filter.$or = [
+        { maPhieu: { $regex: String(q), $options: 'i' } },
+        { docGia: { $in: matchingReaderIds } }
+      ];
     }
 
     const receipts = await BorrowReceipt.find(filter)

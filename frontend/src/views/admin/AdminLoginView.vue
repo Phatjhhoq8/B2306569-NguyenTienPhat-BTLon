@@ -35,7 +35,7 @@
               type="text" 
               required 
               placeholder="Nhập mã số nhân viên" 
-              class="w-full bg-transparent focus:outline-none text-sm font-semibold text-slate-200 uppercase placeholder-slate-600"
+              class="w-full bg-transparent focus:outline-none text-sm font-semibold text-slate-200 placeholder-slate-600"
             />
           </div>
         </div>

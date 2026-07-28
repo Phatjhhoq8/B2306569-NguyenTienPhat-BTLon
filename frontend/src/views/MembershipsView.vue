@@ -8,25 +8,45 @@
         {{ membershipSettings.heroTitle || 'Gói Hội Viên Độc Giả CTU eLibrary' }}
       </h1>
       <p class="text-sm text-slate-500 font-medium leading-relaxed">
-        {{ membershipSettings.heroSubtitle || 'Tài khoản độc giả mặc định được cung cấp Gói Tiêu Chuẩn hoàn toàn miễn phí. Nâng cấp lên gói hội viên Premium để mượn nhiều sách hơn, thời gian lâu hơn và hưởng đặc quyền miễn ký quỹ cọc sách.' }}
+        {{ membershipSettings.heroSubtitle || 'Tài khoản độc giả mặc định được cung cấp Gói Tiêu Chuẩn hoàn toàn miễn phí. Nâng cấp lên gói hội viên Premium để mượn nhiều sách hơn, thời gian lâu hơn.' }}
       </p>
     </div>
 
-    <!-- Plans Cards Grid -->
-    <div v-if="plans.length > 0" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <!-- Toggle tab (Individual / Team & Family) -->
+    <div class="flex justify-center my-4">
+      <div class="bg-slate-100 p-1 rounded-2xl inline-flex space-x-1 border border-slate-200 shadow-sm select-none">
+        <button 
+          @click="activeLoaiGoi = 'INDIVIDUAL'"
+          class="px-6 py-2.5 rounded-xl text-xs font-bold transition-all"
+          :class="activeLoaiGoi === 'INDIVIDUAL' ? 'bg-primary text-white shadow-sm' : 'text-slate-650 hover:text-slate-900'"
+        >
+          Gói cá nhân (Individual)
+        </button>
+        <button 
+          @click="activeLoaiGoi = 'TEAM'"
+          class="px-6 py-2.5 rounded-xl text-xs font-bold transition-all"
+          :class="activeLoaiGoi === 'TEAM' ? 'bg-primary text-white shadow-sm' : 'text-slate-650 hover:text-slate-900'"
+        >
+          Nhóm &amp; Gia đình (Team)
+        </button>
+      </div>
+    </div>
+
+    <!-- Plans Cards Flex (Tự động căn giữa) -->
+    <div v-if="plans.length > 0" class="flex flex-wrap justify-center gap-8">
       <div 
-        v-for="plan in sortedPlans" 
+        v-for="plan in filteredPlans" 
         :key="plan._id"
-        class="bg-white rounded-3xl border-2 overflow-hidden p-8 flex flex-col justify-between transition-all duration-300 relative"
+        class="w-full md:w-[320px] bg-white rounded-3xl border-2 overflow-hidden p-8 flex flex-col justify-between transition-all duration-300 relative"
         :class="[
           isPlanActive(plan) 
-            ? 'border-emerald-500 shadow-md ring-2 ring-emerald-500/10 bg-emerald-50/5' 
+            ? 'border-blue-500 shadow-md ring-2 ring-blue-500/10 bg-blue-50/10' 
             : 'border-slate-200 hover:border-primary hover:shadow-xl hover:ring-2 hover:ring-primary/10'
         ]"
       >
         <!-- Recommended Badge -->
         <span 
-          v-if="plan.tenGoi.toLowerCase().includes('gold') || plan.tenGoi.toLowerCase().includes('vàng')"
+          v-if="isHighlightedPlan(plan)"
           class="absolute top-4 right-4 bg-primary text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow-sm"
         >
           Khuyên dùng
@@ -38,7 +58,7 @@
               <h3 class="text-base font-bold text-slate-800 tracking-wide uppercase">{{ plan.tenGoi }}</h3>
               <span 
                 v-if="isPlanActive(plan)"
-                class="bg-green-100 text-green-700 text-[9px] font-bold px-2 py-0.5 rounded-full uppercase"
+                class="bg-blue-100 text-blue-700 text-[9px] font-bold px-2 py-0.5 rounded-full uppercase"
               >
                 Đang dùng
               </span>
@@ -46,28 +66,25 @@
             
             <div class="flex items-baseline space-x-1">
               <span class="text-3xl font-black text-slate-900">{{ formatPrice(plan.giaTien) }}</span>
-              <span class="text-slate-400 text-xs">/ {{ plan.soNgayHieuLuc }} ngày</span>
+              <span class="text-slate-400 text-xs" v-if="plan.giaTien > 0 && plan.soNgayHieuLuc !== 99999">/ {{ plan.soNgayHieuLuc }} ngày</span>
+              <span class="text-slate-400 text-xs" v-else>/ Vĩnh viễn</span>
             </div>
             <p class="text-xs text-slate-400 font-medium">
-              {{ plan.giaTien === 0 ? 'Gói mặc định áp dụng sẵn cho tất cả độc giả.' : 'Gói Premium nâng cấp thời hạn và giới hạn mượn.' }}
+              {{ getPlanDescription(plan) }}
             </p>
           </div>
 
           <hr class="border-slate-100" />
 
           <!-- Perks List -->
-          <ul class="space-y-4">
-            <li class="flex items-start text-xs font-semibold text-slate-600">
-              <CheckCircle class="h-4.5 w-4.5 text-green-500 mr-2.5 flex-shrink-0 mt-0.5" />
-              <span>Mượn cùng lúc: <strong class="text-slate-900">{{ plan.soSachToiDa }} cuốn sách</strong></span>
-            </li>
-            <li class="flex items-start text-xs font-semibold text-slate-600">
-              <CheckCircle class="h-4.5 w-4.5 text-green-500 mr-2.5 flex-shrink-0 mt-0.5" />
-              <span>Thời hạn giữ sách: <strong class="text-slate-900">{{ plan.soNgayMuonToiDa }} ngày</strong></span>
-            </li>
-            <li class="flex items-start text-xs font-semibold text-slate-600">
-              <CheckCircle class="h-4.5 w-4.5 text-green-500 mr-2.5 flex-shrink-0 mt-0.5" />
-              <span>Yêu cầu ký quỹ cọc: <strong class="text-slate-900">{{ plan.mienTienCoc ? 'Miễn đặt cọc 100%' : 'Cần đặt cọc' }}</strong></span>
+          <ul class="space-y-3">
+            <li 
+              v-for="(perk, i) in getPlanPerks(plan)" 
+              :key="i"
+              class="flex items-start text-xs font-semibold text-slate-650"
+            >
+              <CheckCircle class="h-4 w-4 text-emerald-500 mr-2 flex-shrink-0 mt-0.5" />
+              <span>{{ perk }}</span>
             </li>
           </ul>
         </div>
@@ -100,7 +117,7 @@
             @click="subscribe(plan)"
             class="w-full font-bold py-3 rounded-xl text-xs transition-all shadow-md flex items-center justify-center space-x-1 bg-primary hover:bg-primary-dark text-white"
           >
-            <span>Nâng cấp lên Premium</span>
+            <span>Nâng cấp lên gói {{ plan.tenGoi }}</span>
           </button>
         </div>
       </div>
@@ -134,10 +151,10 @@
                   :key="plan._id" 
                   scope="col" 
                   class="px-6 py-6 text-center w-1/5"
-                  :class="plan.tenGoi.toLowerCase().includes('gold') || plan.tenGoi.toLowerCase().includes('vàng') ? 'bg-primary/5' : ''"
+                  :class="isHighlightedPlan(plan) ? 'bg-blue-50/90 border-x-2 border-t-2 border-blue-300/60 text-blue-900' : ''"
                 >
-                  <span class="block text-sm font-black text-slate-900">{{ plan.tenGoi }}</span>
-                  <span class="block text-[10px] text-slate-400 font-bold mt-1 uppercase">{{ formatPrice(plan.giaTien) }}</span>
+                  <span class="block text-sm font-black" :class="isHighlightedPlan(plan) ? 'text-blue-800' : 'text-slate-900'">{{ plan.tenGoi }}</span>
+                  <span class="block text-[10px] font-bold mt-1 uppercase" :class="isHighlightedPlan(plan) ? 'text-blue-600 font-extrabold' : 'text-slate-400'">{{ formatPrice(plan.giaTien) }}</span>
                 </th>
               </tr>
             </thead>
@@ -145,7 +162,13 @@
             <tbody class="divide-y divide-slate-100 font-semibold">
               <!-- SECTION 1: HẠN MỨC MƯỢN SÁCH -->
               <tr class="bg-slate-50/30">
-                <td colspan="4" class="px-6 py-3.5 font-bold text-primary text-[10px] uppercase tracking-wider">Hạn mức mượn sách</td>
+                <td class="px-6 py-3.5 font-bold text-primary text-[10px] uppercase tracking-wider bg-slate-100/60">Hạn mức mượn sách</td>
+                <td 
+                  v-for="plan in sortedPlans" 
+                  :key="'sec1_' + plan._id" 
+                  class="px-6 py-3.5"
+                  :class="isHighlightedPlan(plan) ? 'bg-blue-50/50 border-x-2 border-blue-300/40' : ''"
+                ></td>
               </tr>
               <tr>
                 <td class="px-6 py-4 text-slate-850">Số sách mượn tối đa cùng lúc</td>
@@ -153,7 +176,7 @@
                   v-for="plan in sortedPlans" 
                   :key="plan._id" 
                   class="px-6 py-4 text-center font-bold text-slate-900"
-                  :class="plan.tenGoi.toLowerCase().includes('gold') || plan.tenGoi.toLowerCase().includes('vàng') ? 'bg-primary/5' : ''"
+                  :class="isHighlightedPlan(plan) ? 'bg-blue-50/50 border-x-2 border-blue-300/40' : ''"
                 >
                   {{ plan.soSachToiDa }} cuốn
                 </td>
@@ -164,54 +187,58 @@
                   v-for="plan in sortedPlans" 
                   :key="plan._id" 
                   class="px-6 py-4 text-center font-bold text-slate-900"
-                  :class="plan.tenGoi.toLowerCase().includes('gold') || plan.tenGoi.toLowerCase().includes('vàng') ? 'bg-primary/5' : ''"
+                  :class="isHighlightedPlan(plan) ? 'bg-blue-50/50 border-x-2 border-blue-300/40' : ''"
                 >
                   {{ plan.soNgayMuonToiDa }} ngày
                 </td>
               </tr>
 
-              <!-- SECTION 2: CHI PHÍ & TIỀN CỌC -->
+              <!-- SECTION 2: CHI PHÍ DỊCH VỤ -->
               <tr class="bg-slate-50/30">
-                <td colspan="4" class="px-6 py-3.5 font-bold text-primary text-[10px] uppercase tracking-wider">Chi phí & Ký quỹ cọc</td>
+                <td class="px-6 py-3.5 font-bold text-primary text-[10px] uppercase tracking-wider bg-slate-100/60">Chi phí dịch vụ</td>
+                <td 
+                  v-for="plan in sortedPlans" 
+                  :key="'sec2_' + plan._id" 
+                  class="px-6 py-3.5"
+                  :class="isHighlightedPlan(plan) ? 'bg-blue-50/50 border-x-2 border-blue-300/40' : ''"
+                ></td>
               </tr>
               <tr>
                 <td class="px-6 py-4 text-slate-850">Chi phí đăng ký định kỳ</td>
                 <td 
                   v-for="plan in sortedPlans" 
                   :key="plan._id" 
-                  class="px-6 py-4 text-center font-black text-primary"
-                  :class="plan.tenGoi.toLowerCase().includes('gold') || plan.tenGoi.toLowerCase().includes('vàng') ? 'bg-primary/5' : ''"
+                  class="px-6 py-4 text-center font-black"
+                  :class="isHighlightedPlan(plan) ? 'bg-blue-50/50 border-x-2 border-blue-300/40 text-blue-700' : 'text-primary'"
                 >
-                  {{ formatPrice(plan.giaTien) }} <span class="text-[9px] text-slate-400 font-normal">/ {{ plan.soNgayHieuLuc }} ngày</span>
-                </td>
-              </tr>
-              <tr>
-                <td class="px-6 py-4 text-slate-850">Miễn cọc tiền ký quỹ (Đặt cọc 50% giá bìa)</td>
-                <td 
-                  v-for="plan in sortedPlans" 
-                  :key="plan._id" 
-                  class="px-6 py-4 text-center"
-                  :class="plan.tenGoi.toLowerCase().includes('gold') || plan.tenGoi.toLowerCase().includes('vàng') ? 'bg-primary/5' : ''"
-                >
-                  <Check class="h-5 w-5 text-primary mx-auto stroke-[2.5]" v-if="plan.mienTienCoc" />
-                  <span v-else class="text-slate-400 text-[10px]">Cần đặt cọc</span>
+                  <span v-if="plan.giaTien > 0">
+                    {{ formatPrice(plan.giaTien) }} 
+                    <span class="text-[9px] text-slate-400 font-normal" v-if="plan.soNgayHieuLuc !== 99999">/ {{ plan.soNgayHieuLuc }} ngày</span>
+                    <span class="text-[9px] text-slate-400 font-normal" v-else>/ Vĩnh viễn</span>
+                  </span>
+                  <span v-else class="text-slate-500">Miễn phí / Vĩnh viễn</span>
                 </td>
               </tr>
 
               <!-- SECTION 3: TIỆN ÍCH PREMIUM -->
               <tr class="bg-slate-50/30">
-                <td colspan="4" class="px-6 py-3.5 font-bold text-primary text-[10px] uppercase tracking-wider">Tiện ích Premium</td>
+                <td class="px-6 py-3.5 font-bold text-primary text-[10px] uppercase tracking-wider bg-slate-100/60">Tiện ích Premium</td>
+                <td 
+                  v-for="plan in sortedPlans" 
+                  :key="'sec3_' + plan._id" 
+                  class="px-6 py-3.5"
+                  :class="isHighlightedPlan(plan) ? 'bg-blue-50/50 border-x-2 border-blue-300/40' : ''"
+                ></td>
               </tr>
               <tr>
                 <td class="px-6 py-4 text-slate-850">Gia hạn hạn trả sách trực tuyến (Online)</td>
                 <td 
                   v-for="plan in sortedPlans" 
                   :key="plan._id" 
-                  class="px-6 py-4 text-center text-[10px]"
-                  :class="plan.tenGoi.toLowerCase().includes('gold') || plan.tenGoi.toLowerCase().includes('vàng') ? 'bg-primary/5' : ''"
+                  class="px-6 py-4 text-center font-bold text-slate-800"
+                  :class="isHighlightedPlan(plan) ? 'bg-blue-50/50 border-x-2 border-blue-300/40' : ''"
                 >
-                  <Check class="h-5 w-5 text-primary mx-auto stroke-[2.5]" v-if="plan.giaTien > 0" />
-                  <span v-else class="text-slate-400">Không hỗ trợ</span>
+                  {{ getPlanGiaHanOnline(plan) }}
                 </td>
               </tr>
               <tr>
@@ -220,21 +247,100 @@
                   v-for="plan in sortedPlans" 
                   :key="plan._id" 
                   class="px-6 py-4 text-center"
-                  :class="plan.tenGoi.toLowerCase().includes('gold') || plan.tenGoi.toLowerCase().includes('vàng') ? 'bg-primary/5' : ''"
+                  :class="isHighlightedPlan(plan) ? 'bg-blue-50/50 border-x-2 border-blue-300/40' : ''"
                 >
-                  <Check class="h-5 w-5 text-primary mx-auto stroke-[2.5]" v-if="plan.giaTien > 0" />
-                  <span v-else class="text-slate-400">—</span>
+                  <Check class="h-5 w-5 text-emerald-600 mx-auto stroke-[2.5]" v-if="plan.quayNhanUuTien" />
+                  <span v-else class="text-slate-400">Không hỗ trợ</span>
                 </td>
               </tr>
               <tr>
-                <td class="px-6 py-4 text-slate-850">Chia sẻ quyền lợi nhóm gia đình (Tối đa 3 thành viên)</td>
+                <td class="px-6 py-4 text-slate-850">Chia sẻ quyền lợi thành viên</td>
+                <td 
+                  v-for="plan in sortedPlans" 
+                  :key="plan._id" 
+                  class="px-6 py-4 text-center font-bold text-slate-800"
+                  :class="isHighlightedPlan(plan) ? 'bg-blue-50/50 border-x-2 border-blue-300/40' : ''"
+                >
+                  {{ getPlanChiaSeNhom(plan) }}
+                </td>
+              </tr>
+              <tr>
+                <td class="px-6 py-4 text-slate-850">Chính sách đặt cọc khi mượn sách giấy</td>
+                <td 
+                  v-for="plan in sortedPlans" 
+                  :key="plan._id" 
+                  class="px-6 py-4 text-center font-bold"
+                  :class="[isHighlightedPlan(plan) ? 'bg-blue-50/50 border-x-2 border-blue-300/40' : '', plan.mienTienCoc ? 'text-emerald-650' : 'text-slate-800']"
+                >
+                  <span v-if="plan.mienTienCoc">Miễn đặt cọc</span>
+                  <span v-else-if="plan.giaTien === 0">Đặt cọc 100.000 ₫</span>
+                  <span v-else>Đặt cọc 50.000 ₫</span>
+                </td>
+              </tr>
+              <tr>
+                <td class="px-6 py-4 text-slate-850">Đọc sách điện tử (Ebook) bản quyền</td>
+                <td 
+                  v-for="plan in sortedPlans" 
+                  :key="plan._id" 
+                  class="px-6 py-4 text-center font-bold text-slate-800"
+                  :class="isHighlightedPlan(plan) ? 'bg-blue-50/50 border-x-2 border-blue-300/40' : ''"
+                >
+                  {{ getPlanEbook(plan) }}
+                </td>
+              </tr>
+              <tr>
+                <td class="px-6 py-4 text-slate-850">Đọc sách nói (Audiobook) bản quyền</td>
+                <td 
+                  v-for="plan in sortedPlans" 
+                  :key="plan._id" 
+                  class="px-6 py-4 text-center font-bold text-slate-800"
+                  :class="isHighlightedPlan(plan) ? 'bg-blue-50/50 border-x-2 border-blue-300/40' : ''"
+                >
+                  {{ getPlanAudiobook(plan) }}
+                </td>
+              </tr>
+              <tr>
+                <td class="px-6 py-4 text-slate-850">Dịch vụ giao/trả sách tận nhà</td>
+                <td 
+                  v-for="plan in sortedPlans" 
+                  :key="plan._id" 
+                  class="px-6 py-4 text-center font-bold text-slate-800"
+                  :class="isHighlightedPlan(plan) ? 'bg-blue-50/50 border-x-2 border-blue-300/40' : ''"
+                >
+                  {{ getPlanGiaoSach(plan) }}
+                </td>
+              </tr>
+              <tr>
+                <td class="px-6 py-4 text-slate-850">Phí dịch vụ mượn sách giấy (mỗi cuốn)</td>
+                <td 
+                  v-for="plan in sortedPlans" 
+                  :key="plan._id" 
+                  class="px-6 py-4 text-center font-bold"
+                  :class="[isHighlightedPlan(plan) ? 'bg-blue-50/50 border-x-2 border-blue-300/40' : '', plan.giaTien > 39000 ? 'text-emerald-650' : 'text-slate-800']"
+                >
+                  {{ getPlanPhiMuon(plan) }}
+                </td>
+              </tr>
+              <tr>
+                <td class="px-6 py-4 text-slate-850">Phí phạt trễ hạn (mỗi ngày/cuốn)</td>
+                <td 
+                  v-for="plan in sortedPlans" 
+                  :key="plan._id" 
+                  class="px-6 py-4 text-center font-bold text-red-600"
+                  :class="isHighlightedPlan(plan) ? 'bg-blue-50/50 border-x-2 border-blue-300/40' : ''"
+                >
+                  {{ getPlanPhatTre(plan) }}
+                </td>
+              </tr>
+              <tr>
+                <td class="px-6 py-4 text-slate-850">Tham gia câu lạc bộ &amp; sự kiện độc quyền</td>
                 <td 
                   v-for="plan in sortedPlans" 
                   :key="plan._id" 
                   class="px-6 py-4 text-center"
-                  :class="plan.tenGoi.toLowerCase().includes('gold') || plan.tenGoi.toLowerCase().includes('vàng') ? 'bg-primary/5' : ''"
+                  :class="isHighlightedPlan(plan) ? 'bg-blue-50/50 border-x-2 border-b-2 border-blue-300/60 pb-5' : ''"
                 >
-                  <Check class="h-5 w-5 text-primary mx-auto stroke-[2.5]" v-if="plan.tenGoi.toLowerCase().includes('gold') || plan.tenGoi.toLowerCase().includes('vàng') || plan.tenGoi.toLowerCase().includes('family') || plan.tenGoi.toLowerCase().includes('gia đình')" />
+                  <Check class="h-5 w-5 text-emerald-600 mx-auto stroke-[2.5]" v-if="plan.workshopDocQuyen" />
                   <span v-else class="text-slate-400">Không hỗ trợ</span>
                 </td>
               </tr>
@@ -246,121 +352,297 @@
       </transition>
     </div>
 
-    <!-- QR Payment Modal with Phone Simulator -->
+    <!-- Configure and Payment Modal (Claude-style) -->
     <div v-if="activePlan" class="fixed inset-0 bg-slate-900 bg-opacity-65 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-      <div class="bg-white rounded-3xl max-w-4xl w-full p-6 md:p-8 space-y-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
-        <button @click="activePlan = null" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
+      <div class="bg-white rounded-3xl max-w-5xl w-full p-6 md:p-8 space-y-6 shadow-2xl relative max-h-[95vh] overflow-y-auto font-sans">
+        <button @click="closeCheckout" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 transition-colors">
           <X class="h-6 w-6" />
         </button>
 
-        <div class="text-center space-y-1">
-          <h2 class="font-sans text-2xl font-extrabold text-slate-900">{{ membershipSettings.qrTitle || 'Quét Mã QR Thanh Toán' }}</h2>
-          <p class="text-sm text-slate-500 font-medium">Sử dụng Momo/Ngân hàng thật của bạn hoặc mô phỏng trên điện thoại giả lập</p>
+        <div class="border-b pb-4">
+          <h2 class="text-2xl font-extrabold text-slate-900 flex items-center gap-2">
+            <span class="h-8 w-8 rounded-lg bg-primary-light flex items-center justify-center">
+              <Award class="h-5 w-5 text-primary" />
+            </span>
+            Cấu hình &amp; Thanh toán gói dịch vụ
+          </h2>
+          <p class="text-xs text-slate-500 font-medium mt-1">Thiết lập phương thức thanh toán và hoàn tất đăng ký của bạn</p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-center justify-center">
-          <!-- Left: Real VietQR Image (5/12) -->
-          <div class="md:col-span-5 space-y-4 flex flex-col items-center">
-            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 shadow-inner flex flex-col items-center text-center">
-              <span class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Quét mã bằng ứng dụng ngân hàng</span>
-              <img 
-                :src="getVietQrUrl()" 
-                alt="VietQR Code" 
-                class="w-52 h-52 object-contain bg-white p-2 rounded-xl border border-slate-100"
-              />
-              <div class="mt-3 text-xs font-semibold text-slate-700 space-y-1">
-                <p>Số tiền: {{ formatPrice(activePlan.giaTien) }}</p>
-                <p>Nội dung: <span class="text-primary uppercase">DK {{ activePlan.maGoi }} {{ authStore.user?.maDocGia || 'DG00001' }}</span></p>
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          <!-- Left: Configure & Payment options (7/12) -->
+          <div class="lg:col-span-7 space-y-6">
+            <!-- Billing Information -->
+            <div class="space-y-4">
+              <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wider">1. Thông tin hóa đơn</h3>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div class="space-y-1">
+                  <label class="text-xs font-bold text-slate-500">Họ và tên</label>
+                  <input v-model="billingName" type="text" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs font-semibold focus:ring-1 focus:ring-primary focus:border-primary text-slate-800" placeholder="Nguyễn Văn A" />
+                </div>
+                <div class="space-y-1">
+                  <label class="text-xs font-bold text-slate-500">Quốc gia hoặc khu vực</label>
+                  <select v-model="billingCountry" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs font-semibold focus:ring-1 focus:ring-primary focus:border-primary text-slate-800">
+                    <option value="VN">Việt Nam</option>
+                    <option value="US">Mỹ</option>
+                    <option value="JP">Nhật Bản</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <hr class="border-slate-100" />
+
+            <!-- Payment Methods Select -->
+            <div class="space-y-4">
+              <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wider">2. Phương thức thanh toán</h3>
+              <div class="grid grid-cols-2 gap-4">
+                <!-- Thẻ tín dụng option -->
+                <label 
+                  class="border-2 rounded-2xl p-4 flex flex-col items-center justify-center space-y-2 cursor-pointer transition-all hover:bg-slate-50"
+                  :class="paymentMethod === 'THE_TIN_DUNG' ? 'border-primary bg-primary-light/10 text-primary-dark shadow-sm' : 'border-slate-200 text-slate-600'"
+                >
+                  <input type="radio" value="THE_TIN_DUNG" v-model="paymentMethod" class="sr-only" />
+                  <CreditCard class="h-6 w-6" />
+                  <span class="text-xs font-bold">Thẻ Tín dụng / Ghi nợ</span>
+                  <span class="text-[9px] font-semibold text-slate-400">Tự động gia hạn</span>
+                </label>
+
+                <!-- VietQR option -->
+                <label 
+                  class="border-2 rounded-2xl p-4 flex flex-col items-center justify-center space-y-2 cursor-pointer transition-all hover:bg-slate-50"
+                  :class="paymentMethod === 'VIETQR' ? 'border-primary bg-primary-light/10 text-primary-dark shadow-sm' : 'border-slate-200 text-slate-600'"
+                >
+                  <input type="radio" value="VIETQR" v-model="paymentMethod" class="sr-only" />
+                  <QrCode class="h-6 w-6" />
+                  <span class="text-xs font-bold">Chuyển khoản VietQR</span>
+                  <span class="text-[9px] font-semibold text-slate-400">Từng tháng, tự hủy</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Detail Form for THE_TIN_DUNG -->
+            <div v-show="paymentMethod === 'THE_TIN_DUNG'" class="space-y-6 pt-2">
+              <div class="flex flex-col md:flex-row gap-6 items-center justify-center bg-slate-50/50 p-4 rounded-3xl border border-slate-100">
+                <!-- Credit Card Visual Mock -->
+                <div class="flex-shrink-0">
+                  <div class="relative w-[300px] h-[180px] bg-gradient-to-br from-indigo-950 via-slate-900 to-indigo-950 rounded-2xl p-5 text-white shadow-lg flex flex-col justify-between border border-white/10 select-none overflow-hidden">
+                    <div class="absolute -right-12 -top-12 w-28 h-28 bg-primary/20 rounded-full blur-2xl"></div>
+                    
+                    <div class="flex justify-between items-start">
+                      <div class="space-y-0.5">
+                        <span class="text-[8px] uppercase font-bold tracking-widest text-slate-400">Gói Hội Viên</span>
+                        <h4 class="text-[10px] font-extrabold text-secondary tracking-wide uppercase">{{ activePlan.tenGoi }}</h4>
+                      </div>
+                      <div class="h-5 w-8 bg-white/10 rounded flex items-center justify-center border border-white/5">
+                        <span class="text-[9px] font-black italic tracking-tighter text-white">VISA</span>
+                      </div>
+                    </div>
+
+                    <div class="flex items-center space-x-3">
+                      <div class="w-8 h-6 bg-gradient-to-br from-amber-300 via-yellow-400 to-amber-500 rounded relative overflow-hidden border border-amber-200/50 shadow-inner flex flex-col justify-between p-0.5">
+                        <div class="grid grid-cols-3 gap-0.5 w-full h-full opacity-60">
+                          <div class="border border-amber-950/30"></div>
+                          <div class="border border-amber-950/30"></div>
+                          <div class="border border-amber-950/30"></div>
+                        </div>
+                      </div>
+                      <svg class="h-3.5 w-3.5 text-white/50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M5 12a10 10 0 0 1 14 0" />
+                        <path d="M8 15a6 6 0 0 1 8 0" />
+                      </svg>
+                    </div>
+
+                    <div class="space-y-2">
+                      <div class="font-mono text-sm tracking-widest text-white/95 font-semibold text-center">
+                        {{ formattedCardNumber || '•••• •••• •••• ••••' }}
+                      </div>
+                      <div class="flex justify-between items-center text-[8px] font-medium text-slate-300">
+                        <div>
+                          <span class="text-[7px] uppercase tracking-wider text-slate-500 block mb-0.5">Chủ thẻ</span>
+                          <span class="font-bold tracking-wider uppercase text-white truncate max-w-[110px] block">
+                            {{ cardName || 'TÊN CHỦ THẺ' }}
+                          </span>
+                        </div>
+                        <div>
+                          <span class="text-[7px] uppercase tracking-wider text-slate-500 block mb-0.5">Hạn dùng</span>
+                          <span class="font-bold text-white block">{{ cardExpiry || 'MM/YY' }}</span>
+                        </div>
+                        <div>
+                          <span class="text-[7px] uppercase tracking-wider text-slate-500 block mb-0.5">CVC</span>
+                          <span class="font-bold text-white block">{{ cardCvc || '•••' }}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Input fields for Credit Card -->
+                <div class="flex-grow space-y-3 w-full">
+                  <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-slate-500 uppercase">Số thẻ</label>
+                    <input 
+                      v-model="cardNumber" 
+                      type="text" 
+                      maxlength="19" 
+                      @input="formatCardInput" 
+                      class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:border-primary text-slate-800" 
+                      placeholder="4111 2222 3333 4444" 
+                    />
+                  </div>
+                  <div class="space-y-1">
+                    <label class="text-[10px] font-bold text-slate-500 uppercase">Tên in trên thẻ</label>
+                    <input 
+                      v-model="cardName" 
+                      type="text" 
+                      class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:border-primary uppercase text-slate-800" 
+                      placeholder="NGUYEN VAN A" 
+                    />
+                  </div>
+                  <div class="grid grid-cols-2 gap-3">
+                    <div class="space-y-1">
+                      <label class="text-[10px] font-bold text-slate-500 uppercase">Hạn dùng (MM/YY)</label>
+                      <input 
+                        v-model="cardExpiry" 
+                        type="text" 
+                        maxlength="5" 
+                        @input="formatExpiryInput"
+                        class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:border-primary text-slate-800" 
+                        placeholder="12/29" 
+                      />
+                    </div>
+                    <div class="space-y-1">
+                      <label class="text-[10px] font-bold text-slate-500 uppercase">Mã bảo mật CVC</label>
+                      <input 
+                        v-model="cardCvc" 
+                        type="password" 
+                        maxlength="3" 
+                        @input="formatCvcInput"
+                        class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:border-primary text-slate-800" 
+                        placeholder="123" 
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Detail QR for VietQR -->
+            <div v-show="paymentMethod === 'VIETQR'" class="space-y-4 pt-2">
+              <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center justify-center">
+                <!-- QR Code (5/12) -->
+                <div class="md:col-span-5 flex flex-col items-center">
+                  <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 shadow-inner flex flex-col items-center text-center w-full">
+                    <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-2">Mã thanh toán VietQR</span>
+                    <img 
+                      :src="getVietQrUrl()" 
+                      alt="VietQR Code" 
+                      class="w-44 h-44 object-contain bg-white p-2 rounded-xl border border-slate-100"
+                    />
+                    <div class="mt-2.5 text-[10px] font-bold text-slate-700 space-y-0.5">
+                      <p>Số tiền: {{ formatPrice(activePlan.giaTien) }}</p>
+                      <p>Nội dung: <span class="text-primary uppercase font-mono">DK {{ activePlan.maGoi }} {{ authStore.user?.maDocGia || 'DG00001' }}</span></p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- physical simulator phone (7/12) -->
+                <div class="md:col-span-7 flex flex-col items-center">
+                  <div class="relative w-56 h-[390px] bg-slate-950 rounded-[38px] p-2 shadow-2xl ring-6 ring-slate-800 border-2 border-slate-900 overflow-visible flex flex-col justify-between">
+                    <div class="absolute top-2.5 left-1/2 -translate-x-1/2 bg-black h-3.5 w-14 rounded-full z-30 flex items-center justify-end px-1.5">
+                      <div class="h-1.5 w-1.5 rounded-full bg-green-500 opacity-80 animate-pulse"></div>
+                    </div>
+                    <div class="relative flex-grow bg-slate-950 rounded-[30px] overflow-hidden flex flex-col justify-between p-3 pt-5 text-white text-center border border-white/5">
+                      <div class="flex justify-between items-center text-[8px] text-slate-400 font-semibold px-1.5">
+                        <span>9:41</span>
+                        <span class="flex items-center space-x-1">
+                          <Wifi class="h-2.5 w-2.5" />
+                          <span class="text-[7px]">5G</span>
+                          <Battery class="h-3.5 w-3.5" />
+                        </span>
+                      </div>
+                      <div class="flex-grow bg-slate-900 rounded-xl flex flex-col items-center justify-center p-2 relative border border-slate-800 overflow-hidden shadow-inner mt-2">
+                        <QrCode class="h-10 w-10 text-green-400/90 mb-1 animate-pulse" />
+                        <span class="text-[9px] font-black text-green-400 tracking-wider">CAMERA GIẢ LẬP</span>
+                        <p class="text-[8px] text-slate-400 mt-1 max-w-[120px] leading-tight">Đang quét mã VietQR tự động...</p>
+                        <div class="absolute left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-green-400 to-transparent shadow-[0_0_8px_rgba(74,222,128,0.8)] scan-laser z-10"></div>
+                      </div>
+                      <div class="mt-3 space-y-1">
+                        <button 
+                          @click="confirmPayment"
+                          class="w-full bg-green-500 hover:bg-green-600 text-slate-950 font-black py-2 rounded-xl text-[10px] transition-all shadow-md active:scale-95 flex items-center justify-center space-x-1"
+                        >
+                          <CheckCircle class="h-3.5 w-3.5" />
+                          <span>Mô phỏng thanh toán QR</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
 
-          <!-- Middle: Divider or info -->
-          <div class="hidden md:block md:col-span-1 text-center text-slate-300 font-bold">HOẶC</div>
-
-          <!-- Right: Interactive Phone Camera Simulator (6/12) -->
-          <div class="md:col-span-6 flex flex-col items-center">
-            <!-- Real Smartphone Mockup Container -->
-            <div class="relative w-64 h-[480px] bg-slate-950 rounded-[44px] p-2.5 shadow-2xl ring-8 ring-slate-800 border-2 border-slate-900 overflow-visible flex flex-col justify-between">
-              
-              <!-- Physical Buttons Mockups (Vol up, Vol down, Power) -->
-              <!-- Volume Up (Left side) -->
-              <div class="absolute top-24 -left-3 w-1 h-10 bg-slate-700 rounded-l-md border-r border-slate-950"></div>
-              <!-- Volume Down (Left side) -->
-              <div class="absolute top-38 -left-3 w-1 h-10 bg-slate-700 rounded-l-md border-r border-slate-950"></div>
-              <!-- Power Button (Right side) -->
-              <div class="absolute top-28 -right-3 w-1 h-14 bg-slate-700 rounded-r-md border-l border-slate-950"></div>
-
-              <!-- Dynamic Island Notch -->
-              <div class="absolute top-3.5 left-1/2 -translate-x-1/2 bg-black h-4.5 w-18 rounded-full z-30 ring-1 ring-slate-800/40 flex items-center justify-end px-2">
-                <!-- Tiny Green Dot Camera Indicator -->
-                <div class="h-1.5 w-1.5 rounded-full bg-green-500 opacity-80 animate-pulse"></div>
+          <!-- Right: Plan Summary & Checkout details (5/12) -->
+          <div class="lg:col-span-5 bg-slate-50 p-6 rounded-3xl border border-slate-200 space-y-6">
+            <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wider border-b pb-2">Tóm tắt đơn đăng ký</h3>
+            
+            <div class="space-y-4">
+              <!-- Plan Info -->
+              <div class="flex justify-between items-start">
+                <div>
+                  <h4 class="text-sm font-extrabold text-slate-900">{{ activePlan.tenGoi }}</h4>
+                  <span class="text-xs text-slate-500 font-semibold">Chu kỳ sử dụng: {{ activePlan.soNgayHieuLuc }} ngày</span>
+                </div>
+                <span class="text-sm font-extrabold text-slate-900">{{ formatPrice(activePlan.giaTien) }}</span>
               </div>
 
-              <!-- Screen Inside -->
-              <div class="relative flex-grow bg-slate-950 rounded-[34px] overflow-hidden flex flex-col justify-between p-4 pt-7 text-white text-center border border-slate-900/50">
-                <!-- Phone Top Bar -->
-                <div class="flex justify-between items-center text-[10px] text-slate-400 font-semibold px-2 mb-1.5">
-                  <span>9:41</span>
-                  <span class="flex items-center space-x-1">
-                    <Wifi class="h-3 w-3" />
-                    <span class="text-[9px] font-bold">5G</span>
-                    <Battery class="h-3.5 w-3.5" />
-                  </span>
-                </div>
+              <hr class="border-slate-200" />
 
-                <!-- Camera viewport mock -->
-                <div class="flex-grow bg-slate-900 rounded-2xl flex flex-col items-center justify-center p-3 relative border border-slate-850 overflow-hidden shadow-inner">
-                  <div class="absolute inset-0 opacity-20 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-green-500 via-transparent to-transparent"></div>
-                  
-                  <!-- Scanning Laser Line (Đường quét chuyển động) -->
-                  <div class="absolute left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-green-400 to-transparent shadow-[0_0_8px_rgba(74,222,128,0.8)] scan-laser z-10"></div>
-                  
-                  <QrCode class="h-14 w-14 text-green-400/90 mb-2 animate-pulse" />
-                  <p class="text-[10px] font-black text-green-400 tracking-wider uppercase">CAMERA DÙNG THỬ</p>
-                  <p class="text-[9px] text-slate-400 mt-1 max-w-[140px] leading-tight">Đang tự động căn chỉnh mã QR...</p>
-                  
-                  <!-- Green scanning frame corner markers -->
-                  <div class="absolute top-6 left-6 h-3 w-3 border-t-2 border-l-2 border-green-400"></div>
-                  <div class="absolute top-6 right-6 h-3 w-3 border-t-2 border-r-2 border-green-400"></div>
-                  <div class="absolute bottom-6 left-6 h-3 w-3 border-b-2 border-l-2 border-green-400"></div>
-                  <div class="absolute bottom-6 right-6 h-3 w-3 border-b-2 border-r-2 border-green-400"></div>
+              <!-- Price Breakdown -->
+              <div class="space-y-2 text-xs font-semibold text-slate-600">
+                <div class="flex justify-between">
+                  <span>Giá cước gói</span>
+                  <span>{{ formatPrice(activePlan.giaTien) }}</span>
                 </div>
-
-                <!-- Phone Bottom Bar: Action Trigger -->
-                <div class="mt-3.5 space-y-2">
-                  <button 
-                    @click="confirmPayment"
-                    class="w-full bg-green-500 hover:bg-green-600 text-slate-950 font-black py-2.5 rounded-xl text-xs transition-all shadow-md active:scale-95 flex items-center justify-center space-x-1.5"
-                  >
-                    <CheckCircle class="h-4 w-4" />
-                    <span>Quét &amp; Chuyển khoản</span>
-                  </button>
-                  <span class="text-[8px] text-slate-500 block font-semibold">Bấm nút trên để giả lập thanh toán nhanh</span>
+                <div class="flex justify-between">
+                  <span>Thuế VAT (10%)</span>
+                  <span>{{ formatPrice(activePlan.giaTien * 0.1) }}</span>
                 </div>
-
-                <!-- iPhone-style Home Indicator Bar -->
-                <div class="w-20 h-1 bg-white/45 rounded-full mx-auto mt-2 flex-shrink-0"></div>
+                <hr class="border-slate-200" />
+                <div class="flex justify-between text-slate-900 text-sm font-black pt-1">
+                  <span>Tổng tiền thanh toán</span>
+                  <span class="text-primary">{{ formatPrice(activePlan.giaTien * 1.1) }}</span>
+                </div>
               </div>
             </div>
+
+            <!-- Auto-renew status Alert -->
+            <div class="p-4 rounded-2xl border text-xs font-semibold" :class="paymentMethod === 'THE_TIN_DUNG' ? 'bg-indigo-50 border-indigo-100 text-indigo-950' : 'bg-amber-50 border-amber-100 text-amber-950'">
+              <div class="flex space-x-2">
+                <Info class="h-4 w-4 flex-shrink-0 mt-0.5" />
+                <div class="space-y-1">
+                  <span class="font-bold">{{ paymentMethod === 'THE_TIN_DUNG' ? 'Chính sách tự động gia hạn' : 'Chính sách từng kỳ' }}</span>
+                  <p class="leading-relaxed font-normal text-[11px] text-slate-600" v-if="paymentMethod === 'THE_TIN_DUNG'">
+                    Bằng việc thanh toán qua Thẻ tín dụng, bạn đồng ý cho hệ thống tự động gia hạn gói với số tiền {{ formatPrice(activePlan.giaTien * 1.1) }} mỗi {{ activePlan.soNgayHieuLuc }} ngày. Bạn có thể tắt tự động gia hạn bất kỳ lúc nào trong Hồ sơ cá nhân.
+                  </p>
+                  <p class="leading-relaxed font-normal text-[11px] text-slate-600" v-else>
+                    Gói dịch vụ này sẽ tự động hết hạn / hủy sau {{ activePlan.soNgayHieuLuc }} ngày nếu bạn không thực hiện quét thanh toán tiếp. Không tự động trừ tiền.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Checkout Button -->
+            <button 
+              @click="submitCheckout"
+              :disabled="subscribing || (paymentMethod === 'THE_TIN_DUNG' && !isCardFormValid)"
+              class="w-full bg-primary hover:bg-primary-dark text-white font-extrabold py-3.5 rounded-2xl text-xs md:text-sm transition-all shadow-md active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+            >
+              <span v-if="subscribing">Đang xử lý kích hoạt...</span>
+              <span v-else>Xác nhận và kích hoạt gói</span>
+            </button>
           </div>
-        </div>
-
-        <hr class="border-slate-100" />
-
-        <!-- Web Manual Activation trigger -->
-        <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
-          <p class="text-xs text-slate-400 text-center sm:text-left max-w-md font-medium">
-            {{ membershipSettings.qrInstruction || 'Sau khi bạn quét bằng điện thoại thật của mình hoặc nhấn nút chuyển khoản giả lập trên điện thoại ảo, vui lòng click nút bên cạnh để kích hoạt gói.' }}
-          </p>
-          <button 
-            @click="confirmPayment"
-            :disabled="subscribing"
-            class="bg-primary hover:bg-primary-dark text-white font-semibold py-2.5 px-6 rounded-xl text-sm transition-all shadow-md disabled:opacity-50 flex items-center space-x-2 flex-shrink-0"
-          >
-            <span v-if="subscribing">Đang kích hoạt...</span>
-            <span v-else>Xác nhận đã chuyển khoản thành công</span>
-          </button>
         </div>
       </div>
     </div>
@@ -381,17 +663,17 @@
       <!-- Hiển thị nếu đang trong một nhóm do người khác chia sẻ -->
       <div 
         v-if="activeSub && activeSub.docGia !== authStore.user?._id" 
-        class="bg-blue-50 border border-blue-100 text-blue-800 text-xs font-semibold p-4 rounded-2xl"
+        class="bg-primary-light/50 border border-primary-light text-primary-dark text-xs font-semibold p-4 rounded-2xl"
       >
-        🎉 Bạn đang dùng chung gói Vàng (Family) chia sẻ từ chủ nhóm: <span class="font-bold text-primary">{{ activeSub.docGia }}</span>
+        🎉 Bạn đang dùng chung gói {{ activeSub.goiDocGia?.tenGoi || 'VIP' }} chia sẻ từ chủ nhóm: <span class="font-bold text-primary">{{ activeSub.docGia }}</span>
       </div>
 
       <!-- Hiển thị nếu là chủ nhóm gói Vàng/Family -->
       <div 
-        v-else-if="activeSub && (activeSub.goiDocGia?.tenGoi?.toLowerCase().includes('gold') || activeSub.goiDocGia?.tenGoi?.toLowerCase().includes('vàng') || activeSub.goiDocGia?.tenGoi?.toLowerCase().includes('family'))" 
+        v-else-if="activeSub && activeSub.goiDocGia?.chiaSeNhomGiaDinh" 
         class="bg-green-50 border border-green-100 text-green-800 text-xs font-semibold p-4 rounded-2xl space-y-1"
       >
-        <p class="font-bold">👑 Bạn là chủ nhóm Gói Vàng (Family)</p>
+        <p class="font-bold">👑 Bạn là chủ nhóm Gói {{ activeSub.goiDocGia?.tenGoi || 'VIP' }}</p>
         <p class="text-[10px] text-green-650">
           Mã của bạn: <span class="font-bold text-slate-900">{{ authStore.user?._id }}</span> (Gửi mã này cho bạn bè)
         </p>
@@ -431,7 +713,7 @@ import { ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/auth';
 import api from '../services/api';
-import { CheckCircle, X, Wifi, Battery, QrCode, Check, Info, Users, ChevronDown, ChevronUp } from '@lucide/vue';
+import { CheckCircle, X, Wifi, Battery, QrCode, Check, Info, Users, ChevronDown, ChevronUp, CreditCard, Award } from '@lucide/vue';
 import { useToastStore } from '../stores/toast';
 import ConfirmModal from '../components/ConfirmModal.vue';
 
@@ -446,24 +728,218 @@ const activeSub = ref(null);
 const activePlan = ref(null);
 const subscribing = ref(false);
 
+// Checkout & Credit Card state
+const paymentMethod = ref('THE_TIN_DUNG'); // 'THE_TIN_DUNG' or 'VIETQR'
+const billingName = ref(authStore.user ? `${authStore.user.hoLot} ${authStore.user.ten}` : '');
+const billingCountry = ref('VN');
+const cardNumber = ref('');
+const cardName = ref(authStore.user ? `${authStore.user.hoLot} ${authStore.user.ten}`.toUpperCase() : '');
+const cardExpiry = ref('');
+const cardCvc = ref('');
+
+const formattedCardNumber = computed(() => {
+  if (!cardNumber.value) return '';
+  return cardNumber.value;
+});
+
+const isCardFormValid = computed(() => {
+  const cleanNum = cardNumber.value.replace(/\s+/g, '');
+  return cleanNum.length === 16 && 
+         cardName.value.trim().length > 3 && 
+         cardExpiry.value.length === 5 && 
+         cardCvc.value.length === 3;
+});
+
+const formatCardInput = (e) => {
+  let val = e.target.value.replace(/\D/g, '');
+  if (val.length > 16) val = val.substring(0, 16);
+  let formatted = '';
+  for (let i = 0; i < val.length; i++) {
+    if (i > 0 && i % 4 === 0) {
+      formatted += ' ';
+    }
+    formatted += val[i];
+  }
+  cardNumber.value = formatted;
+};
+
+const formatExpiryInput = (e) => {
+  let val = e.target.value.replace(/\D/g, '');
+  if (val.length > 4) val = val.substring(0, 4);
+  if (val.length >= 2) {
+    cardExpiry.value = val.substring(0, 2) + '/' + val.substring(2);
+  } else {
+    cardExpiry.value = val;
+  }
+};
+
+const formatCvcInput = (e) => {
+  cardCvc.value = e.target.value.replace(/\D/g, '');
+};
+
+const closeCheckout = () => {
+  activePlan.value = null;
+  cardNumber.value = '';
+  cardExpiry.value = '';
+  cardCvc.value = '';
+};
+
+const activeLoaiGoi = ref('INDIVIDUAL'); // 'INDIVIDUAL' or 'TEAM'
+
 const sortedPlans = computed(() => {
   return [...plans.value].sort((a, b) => a.giaTien - b.giaTien);
 });
 
+const filteredPlans = computed(() => {
+  return sortedPlans.value.filter(plan => plan.loaiGoi === activeLoaiGoi.value);
+});
+
+const isHighlightedPlan = (plan) => {
+  return plan && plan.khuyenDung === true;
+};
 const formatPrice = (val) => {
   if (val === 0) return 'Miễn phí';
   return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(val || 0);
+};
+
+const getPlanDescription = (plan) => {
+  if (!plan) return '';
+  if (plan.giaTien === 0) return 'Gói mặc định áp dụng sẵn cho tất cả độc giả mới đăng ký.';
+  const name = plan.tenGoi.toLowerCase();
+  if (name.includes('pro')) return 'Gói cao cấp dành cho sinh viên với nhu cầu mượn sách nhiều và đọc Ebook/Audiobook.';
+  if (name.includes('vip')) return 'Gói đặc quyền dành cho người đọc thường xuyên, miễn đặt cọc và hỗ trợ giao sách tận nhà.';
+  if (name.includes('family') || name.includes('gia đình')) return 'Gói dùng chung dành cho gia đình 3-4 người (tối đa 4 tài khoản), tiết kiệm chi phí tối đa.';
+  if (name.includes('enterprise') || name.includes('doanh nghiệp')) return 'Gói quy mô lớn dành cho trường học, doanh nghiệp, thư viện đối tác (tối đa 30 tài khoản).';
+  return 'Gói Premium nâng cấp thời hạn và giới hạn mượn.';
+};
+
+const getPlanPerks = (plan) => {
+  if (!plan) return [];
+  const name = (plan.tenGoi || '').toLowerCase().normalize('NFC');
+  if (name.includes('enterprise')) {
+    return [
+      `Mượn cùng lúc: ${plan.soSachToiDa} cuốn`,
+      `Thời hạn giữ sách: ${plan.soNgayMuonToiDa} ngày`,
+      'Phí mượn sách giấy: Miễn phí',
+      'Đặt cọc: Miễn đặt cọc',
+      'Gia hạn online: Không giới hạn',
+      'Chia sẻ thành viên: 30 tài khoản',
+      'Đọc Ebook & Audiobook: Không giới hạn',
+      'Hỗ trợ AI tìm sách: Premium'
+    ];
+  }
+  if (name.includes('family')) {
+    return [
+      `Mượn cùng lúc: ${plan.soSachToiDa} cuốn`,
+      `Thời hạn giữ sách: ${plan.soNgayMuonToiDa} ngày`,
+      'Phí mượn sách giấy: Miễn phí',
+      'Đặt cọc: Miễn đặt cọc',
+      'Gia hạn online: 2 lần',
+      'Chia sẻ thành viên: 4 tài khoản',
+      'Đọc Ebook & Audiobook: Không giới hạn',
+      'Giao nhận tận nhà: 4 lần/tháng'
+    ];
+  }
+  if (name.includes('vip') || name.includes('max')) {
+    return [
+      `Mượn cùng lúc: ${plan.soSachToiDa} cuốn`,
+      `Thời hạn giữ sách: ${plan.soNgayMuonToiDa} ngày`,
+      'Phí mượn sách giấy: Miễn phí',
+      'Đặt cọc: Miễn đặt cọc',
+      'Gia hạn online: 2 lần',
+      'Đọc Ebook & Audiobook: Không giới hạn',
+      'Giao nhận tận nhà: 2 lần/tháng',
+      'Quầy nhận sách ưu tiên: Có'
+    ];
+  }
+  if (name.includes('pro')) {
+    return [
+      `Mượn cùng lúc: ${plan.soSachToiDa} cuốn`,
+      `Thời hạn giữ sách: ${plan.soNgayMuonToiDa} ngày`,
+      'Phí mượn: 3.000 ₫/quyển (Giáo trình miễn phí)',
+      'Đặt cọc: 50.000 ₫',
+      'Gia hạn online: 1 lần',
+      'Đọc Ebook: 300 đầu sách',
+      'Đọc Audiobook: 50 cuốn',
+      'Hỗ trợ AI tìm sách: Nâng cao'
+    ];
+  }
+  // Tiêu chuẩn
+  return [
+    `Mượn cùng lúc: ${plan.soSachToiDa} cuốn`,
+    `Thời hạn giữ sách: ${plan.soNgayMuonToiDa} ngày`,
+    'Phí mượn: 5.000 ₫/quyển (Giáo trình miễn phí)',
+    'Đặt cọc: 100.000 ₫',
+    'Gia hạn online: Không hỗ trợ',
+    'Đọc Ebook: 20 đầu sách miễn phí',
+    'Đọc Audiobook: Không hỗ trợ',
+    'Hỗ trợ AI tìm sách: Cơ bản'
+  ];
+};
+
+const getPlanGiaHanOnline = (plan) => {
+  const name = (plan.tenGoi || '').toLowerCase().normalize('NFC');
+  if (name.includes('enterprise')) return 'Không giới hạn';
+  if (name.includes('family') || name.includes('vip') || name.includes('max')) return '2 lần/lượt';
+  if (name.includes('pro')) return '1 lần/lượt';
+  return 'Không hỗ trợ';
+};
+
+const getPlanChiaSeNhom = (plan) => {
+  const name = (plan.tenGoi || '').toLowerCase().normalize('NFC');
+  if (name.includes('enterprise')) return 'Tối đa 30 tài khoản';
+  if (name.includes('family')) return 'Tối đa 4 tài khoản';
+  return 'Không hỗ trợ';
+};
+
+const getPlanEbook = (plan) => {
+  const name = (plan.tenGoi || '').toLowerCase().normalize('NFC');
+  if (name.includes('enterprise') || name.includes('family') || name.includes('vip') || name.includes('max')) {
+    return 'Không giới hạn';
+  }
+  if (name.includes('pro')) return '300+ đầu sách';
+  return '20 đầu sách miễn phí';
+};
+
+const getPlanAudiobook = (plan) => {
+  const name = (plan.tenGoi || '').toLowerCase().normalize('NFC');
+  if (name.includes('enterprise') || name.includes('family') || name.includes('vip') || name.includes('max')) {
+    return 'Không giới hạn';
+  }
+  if (name.includes('pro')) return '50+ cuốn';
+  return 'Không hỗ trợ';
+};
+
+const getPlanGiaoSach = (plan) => {
+  const name = (plan.tenGoi || '').toLowerCase().normalize('NFC');
+  if (name.includes('enterprise')) return 'Không giới hạn';
+  if (name.includes('family')) return '4 lần/tháng';
+  if (name.includes('vip') || name.includes('max')) return '2 lần/tháng';
+  return 'Không hỗ trợ';
+};
+
+const getPlanPhiMuon = (plan) => {
+  const name = (plan.tenGoi || '').toLowerCase().normalize('NFC');
+  if (name.includes('tiêu chuẩn')) return '5.000 ₫/cuốn';
+  if (name.includes('pro')) return '3.000 ₫/cuốn';
+  return 'Miễn phí';
+};
+
+const getPlanPhatTre = (plan) => {
+  const name = (plan.tenGoi || '').toLowerCase().normalize('NFC');
+  if (name.includes('enterprise')) return '1.000 ₫/ngày';
+  if (name.includes('family') || name.includes('vip') || name.includes('max')) return '2.000 ₫/ngày';
+  if (name.includes('pro')) return '3.000 ₫/ngày';
+  return '5.000 ₫/ngày';
 };
 
 const isPlanActive = (plan) => {
   if (!authStore.isAuthenticated) return false;
   
   if (plan.giaTien === 0) {
-    // Gói tiêu chuẩn (Miễn phí) hoạt động nếu người dùng không đăng ký bất kỳ gói VIP trả phí nào
     return !activeSub.value;
   }
   
-  // Gói trả phí hoạt động nếu nó khớp với ID trong activeSub
   return activeSub.value && activeSub.value.goiDocGia?._id === plan._id;
 };
 
@@ -477,6 +953,9 @@ const subscribe = (plan) => {
     return;
   }
   activePlan.value = plan;
+  paymentMethod.value = 'THE_TIN_DUNG';
+  billingName.value = authStore.user ? `${authStore.user.hoLot} ${authStore.user.ten}` : '';
+  cardName.value = authStore.user ? `${authStore.user.hoLot} ${authStore.user.ten}`.toUpperCase() : '';
 };
 
 // VietQR API
@@ -488,6 +967,51 @@ const getVietQrUrl = () => {
   const readerId = authStore.user?.maDocGia || 'DG00001';
   const addInfo = encodeURIComponent(`DK ${activePlan.value.maGoi} ${readerId}`);
   return `https://img.vietqr.io/image/${bankId}-${accountNo}-compact2.png?amount=${amount}&addInfo=${addInfo}`;
+};
+
+const submitCheckout = async () => {
+  if (paymentMethod.value === 'VIETQR') {
+    toast.show('Vui lòng quét mã QR hoặc bấm nút "Mô phỏng thanh toán QR" trên điện thoại để hoàn tất!', 'warning');
+    return;
+  }
+
+  if (!isCardFormValid.value) return;
+
+  const ok = await confirmModal.value.ask({
+    title: 'Xác nhận thanh toán thẻ',
+    message: `Hệ thống sẽ tiến hành mô phỏng thanh toán số tiền ${formatPrice(activePlan.value.giaTien * 1.1)} (đã bao gồm 10% VAT) qua thẻ của bạn. Gói hội viên sẽ được tự động gia hạn. Bạn muốn tiếp tục?`,
+    confirmText: 'Xác nhận thanh toán',
+    cancelText: 'Hủy bỏ'
+  });
+  if (!ok) return;
+
+  subscribing.value = true;
+  try {
+    const res = await api.post('/memberships/subscribe', { 
+      goiId: activePlan.value._id,
+      phuongThucThanhToan: 'THE_TIN_DUNG',
+      thongTinThe: {
+        soThe: cardNumber.value.replace(/\s+/g, ''),
+        tenTrenThe: cardName.value,
+        ngayHetHan: cardExpiry.value,
+        maCVC: cardCvc.value
+      }
+    });
+    if (res.success) {
+      toast.show('Kích hoạt Gói hội viên thành công qua thẻ tín dụng! Chào mừng bạn đến với Premium.', 'success');
+      activePlan.value = null;
+      await authStore.fetchUser();
+      const activeRes = await api.get('/memberships/my-subscriptions');
+      if (activeRes.success && activeRes.data.length > 0) {
+        activeSub.value = activeRes.data.find(s => s.trangThai === 'DANG_HIEU_LUC') || activeRes.data[0];
+      }
+      router.push('/profile');
+    }
+  } catch (error) {
+    toast.show(error.message || 'Có lỗi xảy ra khi xác nhận thanh toán thẻ.', 'error');
+  } finally {
+    subscribing.value = false;
+  }
 };
 
 const confirmPayment = async () => {
@@ -503,11 +1027,13 @@ const confirmPayment = async () => {
 
   subscribing.value = true;
   try {
-    const res = await api.post('/memberships/subscribe', { goiId: activePlan.value._id });
+    const res = await api.post('/memberships/subscribe', { 
+      goiId: activePlan.value._id,
+      phuongThucThanhToan: 'VIETQR'
+    });
     if (res.success) {
       toast.show('Đăng ký gói hội viên thành công! Tài khoản của bạn đã được kích hoạt.', 'success');
       activePlan.value = null;
-      // Cập nhật lại thông tin user & sub
       await authStore.fetchUser();
       const activeRes = await api.get('/memberships/my-subscriptions');
       if (activeRes.success && activeRes.data.length > 0) {
@@ -561,7 +1087,7 @@ const joinFamily = async () => {
 
 const membershipSettings = ref({
   heroTitle: "Gói Hội Viên Độc Giả CTU eLibrary",
-  heroSubtitle: "Tài khoản độc giả mặc định được cung cấp Gói Tiêu Chuẩn hoàn toàn miễn phí. Nâng cấp lên gói hội viên Premium để mượn nhiều sách hơn, thời gian lâu hơn và hưởng đặc quyền miễn ký quỹ cọc sách.",
+  heroSubtitle: "Tài khoản độc giả mặc định được cung cấp Gói Tiêu Chuẩn hoàn toàn miễn phí. Nâng cấp lên gói hội viên Premium để mượn nhiều sách hơn, thời gian lâu hơn.",
   qrTitle: "Quét Mã QR Thanh Toán",
   qrInstruction: "Sau khi bạn quét bằng điện thoại thật của mình hoặc nhấn nút chuyển khoản giả lập trên điện thoại ảo, vui lòng click nút bên cạnh để kích hoạt gói."
 });

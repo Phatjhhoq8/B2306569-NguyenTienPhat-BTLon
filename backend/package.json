@@ -9,7 +9,8 @@
     "test": "node --test --test-concurrency=1 src/tests/*.test.js",
     "seed": "node src/scripts/seedFromScrapedBooks.js",
     "verify": "node src/scripts/verifyBackend.js",
-    "mark-overdue": "node src/scripts/markOverdueReceipts.js"
+    "mark-overdue": "node src/scripts/markOverdueReceipts.js",
+    "seed:dump": "node src/scripts/dumpAllToSeed.js"
   },
   "dependencies": {
     "cors": "^2.8.5",

@@ -32,12 +32,26 @@
                 </p>
                 
                 <!-- Ratings -->
-                <div class="flex items-center space-x-3 text-xs font-bold">
+                <div class="flex items-center space-x-3 text-xs font-bold flex-wrap gap-y-2">
                   <span class="flex items-center px-2.5 py-1 rounded-lg" :class="book.rating > 0 ? 'text-amber-500 bg-amber-50' : 'text-slate-400 bg-slate-50'">
                     <Star class="h-3.5 w-3.5 mr-1" :class="book.rating > 0 ? 'fill-amber-500 text-amber-550' : 'text-slate-350'" /> {{ book.rating > 0 ? book.rating.toFixed(1) : 'Chưa có đánh giá' }}
                   </span>
                   <span class="text-slate-300">|</span>
                   <span class="text-slate-500">{{ book.soLuotMuon || 0 }} lượt mượn</span>
+                  <span class="text-slate-300">|</span>
+                  
+                  <!-- Nút thích sách -->
+                  <button 
+                    @click="handleLikeToggle" 
+                    class="flex items-center space-x-1.5 px-3 py-1 rounded-full text-xs font-bold transition-all border shadow-sm"
+                    :class="isLiked ? 'bg-red-50 text-red-600 border-red-200 hover:bg-red-100' : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'"
+                  >
+                    <Heart 
+                      class="h-3.5 w-3.5" 
+                      :class="isLiked ? 'fill-red-500 text-red-500 animate-pulse' : 'text-slate-500'" 
+                    />
+                    <span>{{ likesCount }} Thích</span>
+                  </button>
                 </div>
               </div>
 
@@ -63,13 +77,13 @@
               </div>
 
               <div class="bg-slate-50 p-2.5 rounded-2xl border border-slate-150 flex flex-col items-center justify-center space-y-1 shadow-sm">
-                <Globe class="h-5 w-5 text-slate-500" />
+                <Languages class="h-5 w-5 text-slate-500" />
                 <span class="text-[8px] text-slate-400 font-bold uppercase tracking-wider">Ngôn ngữ</span>
                 <span class="text-xs font-extrabold text-slate-800">Tiếng Việt</span>
               </div>
 
               <div class="bg-slate-50 p-2.5 rounded-2xl border border-slate-150 flex flex-col items-center justify-center space-y-1 shadow-sm">
-                <Layers class="h-5 w-5 text-slate-500" />
+                <Building2 class="h-5 w-5 text-slate-500" />
                 <span class="text-[8px] text-slate-400 font-bold uppercase tracking-wider">Nhà xuất bản</span>
                 <span class="text-[10px] font-extrabold text-slate-800 truncate max-w-full px-1">{{ book.nhaXuatBan?.tenNXB || 'CTU Publisher' }}</span>
               </div>
@@ -81,13 +95,13 @@
               </div>
 
               <div class="bg-slate-50 p-2.5 rounded-2xl border border-slate-150 flex flex-col items-center justify-center space-y-1 shadow-sm">
-                <Bookmark class="h-5 w-5 text-slate-500" />
+                <Ruler class="h-5 w-5 text-slate-500" />
                 <span class="text-[8px] text-slate-400 font-bold uppercase tracking-wider">Kích thước</span>
                 <span class="text-xs font-extrabold text-slate-800">14.5 x 20.5 cm</span>
               </div>
 
               <div class="bg-slate-50 p-2.5 rounded-2xl border border-slate-150 flex flex-col items-center justify-center space-y-1 shadow-sm">
-                <Bookmark class="h-5 w-5 text-slate-500" />
+                <Book class="h-5 w-5 text-slate-500" />
                 <span class="text-[8px] text-slate-400 font-bold uppercase tracking-wider">Hình thức</span>
                 <span class="text-xs font-extrabold text-slate-800">Bìa mềm</span>
               </div>
@@ -155,6 +169,18 @@
                     </div>
                   </div>
                   <p class="text-slate-650 text-xs leading-relaxed pl-9 whitespace-pre-line">{{ rv.noiDung }}</p>
+                  
+                  <!-- Nút sửa/xóa bình luận của chính mình -->
+                  <div v-if="authStore.isAuthenticated && (rv.docGia === authStore.user?._id || rv.docGia?._id === authStore.user?._id)" class="pl-9 flex items-center space-x-3 pt-1 text-[10px] font-bold">
+                    <button @click="startEditReview" class="text-primary hover:underline flex items-center space-x-0.5">
+                      <Edit class="h-3 w-3" />
+                      <span>Sửa</span>
+                    </button>
+                    <button @click="deleteReview" class="text-red-600 hover:underline flex items-center space-x-0.5">
+                      <Trash class="h-3 w-3" />
+                      <span>Xóa</span>
+                    </button>
+                  </div>
                 </div>
               </div>
               <div v-else class="h-full flex flex-col items-center justify-center text-center py-4 text-slate-400 space-y-1">
@@ -164,55 +190,70 @@
           </div>
 
           <!-- Write a Review Form -->
-          <div class="bg-slate-50 rounded-2xl border border-slate-200 p-4 space-y-3">
+          <div v-if="!hasReviewed || isEditingReview" class="bg-slate-50 rounded-2xl border border-slate-200 p-4 space-y-3">
             <h3 class="font-bold text-slate-900 text-xs flex items-center">
-              Viết đánh giá của bạn
+              {{ isEditingReview ? 'Chỉnh sửa đánh giá của bạn' : 'Viết đánh giá của bạn' }}
             </h3>
 
             <div v-if="authStore.isAuthenticated" class="space-y-3">
-              <div class="flex items-center space-x-2">
-                <span class="text-xs text-slate-500 font-bold">Chọn số sao:</span>
-                <div class="flex items-center space-x-1">
+              <!-- Chặn tài khoản Staff/Admin -->
+              <div v-if="authStore.isStaff" class="text-amber-700 bg-amber-50 border border-amber-100 p-3 rounded-xl text-xs font-bold text-center">
+                Tài khoản quản lý không có quyền đánh giá tác phẩm này.
+              </div>
+              
+              <div v-else class="space-y-3">
+                <div class="flex items-center space-x-2">
+                  <span class="text-xs text-slate-500 font-bold">Chọn số sao:</span>
+                  <div class="flex items-center space-x-1">
+                    <button 
+                      v-for="star in 5" 
+                      :key="star" 
+                      type="button"
+                      @click="userRating = star"
+                      class="text-slate-350 hover:scale-110 transition-transform focus:outline-none"
+                    >
+                      <Star 
+                        class="h-4.5 w-4.5" 
+                        :class="star <= userRating ? 'text-amber-500 fill-amber-500' : 'text-slate-300'"
+                      />
+                    </button>
+                  </div>
+                  <span class="text-xs text-slate-600 font-bold ml-2">({{ userRating }}/5 sao)</span>
+                </div>
+
+                <div class="space-y-1">
+                  <textarea 
+                    v-model="userComment" 
+                    rows="2" 
+                    placeholder="Chia sẻ cảm nhận thực tế của bạn..."
+                    class="w-full text-xs p-2.5 border border-slate-200 rounded-xl focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none transition-all placeholder-slate-400"
+                  ></textarea>
+                </div>
+
+                <div v-if="reviewError" class="text-red-650 text-[10px] font-bold bg-red-50 border border-red-100 px-3 py-1.5 rounded-lg">
+                  {{ reviewError }}
+                </div>
+                <div v-if="reviewSuccess" class="text-green-655 text-[10px] font-bold bg-green-50 border border-green-100 px-3 py-1.5 rounded-lg">
+                  {{ reviewSuccess }}
+                </div>
+
+                <div class="flex justify-end space-x-2">
                   <button 
-                    v-for="star in 5" 
-                    :key="star" 
+                    v-if="isEditingReview"
                     type="button"
-                    @click="userRating = star"
-                    class="text-slate-350 hover:scale-110 transition-transform focus:outline-none"
+                    @click="cancelEditReview"
+                    class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-bold py-1.5 px-4 rounded-xl text-xs transition-colors"
                   >
-                    <Star 
-                      class="h-4.5 w-4.5" 
-                      :class="star <= userRating ? 'text-amber-500 fill-amber-500' : 'text-slate-300'"
-                    />
+                    <span>Hủy</span>
+                  </button>
+                  <button 
+                    @click="submitReview"
+                    :disabled="submittingReview"
+                    class="bg-primary hover:bg-primary-dark text-white font-bold py-1.5 px-4 rounded-xl text-xs transition-colors shadow-sm disabled:opacity-50"
+                  >
+                    <span>{{ submittingReview ? 'Đang gửi...' : (isEditingReview ? 'Cập nhật' : 'Gửi đánh giá') }}</span>
                   </button>
                 </div>
-                <span class="text-xs text-slate-600 font-bold ml-2">({{ userRating }}/5 sao)</span>
-              </div>
-
-              <div class="space-y-1">
-                <textarea 
-                  v-model="userComment" 
-                  rows="2" 
-                  placeholder="Chia sẻ cảm nhận thực tế của bạn..."
-                  class="w-full text-xs p-2.5 border border-slate-200 rounded-xl focus:border-primary focus:ring-1 focus:ring-primary focus:outline-none transition-all placeholder-slate-400"
-                ></textarea>
-              </div>
-
-              <div v-if="reviewError" class="text-red-650 text-[10px] font-bold bg-red-50 border border-red-100 px-3 py-1.5 rounded-lg">
-                {{ reviewError }}
-              </div>
-              <div v-if="reviewSuccess" class="text-green-655 text-[10px] font-bold bg-green-50 border border-green-100 px-3 py-1.5 rounded-lg">
-                {{ reviewSuccess }}
-              </div>
-
-              <div class="flex justify-end">
-                <button 
-                  @click="submitReview"
-                  :disabled="submittingReview"
-                  class="bg-primary hover:bg-primary-dark text-white font-bold py-1.5 px-4 rounded-xl text-xs transition-colors shadow-sm disabled:opacity-50"
-                >
-                  <span>{{ submittingReview ? 'Đang gửi...' : 'Gửi đánh giá' }}</span>
-                </button>
               </div>
             </div>
             <div v-else class="text-center py-3 bg-white border border-dashed border-slate-200 rounded-xl">
@@ -228,14 +269,76 @@
       <div class="lg:col-span-4">
         <div class="sticky top-6 bg-white rounded-3xl border border-slate-200 shadow-sm p-6 space-y-6">
           <!-- Book Price Header -->
-          <div class="space-y-1">
-            <span class="text-xs text-slate-400 font-bold uppercase tracking-wider block">Giá gốc / Giá thuê</span>
-            <span class="text-2xl font-black text-slate-900 block">
-              {{ formatCurrency(book.giaBia) }} 
-              <span class="text-slate-300 font-normal">/</span> 
-              <span class="text-primary">{{ formatCurrency(book.giaBia * 0.02) }}</span>
-            </span>
-            <span class="text-[10px] text-slate-400 block font-medium leading-relaxed">* Được miễn phí cọc nếu gói thẻ của bạn có hỗ trợ miễn cọc.</span>
+          <div class="space-y-2">
+            <span class="text-xs text-slate-400 font-bold uppercase tracking-wider block">Giá gốc / Gói của bạn</span>
+            <div class="flex items-baseline space-x-1.5 flex-wrap">
+              <span class="text-2xl font-black text-slate-900">{{ formatCurrency(book.giaBia) }}</span>
+              <span class="text-slate-300 font-normal">|</span>
+              <span class="text-xs text-slate-500 font-bold">
+                Gói: <span class="text-primary font-black uppercase">{{ authStore.user?.subscriptionPlan?.tenGoi || 'Tiêu chuẩn' }}</span>
+              </span>
+            </div>
+            
+            <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-150 text-[11px] font-bold text-slate-650 space-y-1">
+              <div class="flex justify-between">
+                <span>Phí mượn sách giấy:</span>
+                <span class="text-emerald-600 font-extrabold">{{ getBookBorrowFee(authStore.user?.subscriptionPlan) > 0 ? formatCurrency(getBookBorrowFee(authStore.user?.subscriptionPlan)) : 'Miễn phí' }}</span>
+              </div>
+              <div class="flex justify-between">
+                <span>Phí phạt trễ hạn:</span>
+                <span class="text-red-655 font-extrabold">{{ formatCurrency(getBookOverdueFee(authStore.user?.subscriptionPlan)) }}/ngày</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Bảng giá mượn & phạt trễ hạn chi tiết theo gói -->
+          <div class="space-y-2 pt-2 border-t border-slate-100">
+            <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Bảng giá mượn theo gói</span>
+            <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200 space-y-2">
+              <table class="w-full text-left border-collapse text-[10px] font-semibold text-slate-600">
+                <thead>
+                  <tr class="border-b border-slate-200 text-slate-400 uppercase text-[9px]">
+                    <th class="pb-1 w-[35%]">Gói hội viên</th>
+                    <th class="pb-1 text-center">Phí mượn</th>
+                    <th class="pb-1 text-center">Đặt cọc</th>
+                    <th class="pb-1 text-right">Phạt trễ/ngày</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-150 text-slate-750">
+                  <tr>
+                    <td class="py-1 font-bold text-slate-800">Tiêu chuẩn</td>
+                    <td class="py-1 text-center">{{ isBookGiaoTrinh ? 'Miễn phí' : '5.000 ₫' }}</td>
+                    <td class="py-1 text-center">100k</td>
+                    <td class="py-1 text-right text-red-600 font-bold">5k</td>
+                  </tr>
+                  <tr>
+                    <td class="py-1 font-bold text-slate-800">Pro</td>
+                    <td class="py-1 text-center">{{ isBookGiaoTrinh ? 'Miễn phí' : '3.000 ₫' }}</td>
+                    <td class="py-1 text-center">50k</td>
+                    <td class="py-1 text-right text-red-600 font-bold">3k</td>
+                  </tr>
+                  <tr>
+                    <td class="py-1 font-bold text-slate-800">VIP</td>
+                    <td class="py-1 text-center text-emerald-600 font-bold">Miễn phí</td>
+                    <td class="py-1 text-center text-emerald-600 font-bold">Miễn</td>
+                    <td class="py-1 text-right text-red-600 font-bold">2k</td>
+                  </tr>
+                  <tr>
+                    <td class="py-1 font-bold text-slate-800">Family</td>
+                    <td class="py-1 text-center text-emerald-600 font-bold">Miễn phí</td>
+                    <td class="py-1 text-center text-emerald-600 font-bold">Miễn</td>
+                    <td class="py-1 text-right text-red-600 font-bold">2k</td>
+                  </tr>
+                  <tr>
+                    <td class="py-1 font-bold text-slate-800">Enterprise</td>
+                    <td class="py-1 text-center text-emerald-600 font-bold">Miễn phí</td>
+                    <td class="py-1 text-center text-emerald-600 font-bold">Miễn</td>
+                    <td class="py-1 text-right text-red-600 font-bold">1k</td>
+                  </tr>
+                </tbody>
+              </table>
+              <span v-if="isBookGiaoTrinh" class="text-[9px] text-emerald-600 font-bold block mt-1 leading-relaxed">* Đây là Giáo trình/Giáo khoa học thuật, được miễn phí dịch vụ mượn sách giấy đối với mọi gói hội viên.</span>
+            </div>
           </div>
           
           <hr class="border-slate-100" />
@@ -324,6 +427,67 @@
 
     </div>
 
+    <!-- Related Books Section (Sách liên quan cùng tác giả) -->
+    <div v-if="book && relatedBooks.length > 0" class="mt-10 bg-white rounded-3xl border border-slate-200 shadow-sm p-6 md:p-8 transition-all duration-300" :class="isRelatedCollapsed ? 'space-y-0' : 'space-y-6'">
+      <div class="flex items-center justify-between transition-all duration-300" :class="isRelatedCollapsed ? '' : 'border-b border-slate-100 pb-4'">
+        <h2 class="font-sans text-base font-extrabold text-slate-900 flex items-center">
+          <BookOpen class="h-4.5 w-4.5 mr-2 text-primary" /> Sách liên quan cùng tác giả
+        </h2>
+        <button 
+          @click="isRelatedCollapsed = !isRelatedCollapsed" 
+          class="text-xs font-bold text-primary hover:underline flex items-center space-x-1"
+        >
+          <span>{{ isRelatedCollapsed ? 'Mở rộng' : 'Thu gọn' }}</span>
+        </button>
+      </div>
+
+      <div v-show="!isRelatedCollapsed" class="relative group">
+        <!-- Nút cuộn trái -->
+        <button 
+          @click="scrollRelated('prev')"
+          class="absolute -left-4 top-1/2 -translate-y-1/2 z-10 bg-white hover:bg-slate-50 text-slate-700 hover:text-primary h-9 w-9 rounded-full border border-slate-200 shadow-md flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-primary/20"
+        >
+          <ChevronLeft class="h-5 w-5" />
+        </button>
+
+        <!-- Container cuộn ngang -->
+        <div ref="scrollContainer" class="flex overflow-x-auto gap-4 pb-2 snap-x custom-horizontal-scroll scroll-smooth">
+          <div 
+            v-for="rb in relatedBooks" 
+            :key="rb._id"
+            @click="navigateToBook(rb._id)"
+            class="w-40 sm:w-44 flex-shrink-0 snap-start bg-slate-50 hover:bg-white rounded-2xl border border-slate-150 p-3 hover:border-primary hover:shadow-md cursor-pointer transition-all duration-300 space-y-3"
+          >
+            <!-- Cover image -->
+            <div class="bg-slate-200 rounded-xl overflow-hidden pt-[135%] relative">
+              <img 
+                :src="getImageUrl(rb.hinhAnh)" 
+                :alt="rb.tenSach" 
+                class="absolute inset-0 w-full h-full object-cover"
+              />
+            </div>
+            <!-- Text info -->
+            <div class="space-y-1">
+              <h4 class="font-bold text-xs text-slate-800 line-clamp-2 h-8 leading-snug">{{ rb.tenSach }}</h4>
+              <p class="text-[9px] text-slate-400 font-bold truncate">{{ rb.tacGia?.map(t => t.tenTacGia).join(', ') || 'Tác giả' }}</p>
+              <div class="flex items-center justify-between pt-1">
+                <span class="text-[10px] font-extrabold text-primary">Miễn phí</span>
+                <span class="text-[9px] text-slate-400 font-bold">{{ formatCurrency(rb.giaBia) }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Nút cuộn phải -->
+        <button 
+          @click="scrollRelated('next')"
+          class="absolute -right-4 top-1/2 -translate-y-1/2 z-10 bg-white hover:bg-slate-50 text-slate-700 hover:text-primary h-9 w-9 rounded-full border border-slate-200 shadow-md flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-primary/20"
+        >
+          <ChevronRight class="h-5 w-5" />
+        </button>
+      </div>
+    </div>
+
     <div v-else-if="loading" class="text-center py-20 text-slate-400 font-medium">Đang tải chi tiết sách...</div>
     <div v-else class="text-center py-20 text-slate-400 font-medium bg-white rounded-3xl border border-slate-200">
       Đầu sách không tồn tại hoặc đã bị xóa.
@@ -362,6 +526,7 @@
         </div>
       </div>
     </div>
+    <ConfirmModal ref="confirmModal" />
   </div>
 </template>
 
@@ -371,14 +536,17 @@ import { useRoute, useRouter } from 'vue-router';
 import { useCartStore } from '../stores/cart';
 import { useAuthStore } from '../stores/auth';
 import api from '../services/api';
-import { Star, MapPin, ShoppingBag, Check, BookOpen, X, Lock, Layers, Globe, Calendar, Bookmark } from '@lucide/vue';
+import { Star, MapPin, ShoppingBag, Check, BookOpen, X, Lock, Layers, Globe, Calendar, Bookmark, Edit, Trash, ChevronLeft, ChevronRight, Heart, Languages, Building2, Ruler, Book } from '@lucide/vue';
 import { useToastStore } from '../stores/toast';
+import ConfirmModal from '../components/ConfirmModal.vue';
 
 const route = useRoute();
 const router = useRouter();
 const cartStore = useCartStore();
 const authStore = useAuthStore();
 const toast = useToastStore();
+
+const confirmModal = ref(null);
 
 const book = ref(null);
 const loading = ref(true);
@@ -390,6 +558,93 @@ const userComment = ref('');
 const submittingReview = ref(false);
 const reviewError = ref('');
 const reviewSuccess = ref('');
+const isEditingReview = ref(false);
+
+const isLiked = computed(() => {
+  if (!authStore.isAuthenticated || !authStore.user?._id || !book.value?.yeuThich) return false;
+  return book.value.yeuThich.includes(authStore.user._id);
+});
+
+const likesCount = computed(() => {
+  return book.value?.yeuThich?.length || 0;
+});
+
+const handleLikeToggle = async () => {
+  if (!authStore.isAuthenticated) {
+    showAuthModal.value = true;
+    return;
+  }
+  if (authStore.isStaff) {
+    toast.show('Tài khoản quản lý không có quyền thích sách.', 'warning');
+    return;
+  }
+  try {
+    const res = await api.post(`/books/${book.value._id}/like-toggle`);
+    if (res.success) {
+      book.value.yeuThich = res.data.yeuThich;
+      if (res.data.isLiked) {
+        toast.show('Đã thích sách thành công!', 'success');
+      } else {
+        toast.show('Đã bỏ thích sách thành công!', 'success');
+      }
+    } else {
+      toast.show(res.message || 'Lỗi thao tác thích sách.', 'error');
+    }
+  } catch (err) {
+    console.error('Like toggle error:', err);
+    toast.show(err.response?.data?.message || 'Không thể thực hiện thích sách lúc này.', 'error');
+  }
+};
+
+const hasReviewed = computed(() => {
+  if (!authStore.isAuthenticated || !authStore.user?._id || !book.value?.binhLuan) return false;
+  return book.value.binhLuan.some(rv => (rv.docGia === authStore.user._id || rv.docGia?._id === authStore.user._id));
+});
+
+const myReview = computed(() => {
+  if (!authStore.isAuthenticated || !authStore.user?._id || !book.value?.binhLuan) return null;
+  return book.value.binhLuan.find(rv => (rv.docGia === authStore.user._id || rv.docGia?._id === authStore.user._id));
+});
+
+const startEditReview = () => {
+  if (myReview.value) {
+    userRating.value = myReview.value.soSao;
+    userComment.value = myReview.value.noiDung;
+    isEditingReview.value = true;
+  }
+};
+
+const cancelEditReview = () => {
+  isEditingReview.value = false;
+  userRating.value = 5;
+  userComment.value = '';
+  reviewError.value = '';
+  reviewSuccess.value = '';
+};
+
+const deleteReview = async () => {
+  const ok = await confirmModal.value.ask({ message: 'Bạn có chắc chắn muốn xóa đánh giá này không?' });
+  if (!ok) return;
+  reviewError.value = '';
+  reviewSuccess.value = '';
+  try {
+    const res = await api.delete(`/books/${book.value._id}/reviews`);
+    if (res.success) {
+      toast.show('Đã xóa đánh giá thành công!', 'success');
+      book.value.rating = res.data.rating;
+      book.value.soLuotDanhGia = res.data.soLuotDanhGia;
+      book.value.binhLuan = res.data.binhLuan;
+      userComment.value = '';
+      userRating.value = 5;
+      isEditingReview.value = false;
+    } else {
+      toast.show(res.message || 'Xóa đánh giá thất bại.', 'error');
+    }
+  } catch (err) {
+    console.error('Delete review error:', err);
+    toast.show(err.response?.data?.message || 'Có lỗi xảy ra khi xóa đánh giá.', 'error');
+  }
+};
 
 // State cho mượn lẻ nhanh (Quick Borrow)
 const ngayHenTra = ref('');
@@ -408,6 +663,20 @@ const maxBorrowDays = computed(() => {
   return authStore.user?.subscriptionPlan?.soNgayMuonToiDa || 14;
 });
 
+const isBookGiaoTrinh = computed(() => {
+  if (!book.value) return false;
+  const name = (book.value.tenSach || '').toLowerCase();
+  const categoryName = (book.value.theLoai?.tenTheLoai || book.value.theLoai || '').toString().toLowerCase();
+  
+  return categoryName.includes('giáo dục') || 
+         categoryName.includes('ngoại ngữ') || 
+         categoryName.includes('khoa học') ||
+         name.includes('giáo trình') || 
+         name.includes('bài tập') ||
+         name.includes('sách giáo khoa') ||
+         name.includes('tài liệu học tập');
+});
+
 const maxDate = computed(() => {
   const max = new Date();
   max.setDate(max.getDate() + maxBorrowDays.value);
@@ -419,6 +688,17 @@ const setDefaultReturnDate = () => {
   const defDate = new Date();
   defDate.setDate(defDate.getDate() + Math.min(14, maxBorrowDays.value));
   ngayHenTra.value = defDate.toISOString().split('T')[0];
+};
+
+const getBookBorrowFee = (plan) => {
+  if (!plan) return 5000;
+  if (isBookGiaoTrinh.value) return 0;
+  return plan.phiMuonSachGiay !== undefined ? plan.phiMuonSachGiay : 5000;
+};
+
+const getBookOverdueFee = (plan) => {
+  if (!plan) return 5000;
+  return plan.phiPhatTreHan !== undefined ? plan.phiPhatTreHan : 5000;
 };
 
 const formatDate = (dateStr) => {
@@ -437,22 +717,24 @@ const submitReview = async () => {
   reviewError.value = '';
   reviewSuccess.value = '';
   submittingReview.value = true;
+  const isEdit = isEditingReview.value;
   try {
     const res = await api.post(`/books/${book.value._id}/reviews`, {
       soSao: userRating.value,
       noiDung: userComment.value
     });
     if (res.success) {
-      reviewSuccess.value = 'Đánh giá của bạn đã được ghi nhận thành công!';
+      if (isEdit) {
+        toast.show('Đã cập nhật đánh giá thành công!', 'success');
+      } else {
+        toast.show('Đã gửi đánh giá thành công!', 'success');
+      }
       book.value.rating = res.data.rating;
       book.value.soLuotDanhGia = res.data.soLuotDanhGia;
       book.value.binhLuan = res.data.binhLuan;
       userComment.value = '';
       userRating.value = 5;
-      
-      setTimeout(() => {
-        reviewSuccess.value = '';
-      }, 3500);
+      isEditingReview.value = false;
     } else {
       reviewError.value = res.message || 'Gửi đánh giá thất bại.';
     }
@@ -506,6 +788,25 @@ const goToCart = () => {
 };
 
 const relatedBooks = ref([]);
+const isRelatedCollapsed = ref(false);
+const scrollContainer = ref(null);
+
+const navigateToBook = (id) => {
+  router.push(`/books/${id}`);
+};
+
+const scrollRelated = (direction) => {
+  if (!scrollContainer.value) return;
+  const container = scrollContainer.value;
+  const card = container.children[0];
+  if (!card) return;
+  const cardWidth = card.offsetWidth + 16; // w-40/44 + gap
+  if (direction === 'prev') {
+    container.scrollBy({ left: -cardWidth, behavior: 'smooth' });
+  } else {
+    container.scrollBy({ left: cardWidth, behavior: 'smooth' });
+  }
+};
 
 const handleQuickBorrow = async () => {
   if (!authStore.isAuthenticated) {
@@ -531,7 +832,7 @@ const handleQuickBorrow = async () => {
       soLuong: 1
     }];
 
-    const phi = book.value.giaBia * 0.02 || 0;
+    const phi = 0;
     const payload = {
       chiTietMuon,
       ngayHenTra: ngayHenTra.value,
@@ -587,3 +888,15 @@ onMounted(() => {
   fetchBookDetail(route.params.id);
 });
 </script>
+
+<style scoped>
+.custom-horizontal-scroll {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none;  /* IE and Edge */
+}
+.custom-horizontal-scroll::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+</style>

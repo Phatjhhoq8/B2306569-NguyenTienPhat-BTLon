@@ -1,26 +1,50 @@
 <template>
   <div class="space-y-8">
     <!-- Header -->
-    <div class="flex justify-between items-center border-b pb-3">
-      <div>
-        <h1 class="font-sans text-3xl font-extrabold text-slate-900">Quản Lý Mượn / Trả Sách</h1>
+    <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 border-b pb-3">
+      <div class="space-y-1.5">
+        <h1 class="font-sans text-3xl font-extrabold text-slate-900">Quản Lý Mượn Trả Sách</h1>
         <p class="text-sm text-slate-500 font-medium">Phê duyệt phiếu mượn, xác nhận trả sách và theo dõi quá hạn</p>
       </div>
     </div>
 
     <!-- Filters & List -->
     <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm space-y-6">
-      <!-- State Filters -->
-      <div class="flex flex-wrap gap-2">
-        <button 
-          v-for="status in statuses" 
-          :key="status.value"
-          @click="filterStatus(status.value)"
-          class="px-4 py-2 rounded-xl text-xs font-bold transition-all border"
-          :class="selectedStatus === status.value ? 'bg-primary text-white border-primary shadow-sm' : 'bg-slate-50 hover:bg-slate-100 text-slate-600 border-slate-200'"
-        >
-          {{ status.label }}
-        </button>
+      <!-- Search & Filters Container -->
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <!-- State Filters -->
+        <div class="flex flex-wrap gap-2">
+          <button 
+            v-for="status in statuses" 
+            :key="status.value"
+            @click="filterStatus(status.value)"
+            class="px-4 py-2 rounded-xl text-xs font-bold transition-all border"
+            :class="selectedStatus === status.value ? 'bg-primary text-white border-primary shadow-sm' : 'bg-slate-50 hover:bg-slate-100 text-slate-600 border-slate-200'"
+          >
+            {{ status.label }}
+          </button>
+        </div>
+
+        <!-- Search Input -->
+        <div class="flex items-center space-x-2 bg-slate-50 px-3 py-2 rounded-xl border border-slate-200 w-full md:w-80 shadow-inner relative z-30">
+          <Search class="h-4 w-4 text-slate-400 flex-shrink-0" />
+          <div class="relative flex-grow">
+            <input 
+              v-model="searchQuery" 
+              type="text" 
+              placeholder="Tìm mã phiếu, độc giả..." 
+              class="w-full focus:outline-none text-sm bg-transparent font-medium"
+              @input="fetchReceipts"
+            />
+          </div>
+          <button 
+            v-if="searchQuery"
+            @click="[searchQuery = '', fetchReceipts()]"
+            class="text-xs font-bold text-primary hover:underline flex items-center space-x-1"
+          >
+            <XIcon class="h-4.5 w-4.5 text-slate-400" />
+          </button>
+        </div>
       </div>
 
       <!-- Receipts Table -->
@@ -125,32 +149,33 @@
               :key="item.sachId"
               class="flex items-center justify-between bg-slate-50 p-3 rounded-xl border border-slate-200"
             >
-              <div class="flex items-center space-x-3">
-                <!-- Checkbox -->
-                <input 
-                  type="checkbox" 
-                  v-model="item.daTraChua"
-                  :disabled="item.alreadyReturned"
-                  class="h-4 w-4 text-primary focus:ring-primary rounded"
-                />
-                <div>
-                  <span class="font-bold text-xs text-slate-800 block leading-tight">{{ item.tenSach }}</span>
-                  <span class="text-[9px] text-slate-400 block font-mono">Mã: {{ item.maSach }}</span>
-                </div>
+              <div class="flex-grow min-w-0 pr-4">
+                <span class="font-bold text-xs text-slate-800 block leading-tight truncate">{{ item.tenSach }}</span>
+                <span class="text-[9px] text-slate-400 block font-mono">Mã sách: {{ item.maSach }}</span>
               </div>
-              <span 
-                v-if="item.alreadyReturned"
-                class="bg-green-100 text-green-700 text-[9px] font-bold px-2 py-0.5 rounded-full"
-              >
-                Đã trả từ trước
-              </span>
-              <span 
-                v-else
-                class="text-[9px] font-bold px-2 py-0.5 rounded-full"
-                :class="item.daTraChua ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-500'"
-              >
-                {{ item.daTraChua ? 'Sắp trả' : 'Chưa trả' }}
-              </span>
+              <div class="flex-shrink-0 flex items-center">
+                <!-- Nếu sách chưa trả, hiển thị 3 lựa chọn radio -->
+                <div v-if="!item.alreadyReturned" class="flex items-center space-x-3.5">
+                  <label class="inline-flex items-center text-xs font-bold text-slate-500 cursor-pointer">
+                    <input type="radio" :name="'status_' + item.sachId" v-model="item.statusAction" value="CHUA_TRA" class="h-3.5 w-3.5 text-slate-600 focus:ring-slate-500 mr-1" />
+                    Chưa trả
+                  </label>
+                  <label class="inline-flex items-center text-xs font-bold text-primary cursor-pointer">
+                    <input type="radio" :name="'status_' + item.sachId" v-model="item.statusAction" value="TRA_SACH" class="h-3.5 w-3.5 text-primary focus:ring-primary mr-1" />
+                    Đã trả
+                  </label>
+                  <label class="inline-flex items-center text-xs font-bold text-red-600 cursor-pointer">
+                    <input type="radio" :name="'status_' + item.sachId" v-model="item.statusAction" value="MAT_SACH" class="h-3.5 w-3.5 text-red-600 focus:ring-red-500 mr-1" />
+                    Báo mất
+                  </label>
+                </div>
+                <span 
+                  v-else
+                  class="bg-green-100 text-green-700 text-[9px] font-bold px-2.5 py-1 rounded-full"
+                >
+                  Đã trả từ trước
+                </span>
+              </div>
             </div>
           </div>
 
@@ -185,7 +210,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import api from '../../services/api';
-import { X } from '@lucide/vue';
+import { X as XIcon, Search } from '@lucide/vue';
 import ConfirmModal from '../../components/ConfirmModal.vue';
 import { useToastStore } from '../../stores/toast';
 
@@ -195,6 +220,7 @@ const receipts = ref([]);
 const selectedStatus = ref('');
 const activeReceipt = ref(null);
 const submitting = ref(false);
+const searchQuery = ref('');
 
 const returnForm = ref({
   chiTietMuon: [],
@@ -228,7 +254,7 @@ const getReceiptStatusText = (status) => {
 const getReceiptStatusClass = (status) => {
   const map = {
     'PENDING': 'bg-slate-100 text-slate-700',
-    'DANG_MUON': 'bg-blue-100 text-blue-700',
+    'DANG_MUON': 'bg-primary-light text-primary-dark',
     'DA_TRA': 'bg-green-100 text-green-700',
     'QUA_HAN': 'bg-red-100 text-red-700',
     'HUY': 'bg-red-50 text-red-400'
@@ -243,8 +269,9 @@ const filterStatus = (status) => {
 
 const fetchReceipts = async () => {
   try {
-    let url = '/borrowing/receipts';
-    if (selectedStatus.value) url += `?status=${selectedStatus.value}`;
+    let url = '/borrowing/receipts?';
+    if (selectedStatus.value) url += `status=${selectedStatus.value}&`;
+    if (searchQuery.value.trim()) url += `q=${encodeURIComponent(searchQuery.value.trim())}&`;
     const res = await api.get(url);
     if (res.success) {
       receipts.value = res.data;
@@ -263,22 +290,36 @@ const openReturnModal = (receipt) => {
       tenSach: item.sach?.dauSach?.tenSach,
       maSach: item.sach?.maSach,
       daTraChua: item.daTraChua,
-      alreadyReturned: item.daTraChua
+      alreadyReturned: item.daTraChua,
+      statusAction: item.daTraChua ? 'TRA_SACH' : 'CHUA_TRA'
     }))
   };
 };
 
 const submitReturn = async () => {
   if (!activeReceipt.value || submitting.value) return;
-  const ok = await confirmModal.value.ask({ message: 'Bạn có chắc chắn muốn ghi nhận trả sách cho phiếu mượn này không?' });
+  const ok = await confirmModal.value.ask({ message: 'Bạn có chắc chắn muốn ghi nhận trạng thái mượn trả/báo mất cho phiếu mượn này không?' });
   if (!ok) return;
   submitting.value = true;
   try {
-    // Chỉ gửi các cuốn sách được đánh dấu trả
-    const chiTietMuon = returnForm.value.chiTietMuon.map(item => ({
-      sach: item.sachId,
-      daTraChua: item.daTraChua
-    }));
+    const chiTietMuon = returnForm.value.chiTietMuon.map(item => {
+      let daTraChua = item.daTraChua;
+      let tinhTrangSauMuon = '';
+      if (item.statusAction === 'TRA_SACH') {
+        daTraChua = true;
+        tinhTrangSauMuon = 'TRA_SACH';
+      } else if (item.statusAction === 'MAT_SACH') {
+        daTraChua = true; // Đánh dấu đã xử lý để đóng phiếu
+        tinhTrangSauMuon = 'MAT';
+      } else if (item.statusAction === 'CHUA_TRA') {
+        daTraChua = false;
+      }
+      return {
+        sach: item.sachId,
+        daTraChua,
+        tinhTrangSauMuon
+      };
+    });
 
     const res = await api.post(`/borrowing/receipts/${activeReceipt.value._id}/return`, {
       chiTietMuon,

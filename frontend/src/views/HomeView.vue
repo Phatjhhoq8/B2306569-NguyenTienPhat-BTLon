@@ -49,7 +49,7 @@
                   <div class="flex items-center space-x-2">
                     <span 
                       class="text-[10px] md:text-xs font-extrabold px-2.5 py-0.5 rounded-full uppercase"
-                      :class="item.type === 'book' ? 'bg-blue-100 text-blue-700' : item.type === 'author' ? 'bg-amber-100 text-amber-700' : 'bg-purple-100 text-purple-700'"
+                      :class="item.type === 'book' ? 'bg-primary-light text-primary-dark' : item.type === 'author' ? 'bg-amber-100 text-amber-700' : 'bg-purple-100 text-purple-700'"
                     >
                       {{ item.type === 'book' ? 'Sách' : item.type === 'author' ? 'Tác giả' : 'NXB' }}
                     </span>
@@ -201,8 +201,8 @@
               <span class="text-slate-500 truncate max-w-[100px]">
                 {{ book.tacGia?.map(t => t.tenTacGia).join(', ') || 'Tác giả' }}
               </span>
-              <span class="font-bold text-slate-900 text-[10px]">
-                {{ formatCurrency(book.giaBia) }} <span class="text-slate-300 font-normal">/</span> <span class="text-primary font-extrabold">{{ formatCurrency(book.giaBia * 0.02) }}</span>
+              <span class="font-extrabold text-primary text-xs">
+                Miễn phí
               </span>
             </div>
           </div>
@@ -239,7 +239,7 @@
           <!-- Step 1 -->
           <div 
             :class="[
-              'flex gap-6 mb-8 relative safe-step',
+              'flex items-center gap-6 mb-8 relative safe-step',
               isVisible ? 'animate-active' : ''
             ]"
           >
@@ -257,7 +257,7 @@
           <!-- Step 2 -->
           <div 
             :class="[
-              'flex gap-6 mb-8 relative safe-step step-delay-100',
+              'flex items-center gap-6 mb-8 relative safe-step step-delay-100',
               isVisible ? 'animate-active' : ''
             ]"
           >
@@ -275,7 +275,7 @@
           <!-- Step 3 -->
           <div 
             :class="[
-              'flex gap-6 mb-8 relative safe-step step-delay-200',
+              'flex items-center gap-6 mb-8 relative safe-step step-delay-200',
               isVisible ? 'animate-active' : ''
             ]"
           >
@@ -293,7 +293,7 @@
           <!-- Step 4 -->
           <div 
             :class="[
-              'flex gap-6 relative safe-step step-delay-300',
+              'flex items-center gap-6 relative safe-step step-delay-300',
               isVisible ? 'animate-active' : ''
             ]"
           >
@@ -491,14 +491,14 @@ const homepageSettings = ref({
   heroTitle: "KHÁM PHÁ THẾ GIỚI TRI THỨC TẠI CTU",
   heroSubtitle: "Tìm kiếm nhanh giáo trình môn học, công trình nghiên cứu khoa học và đăng ký mượn sách giấy trực tuyến dễ dàng tại Đại học Cần Thơ.",
   heroBanner: "/hero_banner.png",
-  step1Title: "1. Chọn sách & Đăng ký",
-  step1Desc: "Tìm kiếm cuốn sách cần thiết trong kho tài liệu số khổng lồ, nhấn nút đăng ký và lựa chọn gói dịch vụ phù hợp nhất.",
-  step2Title: "2. Nhận mã xác nhận",
-  step2Desc: "Hệ thống sẽ tự động phê duyệt nhanh chóng và gửi mã vạch xác nhận mượn sách trực tiếp qua thư điện tử/SMS.",
-  step3Title: "3. Đến quầy thủ thư",
-  step3Desc: "Mang mã xác nhận (hoặc thẻ độc giả) đến quầy thư viện trung tâm để nhận sách giấy trong thời gian hoạt động.",
-  step4Title: "4. Trả sách đúng hẹn",
-  step4Desc: "Độc giả trả sách tại quầy hoặc thùng trả tự động trước khi hết hạn để tránh phát sinh chi phí phạt không đáng có.",
+  step1Title: "Tìm kiếm & Chọn sách",
+  step1Desc: "Tra cứu đầu sách mong muốn trên hệ thống cổng thư viện điện tử CTU eLibrary với bộ lọc thông minh.",
+  step2Title: "Thêm vào giỏ mượn",
+  step2Desc: "Đưa các cuốn sách cần mượn vào giỏ trực tuyến và xác nhận thời hạn cùng chi nhánh nhận sách mong muốn.",
+  step3Title: "Nhận mã phiếu hẹn",
+  step3Desc: "Hệ thống cấp ngay mã phiếu hẹn điện tử ghi rõ hạn giữ sách và gửi thông tin xác nhận trực tiếp.",
+  step4Title: "Đến nhận sách giấy",
+  step4Desc: "Độc giả xuất trình mã phiếu hẹn tại quầy thủ thư chi nhánh đã chọn để nhận sách giấy trong 5 phút.",
   faqs: []
 });
 

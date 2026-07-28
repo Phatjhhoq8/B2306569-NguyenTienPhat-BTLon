@@ -47,6 +47,54 @@ const membershipPlanSchema = new mongoose.Schema({
   mienTienCoc: {
     type: Boolean,
     default: false
+  },
+  choPhepGiaHanOnline: {
+    type: Boolean,
+    default: false
+  },
+  quayNhanUuTien: {
+    type: Boolean,
+    default: false
+  },
+  chiaSeNhomGiaDinh: {
+    type: Boolean,
+    default: false
+  },
+  docEbookKhongGioiHan: {
+    type: Boolean,
+    default: false
+  },
+  giaoSachTanNha: {
+    type: Boolean,
+    default: false
+  },
+  workshopDocQuyen: {
+    type: Boolean,
+    default: false
+  },
+  loaiGoi: {
+    type: String,
+    enum: ['INDIVIDUAL', 'TEAM'],
+    default: 'INDIVIDUAL'
+  },
+  khuyenDung: {
+    type: Boolean,
+    default: false
+  },
+  phiMuonSachGiay: {
+    type: Number,
+    default: 0,
+    min: [0, 'Phí mượn không được âm']
+  },
+  phiPhatTreHan: {
+    type: Number,
+    default: 2000,
+    min: [0, 'Phí phạt trễ hạn không được âm']
+  },
+  tienDatCoc: {
+    type: Number,
+    default: 0,
+    min: [0, 'Tiền đặt cọc không được âm']
   }
 }, { timestamps: true });
 

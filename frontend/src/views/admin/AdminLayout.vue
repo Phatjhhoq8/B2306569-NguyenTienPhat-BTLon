@@ -77,7 +77,7 @@
           <span class="bg-slate-100 text-slate-700 text-xs font-bold px-2.5 py-0.5 rounded-full uppercase border border-slate-200 shadow-sm flex items-center">
             Mã: {{ authStore.user?.maSoNV }}
           </span>
-          <router-link to="/" class="flex items-center space-x-1 text-xs md:text-sm font-semibold text-primary hover:text-primary-dark transition-all">
+          <router-link to="/" class="flex items-center space-x-1.5 text-xs md:text-sm font-bold text-primary px-3 py-1.5 rounded-xl hover:bg-slate-100 hover:text-primary-dark transition-all border border-transparent hover:border-slate-200">
             <Home class="h-3.5 w-3.5" />
             <span class="hidden xs:inline">Về Trang chủ độc giả</span>
             <span class="xs:hidden">Trang chủ</span>

@@ -2,7 +2,7 @@
   <div class="space-y-8">
     <!-- Header -->
     <div class="flex justify-between items-center border-b pb-3">
-      <div>
+      <div class="space-y-1.5">
         <h1 class="font-sans text-3xl font-extrabold text-slate-900">Quản Lý Bản Sao Vật Lý</h1>
         <p class="text-sm text-slate-500 font-medium">Đầu sách: <span class="text-primary font-bold">{{ bookTitle?.tenSach }}</span></p>
       </div>
@@ -117,7 +117,10 @@ const updateCopy = async (copy) => {
 };
 
 const deleteCopy = async (copy) => {
-  const ok = await confirmModal.value.ask({ message: `Bạn có chắc chắn muốn xóa bản sao ${copy.maSach} ra khỏi hệ thống không?` });
+  const ok = await confirmModal.value.ask({ 
+    message: `Bạn có chắc chắn muốn xóa bản sao ${copy.maSach} ra khỏi hệ thống không?`,
+    isDestructive: true 
+  });
   if (!ok) return;
   try {
     const res = await api.delete(`/book-copies/${copy._id}`);

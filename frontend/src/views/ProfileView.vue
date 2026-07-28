@@ -36,7 +36,8 @@
           </h3>
           
           <div v-if="activeSub" class="space-y-3">
-            <div class="bg-gradient-to-r from-primary to-indigo-900 text-white p-4 rounded-2xl space-y-2">
+            <div class="bg-gradient-to-r from-primary to-indigo-900 text-white p-4 rounded-2xl space-y-2 relative overflow-hidden">
+              <div class="absolute -right-6 -bottom-6 w-16 h-16 bg-white/10 rounded-full"></div>
               <span class="text-[10px] uppercase font-bold tracking-widest block opacity-70">Gói hoạt động</span>
               <h4 class="font-bold text-lg text-secondary">{{ activeSub.goiDocGia?.tenGoi || 'Standard' }}</h4>
               <span class="text-[10px] block opacity-90">Hạn dùng: {{ formatDate(activeSub.ngayKetThuc) }}</span>
@@ -44,7 +45,27 @@
             <ul class="text-xs space-y-1 text-slate-500 font-medium pt-2">
               <li>• Mượn tối đa: {{ activeSub.goiDocGia?.soSachToiDa }} cuốn</li>
               <li>• Thời gian mượn: {{ activeSub.goiDocGia?.soNgayMuonToiDa }} ngày</li>
-              <li>• Miễn cọc sách: {{ activeSub.goiDocGia?.mienTienCoc ? 'Có' : 'Không' }}</li>
+              <li class="pt-2 text-slate-700 flex flex-col gap-1.5 border-t border-slate-100 mt-2">
+                <span class="block">
+                  <strong>Thanh toán:</strong> 
+                  {{ activeSub.phuongThucThanhToan === 'THE_TIN_DUNG' ? 'Thẻ tín dụng/Ghi nợ' : 'Chuyển khoản VietQR' }}
+                </span>
+                
+                <span v-if="activeSub.phuongThucThanhToan === 'THE_TIN_DUNG'" class="flex items-center gap-1.5">
+                  <span class="h-2 w-2 rounded-full" :class="activeSub.tuDongGiaHan ? 'bg-green-500 animate-pulse' : 'bg-slate-400'"></span>
+                  <span>Tự động gia hạn: <strong>{{ activeSub.tuDongGiaHan ? 'Đang bật' : 'Đã tắt' }}</strong></span>
+                </span>
+                <span v-else class="text-slate-500 italic text-[11px] block">Thanh toán từng kỳ (Không tự động gia hạn)</span>
+
+                <button 
+                  v-if="activeSub.phuongThucThanhToan === 'THE_TIN_DUNG' && activeSub.tuDongGiaHan && activeSub.trangThai === 'DANG_HIEU_LUC'"
+                  @click="cancelSubscription"
+                  :disabled="cancelling"
+                  class="mt-1 w-full bg-red-50 hover:bg-red-100 text-red-600 font-semibold py-1.5 px-3 rounded-xl text-[10px] transition-colors border border-red-200"
+                >
+                  {{ cancelling ? 'Đang hủy gia hạn...' : 'Hủy tự động gia hạn' }}
+                </button>
+              </li>
             </ul>
           </div>
           
@@ -185,6 +206,30 @@ const confirmModal = ref(null);
 const activeSub = ref(null);
 const receipts = ref([]);
 const penalties = ref([]);
+const cancelling = ref(false);
+
+const cancelSubscription = async () => {
+  const ok = await confirmModal.value.ask({
+    title: 'Xác nhận hủy tự động gia hạn',
+    message: 'Bạn có chắc chắn muốn hủy tự động gia hạn cho gói dịch vụ này? Gói vẫn sẽ hoạt động cho đến ngày hết hạn và không tự động trừ tiền kỳ tiếp theo.',
+    confirmText: 'Hủy gia hạn',
+    cancelText: 'Quay lại'
+  });
+  if (!ok) return;
+
+  cancelling.value = true;
+  try {
+    const res = await api.post('/memberships/cancel-auto-renew');
+    if (res.success) {
+      toast.show('Đã hủy tự động gia hạn thành công! Gói hội viên của bạn sẽ hết hạn khi tới hạn.', 'success');
+      await loadData();
+    }
+  } catch (error) {
+    toast.show(error.message || 'Có lỗi xảy ra khi hủy gia hạn.', 'error');
+  } finally {
+    cancelling.value = false;
+  }
+};
 
 const getImageUrl = (path) => {
   if (!path) return '/placeholder_book.png';
@@ -216,7 +261,7 @@ const getReceiptStatusText = (status) => {
 const getReceiptStatusClass = (status) => {
   const map = {
     'PENDING': 'bg-slate-100 text-slate-700',
-    'DANG_MUON': 'bg-blue-100 text-blue-700',
+    'DANG_MUON': 'bg-primary-light text-primary-dark',
     'DA_TRA': 'bg-green-100 text-green-700',
     'QUA_HAN': 'bg-red-100 text-red-700',
     'HUY': 'bg-red-50 text-red-400'

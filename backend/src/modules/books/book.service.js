@@ -228,7 +228,24 @@ const softDeleteBookTitle = async (bookTitleId) => withTransactionFallback(async
   const book = await BookTitle.findById(bookTitleId).session(session);
   if (!book || book.isDeleted) throw new Error('Đầu sách không tồn tại hoặc đã bị xóa');
 
-  // Kiểm tra bản sao đang được mượn
+  // Lấy danh sách ID các bản sao của đầu sách này (kể cả đã bị xóa mềm trước đó)
+  const copies = await BookCopy.find({ dauSach: book._id }).session(session);
+  const copyIds = copies.map(c => c._id);
+
+  // Kiểm tra xem các bản sao này đã từng được mượn trong phiếu mượn nào chưa
+  const BorrowReceipt = mongoose.model('BorrowReceipt');
+  const hasBeenBorrowed = await BorrowReceipt.exists({
+    'chiTietMuon.sach': { $in: copyIds }
+  }).session(session);
+
+  if (!hasBeenBorrowed) {
+    // Chưa từng được mượn -> Xóa cứng đầu sách và toàn bộ bản sao của nó khỏi CSDL
+    await BookTitle.deleteOne({ _id: book._id }).session(session);
+    await BookCopy.deleteMany({ dauSach: book._id }).session(session);
+    return { message: 'Đã xóa cứng đầu sách và tất cả các bản sao khỏi cơ sở dữ liệu (do chưa từng được mượn).', trangThai: 'DELETED' };
+  }
+
+  // Nếu đã từng được mượn -> Tiếp tục kiểm tra xem có bản sao nào đang được mượn tại thời điểm hiện tại không
   const borrowedCopies = await BookCopy.countDocuments({
     dauSach: book._id, tinhTrang: 'DA_MUON', isDeleted: false
   }).session(session);
@@ -247,7 +264,7 @@ const softDeleteBookTitle = async (bookTitleId) => withTransactionFallback(async
     return { message: `Đã ngừng phục vụ đầu sách. Còn ${borrowedCopies} bản sao đang mượn sẽ thu hồi khi trả.`, trangThai: 'DISCONTINUED' };
   }
 
-  // Không còn sách đang mượn → xóa mềm hoàn toàn
+  // Không còn sách đang mượn -> xóa mềm hoàn toàn
   book.isDeleted = true;
   book.deletedAt = new Date();
   book.trangThai = 'DISCONTINUED';

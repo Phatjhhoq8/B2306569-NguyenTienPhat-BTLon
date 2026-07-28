@@ -1,51 +1,55 @@
 <template>
-  <div class="min-h-[80vh] flex items-center justify-center px-4 py-12 bg-slate-50 font-sans">
-    <div class="max-w-md w-full bg-white p-8 rounded-3xl border border-slate-200 shadow-sm space-y-6">
-      <div class="text-center space-y-2">
+  <div class="min-h-screen flex items-center justify-center bg-slate-950 px-4 py-12 relative overflow-hidden font-sans">
+    <!-- Decorative background elements -->
+    <div class="absolute -top-40 -right-40 w-96 h-96 bg-primary rounded-full filter blur-[120px] opacity-20 animate-pulse"></div>
+    <div class="absolute -bottom-40 -left-40 w-96 h-96 bg-emerald-500 rounded-full filter blur-[120px] opacity-10 animate-pulse"></div>
+
+    <div class="max-w-md w-full bg-slate-900 border border-slate-800 p-8 rounded-3xl shadow-2xl relative z-10 space-y-6">
+      <div class="text-center space-y-3">
         <!-- Logo -->
         <div class="flex justify-center">
-          <div class="bg-slate-50 p-2 rounded-2xl border border-slate-100">
-            <img src="/src/assets/logo.jpg" alt="Logo" class="h-10 w-10 rounded-xl object-cover" />
+          <div class="bg-slate-800 p-3 rounded-2xl border border-slate-700">
+            <img src="/src/assets/logo.jpg" alt="Logo" class="h-12 w-12 rounded-xl object-cover" />
           </div>
         </div>
-        <h2 class="font-sans text-2xl md:text-3xl font-extrabold text-slate-900">ĐĂNG NHẬP ĐỘC GIẢ</h2>
-        <p class="text-sm text-slate-500 font-medium">Truy cập tài khoản để mượn sách và nhận ưu đãi</p>
+        <h2 class="font-sans text-2xl font-extrabold tracking-wide text-white uppercase pt-2">ĐĂNG NHẬP ĐỘC GIẢ</h2>
+        <p class="text-xs text-slate-400 font-medium">Truy cập tài khoản để mượn sách và nhận ưu đãi</p>
       </div>
 
       <!-- Error Alert -->
-      <div v-if="error" class="bg-red-50 text-red-700 border border-red-100 rounded-xl p-3 text-sm font-medium flex items-center">
-        <AlertTriangle class="h-5 w-5 mr-2 flex-shrink-0" />
-        <span>{{ error }}</span>
+      <div v-if="error" class="bg-red-950/50 text-red-400 border border-red-900/50 rounded-2xl p-3.5 text-xs font-semibold flex items-start space-x-2">
+        <AlertTriangle class="h-5 w-5 flex-shrink-0 text-red-500" />
+        <span class="leading-relaxed">{{ error }}</span>
       </div>
 
       <!-- Form -->
-      <form class="space-y-4" @submit.prevent="handleLogin">
-        <!-- Địa chỉ Email -->
-        <div class="space-y-1">
-          <label class="text-xs font-semibold text-slate-600 uppercase">Địa chỉ Email</label>
-          <div class="flex items-center space-x-2 bg-slate-50 px-3 py-2 rounded-xl border border-slate-200">
-            <Mail class="h-4 w-4 text-slate-400" />
+      <form class="space-y-5" @submit.prevent="handleLogin">
+        <!-- Tài khoản -->
+        <div class="space-y-1.5">
+          <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Tài khoản</label>
+          <div class="flex items-center space-x-3 bg-slate-950 px-4 py-3 rounded-xl border border-slate-800 focus-within:border-primary transition-all">
+            <User class="h-4 w-4 text-slate-500" />
             <input 
               v-model="email" 
-              type="email" 
+              type="text" 
               required 
-              placeholder="example@gmail.com" 
-              class="w-full bg-transparent focus:outline-none text-sm font-medium"
+              placeholder="Email hoặc Số điện thoại" 
+              class="w-full bg-transparent focus:outline-none text-sm font-semibold text-slate-200 placeholder-slate-600"
             />
           </div>
         </div>
 
         <!-- Mật khẩu -->
-        <div class="space-y-1">
-          <label class="text-xs font-semibold text-slate-600 uppercase">Mật khẩu</label>
-          <div class="flex items-center space-x-2 bg-slate-50 px-3 py-2 rounded-xl border border-slate-200">
-            <Lock class="h-4 w-4 text-slate-400" />
+        <div class="space-y-1.5">
+          <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Mật khẩu</label>
+          <div class="flex items-center space-x-3 bg-slate-950 px-4 py-3 rounded-xl border border-slate-800 focus-within:border-primary transition-all">
+            <Lock class="h-4 w-4 text-slate-500" />
             <input 
               v-model="password" 
               type="password" 
               required 
               placeholder="••••••" 
-              class="w-full bg-transparent focus:outline-none text-sm font-medium"
+              class="w-full bg-transparent focus:outline-none text-sm font-semibold text-slate-200 placeholder-slate-600"
             />
           </div>
         </div>
@@ -54,7 +58,7 @@
         <button 
           type="submit" 
           :disabled="loading"
-          class="w-full bg-primary hover:bg-primary-dark text-white font-semibold py-3 rounded-xl transition-all shadow-md flex items-center justify-center space-x-2 disabled:opacity-50"
+          class="w-full bg-primary hover:bg-primary-dark text-white font-bold py-3.5 rounded-xl transition-all shadow-lg flex items-center justify-center space-x-2 disabled:opacity-50 text-sm tracking-wide mt-2"
         >
           <span v-if="loading">Đang đăng nhập...</span>
           <span v-else>Đăng nhập</span>
@@ -62,12 +66,12 @@
       </form>
 
       <!-- Bottom Links -->
-      <div class="flex flex-col items-center space-y-2 pt-2 border-t border-slate-100">
-        <div class="text-sm font-medium text-center">
-          <span class="text-slate-500">Chưa có tài khoản?</span>
+      <div class="flex flex-col items-center space-y-3 pt-4 border-t border-slate-800">
+        <div class="text-sm font-semibold text-center">
+          <span class="text-slate-400">Chưa có tài khoản?</span>
           <router-link to="/register" class="text-primary hover:underline ml-1">Đăng ký độc giả</router-link>
         </div>
-        <router-link to="/admin/login" class="text-xs text-slate-400 hover:text-slate-600 transition-colors">
+        <router-link to="/admin/login" class="text-xs text-slate-500 hover:text-slate-300 font-semibold transition-colors">
           Cổng đăng nhập dành cho thủ thư & quản trị &rarr;
         </router-link>
       </div>
@@ -79,7 +83,7 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/auth';
-import { Mail, Lock, AlertTriangle } from '@lucide/vue';
+import { User, Lock, AlertTriangle } from '@lucide/vue';
 
 const router = useRouter();
 const authStore = useAuthStore();

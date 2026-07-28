@@ -2,7 +2,7 @@
   <div class="space-y-8">
     <!-- Header -->
     <div class="flex justify-between items-center border-b pb-3">
-      <div>
+      <div class="space-y-1.5">
         <h1 class="font-sans text-3xl font-extrabold text-slate-900">Quản Lý Độc Giả</h1>
         <p class="text-sm text-slate-500 font-medium">Xem danh sách độc giả, đổi trạng thái hoạt động hoặc xóa tài khoản độc giả</p>
       </div>
@@ -113,7 +113,14 @@
       <div v-else class="text-center py-12 text-sm text-slate-400 font-medium">Không tìm thấy độc giả nào phù hợp.</div>
 
       <!-- Pagination -->
-      <div v-if="totalPages > 1" class="flex justify-center items-center space-x-2 pt-4">
+      <div v-if="totalPages > 1" class="flex justify-center items-center space-x-1.5 pt-4">
+        <button 
+          @click="changePage(1)" 
+          :disabled="currentPage === 1"
+          class="px-2.5 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 disabled:opacity-50 text-xs font-semibold transition-colors"
+        >
+          Đầu
+        </button>
         <button 
           @click="changePage(currentPage - 1)" 
           :disabled="currentPage === 1"
@@ -121,13 +128,34 @@
         >
           Trước
         </button>
-        <span class="text-xs font-bold text-slate-500">Trang {{ currentPage }} / {{ totalPages }}</span>
+
+        <template v-for="(page, idx) in visiblePages" :key="idx">
+          <span v-if="page === '...'" class="px-1 text-xs font-bold text-slate-400">...</span>
+          <button 
+            v-else
+            @click="changePage(page)"
+            class="w-7 h-7 rounded-lg border text-xs font-bold transition-all"
+            :class="page === currentPage 
+              ? 'bg-primary text-white border-primary shadow-sm' 
+              : 'border-slate-200 hover:bg-slate-50 text-slate-600'"
+          >
+            {{ page }}
+          </button>
+        </template>
+
         <button 
           @click="changePage(currentPage + 1)" 
           :disabled="currentPage === totalPages"
           class="px-2.5 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 disabled:opacity-50 text-xs font-semibold transition-colors"
         >
           Sau
+        </button>
+        <button 
+          @click="changePage(totalPages)" 
+          :disabled="currentPage === totalPages"
+          class="px-2.5 py-1.5 rounded-lg border border-slate-200 hover:bg-slate-50 disabled:opacity-50 text-xs font-semibold transition-colors"
+        >
+          Cuối
         </button>
       </div>
     </div>
@@ -138,7 +166,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import api from '../../services/api';
 import { Search } from '@lucide/vue';
 import ConfirmModal from '../../components/ConfirmModal.vue';
@@ -156,6 +184,31 @@ const selectedStatus = ref('');
 const currentPage = ref(1);
 const totalPages = ref(1);
 const limit = 10;
+
+const visiblePages = computed(() => {
+  const pages = [];
+  const range = 1;
+  for (let i = 1; i <= totalPages.value; i++) {
+    if (
+      i === 1 ||
+      i === totalPages.value ||
+      (i >= currentPage.value - range && i <= currentPage.value + range)
+    ) {
+      pages.push(i);
+    } else if (
+      (i === 2 && currentPage.value - range > 2) ||
+      (i === totalPages.value - 1 && currentPage.value + range < totalPages.value - 1)
+    ) {
+      pages.push('...');
+    }
+  }
+  return pages.filter((item, index, self) => {
+    if (item === '...') {
+      return self[index - 1] !== '...';
+    }
+    return true;
+  });
+});
 
 const formatDate = (dateStr) => {
   if (!dateStr) return '';
@@ -251,7 +304,10 @@ const toggleStatus = async (id) => {
 };
 
 const deleteReader = async (id) => {
-  const ok = await confirmModal.value.ask({ message: 'Bạn có chắc chắn muốn xóa độc giả này khỏi hệ thống không?' });
+  const ok = await confirmModal.value.ask({ 
+    message: 'Bạn có chắc chắn muốn xóa độc giả này khỏi hệ thống không?',
+    isDestructive: true 
+  });
   if (!ok) return;
   try {
     const res = await api.delete(`/admin/readers/${id}`);

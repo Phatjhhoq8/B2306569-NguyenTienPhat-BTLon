@@ -119,6 +119,11 @@ const bookTitleSchema = new mongoose.Schema({
       default: Date.now
     }
   }],
+  yeuThich: [{
+    type: String,
+    ref: 'Reader',
+    default: []
+  }],
   trangThai: {
     type: String,
     enum: ['ACTIVE', 'DISCONTINUED'],

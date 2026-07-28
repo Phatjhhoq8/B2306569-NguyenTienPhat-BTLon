@@ -98,17 +98,12 @@ cd B2306569-NguyenTienPhat-BTLon
 
 ## 🔑 Tài Khoản Thử Nghiệm
 
-Sau khi chạy lệnh `npm run seed` ở Bước 2, bạn có thể đăng nhập bằng các tài khoản mẫu sau:
+Sau khi chạy lệnh `npm run seed` ở Bước 2, bạn đăng nhập bằng các tài khoản mẫu sau:
 
-### Cổng Nhân Viên / Quản trị (Admin Portal)
-*   **Mã số nhân viên (maSoNV)**: `NV001`
-*   **Mật khẩu**: `admin123`
-*   *Lưu ý*: Nhân viên xác thực trực tiếp bằng mã số nhân viên (không dùng email). Chức vụ của tài khoản mẫu này là `QUAN_LY` (Quản lý - được cấp đầy đủ tất cả quyền cấu hình gói hội viên, mã giảm giá và quản lý nhân sự).
-
-### Cổng Độc Giả (Public Site)
-*   **Địa chỉ Email**: `reader@library.local`
-*   **Mật khẩu**: `reader123`
-*   *Lưu ý*: Độc giả đăng nhập bằng địa chỉ email và mật khẩu. Bạn cũng có thể đăng ký một tài khoản độc giả hoàn toàn mới trên giao diện.
+| Cổng Đăng Nhập | Tên Đăng Nhập / Email | Mật Khẩu | Lưu Ý Phân Quyền |
+| :--- | :--- | :--- | :--- |
+| **Quản trị (Admin Portal)** | `NV001` (Mã số nhân viên) | `admin123` | Quyền `QUAN_LY` (Thao tác toàn bộ hệ thống) |
+| **Độc giả (Public Site)** | `reader@library.local` | `reader123` | Tài khoản độc giả thông thường (có thể tự đăng ký mới) |
 
 ---
 

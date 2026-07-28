@@ -7,31 +7,12 @@
     "nhaXuatBan": "Dân Trí",
     "theLoai": "Văn Học",
     "giaBia": 364000,
-    "giaGoc": 428000,
-    "hinhAnhUrl": "https://cdn1.fahasa.com/media/catalog/product/z/7/z7900503102192_ead4e10ee27824a61dfa22fe98659290.jpg",
-    "hinhAnhLocal": "images/fahasa/bi-mat-toi-thuong-the-secret-of-secrets-bia-cung-kem-chu-ky-in-cua-dan-brown-chi.jpg",
     "moTa": "Bí Mật Tối Thượng - The Secret Of Secrets ĐIỀU GÌ ĐÁNG MONG CHỜ NHẤT Ở “BÍ MẬT TỐI THƯỢNG”? Điều gì sẽ xảy ra nếu có một bí mật đủ sức phá hủy mọi điều nhân loại từng tin tưởng? Nếu lịch sử mà chúng ta học suốt hàng trăm năm chỉ là một lớp màn được dựng lên để che giấu sự thật khủng khiếp hơn nhiều? Đó chính là cảm giác rợn người mà Bí mật tối thượng mang lại ngay từ những trang đầu tiên. Sau nhiều năm im lặng, Dan Brown trở lại với một câu chuyện được mô tả là táo bạo và nguy hiểm nhất trong sự nghiệp của ông. Không còn đơn thuần là những mật mã cổ hay các hội kín bí ẩn, lần này cuốn tiểu thuyết dường như đào sâu vào một “bí mật cuối cùng”, thứ mà nếu bị phơi bày có thể làm rung chuyển nền tảng của tôn giáo, khoa học và cả quyền lực toàn cầu. Ngay khi nội dung đầu tiên được hé lộ, cộng đồng yêu sách quốc tế đã bùng nổ tranh luận. Những giả thuyết đáng sợ xuất hiện khắp nơi: Dan Brown đang ám chỉ điều gì? Có phải cuốn sách liên quan đến những bí mật bị Vatican che giấu? Hay là một khám",
-    "isbn": "9786320057573",
+    "isbn": "DS00001",
     "namSanXuat": 2026,
-    "url": "https://www.fahasa.com/bi-mat-toi-thuong-the-secret-of-secrets-bia-cung.html",
-    "nguon": "fahasa"
-  },
-  {
-    "tenSach": "Bộ Chuyện Tình Thị Trấn - Tặng Kèm Ngẫu Nhiên Chữ Ký Tác Giả + Bookmark + Card Tròn Hình Đĩa Nhạc",
-    "tacGia": [
-      "Nguyễn Nhật Ánh"
-    ],
-    "nhaXuatBan": "Trẻ",
-    "theLoai": "Văn Học",
-    "giaBia": 135000,
-    "giaGoc": 150000,
-    "hinhAnhUrl": "https://cdn1.fahasa.com/media/catalog/product/z/7/z7987418532988_8e03faa5b99f1c6924aa52d42e258691.jpg",
-    "hinhAnhLocal": "images/fahasa/bo-chuyen-tinh-thi-tran-tang-kem-ngau-nhien-chu-ky-tac-gia-bookmark-card-tron-hi.jpg",
-    "moTa": "Chuyện Tình Thị Trấn Chuyện tình thị trấn là tác phẩm dành cho bạn đọc tuổi trưởng thành của nhà văn Nguyễn Nhật Ánh. Tác phẩm mở ra câu chuyện về những nhân vật trong một thị trấn nhỏ với cuộc sống chậm trôi, nhưng đằng sau đó, mỗi người đều có những câu chuyện riêng nối kết với nhau theo cách ít ai ngờ đến. Chàng trai tài hoa, hào hiệp và cô gái xinh đẹp nhất thị trấn ở rất gần nhau, nhưng vì đâu số phận lại đẩy họ ra hai đầu xa nhau tít tắp? Khi bắt đầu một câu chuyện tình, ai cũng mơ về sự viên mãn, nhưng “… cuộc sống thường có những khúc quanh bất ngờ. Khi con người tình cờ bước tới khúc quanh đó, bi kịch sẽ gọi tên. Lỗi đâu tại tình yêu!” (Trích) Tình yêu không có lỗi, nhưng lựa chọn trong tình yêu có thể thay đổi nhiều điều trong cuộc đời mình và những người xung quanh mình. Viết về một chủ đề \"kinh điển\" là tình yêu, Chuyện tình thị trấn hấp dẫn bạn đọc bằng cách kể mới lạ, hài hước và tình tiết chuyển ngoặt bất ngờ như một cuốn phim trinh thám. Mỗi một nhân vật đều có nét đặc ",
-    "isbn": "8934974216766",
-    "namSanXuat": 2026,
-    "url": "https://www.fahasa.com/chuyen-tinh-thi-tran-tang-kem-ngau-nhien-chu-ky-tac-gia-bookmark-card-tron-hinh-dia-nhac.html",
-    "nguon": "fahasa"
+    "hinhAnhLocal": "images/fahasa/bi-mat-toi-thuong-the-secret-of-secrets-bia-cung-kem-chu-ky-in-cua-dan-brown-chi.jpg",
+    "hinhAnhUrl": "/uploads/books/images/fahasa/bi-mat-toi-thuong-the-secret-of-secrets-bia-cung-kem-chu-ky-in-cua-dan-brown-chi.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Bộ Chuyện Tình Thị Trấn - Bìa Cứng - Tặng Kèm Ngẫu Nhiên Chữ Ký Tác Giả + Bookmark + Card Tròn Hình Đĩa Nhạc + Sổ Tay",
@@ -41,14 +22,12 @@
     "nhaXuatBan": "Trẻ",
     "theLoai": "Văn Học",
     "giaBia": 256500,
-    "giaGoc": 285000,
-    "hinhAnhUrl": "https://cdn1.fahasa.com/media/catalog/product/z/7/z7987418532989_5e00a4b7f82e7e83d8bfca9bdb4dc52b.jpg",
-    "hinhAnhLocal": "images/fahasa/bo-chuyen-tinh-thi-tran-bia-cung-tang-kem-ngau-nhien-chu-ky-tac-gia-bookmark-car.jpg",
     "moTa": "Chuyện Tình Thị Trấn Chuyện tình thị trấn là tác phẩm dành cho bạn đọc tuổi trưởng thành của nhà văn Nguyễn Nhật Ánh. Tác phẩm mở ra câu chuyện về những nhân vật trong một thị trấn nhỏ với cuộc sống chậm trôi, nhưng đằng sau đó, mỗi người đều có những câu chuyện riêng nối kết với nhau theo cách ít ai ngờ đến. Chàng trai tài hoa, hào hiệp và cô gái xinh đẹp nhất thị trấn ở rất gần nhau, nhưng vì đâu số phận lại đẩy họ ra hai đầu xa nhau tít tắp? Khi bắt đầu một câu chuyện tình, ai cũng mơ về sự viên mãn, nhưng “… cuộc sống thường có những khúc quanh bất ngờ. Khi con người tình cờ bước tới khúc quanh đó, bi kịch sẽ gọi tên. Lỗi đâu tại tình yêu!” (Trích) Tình yêu không có lỗi, nhưng lựa chọn trong tình yêu có thể thay đổi nhiều điều trong cuộc đời mình và những người xung quanh mình. Viết về một chủ đề \"kinh điển\" là tình yêu, Chuyện tình thị trấn hấp dẫn bạn đọc bằng cách kể mới lạ, hài hước và tình tiết chuyển ngoặt bất ngờ như một cuốn phim trinh thám. Mỗi một nhân vật đều có nét đặc ",
-    "isbn": "8934974216773",
+    "isbn": "DS00003",
     "namSanXuat": 2026,
-    "url": "https://www.fahasa.com/chuyen-tinh-thi-tran-bia-cung-tang-kem-ngau-nhien-chu-ky-tac-gia-bookmark-card-tron-hinh-dia-nhac-so-tay.html",
-    "nguon": "fahasa"
+    "hinhAnhLocal": "images/fahasa/bo-chuyen-tinh-thi-tran-bia-cung-tang-kem-ngau-nhien-chu-ky-tac-gia-bookmark-car.jpg",
+    "hinhAnhUrl": "/uploads/books/images/fahasa/bo-chuyen-tinh-thi-tran-bia-cung-tang-kem-ngau-nhien-chu-ky-tac-gia-bookmark-car.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Arya Bàn Bên Thỉnh Thoảng Lại Trêu Ghẹo Tôi Bằng Tiếng Nga - Tập 10 - Bản Boxset - Tặng Kèm Box + Set 6 Bookmark + Standee Acrylic",
@@ -59,14 +38,12 @@
     "nhaXuatBan": "Kim Đồng",
     "theLoai": "Văn Học",
     "giaBia": 250000,
-    "giaGoc": 250000,
-    "hinhAnhUrl": "https://cdn1.fahasa.com/media/catalog/product/a/r/arya-ban-ben-thinh-thoang-lai-treu-gheo-toi-bang-tieng-nga_tap-10_limited-edition_bia_qua-tang.jpg",
-    "hinhAnhLocal": "images/fahasa/arya-ban-ben-thinh-thoang-lai-treu-gheo-toi-bang-tieng-nga-tap-10-ban-boxset-tan.jpg",
     "moTa": "Arya Bàn Bên Thỉnh Thoảng Lại Trêu Ghẹo Tôi Bằng Tiếng Nga - Tập 10 “И наменятоже обрати внимание” “Anh sẽ trở lại là Suou Masachika để trở thành một bản thân mà anh có thể tự hào.” Sự giác ngộ đặt cược vào vị trí gia chủ nhà Suou, cùng quyết tâm không lay chuyển với cuộc chiến bầu cử. Sau khi bộc bạch hết nỗi lòng với nhau, Masachika và Yuki cuối cùng cũng làm hòa. (Không... đây thật ra là ai? Người khác à? Làm… gì có chuyện đó chứ?) Mặt khác, dù bị Yuki trong “chế độ em gái” xoay như chong chóng, Alisa vẫn thấu hiểu quá khứ mà hai anh em nhà Suou phải gánh vác và chấp nhận sự thật. Giữa lúc ấy, Ayano lại có vẻ như đang một mình trầm tư suy nghĩ điều gì đó. Và rồi, Nonoa với ác ý ngây thơ ẩn giấu đã bất ngờ tiếp cận cô...!? “… Thực ra cậu thấy ngứa mắt Kujou Alisa lắm đúng không?” Những âm mưu cuộn xoáy bắt đầu hiển lộ trong tập 10 này của câu chuyện hài lãng mạn tuổi thanh xuân cùng nữ sinh trung học gốc Nga!",
-    "isbn": "9786042399579",
+    "isbn": "DS00004",
     "namSanXuat": 2026,
-    "url": "https://www.fahasa.com/arya-ban-ben-thinh-thoang-lai-treu-gheo-toi-bang-tieng-nga-tap-10-ban-boxset-tang-kem-box-set-6-bookmark-standee-acrylic.html",
-    "nguon": "fahasa"
+    "hinhAnhLocal": "images/fahasa/arya-ban-ben-thinh-thoang-lai-treu-gheo-toi-bang-tieng-nga-tap-10-ban-boxset-tan.jpg",
+    "hinhAnhUrl": "/uploads/books/images/fahasa/arya-ban-ben-thinh-thoang-lai-treu-gheo-toi-bang-tieng-nga-tap-10-ban-boxset-tan.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Arya Bàn Bên Thỉnh Thoảng Lại Trêu Ghẹo Tôi Bằng Tiếng Nga - Tập 10 - Bản Boxset - Tặng Kèm Box + Set 6 Bookmark + Standee Acrylic + Poster",
@@ -77,14 +54,12 @@
     "nhaXuatBan": "Kim Đồng",
     "theLoai": "Văn Học",
     "giaBia": 250000,
-    "giaGoc": 250000,
-    "hinhAnhUrl": "https://cdn1.fahasa.com/media/catalog/product/z/8/z8038372327500_680e0ac45011ff676030987f25acf047.jpg",
-    "hinhAnhLocal": "images/fahasa/arya-ban-ben-thinh-thoang-lai-treu-gheo-toi-bang-tieng-nga-tap-10-ban-boxset-tan.jpg",
     "moTa": "Arya Bàn Bên Thỉnh Thoảng Lại Trêu Ghẹo Tôi Bằng Tiếng Nga - Tập 10 “И наменятоже обрати внимание” “Anh sẽ trở lại là Suou Masachika để trở thành một bản thân mà anh có thể tự hào.” Sự giác ngộ đặt cược vào vị trí gia chủ nhà Suou, cùng quyết tâm không lay chuyển với cuộc chiến bầu cử. Sau khi bộc bạch hết nỗi lòng với nhau, Masachika và Yuki cuối cùng cũng làm hòa. (Không... đây thật ra là ai? Người khác à? Làm… gì có chuyện đó chứ?) Mặt khác, dù bị Yuki trong “chế độ em gái” xoay như chong chóng, Alisa vẫn thấu hiểu quá khứ mà hai anh em nhà Suou phải gánh vác và chấp nhận sự thật. Giữa lúc ấy, Ayano lại có vẻ như đang một mình trầm tư suy nghĩ điều gì đó. Và rồi, Nonoa với ác ý ngây thơ ẩn giấu đã bất ngờ tiếp cận cô...!? “… Thực ra cậu thấy ngứa mắt Kujou Alisa lắm đúng không?” Những âm mưu cuộn xoáy bắt đầu hiển lộ trong tập 10 này của câu chuyện hài lãng mạn tuổi thanh xuân cùng nữ sinh trung học gốc Nga!",
-    "isbn": "9786042399579-qt",
+    "isbn": "DS00005",
     "namSanXuat": 2026,
-    "url": "https://www.fahasa.com/arya-ban-ben-thinh-thoang-lai-treu-gheo-toi-bang-tieng-nga-tap-10-ban-boxset-tang-kem-box-set-6-bookmark-standee-acrylic-poster.html",
-    "nguon": "fahasa"
+    "hinhAnhLocal": "images/fahasa/arya-ban-ben-thinh-thoang-lai-treu-gheo-toi-bang-tieng-nga-tap-10-ban-boxset-tan.jpg",
+    "hinhAnhUrl": "/uploads/books/images/fahasa/arya-ban-ben-thinh-thoang-lai-treu-gheo-toi-bang-tieng-nga-tap-10-ban-boxset-tan.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Bộ Bến Xe (Tái Bản 2020)",
@@ -94,14 +69,12 @@
     "nhaXuatBan": "Văn Học",
     "theLoai": "Văn Học",
     "giaBia": 58520,
-    "giaGoc": 76000,
-    "hinhAnhUrl": "https://cdn1.fahasa.com/media/catalog/product/8/9/8935212349208.jpg",
-    "hinhAnhLocal": "images/fahasa/bo-ben-xe-tai-ban-2020.jpg",
     "moTa": "Bến Xe (Tái Bản 2020) Bến Xe Thứ tôi có thể cho em trong cuộc đời này chỉ là danh dự trong sạch và một tương lai tươi đẹp mà thôi. Thế nhưng, nếu chúng ta có kiếp sau, nếu kiếp sau tôi có đôi mắt sáng, tôi sẽ ở bến xe này… đợi em.",
-    "isbn": "8935212349208",
+    "isbn": "DS00006",
     "namSanXuat": 2020,
-    "url": "https://www.fahasa.com/ben-xe-tai-ban-2020.html",
-    "nguon": "fahasa"
+    "hinhAnhLocal": "images/fahasa/bo-ben-xe-tai-ban-2020.jpg",
+    "hinhAnhUrl": "/uploads/books/images/fahasa/bo-ben-xe-tai-ban-2020.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Boxset Harry Potter (Hộp 7 Cuốn) - Bìa Cứng - Tặng Kèm 7 Bookmark Ghép Hình In 2 Mặt + 1 Bản Đồ Đạo Tặc Khổ Poster - Phiên Bản Độc Quyền 50 Năm Fahasa",
@@ -111,14 +84,12 @@
     "nhaXuatBan": "Trẻ",
     "theLoai": "Văn Học",
     "giaBia": 4150000,
-    "giaGoc": 4150000,
-    "hinhAnhUrl": "https://cdn1.fahasa.com/media/catalog/product/z/7/z7928354816092_036513aa35487d3da4f7b74c9305e4bc_1.jpg",
-    "hinhAnhLocal": "images/fahasa/boxset-harry-potter-hop-7-cuon-bia-cung-tang-kem-7-bookmark-ghep-hinh-in-2-mat-1.jpg",
     "moTa": "Boxset Harry Potter (Hộp 7 Cuốn) Harry Potter là tên của bộ truyện (gồm bảy phần) của nữ nhà văn J. K. Rowling viết về cậu bé thiếu niên Harry Potter. Câu chuyện phần lớn diễn ra tại Trường Phù thủy và Pháp sư Hogwarts, một ngôi trường pháp thuật, và tập trung vào cuộc chiến của Harry Potter chống lại một phù thủy hắc ám là Chúa tể Voldemort, người đã giết cha mẹ cậu trong tham vọng làm chủ thế giới phù thủy. Sau khi Việt Nam gia nhập công ước Berne, Nhà xuất bản Trẻ là đơn vị đầu tiên mua tác quyền sách từ nước ngoài, và bộ sách đầu tiên được mua chính là bộ Harry Potter. Bộ sách lập tức được sự đón nhận rộng rãi của bạn đọc trên khắp cả nước. Để kịp đáp ứng nhu cầu bạn đọc, NXB Trẻ đã “chẻ nhỏ” bộ sách ra thành nhiều tập cỡ nhỏ dịch đến đâu thì biên tập, in ấn, phát hành tới đó để kịp đến tay bạn đọc. Bộ bìa hoạt hình đầu tiên dùng cho bộ Harry Potter khổ nhỏ, hơn 60 tập, đã trở thành một phần tuổi thơ của nhiều thế hệ. Nhà xuất bản Trẻ đã ra mắt nhiều phiên bản bìa mềm của bộ Harry ",
-    "isbn": "8934974216209-bq",
+    "isbn": "DS00007",
     "namSanXuat": 2026,
-    "url": "https://www.fahasa.com/boxset-harry-potter-hop-7-cuon-bia-cung-tang-kem-7-bookmark-ghep-hinh-in-2-mat-1-ban-do-dao-tac-kho-poster-doc-quyen-fahasa.html",
-    "nguon": "fahasa"
+    "hinhAnhLocal": "images/fahasa/boxset-harry-potter-hop-7-cuon-bia-cung-tang-kem-7-bookmark-ghep-hinh-in-2-mat-1.jpg",
+    "hinhAnhUrl": "/uploads/books/images/fahasa/boxset-harry-potter-hop-7-cuon-bia-cung-tang-kem-7-bookmark-ghep-hinh-in-2-mat-1.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Người Đàn Ông Mang Tên OVE (Tái Bản)",
@@ -128,14 +99,12 @@
     "nhaXuatBan": "Trẻ",
     "theLoai": "Văn Học",
     "giaBia": 136000,
-    "giaGoc": 160000,
-    "hinhAnhUrl": "https://cdn1.fahasa.com/media/catalog/product/8/9/8934974182375.jpg",
-    "hinhAnhLocal": "images/fahasa/nguoi-dan-ong-mang-ten-ove-tai-ban.jpg",
     "moTa": "NGƯỜI ĐÀN ÔNG MANG TÊN OVE - CUỐN SÁCH KHIẾN TRIỆU ĐỘC GIẢ CƯỜI RỒI KHÓC Bạn có tin rằng một ông lão cộc cằn, khó tính lại có thể khiến bạn rơi nước mắt vì xúc động? Bạn đã bao giờ nghĩ rằng lòng nhân ái có thể đến từ những con người tưởng chừng khô khan nhất? Một ông lão cộc cằn, một con mèo hoang, vài người hàng xóm phiền phức - tất cả có thể tạo nên một câu chuyện khiến bạn bật khóc? VỀ TÁC GIẢ: Fredrik Backman - Hành trình trở thành nhà Văn được yêu thích Fredrik Backman (sinh năm 1981) là nhà văn, blogger và nhà báo người Thụy Điển. Trước khi trở thành tiểu thuyết gia, ông từng viết blog và làm phóng viên cho một tờ báo địa phương. Năm 2012, ông xuất bản Người Đàn Ông Mang Tên Ove, tác phẩm nhanh chóng trở thành hiện tượng toàn cầu, lọt top bán chạy tại nhiều quốc gia. Ông nổi tiếng với lối viết hài hước, cảm động và đầy tính nhân văn, đưa những câu chuyện đời thường trở nên sâu sắc và đáng nhớ. VỀ DỊCH GIẢ: Hoàng Anh - Người thổi hồn vào tác phẩm Hoàng Anh là dịch giả tận tâm, ma",
-    "isbn": "8934974182375",
+    "isbn": "DS00008",
     "namSanXuat": 2022,
-    "url": "https://www.fahasa.com/nguoi-dan-ong-mang-ten-ove-tai-ban.html",
-    "nguon": "fahasa"
+    "hinhAnhLocal": "images/fahasa/nguoi-dan-ong-mang-ten-ove-tai-ban.jpg",
+    "hinhAnhUrl": "/uploads/books/images/fahasa/nguoi-dan-ong-mang-ten-ove-tai-ban.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Trường Ca Achilles",
@@ -145,14 +114,12 @@
     "nhaXuatBan": "NXB Kim Đồng",
     "theLoai": "Văn Học",
     "giaBia": 125000,
-    "giaGoc": 156000,
-    "hinhAnhUrl": "https://cdn1.fahasa.com/media/catalog/product/i/m/image_195509_1_41170.jpg",
-    "hinhAnhLocal": "images/fahasa/truong-ca-achilles.jpg",
     "moTa": "TRƯỜNG CA ACHILLES - MỘT BẢN TÌNH CA BI TRÁNG DƯỚI ÁNH HOÀNG HÔN HY LẠP Lấy cảm hứng từ sử thi Iliad, Madeline Miller đã tái hiện một câu chuyện tình yêu đầy say đắm nhưng cũng nhuốm màu bi kịch giữa hai người anh hùng Hy Lạp trong tác phẩm đầu tay của mình – Trường Ca Achilles. VỀ TÁC GIẢ: Madeline Miller Là nhà văn người Mỹ, chuyên gia về văn học Hy Lạp cổ đại. Bà từng giảng dạy về Iliad và Odyssey suốt hơn 10 năm trước khi viết Trường Ca Achilles. Trường Ca Achilles đã giúp bà giành Giải Orange Prize 2012 – giải thưởng danh giá dành cho tiểu thuyết xuất sắc nhất của nữ tác giả. Cuốn sách sau đó được đề cử Women's Prize năm 2019, và cùng với Trường ca Achilles đã đánh dấu một sự nghiệp văn chương rực rỡ của Madeline Miller. VỀ DỊCH GIẢ: Jack Frogg Một dịch giả tài năng, sinh ra tại Hà Nội và hiện đang sinh sống tại Aix-en-Provence. Với niềm đam mê văn học và ngôn ngữ, anh đã chuyển ngữ thành công nhiều tác phẩm nổi tiếng. Tiểu thuyết Trường Ca Achilles, đã mang đến một bản chuyển ngữ",
-    "isbn": "8935244843545",
+    "isbn": "DS00009",
     "namSanXuat": 2020,
-    "url": "https://www.fahasa.com/truong-ca-achilles.html",
-    "nguon": "fahasa"
+    "hinhAnhLocal": "images/fahasa/truong-ca-achilles.jpg",
+    "hinhAnhUrl": "/uploads/books/images/fahasa/truong-ca-achilles.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Hồ Điệp Và Kình Ngư",
@@ -160,16 +127,14 @@
       "Tuế Kiến"
     ],
     "nhaXuatBan": "Văn Học",
-    "theLoai": "Văn Học",
+    "theLoai": "Khác",
     "giaBia": 119350,
-    "giaGoc": 155000,
-    "hinhAnhUrl": "https://cdn1.fahasa.com/media/catalog/product/b/i/bia-2d_ho-diep-va-kinh-ngu_17307.jpg",
-    "hinhAnhLocal": "images/fahasa/ho-diep-va-kinh-ngu.jpg",
     "moTa": "HỒ ĐIỆP VÀ KÌNH NGƯ - BI KỊCH HAY HUYỀN THOẠI CỦA TÌNH YÊU? Một câu chuyện cuốn hút ngay từ những trang đầu tiên - Khi tình yêu trở thành sợi dây mong manh giữa sinh tử, phản bội và hy vọng. Khi một nàng hồ điệp nhỏ bé chạm trán với kình ngư mạnh mẽ, liệu đó là định mệnh hay chỉ là một giấc mộng chóng tàn? VỀ TÁC GIẢ: Tuế Kiến Tuế Kiến là một tác giả được yêu thích trong dòng văn học lãng mạn Trung Quốc. Cô nổi tiếng với những tác phẩm có nội dung sâu sắc, kịch tính, giàu cảm xúc nhưng cũng đầy tính hiện thực. Văn phong của Tuế Kiến không chỉ khiến độc giả đắm chìm trong từng câu chữ mà còn khơi gợi nhiều suy ngẫm về tình yêu, số phận và lựa chọn của con người. Hồ Điệp Và Kình Ngư, cô một lần nữa chứng minh được khả năng dẫn dắt câu chuyện tài tình, khiến độc giả không thể rời mắt khỏi từng trang sách. VỀ DỊCH GIẢ: Diệp Châu Diệp Châu là dịch giả có nhiều kinh nghiệm trong việc chuyển ngữ các tác phẩm văn học Trung Quốc. Với sự nhạy bén trong ngôn ngữ và khả năng truyền tải cảm xúc tin",
-    "isbn": "8935212370189",
+    "isbn": "DS00010",
     "namSanXuat": 2024,
-    "url": "https://www.fahasa.com/ho-diep-va-kinh-ngu.html",
-    "nguon": "fahasa"
+    "hinhAnhLocal": "images/fahasa/ho-diep-va-kinh-ngu.jpg",
+    "hinhAnhUrl": "/uploads/books/images/fahasa/ho-diep-va-kinh-ngu.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Bộ Nhà Giả Kim (Tái Bản 2025)",
@@ -179,14 +144,12 @@
     "nhaXuatBan": "Hội Nhà Văn",
     "theLoai": "Văn Học",
     "giaBia": 76000,
-    "giaGoc": 95000,
-    "hinhAnhUrl": "https://cdn1.fahasa.com/media/catalog/product/i/m/image_195509_1_36793_1.jpg",
-    "hinhAnhLocal": "images/fahasa/bo-nha-gia-kim-tai-ban-2025.jpg",
     "moTa": "Nhà Giả Kim NHÀ GIẢ KIM - HÀNH TRÌNH ĐI TÌM KHO BÁU HAY CUỘC HÀNH TRÌNH TÌM KIẾM CHÍNH MÌNH \"Nhà Giả Kim\" không đơn thuần là một cuốn tiểu thuyết, mà là bản đồ dẫn lối đến giấc mơ, khao khát và định mệnh của mỗi con người. Câu chuyện về chàng trai chăn cừu Santiago không chỉ mang đến những cuộc phiêu lưu hấp dẫn, mà còn mở ra nhiều tầng triết lý sâu sắc về cuộc sống. VỀ TÁC GIẢ Paulo Coelho - Là nhà văn người Brazil, bậc thầy kể chuyện với lối viết đậm chất triết lý. - Ông là tác giả của nhiều tác phẩm truyền cảm hứng, trong đó \"Nhà Giả Kim\" là cuốn sách nổi tiếng nhất, được dịch ra hơn 80 ngôn ngữ và bán hàng triệu bản trên toàn thế giới. - Các tác phẩm khác của ông như \"Veronika quyết chết\", \"Nhà tiên tri\" hay \"Phù thủy thành phố Portobello\" cũng để lại dấu ấn sâu sắc trong lòng độc giả. VỀ DỊCH GIẢ Lê Chu Cầu - Là dịch giả có nhiều đóng góp trong việc đưa văn học nước ngoài đến với độc giả Việt Nam. - Ông đã chuyển ngữ nhiều tác phẩm kinh điển, trong đó bản dịch \"Nhà Giả Kim\" của ôn",
-    "isbn": "8935235247376",
+    "isbn": "DS00011",
     "namSanXuat": 2025,
-    "url": "https://www.fahasa.com/nha-gia-kim-tai-ban-2025.html",
-    "nguon": "fahasa"
+    "hinhAnhLocal": "images/fahasa/bo-nha-gia-kim-tai-ban-2025.jpg",
+    "hinhAnhUrl": "/uploads/books/images/fahasa/bo-nha-gia-kim-tai-ban-2025.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Lén Nhặt Chuyện Đời",
@@ -196,14 +159,12 @@
     "nhaXuatBan": "Thế Giới",
     "theLoai": "Văn Học",
     "giaBia": 68000,
-    "giaGoc": 85000,
-    "hinhAnhUrl": "https://cdn1.fahasa.com/media/catalog/product/9/7/9786043651591_1.jpg",
-    "hinhAnhLocal": "images/fahasa/len-nhat-chuyen-doi.jpg",
     "moTa": "Lén Nhặt Chuyện Đời Tại vùng ngoại ô xứ Đan Mạch xưa, người thợ kim hoàn Per Enevoldsen đã cho ra mắt một món đồ trang sức lấy ý tưởng từ Pandora - người phụ nữ đầu tiên của nhân loại mang vẻ đẹp như một ngọc nữ phù dung, kiêu sa và bí ẩn trong Thần thoại Hy Lạp. Vòng Pandora được kết hợp từ một sợi dây bằng vàng, bạc hoặc bằng da cùng với những viên charm được chế tác đa dạng, tỉ mỉ. Ý tưởng của ông, mỗi viên charm như một câu chuyện, một kỷ niệm đáng nhớ của người sở hữu chiếc vòng. Khi một viên charm được thêm vào sợi Pandora là cuộc đời lại có thêm một ký ức cần lưu lại để nhớ, để thương, để trân trọng. Lén nhặt chuyện đời ra mắt trong khoảng thời gian chông chênh nhất của bản thân, hay nói cách khác là một cậu bé mới lớn, vừa bước ra khỏi cái vỏ bọc vốn an toàn của mình. Những câu chuyện trong Lén nhặt chuyện đời là những câu chuyện tôi được nghe kể lại, hoặc vô tình bắt gặp, hoặc nhặt nhạnh ở đâu đó trong miền ký ức rời rạc của quá khứ, không theo một trình tự hay một thời gian n",
-    "isbn": "9786043651591",
+    "isbn": "DS00012",
     "namSanXuat": 2022,
-    "url": "https://www.fahasa.com/len-nhat-chuyen-doi-404720.html",
-    "nguon": "fahasa"
+    "hinhAnhLocal": "images/fahasa/len-nhat-chuyen-doi.jpg",
+    "hinhAnhUrl": "/uploads/books/images/fahasa/len-nhat-chuyen-doi.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Nếu Biết Trăm Năm Là Hữu Hạn - Ấn Bản Kỉ Niệm 10 Năm Xuất Bản (Tái Bản 2024)",
@@ -213,14 +174,12 @@
     "nhaXuatBan": "Thế Giới",
     "theLoai": "Văn Học",
     "giaBia": 136000,
-    "giaGoc": 159000,
-    "hinhAnhUrl": "https://cdn1.fahasa.com/media/catalog/product/8/9/8932000134749_1.jpg",
-    "hinhAnhLocal": "images/fahasa/neu-biet-tram-nam-la-huu-han-an-ban-ki-niem-10-nam-xuat-ban-tai-ban-2024.jpg",
     "moTa": "NẾU BIẾT TRĂM NĂM LÀ HỮU HẠN - LÁ THƯ GỬI NHỮNG NGƯỜI TRẺ ĐANG LẠC LỐI Bạn đã bao giờ tự hỏi: Nếu biết trước cuộc đời là hữu hạn, bạn sẽ sống khác đi chứ? Chúng ta luôn nghĩ mình có nhiều thời gian, nhưng thực tế, mọi khoảnh khắc đều đang trôi qua mãi mãi. VỀ TÁC GIẢ: PHẠM LỮ ÂN Là bút danh của đôi vợ chồng nhà báo chuyên viết cho giới trẻ, là Đặng Nguyễn Đông Vy và Nguyễn Hoàng Mai, hai nhà văn nổi bật trong dòng sách truyền cảm hứng. Những tác phẩm của họ không chỉ là lời kể, mà là những triết lý sống sâu sắc, giúp độc giả nhìn lại chính mình. Nếu Biết Trăm Năm Là Hữu Hạn là một trong những cuốn sách được yêu thích nhất, giúp hàng ngàn người trẻ tìm lại ý nghĩa của cuộc sống. TÓM TẮT NỘI DUNG SÁCH Nếu Biết Trăm Năm Là Hữu Hạn là tập hợp 40 bài viết nhẹ nhàng nhưng sâu sắc, giàu cảm xúc từ chuyên mục Cảm thức của Bán nguyệt san Sinh Viên Việt Nam. Cuốn sách dẫn dắt người đọc đi sâu vào những cảm nhận về cuộc đời, tình yêu, tình bạn và sự thành bại, đặt ra những câu hỏi mà ai cũng từng",
-    "isbn": "8932000134749",
+    "isbn": "DS00013",
     "namSanXuat": 2024,
-    "url": "https://www.fahasa.com/neu-biet-tram-nam-la-huu-han-an-ban-ki-niem-10-nam-xuat-ban-tai-ban-2024.html",
-    "nguon": "fahasa"
+    "hinhAnhLocal": "images/fahasa/neu-biet-tram-nam-la-huu-han-an-ban-ki-niem-10-nam-xuat-ban-tai-ban-2024.jpg",
+    "hinhAnhUrl": "/uploads/books/images/fahasa/neu-biet-tram-nam-la-huu-han-an-ban-ki-niem-10-nam-xuat-ban-tai-ban-2024.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Anh Em Nhà Karamazov - Bìa Cứng (Tái Bản 2026)",
@@ -230,14 +189,12 @@
     "nhaXuatBan": "Hà Nội",
     "theLoai": "Văn Học",
     "giaBia": 392000,
-    "giaGoc": 490000,
-    "hinhAnhUrl": "https://cdn1.fahasa.com/media/catalog/product/i/m/image_234830_1.jpg",
-    "hinhAnhLocal": "images/fahasa/anh-em-nha-karamazov-bia-cung-tai-ban-2026.jpg",
     "moTa": "Anh Em Nhà Karamazov “Dos đã cho tôi nhiều hơn bất cứ nhà tư tưởng nào của nhân loại.” – A. Einstein “Anh em nhà Karamazov là cuốn tiểu thuyết vĩ đại nhất từng được viết nên.” – Sigmund Freud “Một con người đơn độc mà viết nổi Anh em nhà Karamazov thì đó là phép mầu.” – Hermann Hesse (Nobel Văn chương 1946) ______________ “Muốn viết cho hay thì phải đau khổ, đau khổ.” – F. Dostoyevsky Cuỗm được khối tài sản lớn từ người vợ đầu Adelaida Ivanovna xuất thân quý tộc giàu có, đày đọa vợ thứ hai Sofya Ivanovna nhu mì, khiến nàng hóa điên mà chết, thậm chí cưỡng bức cô gái ngây dại ngoài phố sinh ra đứa con hoang quái dị Smerdyakov, Fyodor Karamazov ma mãnh và tàn nhẫn sau khi góa cả hai vợ cũng tống khứ nốt, không nuôi nấng đứa con nào, sống đây đó sa đọa với đám đàn bà mạt hạng. Ở tuổi xế chiều, lão già ấy mới trở về điền địa của mình. Nơi đây, nhà Karamazov đoàn tụ. Nhưng chỉ là để đẩy tấn bi kịch của những tâm hồn bị hành hạ lên tột cùng bi thảm... Dos đã viết Anh em nhà Karamazov trong c",
-    "isbn": "8935235247772",
+    "isbn": "DS00014",
     "namSanXuat": 2026,
-    "url": "https://www.fahasa.com/anh-em-nha-karamazov-bia-cung-tai-ban-2026.html",
-    "nguon": "fahasa"
+    "hinhAnhLocal": "images/fahasa/anh-em-nha-karamazov-bia-cung-tai-ban-2026.jpg",
+    "hinhAnhUrl": "/uploads/books/images/fahasa/anh-em-nha-karamazov-bia-cung-tai-ban-2026.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Bộ Mắt Biếc (Tái Bản 2022)",
@@ -247,14 +204,12 @@
     "nhaXuatBan": "NXB Trẻ",
     "theLoai": "Văn Học",
     "giaBia": 37000,
-    "giaGoc": 43000,
-    "hinhAnhUrl": "https://cdn1.fahasa.com/media/catalog/product/8/9/8934974178637.jpg",
-    "hinhAnhLocal": "images/fahasa/bo-mat-biec-tai-ban-2022.jpg",
     "moTa": "Mắt Biếc Một tác phẩm được nhiều người bình chọn là hay nhất của nhà văn này. Một tác phẩm đang được dịch và giới thiệu tại Nhật Bản (theo thông tin từ các báo)… Bởi sự trong sáng của một tình cảm, bởi cái kết thúc rất, rất buồn khi suốt câu chuyện vẫn là những điều vui, buồn lẫn lộn (cái kết thúc không như mong đợi của mọi người). Cũng bởi, mắt biếc… năm xưa nay đâu (theo lời một bài hát)",
-    "isbn": "8934974178637",
+    "isbn": "DS00015",
     "namSanXuat": 2022,
-    "url": "https://www.fahasa.com/mat-biec-tai-ban-2022.html",
-    "nguon": "fahasa"
+    "hinhAnhLocal": "images/fahasa/bo-mat-biec-tai-ban-2022.jpg",
+    "hinhAnhUrl": "/uploads/books/images/fahasa/bo-mat-biec-tai-ban-2022.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Truyện Kiều - Ấn Bản Cao Cấp - Bìa Cứng - Phiên Bản Độc Quyền 50 Năm Fahasa",
@@ -266,14 +221,12 @@
     "nhaXuatBan": "Văn Học",
     "theLoai": "Văn Học",
     "giaBia": 790000,
-    "giaGoc": 790000,
-    "hinhAnhUrl": "https://cdn1.fahasa.com/media/catalog/product/0/w/0w5a5533.jpg",
-    "hinhAnhLocal": "images/fahasa/truyen-kieu-an-ban-cao-cap-bia-cung-phien-ban-doc-quyen-50-nam-fahasa.jpg",
     "moTa": "Truyện Kiều Truyện Kiều là một kiệt tác văn chương của nước ta, với tinh thần cốt tử là niềm bi cảm về thân phận con người trong buổi loạn ly. Nỗi niềm đó, như nhà nghiên cứu Nhật Chiêu nhận xét, gói gọn cái tinh túy trong sự “trông thấu” (sáu cõi) và “nghĩ suốt” (ngàn đời). Không chỉ là minh chứng cho tài hoa của văn chương quốc âm thế kỷ XVIII, Truyện Kiều còn là đúc kết của nhân sinh quan dân tộc với tư tưởng Phật giáo, Khổng giáo của giới trí thức, dùng đạo lý hiếu nghĩa làm nền, lấy giáo pháp duyên khởi làm móng. Câu nói của học giả Phạm Quỳnh (“Truyện Kiều còn, tiếng ta còn...”), theo lẽ đó, có lẽ cũng không quá thậm xưng. Thế nhưng, đối với người đọc phổ thông thời hiện đại, Truyện Kiều của Nguyễn Du không phải dễ đọc, không chỉ bởi những từ Nôm cổ, những từ Hán-Việt khó, mà còn vì hệ thống điển tích, điển cố dày đặc, vốn là đặc trưng của văn học Hán-Nôm trung đại. Công trình khảo đính và chú thích Truyện Kiều của nhà nghiên cứu Hán-Nôm Nguyễn Thạch Giang là một công trình đặc b",
-    "isbn": "8936203366280",
+    "isbn": "DS00016",
     "namSanXuat": 2026,
-    "url": "https://www.fahasa.com/truyen-kieu-an-ban-cao-cap-bia-cung-phien-ban-doc-quyen-50-nam-fahasa.html",
-    "nguon": "fahasa"
+    "hinhAnhLocal": "images/fahasa/truyen-kieu-an-ban-cao-cap-bia-cung-phien-ban-doc-quyen-50-nam-fahasa.jpg",
+    "hinhAnhUrl": "/uploads/books/images/fahasa/truyen-kieu-an-ban-cao-cap-bia-cung-phien-ban-doc-quyen-50-nam-fahasa.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Bộ Sách Tô Màu - Lạc Vào Thế Giới Chibi",
@@ -283,14 +236,12 @@
     "nhaXuatBan": "Thanh Niên",
     "theLoai": "Văn Học",
     "giaBia": 71000,
-    "giaGoc": 88000,
-    "hinhAnhUrl": "https://cdn1.fahasa.com/media/catalog/product/l/a/lacvaothegioichibi.jpg",
-    "hinhAnhLocal": "images/fahasa/bo-sach-to-mau-lac-vao-the-gioi-chibi.jpg",
     "moTa": "Sách Tô Màu - Lạc Vào Thế Giới Chibi Giới thiệu chung về chủ đề của sách Thông điệp về cảm xúc: - Lạc vào thế giới chibi, lạc vào thế giới của bạn - Cùng Chibi tô nên những khoảnh khắc ngọt ngào và đầy màu sắc Thông điệp về công năng: - Tô chibi, giảm stress - 30 câu chuyện, 30 sắc màu, vô vàn cảm xúc 1. Phần bìa sách: Bìa sách mang phong cách anime, vibe vui nhộn, tinh nghịch, vô tri, đáng yêu. 2. Phần nội dung bên trong sản phẩm - Nội dung: Chọn kiểu nhân vật, chủ đề mang phong cách anime, một chủ đề và phong cách khách hàng rất yêu thích. Không chỉ là sách tô màu, mà còn kết hợp câu chuyện ngắn về cuộc sống của nhân vật Chibi - Sách tô màu về chibi/anime đầu tiên trên thị trường - Kết hợp giữa tô màu và kể chuyện >> Tạo chiều sâu gắn kết cảm xúc nhân vật - Cấp độ tô màu đa dạng: Từ tranh đơn giản đến phức tạp 3. Chất lượng giấy - Định lượng: 140gsm - Chất giấy mịn mượt, cứng cáp - Sử dụng đa chất liệu: chì màu, bút sáp, acrylic marker, gouche. 4. Kích thước: 24x19cm",
-    "isbn": "8936228540382",
+    "isbn": "DS00017",
     "namSanXuat": 2024,
-    "url": "https://www.fahasa.com/sach-to-mau-lac-vao-the-gioi-chibi.html",
-    "nguon": "fahasa"
+    "hinhAnhLocal": "images/fahasa/bo-sach-to-mau-lac-vao-the-gioi-chibi.jpg",
+    "hinhAnhUrl": "/uploads/books/images/fahasa/bo-sach-to-mau-lac-vao-the-gioi-chibi.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Bộ Làm Bạn Với Cô Nàng Dễ Thương Nhì Lớp - Tập 4 - Bản Giới Hạn - Tặng Kèm Postcard + Bookmark + Kẹp File Ivory",
@@ -301,14 +252,12 @@
     "nhaXuatBan": "Kim Đồng",
     "theLoai": "Văn Học",
     "giaBia": 90000,
-    "giaGoc": 105000,
-    "hinhAnhUrl": "https://cdn1.fahasa.com/media/catalog/product/l/a/lam-ban-voi-co-nang-de-thuong-nhi-lop_tap-4_ban-gioi-han.jpg",
-    "hinhAnhLocal": "images/fahasa/bo-lam-ban-voi-co-nang-de-thuong-nhi-lop-tap-4-ban-gioi-han-tang-kem-postcard-bo.jpg",
     "moTa": "Làm Bạn Với Cô Nàng Dễ Thương Nhì Lớp - Tập 4 Mùa xuân này, tôi - Maehara Maki, và “cô gái dễ thương nhì lớp” Asanagi Umi đã lên lớp 11. Dù học khác lớp với Umi… nhưng 30 phút trước giờ đến trường vẫn là khoảng thời gian quý giá của đôi tình nhân chúng tôi. Những tin nhắn điện thoại gửi cho nhau từ phía bên kia hành lang cũng mang lại cảm giác mới mẻ. Tôi được bạn bè mới của Umi chào đón với tư cách là “cậu bạn trai”, vừa bối rối lại vừa rộn ràng mong đợi trước những mối quan hệ dần rộng mở… Ở lớp tôi, ngoài Amami còn có một nhân vật nổi bật khác: Arae Nagisa, người thường xuyên đi học muộn và luôn tỏ ra lạnh lùng. Dù Amami có bắt chuyện thì cô ấy cũng chỉ phớt lờ, khiến bầu không khí trong lớp khó có thể gọi là đồng lòng. Mà trong lúc ấy, giải đấu thể thao đối kháng giữa các lớp đang đến gần!? Đồng hành và xung đột. Thanh xuân và tình yêu cùng nảy nở trong tập 4.",
-    "isbn": "8935352627518",
+    "isbn": "DS00018",
     "namSanXuat": 2026,
-    "url": "https://www.fahasa.com/lam-ban-voi-co-nang-de-thuong-nhi-lop-tap-4-ban-gioi-han-tang-kem-postcard-bookmark-kep-file-ivory.html",
-    "nguon": "fahasa"
+    "hinhAnhLocal": "images/fahasa/bo-lam-ban-voi-co-nang-de-thuong-nhi-lop-tap-4-ban-gioi-han-tang-kem-postcard-bo.jpg",
+    "hinhAnhUrl": "/uploads/books/images/fahasa/bo-lam-ban-voi-co-nang-de-thuong-nhi-lop-tap-4-ban-gioi-han-tang-kem-postcard-bo.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Bộ Ngày Xưa Có Một Chuyện Tình - Khổ Nhỏ (Tái Bản 2025)",
@@ -318,14 +267,12 @@
     "nhaXuatBan": "Trẻ",
     "theLoai": "Văn Học",
     "giaBia": 66000,
-    "giaGoc": 77000,
-    "hinhAnhUrl": "https://cdn1.fahasa.com/media/catalog/product/n/x/nxbtre_full_26412025_084116.jpg",
-    "hinhAnhLocal": "images/fahasa/bo-ngay-xua-co-mot-chuyen-tinh-kho-nho-tai-ban-2025.jpg",
     "moTa": "Ngày Xưa Có Một Chuyện Tình Đúng như tên gọi, đây là cuốn sách về tình yêu, được viết theo một phong cách hoàn toàn khác lạ với nhà văn Nguyễn Nhật Ánh từ trước đến nay. Tác phẩm phù hợp với đông đảo đối tượng độc giả và được Nhà xuất bản Trẻ đầu tư mạnh về hình thức cũng như truyền thông, tiếp thị...Ngày xưa có một chuyện tình là một câu chuyện cảm động khi người ta yêu nhau, nỗi khát khao một hạnh phúc êm đềm ấm áp đến thế; hay đơn giản chỉ là chuyện ba người - anh, em, và người ấy...? Khi mở sách ra, độc giả sẽ được chứng kiến làn gió tình yêu chảy qua như rải nắng trên khuôn mặt mùa đông của cô gái; nụ hôn đầu tiên ngọt mật, cái ôm đầu tiên, những giọt nước mắt và cái ôm xiết cuối cùng của tấm tình người yêu người...Và người đọc sẽ tìm thấy câu trả lời, cho riêng mình. - Miền nè. - Gì hở Phúc? - Có chuyện này nè. - Chuyện gì vậy? - Ở trong lớp mình ấy mà. - Trong lớp mình sao? - Lần này tôi thấy đôi lông mày Miền nhướn lên. Nó vừa hỏi vừa xoáy mắt vào mặt tôi, chắc nó lấy làm lạ tr",
-    "isbn": "8934974208075",
+    "isbn": "DS00019",
     "namSanXuat": 2025,
-    "url": "https://www.fahasa.com/ngay-xua-co-mot-chuyen-tinh-kho-nho-tai-ban-2025.html",
-    "nguon": "fahasa"
+    "hinhAnhLocal": "images/fahasa/bo-ngay-xua-co-mot-chuyen-tinh-kho-nho-tai-ban-2025.jpg",
+    "hinhAnhUrl": "/uploads/books/images/fahasa/bo-ngay-xua-co-mot-chuyen-tinh-kho-nho-tai-ban-2025.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Bộ Harry Potter Và Hòn Đá Phù Thuỷ - Tập 1 (Tái Bản)",
@@ -336,14 +283,12 @@
     "nhaXuatBan": "Trẻ",
     "theLoai": "Văn Học",
     "giaBia": 128000,
-    "giaGoc": 150000,
-    "hinhAnhUrl": "https://cdn1.fahasa.com/media/catalog/product/8/9/8934974179672.jpg",
-    "hinhAnhLocal": "images/fahasa/bo-harry-potter-va-hon-da-phu-thuy-tap-1-tai-ban.jpg",
     "moTa": "Khi một lá thư được gởi đến cho cậu bé Harry Potter bình thường và bất hạnh, cậu khám phá ra một bí mật đã được che giấu suốt cả một thập kỉ. Cha mẹ cậu chính là phù thủy và cả hai đã bị lời nguyền của Chúa tể Hắc ám giết hại khi Harry mới chỉ là một đứa trẻ, và bằng cách nào đó, cậu đã giữ được mạng sống của mình. Thoát khỏi những người giám hộ Muggle không thể chịu đựng nổi để nhập học vào trường Hogwarts, một trường đào tạo phù thủy với những bóng ma và phép thuật, Harry tình cờ dấn thân vào một cuộc phiêu lưu đầy gai góc khi cậu phát hiện ra một con chó ba đầu đang canh giữ một căn phòng trên tầng ba. Rồi Harry nghe nói đến một viên đá bị mất tích sở hữu những sức mạnh lạ kì, rất quí giá, vô cùng nguy hiểm, mà cũng có thể là mang cả hai đặc điểm trên.",
-    "isbn": "8934974179672",
+    "isbn": "DS00020",
     "namSanXuat": 2022,
-    "url": "https://www.fahasa.com/harry-potter-va-hon-da-phu-thuy-tap-1-tai-ban.html",
-    "nguon": "fahasa"
+    "hinhAnhLocal": "images/fahasa/bo-harry-potter-va-hon-da-phu-thuy-tap-1-tai-ban.jpg",
+    "hinhAnhUrl": "/uploads/books/images/fahasa/bo-harry-potter-va-hon-da-phu-thuy-tap-1-tai-ban.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Bố Già - Ấn Bản Giới Hạn - Bìa Vải - Phiên Bản Độc Quyền 50 Năm Fahasa - Tặng Kèm Postcard",
@@ -353,14 +298,12 @@
     "nhaXuatBan": "Văn Học",
     "theLoai": "Văn Học",
     "giaBia": 2400000,
-    "giaGoc": 2400000,
-    "hinhAnhUrl": "https://cdn1.fahasa.com/media/catalog/product/s/a/sachpremium3-1.jpg",
-    "hinhAnhLocal": "images/fahasa/bo-gia-an-ban-gioi-han-bia-vai-phien-ban-doc-quyen-50-nam-fahasa-tang-kem-postca.jpg",
     "moTa": "Bố Già Thế giới ngầm được phản ánh trong tiểu thuyết Bố Già là sự gặp gỡ giữa một bên là ý chí cương cường và nền tảng gia tộc chặt chẽ theo truyền thống mafia xứ Sicily với một bên là xã hội Mỹ nhập nhằng đen trắng, mảnh đất màu mỡ cho những cơ hội làm ăn bất chính hứa hẹn những món lợi kếch xù. Trong thế giới ấy, hình tượng Bố Già được tác giả dày công khắc họa đã trở thành bức chân dung bất hủ trong lòng người đọc. Từ một kẻ nhập cư tay trắng đến ông trùm tột đỉnh quyền uy, Don Vito Corleone là con rắn hổ mang thâm trầm, nguy hiểm khiến kẻ thù phải kiềng nể, e dè, nhưng cũng được bạn bè, thân quyến xem như một đấng toàn năng đầy nghĩa khí. Nhân vật trung tâm ấy đồng thời cũng là hiện thân của một pho triết lí rất “đời” được nhào nặn từ vốn sống của hàng chục năm lăn lộn giữa chốn giang hồ bao phen vào sinh ra tử, vì thế mà có ý kiến cho rằng “Bố Già là sự tổng hòa của mọi hiểu biết. Bố Già là đáp án cho mọi câu hỏi”. Với cấu tứ hoàn hảo, cốt truyện không thiếu những pha hành động ga",
-    "isbn": "8936203366150",
+    "isbn": "DS00021",
     "namSanXuat": 2026,
-    "url": "https://www.fahasa.com/bo-gia-an-ban-gioi-han-bia-vai-phien-ban-doc-quyen-50-nam-fahasa.html",
-    "nguon": "fahasa"
+    "hinhAnhLocal": "images/fahasa/bo-gia-an-ban-gioi-han-bia-vai-phien-ban-doc-quyen-50-nam-fahasa-tang-kem-postca.jpg",
+    "hinhAnhUrl": "/uploads/books/images/fahasa/bo-gia-an-ban-gioi-han-bia-vai-phien-ban-doc-quyen-50-nam-fahasa-tang-kem-postca.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Bộ Bộ Sách Quả Ngọt Năm Tháng - Tập 1 + Tập 2 (Bộ 2 Tập) - Tặng Kèm 2 Bookmark Cán Màng Lụa Ánh Ngọc Trai",
@@ -370,14 +313,12 @@
     "nhaXuatBan": "Lao Động",
     "theLoai": "Văn Học",
     "giaBia": 240530,
-    "giaGoc": 359000,
-    "hinhAnhUrl": "https://cdn1.fahasa.com/media/catalog/product/b/a/banthuong_3.jpg",
-    "hinhAnhLocal": "images/fahasa/bo-bo-sach-qua-ngot-nam-thang-tap-1-tap-2-bo-2-tap-tang-kem-2-bookmark-can-mang-.jpg",
     "moTa": "Bộ Sách Quả Ngọt Năm Tháng - Tập 1 + Tập 2 (Bộ 2 Tập) Thuở mới biết yêu, ai có thể thoát khỏi những xuyến xao của tuổi trẻ? Năm mười ba tuổi, lần đầu tiên Đinh Mật gặp gỡ Lục Thời Miễm khi cậu chuyển tới sống trong căn biệt thự cạnh nhà cô. Từ đó, những năm tháng thanh xuân của Đinh Mật đều ngập tràn hình bóng chàng trai khôi ngô, giỏi giang có đôi mắt xếch lạnh lùng, cao ngạo. Quãng thời gian học cấp Ba hai người là bạn cùng bàn. Những rung động ngọt ngào, những giây phút gần gũi thoáng qua đã dần dần bồi đắp cho tình cảm của họ. Nhưng vì sự ghen ghét đố kỵ của người chị kế, Đinh Mật đã lầm đường lạc lối, đánh mất tương lai xán lạn cùng tình yêu với Lục Thời Miễn. Sau sáu năm xa vắng, hơn hai nghìn ngày đêm không thôi nhớ nhung, liệu cô có tìm được lối về? Liệu trái ngọt họ bỏ lỡ năm nào có thể lần nữa được tình yêu bồi đắp? “Đinh Tiểu Mật, đừng có lạc đường nữa.” “Nếu vẫn lạc thì sao?” “Anh sẽ chờ em ở nguyên chỗ cũ.”",
-    "isbn": "8935325028779",
+    "isbn": "DS00022",
     "namSanXuat": 2025,
-    "url": "https://www.fahasa.com/bo-sach-qua-ngot-nam-thang-tap-1-tap-2-bo-2-tap-tang-kem-2-bookmark-can-mang-lua-anh-ngoc-trai.html",
-    "nguon": "fahasa"
+    "hinhAnhLocal": "images/fahasa/bo-bo-sach-qua-ngot-nam-thang-tap-1-tap-2-bo-2-tap-tang-kem-2-bookmark-can-mang-.jpg",
+    "hinhAnhUrl": "/uploads/books/images/fahasa/bo-bo-sach-qua-ngot-nam-thang-tap-1-tap-2-bo-2-tap-tang-kem-2-bookmark-can-mang-.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Bộ Không Gia Đình - Bìa Cứng (Tái Bản 2024)",
@@ -387,14 +328,12 @@
     "nhaXuatBan": "Văn Học",
     "theLoai": "Văn Học",
     "giaBia": 172000,
-    "giaGoc": 215000,
-    "hinhAnhUrl": "https://cdn1.fahasa.com/media/catalog/product/z/5/z5767334826845_2e61b754a821ac7fd.jpg",
-    "hinhAnhLocal": "images/fahasa/bo-khong-gia-dinh-bia-cung-tai-ban-2024.jpg",
     "moTa": "Không Gia Đình KHÔNG GIA ĐÌNH - HÀNH TRÌNH ĐẦY NƯỚC MẮT VÀ HY VỌNG CỦA CẬU BÉ RÉMI Bạn đã bao giờ cảm thấy lạc lõng giữa dòng đời, khao khát một mái ấm nhưng chỉ nhận lại những thử thách khắc nghiệt? Không Gia Đình sẽ đưa bạn vào hành trình xúc động của cậu bé Rémi – nơi mỗi bước chân là một bài học về lòng nhân ái, sự kiên cường và ý nghĩa thực sự của gia đình. VỀ TÁC GIẢ: Hector Malot (1830-1907) - Là một nhà văn nổi tiếng người Pháp thế kỷ 19, với nhiều tác phẩm để lại dấu ấn sâu sắc trong lòng độc giả. - Ông là người tiên phong trong việc khắc họa tâm lý nhân vật một cách tinh tế, gây rung động mạnh mẽ cho người đọc. - Tác phẩm “KHÔNG GIA ĐÌNH” được coi là đỉnh cao trong sự nghiệp văn chương của ông. VỀ DỊCH GIẢ: Hà Mai Anh (1905 - 1975) - Là một dịch giả xuất sắc, được biết đến qua nhiều bản dịch kinh điển của văn học Pháp. - Ông đã mang đến cho độc giả Việt Nam một bản dịch mượt mà, tinh tế, giúp giữ nguyên vẹn giá trị và tinh thần của tác phẩm Không Gia Đình. TÓM TẮT NỘI DUNG SÁ",
-    "isbn": "8935095633982",
+    "isbn": "DS00023",
     "namSanXuat": 2024,
-    "url": "https://www.fahasa.com/khong-gia-dinh-bia-cung-tai-ban-2024.html",
-    "nguon": "fahasa"
+    "hinhAnhLocal": "images/fahasa/bo-khong-gia-dinh-bia-cung-tai-ban-2024.jpg",
+    "hinhAnhUrl": "/uploads/books/images/fahasa/bo-khong-gia-dinh-bia-cung-tai-ban-2024.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Bộ 86-EIGHTY SIX - Ep.13 - Hỡi Chàng Thợ Săn Thân Mến - Bản Đặc Biệt - Tặng Kèm Set 4 Bookmark",
@@ -406,14 +345,12 @@
     "nhaXuatBan": "Lao Động",
     "theLoai": "Văn Học",
     "giaBia": 116000,
-    "giaGoc": 145000,
-    "hinhAnhUrl": "https://cdn1.fahasa.com/media/catalog/product/1/8/180425-3.jpg",
-    "hinhAnhLocal": "images/fahasa/bo-86-eighty-six-ep13-hoi-chang-tho-san-than-men-ban-dac-biet-tang-kem-set-4-boo.jpg",
     "moTa": "86-EIGHTY SIX - Ep.13 - Hỡi Chàng Thợ Săn Thân Mến Khủng bố đánh bom tự sát gây rúng động thủ đô, Legion tấn công dữ dội, dân tị nạn gia tăng đột biến, vô vàn suy đoán và hoài nghi khiến hỗn loạn phát sinh. Trong bối cảnh đó, một bộ phận dân Cộng hòa còn tổ chức bạo động vũ trang tại Liên bang. Đang làm nhiệm vụ hỗ trợ rút quân tại tiền tuyến, Lữ đoàn Biệt kích cũng bị điều đi trấn áp. Tuy nhiên, việc Lena còn bị giữ ở hậu phương khiến lòng Shin rối bời. Mặt khác, Yuto dẫn theo nhóm Actaeon gồm Chitori, bước vào “hành trình cuối cùng” tìm về Cộng hòa. Nhận được tin từ họ, Dustin bị giằng xé giữa quá khứ và hiện tại, Ange không khỏi tự dằn vặt khi thấy cậu như vậy. “Lời nhắn gửi cho chàng trai thân thương ấy là lời nguyền, hay...”",
-    "isbn": "8935250716291",
+    "isbn": "DS00024",
     "namSanXuat": 2025,
-    "url": "https://www.fahasa.com/86-eighty-six-ep-13-hoi-chang-tho-san-than-men-ban-dac-biet-tang-kem-set-4-bookmark.html",
-    "nguon": "fahasa"
+    "hinhAnhLocal": "images/fahasa/bo-86-eighty-six-ep13-hoi-chang-tho-san-than-men-ban-dac-biet-tang-kem-set-4-boo.jpg",
+    "hinhAnhUrl": "/uploads/books/images/fahasa/bo-86-eighty-six-ep13-hoi-chang-tho-san-than-men-ban-dac-biet-tang-kem-set-4-boo.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Bộ Cho Tôi Xin Một Vé Đi Tuổi Thơ (Tái Bản 2023)",
@@ -423,14 +360,12 @@
     "nhaXuatBan": "Trẻ",
     "theLoai": "Văn Học",
     "giaBia": 77000,
-    "giaGoc": 90000,
-    "hinhAnhUrl": "https://cdn1.fahasa.com/media/catalog/product/8/9/8934974187639.jpg",
-    "hinhAnhLocal": "images/fahasa/bo-cho-toi-xin-mot-ve-di-tuoi-tho-tai-ban-2023.jpg",
     "moTa": "CHO TÔI XIN MỘT VÉ ĐI TUỔI THƠ - HỒI ỨC NGỌT NGÀO CỦA NHỮNG NGÀY XƯA TƯƠI ĐẸP Bạn có bao giờ muốn quay ngược thời gian, trở lại những ngày vô tư chạy chân trần trên sân, háo hức đợi cây kem ốc quế hay trốn ngủ trưa để chơi cùng lũ bạn? Cho Tôi Một Vé Về Tuổi Thơ chính là tấm vé đưa bạn trở lại khoảng trời hồn nhiên ấy. VỀ TÁC GIẢ: Nguyễn Nhật Ánh - Người đưa tuổi thơ lên trang sách Nguyễn Nhật Ánh – nhà văn nổi tiếng bậc nhất của văn học Việt Nam đương đại, chuyên viết về tuổi thơ và thanh xuân, chạm đến cảm xúc của cả trẻ em lẫn người lớn. Với hơn 40 năm sáng tác, ông đã để lại dấu ấn với hàng loạt tác phẩm như Mắt Biếc, Cô Gái Đến Từ Hôm Qua, Tôi Thấy Hoa Vàng Trên Cỏ Xanh… Là một trong những nhà văn có lượng sách bán chạy nhất Việt Nam, với hàng triệu bản in và luôn được tái bản nhiều lần. Cho Tôi Một Vé Về Tuổi Thơ là một trong những cuốn sách bán chạy nhất của ông, được đông đảo độc giả yêu thích. Văn chương của Nguyễn Nhật Ánh không chỉ để đọc, mà còn để sống lại những năm tháng ",
-    "isbn": "8934974187639",
+    "isbn": "DS00025",
     "namSanXuat": 2023,
-    "url": "https://www.fahasa.com/cho-toi-xin-mot-ve-di-tuoi-tho-tai-ban-2023.html",
-    "nguon": "fahasa"
+    "hinhAnhLocal": "images/fahasa/bo-cho-toi-xin-mot-ve-di-tuoi-tho-tai-ban-2023.jpg",
+    "hinhAnhUrl": "/uploads/books/images/fahasa/bo-cho-toi-xin-mot-ve-di-tuoi-tho-tai-ban-2023.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Doraemon - Tiểu Thuyết - Nobita Và Lâu Đài Dưới Đáy Biển - Phiên Bản Mới",
@@ -442,14 +377,12 @@
     "nhaXuatBan": "Kim Đồng",
     "theLoai": "Văn Học",
     "giaBia": 51000,
-    "giaGoc": 60000,
-    "hinhAnhUrl": "https://cdn1.fahasa.com/media/catalog/product/t/i/tieu-thuyet-doraemon_nobita-va-lau-dai-duoi-day-bien-phien-ban-moi_bia.jpg",
-    "hinhAnhLocal": "images/fahasa/doraemon-tieu-thuyet-nobita-va-lau-dai-duoi-day-bien-phien-ban-moi.jpg",
     "moTa": "Doraemon - Tiểu Thuyết - Nobita Và Lâu Đài Dưới Đáy Biển Kì nghỉ hè đã đến! Nobita háo hức vô cùng, vì Doraemon có một ý tưởng cực kì hấp dẫn: đưa nhóm bạn đi cắm trại… dưới lòng biển, nhờ sự trợ giúp của các bảo bối tuyệt đỉnh như xe buggy dưới nước và đèn pin thích ứng! Chuyến du hành mở ra thế giới đại dương kì thú ngoài sức tưởng tượng. Đang say mê khám phá, nhóm bạn bất ngờ phát hiện xác tàu đắm bí ẩn và chạm trán El - chàng trai kì lạ thuộc Liên bang MU, nền văn minh trải rộng dưới đáy biển. Đúng lúc đó, tin dữ ập đến: Lâu đài quỷ - nỗi ám ảnh của cư dân biển cả - đã thức tỉnh. Bí mật gì chôn vùi nơi tòa lâu đài kì dị ấy? Thử thách kinh hoàng nào đang chờ đợi phía trước? Mang theo niềm tin mãnh liệt vào sức mạnh vô song của tình bạn, nhóm bạn dấn thân vào cuộc phiêu lưu vĩ đại sẽ quyết định vận mệnh của địa cầu! --- FUJIKO F FUJIO Tác giả FUJIKO F FUJIO tên thật là Hiroshi Fujimoto, sinh năm 1933 tại thành phố Takaoka, tỉnh Toyama, Nhật Bản. Ông giới thiệu tác phẩm đầu tay Tenshi",
-    "isbn": "9786042419024",
+    "isbn": "DS00026",
     "namSanXuat": 2024,
-    "url": "https://www.fahasa.com/doraemon-tieu-thuyet-nobita-va-lau-dai-duoi-day-bien-phien-ban-moi.html",
-    "nguon": "fahasa"
+    "hinhAnhLocal": "images/fahasa/doraemon-tieu-thuyet-nobita-va-lau-dai-duoi-day-bien-phien-ban-moi.jpg",
+    "hinhAnhUrl": "/uploads/books/images/fahasa/doraemon-tieu-thuyet-nobita-va-lau-dai-duoi-day-bien-phien-ban-moi.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Người Bà Tài Giỏi Vùng Saga",
@@ -459,14 +392,12 @@
     "nhaXuatBan": "NXB Thanh Niên",
     "theLoai": "Văn Học",
     "giaBia": 103000,
-    "giaGoc": 128000,
-    "hinhAnhUrl": "https://cdn1.fahasa.com/media/catalog/product/i/m/image_231202.jpg",
-    "hinhAnhLocal": "images/fahasa/nguoi-ba-tai-gioi-vung-saga.jpg",
     "moTa": "Hạnh phúc không phải là thứ được định đoạt bằng tiền. Hạnh phúc phải được định đoạt bằng tâm thế của mỗi chúng ta.",
-    "isbn": "8935095631537",
+    "isbn": "DS00027",
     "namSanXuat": 2021,
-    "url": "https://www.fahasa.com/nguoi-ba-tai-gioi-vung-saga.html",
-    "nguon": "fahasa"
+    "hinhAnhLocal": "images/fahasa/nguoi-ba-tai-gioi-vung-saga.jpg",
+    "hinhAnhUrl": "/uploads/books/images/fahasa/nguoi-ba-tai-gioi-vung-saga.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Bộ Con Chim Xanh Biếc Bay Về - Tặng Kèm 6 Postcard",
@@ -476,14 +407,12 @@
     "nhaXuatBan": "NXB Trẻ",
     "theLoai": "Văn Học",
     "giaBia": 128000,
-    "giaGoc": 150000,
-    "hinhAnhUrl": "https://cdn1.fahasa.com/media/catalog/product/b/i/biamem.jpg",
-    "hinhAnhLocal": "images/fahasa/bo-con-chim-xanh-biec-bay-ve-tang-kem-6-postcard.jpg",
     "moTa": "Con Chim Xanh Biếc Bay Về Không giống như những tác phẩm trước đây lấy bối cảnh vùng quê miền Trung đầy ắp những hoài niệm tuổi thơ dung dị, trong trẻo với các nhân vật ở độ tuổi dậy thì, trong quyển sách mới lần này nhà văn Nguyễn Nhật Ánh lấy bối cảnh chính là Sài Gòn – Thành phố Hồ Chí Minh nơi tác giả sinh sống (như là một sự đền đáp ân tình với mảnh đất miền Nam). Các nhân vật chính trong truyện cũng “lớn” hơn, với những câu chuyện mưu sinh lập nghiệp lắm gian nan thử thách của các sinh viên trẻ đầy hoài bão. Tất nhiên không thể thiếu những câu chuyện tình cảm động, kịch tính và bất ngờ khiến bạn đọc ngẩn ngơ, cười ra nước mắt. Và như trong mọi tác phẩm Nguyễn Nhật Ánh, sự tử tế và tinh thần hướng thượng vẫn là điểm nhấn quan trọng trong quyển sách mới này. Như một cuốn phim “trinh thám tình yêu”, Con chim xanh biếc bay về dẫn bạn đi hết từ bất ngờ này đến tò mò suy đoán khác, để kết thúc bằng một nỗi hân hoan vô bờ sau bao phen hồi hộp nghi kỵ đến khó thở. Bạn sẽ theo phe sinh vi",
-    "isbn": "8934974170617",
+    "isbn": "DS00028",
     "namSanXuat": 2020,
-    "url": "https://www.fahasa.com/con-chim-xanh-biec-bay-ve-tang-kem-6-postcard.html",
-    "nguon": "fahasa"
+    "hinhAnhLocal": "images/fahasa/bo-con-chim-xanh-biec-bay-ve-tang-kem-6-postcard.jpg",
+    "hinhAnhUrl": "/uploads/books/images/fahasa/bo-con-chim-xanh-biec-bay-ve-tang-kem-6-postcard.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Bộ Beartown - Thị Trấn Nhỏ, Giấc Mơ Lớn",
@@ -493,14 +422,12 @@
     "nhaXuatBan": "Trẻ",
     "theLoai": "Văn Học",
     "giaBia": 179000,
-    "giaGoc": 210000,
-    "hinhAnhUrl": "https://cdn1.fahasa.com/media/catalog/product/8/9/8934974186083.jpg",
-    "hinhAnhLocal": "images/fahasa/bo-beartown-thi-tran-nho-giac-mo-lon.jpg",
     "moTa": "Beartown - Thị Trấn Nhỏ, Giấc Mơ Lớn Từ tác giả cuốn sách bán chạy toàn cầu “Người đàn ông mang tên Ove” Fredrik Backman cuốn hút người đọc vào cuốn tiểu thuyết sâu sắc, quyến rũ về một thị trấn nhỏ mang giấc mơ lớn – và cái giá phải trả để biến giấc mơ thành hiện thực. Ai cũng nói Beartown vậy là xong rồi. Một cộng đồng nhỏ nép mình sâu trong rừng, và ngày càng nhỏ lại khi cây cối xâm lấn. Nhưng ở đây có một sân băng cũ, và đây là lí do người dân Beartown tin rằng ngày mai sẽ tốt hơn hôm nay. Đội khúc côn cầu trên băng của họ sắp thi đấu ở vòng bán kết quốc gia, và họ hoàn toàn có cơ hội chiến thắng. Tất cả hi vọng và ước mơ của nơi này được đặt lên vai những cậu trai tuổi teen. Nhưng chính điều đó lại tạo thành một gánh nặng cho các cậu, và đã kích hoạt một hành động bạo lực, cả thị trấn chìm trong hỗn loạn. “Beartown” đi sâu vào những hi vọng gắn kết một cộng đồng nhỏ lại với nhau, những bí mật đã chia cắt nó và sự can đảm cần có để một người làm điều khác thường. Trong câu chuyện v",
-    "isbn": "8934974186083",
+    "isbn": "DS00029",
     "namSanXuat": 2023,
-    "url": "https://www.fahasa.com/beartown-thi-tran-nho-giac-mo-lon.html",
-    "nguon": "fahasa"
+    "hinhAnhLocal": "images/fahasa/bo-beartown-thi-tran-nho-giac-mo-lon.jpg",
+    "hinhAnhUrl": "/uploads/books/images/fahasa/bo-beartown-thi-tran-nho-giac-mo-lon.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Và Rồi Chẳng Còn Ai - And Then There Were None (Từ Tựa Cũ: Mười Người Da Đen Nhỏ)",
@@ -510,14 +437,12 @@
     "nhaXuatBan": "NXB Trẻ",
     "theLoai": "Văn Học",
     "giaBia": 94000,
-    "giaGoc": 110000,
-    "hinhAnhUrl": "https://cdn1.fahasa.com/media/catalog/product/i/m/image_237727.jpg",
-    "hinhAnhLocal": "images/fahasa/va-roi-chang-con-ai-and-then-there-were-none-tu-tua-cu-muoi-nguoi-da-den-nho.jpg",
     "moTa": "“Mười…” Mười người bị lừa ra một hòn đảo nằm trơ trọi giữa biển khơi thuộc vịnh Devon, tất cả được bố trí cho ở trong một căn nhà. Tác giả của trò bịp này là một nhân vật bí hiểm có tên “U.N.Owen”. “Chín…” Trong bữa ăn tối, một thông điệp được thu âm sẵn vang lên lần lượt buộc tội từng người đã gây ra những tội ác bí mật. Vào cuối buổi tối hôm đó, một vị khách đã thiệt mạng. “Tám…” Bị kẹt lại giữa muôn trùng khơi vì giông bão cùng nỗi ám ảnh về một bài vè đếm ngược, từng người, từng người một… những vị khách trên đảo bắt đầu bỏ mạng. “Bảy…” Ai trong số mười người trên đảo là kẻ giết người, và liệu ai trong số họ có thể sống sót? “Một trong những tác phẩm gây tò mò hay nhất, xuất sắc nhất của Christie.” – Tạp chí Observer “Kiệt tác của Agatha Christie.” – Tạp chí Spectator",
-    "isbn": "8934974174240",
+    "isbn": "DS00030",
     "namSanXuat": 2021,
-    "url": "https://www.fahasa.com/va-roi-chang-con-ai-and-then-there-were-none-tu-tua-cu-muoi-nguoi-da-den-nho.html",
-    "nguon": "fahasa"
+    "hinhAnhLocal": "images/fahasa/va-roi-chang-con-ai-and-then-there-were-none-tu-tua-cu-muoi-nguoi-da-den-nho.jpg",
+    "hinhAnhUrl": "/uploads/books/images/fahasa/va-roi-chang-con-ai-and-then-there-were-none-tu-tua-cu-muoi-nguoi-da-den-nho.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Bộ Mưa Đỏ - Ấn Bản Kỷ Niệm - Bìa Cứng - Tặng Kèm Bookmark + Móc Khoá Balo Mũ Cối - Độc Quyền Fahasa",
@@ -527,14 +452,12 @@
     "nhaXuatBan": "Quân Đội Nhân Dân",
     "theLoai": "Văn Học",
     "giaBia": 175000,
-    "giaGoc": 249000,
-    "hinhAnhUrl": "https://cdn1.fahasa.com/media/catalog/product/z/7/z7524933271610_1ef60b420a04d34b2.jpg",
-    "hinhAnhLocal": "images/fahasa/bo-mua-do-an-ban-ky-niem-bia-cung-tang-kem-bookmark-moc-khoa-balo-mu-coi-doc-quy.jpg",
     "moTa": "Mưa Đỏ “Mưa đỏ” là tiểu thuyết của nhà văn Chu Lai, kết quả sau nhiều năm trăn trở và sáng tạo. Tiểu thuyết lấy bối cảnh chính là cuộc chiến đấu bảo vệ Thành cổ Quảng Trị mùa hè năm 1972, cả ở hai bên chiến tuyến (ta và địch), xoay quanh trục hai nhân vật chính: Cường (chiến sĩ Giải phóng) và Quang (tên chỉ huy hắc báo của ngụy). Bên cạnh đó là bối cảnh trên bàn đàm phán ở Pa-ri với nhân vật bà mẹ của Cường - một nhà ngoại giao là thành viên của đoàn đàm phán phía ta… Tác giả đã mượn phông nền của một sự kiện lịch sử điển hình nhưng cũng khá “nhạy cảm” trong cuộc kháng chiến chống Mỹ, cứu nước để dựng lại bức tranh bi tráng về cuộc chiến đấu bảo vệ Thành cổ 81 ngày đêm mùa hè đỏ lửa năm 1972. Bằng ngòi bút đậm chất văn miêu tả, không ôm đồm đi vào “bề rộng” của không gian cuộc chiến, mà đi vào chiều sâu của những chi tiết, những nhân vật; lột tả tính chất khốc liệt và bi tráng, tác giả nhập hồn vào từng nhân vật để giúp bạn đọc thấy được tâm trạng giằng xé trong từng cảnh huống: Cả sự ",
-    "isbn": "8938563609069",
+    "isbn": "DS00031",
     "namSanXuat": 2025,
-    "url": "https://www.fahasa.com/mua-do-an-ban-ky-niem-bia-cung-tang-kem-bookmark-moc-khoa-balo-mu-coi-doc-quyen-fahasa-1033999.html",
-    "nguon": "fahasa"
+    "hinhAnhLocal": "images/fahasa/bo-mua-do-an-ban-ky-niem-bia-cung-tang-kem-bookmark-moc-khoa-balo-mu-coi-doc-quy.jpg",
+    "hinhAnhUrl": "/uploads/books/images/fahasa/bo-mua-do-an-ban-ky-niem-bia-cung-tang-kem-bookmark-moc-khoa-balo-mu-coi-doc-quy.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Bộ Còn Chút Gì Để Nhớ (2022)",
@@ -544,14 +467,12 @@
     "nhaXuatBan": "NXB Trẻ",
     "theLoai": "Văn Học",
     "giaBia": 94000,
-    "giaGoc": 110000,
-    "hinhAnhUrl": "https://cdn1.fahasa.com/media/catalog/product/8/9/8934974177944.jpg",
-    "hinhAnhLocal": "images/fahasa/bo-con-chut-gi-de-nho-2022.jpg",
     "moTa": "Đó là những kỷ niệm thời đi học của Chương, lúc mới bước chân vào Sài Gòn và làm quen với cuộc sống đô thị. Là những mối quan hệ bạn bè tưởng chừng hời hợt thoảng qua nhưng gắn bó suốt cuộc đời. Cuộc sống đầy biến động đã xô dạt mỗi người mỗi nơi, nhưng trải qua hàng mấy chục năm, những kỷ niệm ấy vẫn luôn níu kéo Chương về với một thời để nhớ.",
-    "isbn": "8934974177944",
+    "isbn": "DS00032",
     "namSanXuat": 2022,
-    "url": "https://www.fahasa.com/con-chut-gi-de-nho-2022.html",
-    "nguon": "fahasa"
+    "hinhAnhLocal": "images/fahasa/bo-con-chut-gi-de-nho-2022.jpg",
+    "hinhAnhUrl": "/uploads/books/images/fahasa/bo-con-chut-gi-de-nho-2022.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Tủ Sách Thanh Niên - Mãi Mãi Tuổi Hai Mươi - Nhật Ký Thời Chiến Việt Nam",
@@ -562,14 +483,12 @@
     "nhaXuatBan": "Kim Đồng",
     "theLoai": "Văn Học",
     "giaBia": 68000,
-    "giaGoc": 80000,
-    "hinhAnhUrl": "https://cdn1.fahasa.com/media/catalog/product/z/6/z6923363975014_eba930925324269aa1bdbf39ac1f57db.jpg",
-    "hinhAnhLocal": "images/fahasa/tu-sach-thanh-nien-mai-mai-tuoi-hai-muoi-nhat-ky-thoi-chien-viet-nam.jpg",
     "moTa": "Tủ Sách Thanh Niên - Mãi Mãi Tuổi Hai Mươi - Nhật Ký Thời Chiến Việt Nam Mãi mãi tuổi hai mươi đã làm rung động hàng triệu con tim của bạn đọc bởi vẻ đẹp tâm hồn thuần khiết, tình yêu quê hương đất nước nồng nàn thể hiện qua những cảm nhận bình dị của liệt sĩ Nguyễn Văn Thạc trong suốt những chặng đường hành quân. Như một lời tiên tri về ngày thống nhất đất nước, lá thư đề ngày 18 tháng 9 năm 1971 gửi người yêu, anh Thạc viết: “Bất kỳ một sự vinh quang nào cũng cần phải trả bằng một giá. Và khó khăn gian khổ càng nhiều và thử thách càng nhiều, sự vinh quang đó càng trở nên rực rỡ. Chúng ta đừng đi tìm những chân lý sâu xa đơn thuần qua những áng văn và những bài thơ, bài toán. 30.4.1975 Thạc sẽ trả lời cho P. câu: Hạnh phúc là gì?...” Và cuốn nhật ký dừng lại tại ngã ba Đồng Lộc ngày 3 tháng 6 năm 1972 khi anh chuẩn bị vào chiến trường… --- Mãi mãi tuổi hai mươi cùng với Nhật ký Đặng Thùy Trâm đã được xếp vào một trong mười sự kiện văn hóa tiêu biểu năm 2005 tại Việt Nam với số lượng p",
-    "isbn": "9786042284721",
+    "isbn": "DS00033",
     "namSanXuat": 2025,
-    "url": "https://www.fahasa.com/tu-sach-thanh-nien-mai-mai-tuoi-hai-muoi-nhat-ky-thoi-chien-viet-nam.html",
-    "nguon": "fahasa"
+    "hinhAnhLocal": "images/fahasa/tu-sach-thanh-nien-mai-mai-tuoi-hai-muoi-nhat-ky-thoi-chien-viet-nam.jpg",
+    "hinhAnhUrl": "/uploads/books/images/fahasa/tu-sach-thanh-nien-mai-mai-tuoi-hai-muoi-nhat-ky-thoi-chien-viet-nam.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Anh Hùng Ca Odyssée - Ấn Bản Giới Hạn - Bìa Vải",
@@ -580,14 +499,12 @@
     "nhaXuatBan": "Văn Học",
     "theLoai": "Văn Học",
     "giaBia": 2500000,
-    "giaGoc": 2500000,
-    "hinhAnhUrl": "https://cdn1.fahasa.com/media/catalog/product/1/_/1_24_12.jpg",
-    "hinhAnhLocal": "images/fahasa/anh-hung-ca-odyssee-an-ban-gioi-han-bia-vai.jpg",
     "moTa": "Anh Hùng Ca Odyssée Odyssée là bản anh hùng ca bất hủ của Homère, kể về hành trình mười năm trở về quê hương Ithaque của Ulysse sau khi thành Troie thất thủ. Chàng cùng các bạn đồng hành phải đối mặt với vô vàn thử thách do thiên nhiên, quái vật và các vị thần gây nên: bão tố, Polyphème, những nàng Sirène có giọng hát mê hồn, nữ phù thủy Circé, nàng tiên Calypso... Sau khi mất toàn bộ đồng đội, chỉ còn một mình Ulysse trở về quê hương để đoàn tụ với vợ Pénélope và con trai Télémaque, đồng thời giành lại vương quốc từ tay những kẻ cầu hôn đang chiếm giữ cung điện. Tác phẩm có kết cấu chặt chẽ gồm 24 khúc ca và nghệ thuật xây dựng nhân vật đặc sắc. Odyssée đề cao trí tuệ, lòng dũng cảm, ý chí vượt nghịch cảnh, tình yêu quê hương và sự thủy chung với gia đình. Bên cạnh đó, Homère đã kết hợp hài hòa giữa tự sự, miêu tả và trữ tình, với ngôn ngữ thơ giàu hình ảnh và truyền cảm, tạo nên sức hấp dẫn bền vững của một kiệt tác văn học nhân loại. “Đối với người Hi Lạp thời kì cổ điển, những anh ",
-    "isbn": "8936203366181",
+    "isbn": "DS00034",
     "namSanXuat": 2026,
-    "url": "https://www.fahasa.com/anh-hung-ca-odyssee-an-ban-gioi-han-bia-vai.html",
-    "nguon": "fahasa"
+    "hinhAnhLocal": "images/fahasa/anh-hung-ca-odyssee-an-ban-gioi-han-bia-vai.jpg",
+    "hinhAnhUrl": "/uploads/books/images/fahasa/anh-hung-ca-odyssee-an-ban-gioi-han-bia-vai.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Sứ Mệnh Hail Mary - Project Hail Mary",
@@ -597,14 +514,12 @@
     "nhaXuatBan": "Văn Học",
     "theLoai": "Văn Học",
     "giaBia": 140030,
-    "giaGoc": 209000,
-    "hinhAnhUrl": "https://cdn1.fahasa.com/media/catalog/product/b/_/b_a-1_7_12.jpg",
-    "hinhAnhLocal": "images/fahasa/su-menh-hail-mary-project-hail-mary.jpg",
     "moTa": "Sứ Mệnh Hail Mary - Project Hail Mary Top 100 cuốn sách hay nhất thế kỷ 21 do độc giả New York Times bình chọn TÁC PHẨM BÁN CHẠY SỐ 1 TRÊN NEW YORK TIMES TỪ TÁC GIẢ CỦA THE MARTIAN - Giải thưởng Audiobook of the Year tại Audie Awards 2022 - Sách nói bán chạy số 1 trên Audible và New York Times - Top 100 cuốn sách hay nhất thế kỷ 21 do độc giả New York Times bình chọn Một sứ mệnh tuyệt vọng. Một phi hành gia đơn độc. Và cơ hội cuối cùng để cứu lấy Trái Đất. Ryland Grace thức dậy trong một con tàu vũ trụ tối tân, trôi dạt giữa không gian, cách xa Trái Đất hàng triệu dặm ánh sáng. Không ký ức, không đồng đội, chỉ có hai thi thể lạnh lẽo bên cạnh. Anh không biết mình là ai, đang ở đâu, hay tại sao lại là người sống sót cuối cùng. Những mảnh ký ức rời rạc dần trở lại – cùng với một sự thật kinh hoàng: anh là niềm hy vọng cuối cùng của nhân loại. Một chủng vi sinh vật ngoài hành tinh đang hút năng lượng từ Mặt Trời và làm chậm quá trình phát sáng của nó, đẩy Trái Đất vào viễn cảnh diệt vong.",
-    "isbn": "8935325029677",
+    "isbn": "DS00035",
     "namSanXuat": 2025,
-    "url": "https://www.fahasa.com/su-menh-hail-mary-project-hail-mary.html",
-    "nguon": "fahasa"
+    "hinhAnhLocal": "images/fahasa/su-menh-hail-mary-project-hail-mary.jpg",
+    "hinhAnhUrl": "/uploads/books/images/fahasa/su-menh-hail-mary-project-hail-mary.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Bộ [Light Novel] Ác Nữ Nửa Vời - Truyền Kì Hoán Hồn Đổi Xác - Tập 4 - Tặng Kèm Bookmark + Postcard PVC + Phiến Quạt Treo",
@@ -615,14 +530,12 @@
     "nhaXuatBan": "Kim Đồng",
     "theLoai": "Văn Học",
     "giaBia": 98000,
-    "giaGoc": 115000,
-    "hinhAnhUrl": "https://cdn1.fahasa.com/media/catalog/product/a/c/ac-nu-nua-voi_ln-tap-4_qua-tang.jpg",
-    "hinhAnhLocal": "images/fahasa/bo-light-novel-ac-nu-nua-voi-truyen-ki-hoan-hon-doi-xac-tap-4-tang-kem-bookmark-.jpg",
     "moTa": "[Light Novel] Ác Nữ Nửa Vời - Truyền Kì Hoán Hồn Đổi Xác - Tập 4 CÂU CHUYỆN HOÁN ĐỔI RUNG CHUYỂN CẢ HẬU CUNG - MÀN HAI: “CHUYẾN XUẤT CUNG ĐẦU TIÊN” KHÉP LẠI! “Tại sao… mình không ngăn cản được họ…” Linh Lâm, trong thân xác của Tuệ Nguyệt chịu sự ghét bỏ, đã bị người dân ấp hạ tiện bắt cóc! Khi bệnh dịch mới lắng xuống một chút, thủ lĩnh Vân Lam bị đâm trọng thương. Chứng kiến cậu hấp hối sắp chết, Linh Lâm trở nên dao động, suy sụp nặng nề, khiến Thần Vũ và Cảnh Hành đều không khỏi lo lắng. Phía bên kia, Tuệ Nguyệt quyết tâm tổ chức “tiệc trà” tập hợp các tú nữ lại, bất chấp sự lo ngại của Nghiêu Minh và Cảnh Chương. Trong cuộc chiến tâm lí giữa các tú nữ, Tuệ Nguyệt đã nhổ bỏ nanh độc của Lam Phương Xuân, kẻ đang rắp tâm bôi nhọ cô, và phản kích trở lại…!? Chuyến xuất cung đầy trắc trở với đủ chuyện xảy ra, Tuệ Nguyệt bị quấy rối, lễ hội gián đoạn, và bệnh dịch bùng phát. Tất cả đều dẫn đến những biến chuyển trong tâm lí của Linh Lâm và Tuệ Nguyệt. Màn hai của bộ truyện được nhiều yêu",
-    "isbn": "9786042399609",
+    "isbn": "DS00036",
     "namSanXuat": 2026,
-    "url": "https://www.fahasa.com/light-novel-ac-nu-nua-voi-truyen-ki-hoan-hon-doi-xac-tap-4-tang-kem-bookmark-postcard-pvc-phien-quat-treo.html",
-    "nguon": "fahasa"
+    "hinhAnhLocal": "images/fahasa/bo-light-novel-ac-nu-nua-voi-truyen-ki-hoan-hon-doi-xac-tap-4-tang-kem-bookmark-.jpg",
+    "hinhAnhUrl": "/uploads/books/images/fahasa/bo-light-novel-ac-nu-nua-voi-truyen-ki-hoan-hon-doi-xac-tap-4-tang-kem-bookmark-.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Arya Bàn Bên Thỉnh Thoảng Lại Trêu Ghẹo Tôi Bằng Tiếng Nga - Tập 10 - Tặng Kèm Bookmark Bế Hình + Bìa Áo Bonus",
@@ -633,14 +546,12 @@
     "nhaXuatBan": "Kim Đồng",
     "theLoai": "Văn Học",
     "giaBia": 85500,
-    "giaGoc": 95000,
-    "hinhAnhUrl": "https://cdn1.fahasa.com/media/catalog/product/a/r/arya-ban-ben-thinh-thoang-lai-treu-gheo-toi-bang-tieng-nga_tap-10_ban-pho-thong_bia_qua-tang.jpg",
-    "hinhAnhLocal": "images/fahasa/arya-ban-ben-thinh-thoang-lai-treu-gheo-toi-bang-tieng-nga-tap-10-tang-kem-bookm.jpg",
     "moTa": "Arya Bàn Bên Thỉnh Thoảng Lại Trêu Ghẹo Tôi Bằng Tiếng Nga - Tập 10 “И наменятоже обрати внимание” “Anh sẽ trở lại là Suou Masachika để trở thành một bản thân mà anh có thể tự hào.” Sự giác ngộ đặt cược vào vị trí gia chủ nhà Suou, cùng quyết tâm không lay chuyển với cuộc chiến bầu cử. Sau khi bộc bạch hết nỗi lòng với nhau, Masachika và Yuki cuối cùng cũng làm hòa. (Không... đây thật ra là ai? Người khác à? Làm… gì có chuyện đó chứ?) Mặt khác, dù bị Yuki trong “chế độ em gái” xoay như chong chóng, Alisa vẫn thấu hiểu quá khứ mà hai anh em nhà Suou phải gánh vác và chấp nhận sự thật. Giữa lúc ấy, Ayano lại có vẻ như đang một mình trầm tư suy nghĩ điều gì đó. Và rồi, Nonoa với ác ý ngây thơ ẩn giấu đã bất ngờ tiếp cận cô...!? “… Thực ra cậu thấy ngứa mắt Kujou Alisa lắm đúng không?” Những âm mưu cuộn xoáy bắt đầu hiển lộ trong tập 10 này của câu chuyện hài lãng mạn tuổi thanh xuân cùng nữ sinh trung học gốc Nga!",
-    "isbn": "9786042399562",
+    "isbn": "DS00037",
     "namSanXuat": 2026,
-    "url": "https://www.fahasa.com/arya-ban-ben-thinh-thoang-lai-treu-gheo-toi-bang-tieng-nga-tap-10-tang-kem-bookmark-be-hinh-bia-ao-bonus.html",
-    "nguon": "fahasa"
+    "hinhAnhLocal": "images/fahasa/arya-ban-ben-thinh-thoang-lai-treu-gheo-toi-bang-tieng-nga-tap-10-tang-kem-bookm.jpg",
+    "hinhAnhUrl": "/uploads/books/images/fahasa/arya-ban-ben-thinh-thoang-lai-treu-gheo-toi-bang-tieng-nga-tap-10-tang-kem-bookm.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Bố Già - Ấn Bản Cao Cấp - Bìa Cứng - Phiên Bản Độc Quyền 50 Năm Fahasa",
@@ -650,14 +561,12 @@
     "nhaXuatBan": "Văn Học",
     "theLoai": "Văn Học",
     "giaBia": 990000,
-    "giaGoc": 990000,
-    "hinhAnhUrl": "https://cdn1.fahasa.com/media/catalog/product/0/w/0w5a5193.jpg",
-    "hinhAnhLocal": "images/fahasa/bo-gia-an-ban-cao-cap-bia-cung-phien-ban-doc-quyen-50-nam-fahasa.jpg",
     "moTa": "Bố Già Thế giới ngầm được phản ánh trong tiểu thuyết Bố Già là sự gặp gỡ giữa một bên là ý chí cương cường và nền tảng gia tộc chặt chẽ theo truyền thống mafia xứ Sicily với một bên là xã hội Mỹ nhập nhằng đen trắng, mảnh đất màu mỡ cho những cơ hội làm ăn bất chính hứa hẹn những món lợi kếch xù. Trong thế giới ấy, hình tượng Bố Già được tác giả dày công khắc họa đã trở thành bức chân dung bất hủ trong lòng người đọc. Từ một kẻ nhập cư tay trắng đến ông trùm tột đỉnh quyền uy, Don Vito Corleone là con rắn hổ mang thâm trầm, nguy hiểm khiến kẻ thù phải kiềng nể, e dè, nhưng cũng được bạn bè, thân quyến xem như một đấng toàn năng đầy nghĩa khí. Nhân vật trung tâm ấy đồng thời cũng là hiện thân của một pho triết lí rất “đời” được nhào nặn từ vốn sống của hàng chục năm lăn lộn giữa chốn giang hồ bao phen vào sinh ra tử, vì thế mà có ý kiến cho rằng “Bố Già là sự tổng hòa của mọi hiểu biết. Bố Già là đáp án cho mọi câu hỏi”. Với cấu tứ hoàn hảo, cốt truyện không thiếu những pha hành động ga",
-    "isbn": "8936203366143",
+    "isbn": "DS00038",
     "namSanXuat": 2026,
-    "url": "https://www.fahasa.com/bo-gia-an-ban-cao-cap-bia-cung-phien-ban-doc-quyen-50-nam-fahasa.html",
-    "nguon": "fahasa"
+    "hinhAnhLocal": "images/fahasa/bo-gia-an-ban-cao-cap-bia-cung-phien-ban-doc-quyen-50-nam-fahasa.jpg",
+    "hinhAnhUrl": "/uploads/books/images/fahasa/bo-gia-an-ban-cao-cap-bia-cung-phien-ban-doc-quyen-50-nam-fahasa.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Bộ Bộ Sách Omniscient Reader’s Viewpoint - Góc Nhìn Của Độc Giả Toàn Tri - Tập 1 + Tập 2 (Bộ 2 Tập) - Tặng Kèm 2 Bookmark Bế Hình",
@@ -667,31 +576,27 @@
     "nhaXuatBan": "Hà Nội",
     "theLoai": "Văn Học",
     "giaBia": 360000,
-    "giaGoc": 449000,
-    "hinhAnhUrl": "https://cdn1.fahasa.com/media/catalog/product/u/n/untitled-1_5_72.jpg",
-    "hinhAnhLocal": "images/fahasa/bo-bo-sach-omniscient-readers-viewpoint-goc-nhin-cua-doc-gia-toan-tri-tap-1-tap-.jpg",
     "moTa": "Bộ Sách Omniscient Reader’s Viewpoint - Góc Nhìn Của Độc Giả Toàn Tri - Tập 1 + Tập 2 (Bộ 2 Tập) “Chỉ mình tôi biết được kết thúc của thế giới này.” Kim Dokja vốn chỉ là một nhân viên văn phòng tầm thường, người tìm thấy niềm an ủi duy nhất ở bộ tiểu thuyết mạng vô danh “Ba cách sống sót trong một thế giới diệt vong”. Nhưng rồi một ngày, ranh giới giữa hư cấu và thực tại bỗng chốc sụp đổ. Những thảm kịch kinh hoàng từ tiểu thuyết bước ra đời thực, nhấn chìm nhân loại trong hỗn loạn và biển máu. Giữa sự tàn khốc của ngày tận thế, Kim Dokja nắm giữ một đặc quyền vô giá: Anh là độc giả duy nhất biết trước hồi kết của bộ tiểu thuyết hơn ba nghìn chương. Để sinh tồn, anh buộc phải dấn thân vào những kịch bản khốc liệt, đồng hành cùng “nhân vật chính” Yoo Joonghyuk và những đồng đội mới trên lằn ranh sinh tử mỏng manh. Bằng tri thức của một kẻ vốn dĩ chỉ đứng ngoài, liệu Kim Dokja có thể viết lại một cái kết mới cho thế giới bi kịch này, hay chỉ đang vô tình đẩy bánh xe vận mệnh lún sâu hơn ",
-    "isbn": "8935325037177",
+    "isbn": "DS00039",
     "namSanXuat": 2026,
-    "url": "https://www.fahasa.com/bo-sach-omniscient-reader-s-viewpoint-goc-nhin-cua-doc-gia-toan-tri-tap-1-tap-2-bo-2-tap-tang-kem-2-bookmark-be-hinh.html",
-    "nguon": "fahasa"
+    "hinhAnhLocal": "images/fahasa/bo-bo-sach-omniscient-readers-viewpoint-goc-nhin-cua-doc-gia-toan-tri-tap-1-tap-.jpg",
+    "hinhAnhUrl": "/uploads/books/images/fahasa/bo-bo-sach-omniscient-readers-viewpoint-goc-nhin-cua-doc-gia-toan-tri-tap-1-tap-.jpg",
+    "nguon": "real_database"
   },
   {
-    "tenSach": "Chó Hoang Và Xương (Tái Bản 2025)",
+    "tenSach": "Chó Hoang Và Xương (Tái Bản 2025)",
     "tacGia": [
       "Hưu Đồ Thành"
     ],
     "nhaXuatBan": "Dân Trí",
     "theLoai": "Văn Học",
     "giaBia": 188000,
-    "giaGoc": 235000,
-    "hinhAnhUrl": "https://cdn1.fahasa.com/media/catalog/product/b/_/b_a-_o-ch_-hoang-v_-x_ng-2025_b_a-tr_c-_1_.jpg",
-    "hinhAnhLocal": "images/fahasa/cho-hoang-va-xuong-tai-ban-2025.jpg",
-    "moTa": "Chó Hoang Và Xương Miêu Tĩnh nghĩ rằng cô đã để lại người ấy ở quá khứ. Miêu Tĩnh tin rằng sau sáu năm xa cách, những mối quan hệ mới và những trải nghiệm mới đã làm cho hình ảnh của người ấy dần phai nhạt. Tuy nhiên, việc hai đứa trẻ xa lạ nương tựa vào nhau suốt mấy năm đã khiến Trần Dị trở thành một chấp niệm khắc sâu trong tâm trí Miêu Tĩnh. Chó Hoang và Xương là câu chuyện xoay quanh cuộc đời của Miêu Tĩnh và Trần Dị, hai con người đến từ hai gia đình không toàn vẹn, chắp vá lại trở thành anh em. Trần Dị không phải là một người tốt, từng nghịch ngợm, hung tàn và hống hách, nhưng suốt những năm tháng khó khăn ấy, chính anh lại là người đã nuôi cô lớn lên. Để rồi từ những chán ghét, sợ hãi ban đầu, chẳng biết từ lúc nào giữa hai người đã nảy sinh một loại tình cảm khác, một loại tình cảm không phải là thứ “tình thân” lập lờ giả tạo, mà nó mãnh liệt, ấm áp và ập đến vô cùng bất ngờ. Điều gì đã khiến họ quyết định tiến về phía nhau? Từ những góc khuất của quá khứ, những bí mật nào đ",
-    "isbn": "8936213491927",
+    "moTa": "Chó Hoang Và Xương Miêu Tĩnh nghĩ rằng cô đã để lại người ấy ở quá khứ. Miêu Tĩnh tin rằng sau sáu năm xa cách, những mối quan hệ mới và những trải nghiệm mới đã làm cho hình ảnh của người ấy dần phai nhạt. Tuy nhiên, việc hai đứa trẻ xa lạ nương tựa vào nhau suốt mấy năm đã khiến Trần Dị trở thành một chấp niệm khắc sâu trong tâm trí Miêu Tĩnh. Chó Hoang và Xương là câu chuyện xoay quanh cuộc đời của Miêu Tĩnh và Trần Dị, hai con người đến từ hai gia đình không toàn vẹn, chắp vá lại trở thành anh em. Trần Dị không phải là một người tốt, từng nghịch ngợm, hung tàn và hống hách, nhưng suốt những năm tháng khó khăn ấy, chính anh lại là người đã nuôi cô lớn lên. Để rồi từ những chán ghét, sợ hãi ban đầu, chẳng biết từ lúc nào giữa hai người đã nảy sinh một loại tình cảm khác, một loại tình cảm không phải là thứ “tình thân” lập lờ giả tạo, mà nó mãnh liệt, ấm áp và ập đến vô cùng bất ngờ. Điều gì đã khiến họ quyết định tiến về phía nhau? Từ những góc khuất của quá khứ, những bí mật nào đ",
+    "isbn": "DS00040",
     "namSanXuat": 2025,
-    "url": "https://www.fahasa.com/cho-hoang-va-xuong-tai-ban-2025.html",
-    "nguon": "fahasa"
+    "hinhAnhLocal": "images/fahasa/cho-hoang-va-xuong-tai-ban-2025.jpg",
+    "hinhAnhUrl": "/uploads/books/images/fahasa/cho-hoang-va-xuong-tai-ban-2025.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Bộ Tôi Thấy Hoa Vàng Trên Cỏ Xanh (Tái Bản 2023)",
@@ -701,14 +606,12 @@
     "nhaXuatBan": "Trẻ",
     "theLoai": "Văn Học",
     "giaBia": 128000,
-    "giaGoc": 150000,
-    "hinhAnhUrl": "https://cdn1.fahasa.com/media/catalog/product/n/n/nna-hvtcx.jpg",
-    "hinhAnhLocal": "images/fahasa/bo-toi-thay-hoa-vang-tren-co-xanh-tai-ban-2023.jpg",
     "moTa": "Tôi Thấy Hoa Vàng Trên Cỏ Xanh Những câu chuyện nhỏ xảy ra ở một ngôi làng nhỏ: chuyện người, chuyện cóc, chuyện ma, chuyện công chúa và hoàng tử , rồi chuyện đói ăn, cháy nhà, lụt lội,... Bối cảnh là trường học, nhà trong xóm, bãi tha ma. Dẫn chuyện là cậu bé 15 tuổi tên Thiều. Thiều có chú ruột là chú Đàn, có bạn thân là cô bé Mận. Nhưng nhân vật đáng yêu nhất lại là Tường, em trai Thiều, một cậu bé học không giỏi. Thiều, Tường và những đứa trẻ sống trong cùng một làng, học cùng một trường, có biết bao chuyện chung. Chúng nô đùa, cãi cọ rồi yêu thương nhau, cùng lớn lên theo năm tháng, trải qua bao sự kiện biến cố của cuộc đời. Tác giả vẫn giữ cách kể chuyện bằng chính giọng trong sáng hồn nhiên của trẻ con. 81 chương ngắn là 81 câu chuyện hấp dẫn với nhiều chi tiết thú vị, cảm động, có những tình tiết bất ngờ, từ đó lộ rõ tính cách người. Cuốn sách, vì thế, có sức ám ảnh.",
-    "isbn": "8934974187622",
+    "isbn": "DS00041",
     "namSanXuat": 2023,
-    "url": "https://www.fahasa.com/toi-thay-hoa-vang-tren-co-xanh-tai-ban-2023.html",
-    "nguon": "fahasa"
+    "hinhAnhLocal": "images/fahasa/bo-toi-thay-hoa-vang-tren-co-xanh-tai-ban-2023.jpg",
+    "hinhAnhUrl": "/uploads/books/images/fahasa/bo-toi-thay-hoa-vang-tren-co-xanh-tai-ban-2023.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Bộ Mùa Hè Không Tên - Tặng Kèm Bookmark 2 Mặt + Poster Tranh",
@@ -718,14 +621,12 @@
     "nhaXuatBan": "Trẻ",
     "theLoai": "Văn Học",
     "giaBia": 111000,
-    "giaGoc": 130000,
-    "hinhAnhUrl": "https://cdn1.fahasa.com/media/catalog/product/m/u/mua-he-khong-ten---bia-mem---qua-tang-kem-1.jpg",
-    "hinhAnhLocal": "images/fahasa/bo-mua-he-khong-ten-tang-kem-bookmark-2-mat-poster-tranh.jpg",
     "moTa": "Mùa Hè Không Tên “Mùa hè không tên” là truyện dài mới nhất của nhà văn Nguyễn Nhật Ánh, với những câu chuyện tuổi thơ với vô số trò tinh nghịch, những thoáng thinh thích hồi hộp cùng vô vàn kỷ niệm. Để rồi khi những tháng ngày trong sáng của tình bạn dần qua, bọn nhỏ trong mỗi gia đình bình dị lớn lên cùng chứng kiến những giây phút cảm động của câu chuyện tình thân, nỗi khát khao hạnh phúc êm đềm, cùng bỡ ngỡ bước vào tuổi lớn nhiều yêu thương mang cả màu va vấp. Mùa hè năm ấy của cậu bé Khang không chỉ toàn chuyện leo cây hái trái và qua lại với con Nhàn hồn hậu đáng yêu ưa nuôi bọn cá dị tật, mà có Tí, có Chỉnh, rồi Túc, Đính… phải đối mặt với những thử thách của số phận. Nhưng vì sao là “mùa hè không tên”? “Đó là mùa hè thật đặc biệt với tôi. Sau mùa hè đó, cuộc sống của tôi đã thay đổi mãi mãi. Vì vậy tôi muốn đặt cho nó một cái tên để nó không giống với những mùa hè khác trong đời tôi mỗi khi tôi nhớ về. Tôi định gọi nó là mùa hè chia tay, mùa hè ưu tư, mùa hè định mệnh, hay sến ",
-    "isbn": "8934974189640",
+    "isbn": "DS00042",
     "namSanXuat": 2023,
-    "url": "https://www.fahasa.com/mua-he-khong-ten-tang-kem-bookmark-2-mat-poster-tranh.html",
-    "nguon": "fahasa"
+    "hinhAnhLocal": "images/fahasa/bo-mua-he-khong-ten-tang-kem-bookmark-2-mat-poster-tranh.jpg",
+    "hinhAnhUrl": "/uploads/books/images/fahasa/bo-mua-he-khong-ten-tang-kem-bookmark-2-mat-poster-tranh.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Bộ Tôi Là Bêtô (Tái Bản 2023)",
@@ -735,14 +636,12 @@
     "nhaXuatBan": "Trẻ",
     "theLoai": "Văn Học",
     "giaBia": 81000,
-    "giaGoc": 95000,
-    "hinhAnhUrl": "https://cdn1.fahasa.com/media/catalog/product/n/x/nxbtre_full_24352023_043531.jpg",
-    "hinhAnhLocal": "images/fahasa/bo-toi-la-beto-tai-ban-2023.jpg",
     "moTa": "Tôi Là Bêtô Truyện Tôi là Bêtô là sáng tác mới nhất của nhà văn Nguyễn Nhật Ánh được viết theo phong cách hoàn toàn khác so với những tác phẩm trước đây của ông. Những mẩu chuyện, hay những phát hiện của chú chó Bêtô đầy thú vị, vừa hài hước, vừa chiêm nghiệm một cách nhẹ nhàng “vô vàn những điều thú vị mà cuộc sống cố tình giấu kín ở ngóc ngách nào đó trong tâm hồn của mỗi chúng ta”.",
-    "isbn": "8934974188841",
+    "isbn": "DS00043",
     "namSanXuat": 2023,
-    "url": "https://www.fahasa.com/toi-la-beto-tai-ban-2023.html",
-    "nguon": "fahasa"
+    "hinhAnhLocal": "images/fahasa/bo-toi-la-beto-tai-ban-2023.jpg",
+    "hinhAnhUrl": "/uploads/books/images/fahasa/bo-toi-la-beto-tai-ban-2023.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Bộ Trốn Lên Mái Nhà Để Khóc - Tặng Kèm Bookmark",
@@ -752,14 +651,12 @@
     "nhaXuatBan": "Dân Trí",
     "theLoai": "Văn Học",
     "giaBia": 66500,
-    "giaGoc": 95000,
-    "hinhAnhUrl": "https://cdn1.fahasa.com/media/catalog/product/b/_/b_a-1-tr_n-l_n-m_i-nh_-_-kh_c-2.jpg",
-    "hinhAnhLocal": "images/fahasa/bo-tron-len-mai-nha-de-khoc-tang-kem-bookmark.jpg",
     "moTa": "TRỐN LÊN MÁI NHÀ ĐỂ KHÓC - NƠI CẢM XÚC ĐƯỢC BUÔNG LỎNG, KÝ ỨC ĐƯỢC CẤT LỜI \"Có những ngày chẳng ai hiểu mình, chẳng ai cần mình, chẳng ai thương mình. Và những ngày đó, mái nhà là nơi duy nhất tôi thấy an toàn.\" \"Trốn Lên Mái Nhà Để Khóc\" không chỉ là câu chuyện của riêng tác giả, mà còn là những mảnh ghép ký ức của mỗi người. Một cuốn sách dành cho những trái tim nhạy cảm, cho những ai từng giấu nước mắt sau nụ cười, từng thu mình vào một góc chỉ để đối diện với chính mình. VỀ TÁC GIẢ: Lam Tác giả trẻ, nổi bật với lối viết tinh tế, giàu cảm xúc. Chuyên viết về tuổi thơ, ký ức, nỗi buồn và hành trình trưởng thành. Ngôn từ nhẹ nhàng nhưng chạm sâu vào tâm hồn độc giả. \"Trốn Lên Mái Nhà Để Khóc\" là nơi để những tâm hồn lạc lõng tìm thấy sự đồng điệu. Tóm tắt nội dung sách Mái nhà – nơi cao nhất trong căn nhà nhưng lại là nơi sâu nhất trong tâm hồn một đứa trẻ. Ở đó, Lam đã lắng nghe nhịp thở của quá khứ, nơi có giọng nói của mẹ, bàn tay của bà, những ký ức đẹp đẽ xen lẫn những nỗi đau kh",
-    "isbn": "8935325015984",
+    "isbn": "DS00044",
     "namSanXuat": 2023,
-    "url": "https://www.fahasa.com/tron-len-mai-nha-de-khoc-tang-kem-bookmark.html",
-    "nguon": "fahasa"
+    "hinhAnhLocal": "images/fahasa/bo-tron-len-mai-nha-de-khoc-tang-kem-bookmark.jpg",
+    "hinhAnhUrl": "/uploads/books/images/fahasa/bo-tron-len-mai-nha-de-khoc-tang-kem-bookmark.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Bộ Bố Con Cá Gai (Tái Bản 2026)",
@@ -769,14 +666,12 @@
     "nhaXuatBan": "Hà Nội",
     "theLoai": "Văn Học",
     "giaBia": 111000,
-    "giaGoc": 138000,
-    "hinhAnhUrl": "https://cdn1.fahasa.com/media/catalog/product/b/o/bo-con-ca-gai-01-_2_.jpg",
-    "hinhAnhLocal": "images/fahasa/bo-bo-con-ca-gai-tai-ban-2026.jpg",
     "moTa": "Bố Con Cá Gai Có những câu chuyện mãi được yêu thương, và nằm trong trái tim bạn đọc suốt năm này qua năm khác… Bố con cá gai là một câu chuyện như thế, trong trái tim độc giả Hàn Quốc, suốt nhiều năm nay. Ở đó có một em nhỏ đã chiến đấu với bệnh hiểm nghèo từ lúc lên ba, giờ em gần mười tuổi. Hãy khoan, đừng vội buồn! Vì em bé này sẽ chẳng làm bạn phải buồn nhiều. Em chịu tiêm rất giỏi, em không khóc, ngoài những lúc mệt quá ngủ thiếp đi, em còn bận đỏ bừng mặt nghĩ tới bạn Eun Mi kẹp-tóc-hoa, bận xếp hình tàu cướp biển, bận lật giở cuốn truyện Bảy viên ngọc rồng… Nhưng bố em thì khác, một ông bố làm em nhỏ của chúng ta phiền lòng quá nhiều, cũng làm những ai dõi theo “bố con cá gai” phải buồn không ít, có khi buồn quá hóa giận! Ông bố ấy đích thị là bố cá gai - một cá bố rất kỳ lạ - cả nguồn sống chỉ co cụm quẩn quanh cá gai con tí xíu. Như một ông bố ngốc! Ra đời năm 2000, câu chuyện cảm động về ông bố cá gai và cậu bé con mà người bố ấy nâng niu trong Bố con cá gai có sức lay động ",
-    "isbn": "8935235249257",
+    "isbn": "DS00045",
     "namSanXuat": 2026,
-    "url": "https://www.fahasa.com/bo-con-ca-gai-tai-ban-2026.html",
-    "nguon": "fahasa"
+    "hinhAnhLocal": "images/fahasa/bo-bo-con-ca-gai-tai-ban-2026.jpg",
+    "hinhAnhUrl": "/uploads/books/images/fahasa/bo-bo-con-ca-gai-tai-ban-2026.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Bộ Nỗi Buồn Chiến Tranh (Tái Bản 2022)",
@@ -786,14 +681,12 @@
     "nhaXuatBan": "Trẻ",
     "theLoai": "Văn Học",
     "giaBia": 111000,
-    "giaGoc": 130000,
-    "hinhAnhUrl": "https://cdn1.fahasa.com/media/catalog/product/8/9/8934974180098_1.jpg",
-    "hinhAnhLocal": "images/fahasa/bo-noi-buon-chien-tranh-tai-ban-2022.jpg",
     "moTa": "Tác phẩm là dòng hồi ức của người lính về chiến tranh và thời tuổi trẻ đã trải qua trong bom đạn. Đólàlòng tiếc thương vô hạn đối với những người cùng thế hệ với mình đã nằm xuống, là ám ảnh về thân phận con người trong thời buổi loạn ly, và thông qua thân phận là sự tái hiện đầy xót xavề quá khứ, những suy tư nghiền ngẫm về con đường dấn thân của cả một thế hệ sinh ra trong chiến tranh. Bao trùm lên tất cả, là nỗi buồn sâu xa gắn với từng mảnh đời riêng. Tác phẩm đã bước ra khỏi lối mòn về lòng tự hào dân tộc cùng những chiến công và vinh quang tập thể để nêu lên thông điệp về sự ghê tởm, về tính chất hủy diệt của chiến tranh đối với con người. Vào thời điểm ra đời cuối thập niên 1980,“Nỗi buồn chiến tranh” có thểđược xem là tác phẩm văn học Việt Nam hiện đại đầu tiên viết về chiến tranh có cái nhìn khác với quan niệm truyền thống, khẳng định mạnh mẽ vai trò cá nhân trong xã hội, quyền sống, hạnh phúc và đau khổ của con người với tư cách một cá thể độc lập. Tiểu thuyết nhận được giải ",
-    "isbn": "8934974180098",
+    "isbn": "DS00046",
     "namSanXuat": 2022,
-    "url": "https://www.fahasa.com/noi-buon-chien-tranh-tai-ban-2022.html",
-    "nguon": "fahasa"
+    "hinhAnhLocal": "images/fahasa/bo-noi-buon-chien-tranh-tai-ban-2022.jpg",
+    "hinhAnhUrl": "/uploads/books/images/fahasa/bo-noi-buon-chien-tranh-tai-ban-2022.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Hạ Đỏ (Tái Bản 2022)",
@@ -803,14 +696,12 @@
     "nhaXuatBan": "NXB Trẻ",
     "theLoai": "Văn Học",
     "giaBia": 33000,
-    "giaGoc": 38000,
-    "hinhAnhUrl": "https://cdn1.fahasa.com/media/catalog/product/8/9/8934974178613.jpg",
-    "hinhAnhLocal": "images/fahasa/ha-do-tai-ban-2022.jpg",
     "moTa": "Hạ Đỏ Kể về mối tình đầu trong sáng của một cậu học trò dành cho một cô gái quê 16 tuổi trong dịp về quê nghỉ hè, và những việc làm cao đẹp của cậu cho em bé quê chân chất chịu nhiều thiệt thòi ở nông thôn. Chuyện nhiều hình ảnh, dễ thương và trong sáng… vẫn không thiếu những “pha” thú vị cho ta những tiếng cười sảng khoái.",
-    "isbn": "8934974178613",
+    "isbn": "DS00047",
     "namSanXuat": 2022,
-    "url": "https://www.fahasa.com/ha-do-tai-ban-2022-399602.html",
-    "nguon": "fahasa"
+    "hinhAnhLocal": "images/fahasa/ha-do-tai-ban-2022.jpg",
+    "hinhAnhUrl": "/uploads/books/images/fahasa/ha-do-tai-ban-2022.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Hệ Thống Tài Khoản Kế Toán (Sửa Đổi Theo Thông Tư Số 99/2025/TT-BTC)",
@@ -820,14 +711,12 @@
     "nhaXuatBan": "Dân Trí",
     "theLoai": "Kinh Tế",
     "giaBia": 7000,
-    "giaGoc": 10000,
-    "hinhAnhUrl": "https://cdn1.fahasa.com/media/catalog/product/2/9/2990436010637.jpg",
-    "hinhAnhLocal": "images/fahasa/he-thong-tai-khoan-ke-toan-sua-doi-theo-thong-tu-so-992025tt-btc.jpg",
     "moTa": "Hệ Thống Tài Khoản Kế Toán (Sửa Đổi Theo Thông Tư Số 99/2025/TT-BTC) Với nhiều điểm mới như tinh gọn tài khoản cấp 1 (71 tài khoản), bổ sung tài khoản chi tiết và mở rộng quyền tự chủ cho doanh nghiệp, nhằm hướng tới chuẩn mực quốc tế và tăng tính minh bạch, phù hợp với doanh nghiệp áp dụng chế độ kế toán mới. Tài khoản mới như 215 (Tài sản sinh học), 82112 (Chi phí thuế TNDN bổ sung - thuế tối thiểu toàn cầu). Tài khoản 112 đổi tên thành \"Tiền gửi không kỳ hạn\". Bỏ các tài khoản liên quan đến nguồn kinh phí sự nghiệp (461, 466). Cho phép doanh nghiệp tự xây dựng tài khoản cấp 2 chi tiết hơn.Gần gũi hơn với chuẩn mực kế toán quốc tế (IFRS) và yêu cầu minh bạch thông tin. Đây là tài liệu quan trọng giúp kế toán viên nắm bắt và chuyển đổi sang hệ thống tài khoản kế toán mới hiệu quả.",
-    "isbn": "2990436010637",
+    "isbn": "DS00048",
     "namSanXuat": 2026,
-    "url": "https://www.fahasa.com/he-thong-tai-khoan-ke-toan-sua-doi-theo-thong-tu-so-99-2025-tt-btc.html",
-    "nguon": "fahasa"
+    "hinhAnhLocal": "images/fahasa/he-thong-tai-khoan-ke-toan-sua-doi-theo-thong-tu-so-992025tt-btc.jpg",
+    "hinhAnhUrl": "/uploads/books/images/fahasa/he-thong-tai-khoan-ke-toan-sua-doi-theo-thong-tu-so-992025tt-btc.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Bộ 48 Nguyên Tắc Chủ Chốt Của Quyền Lực (Tái Bản)",
@@ -837,14 +726,12 @@
     "nhaXuatBan": "NXB Trẻ",
     "theLoai": "Kinh Tế",
     "giaBia": 154000,
-    "giaGoc": 200000,
-    "hinhAnhUrl": "https://cdn1.fahasa.com/media/catalog/product/i/m/image_195509_1_32101.jpg",
-    "hinhAnhLocal": "images/fahasa/bo-48-nguyen-tac-chu-chot-cua-quyen-luc-tai-ban.jpg",
     "moTa": "Quyền lực có sức hấp dẫn vô cùng mạnh mẽ đối với con người trong mọi thời, ở mọi nơi, với mọi giai tầng. Lịch sử xét cho cùng là cuộc đấu tranh triền miên để giành cho bằng được quyền lực cai trị của các tập đoàn thống trị, từ cổ chí kim, từ đông sang tây. Quyền lực là thứ mà rất nhiều người mong muốn nhưng không phải ai cũng dễ dàng đạt được. Vươn lên những vị trí cao hơn trong thang bậc xã hội thường được xem là một khát khao rất con người. Nhưng, liệu có phải chỉ những tài năng xuất chúng mới có thể đạt được điều đó? Không hẳn vậy. Bởi ít ai biết rằng, để giành được một vị trí quyền lực thực tế vẫn mang tính công thức. Qua nghiên cứu lịch sử nhân loại, với những nhân vật có quyền lực nhất tự cổ chí kim, Robert Greene đã khái quát nên 48 nguyên tắc tạo nên quyền lực một cách có cơ sở khoa học. Mỗi nguyên tắc đều được tác giả phân tích, giải thích rõ ràng, mang tính thuyết phục cao và cực kỳ hấp dẫn. Một số quy luật đòi hỏi sự khôn ngoan sắc sảo, một số cần sự lén lút và một số khác h",
-    "isbn": "8934974165569",
+    "isbn": "DS00049",
     "namSanXuat": 2020,
-    "url": "https://www.fahasa.com/48-nguyen-tac-chu-chot-cua-quyen-luc-tai-ban-2020.html",
-    "nguon": "fahasa"
+    "hinhAnhLocal": "images/fahasa/bo-48-nguyen-tac-chu-chot-cua-quyen-luc-tai-ban.jpg",
+    "hinhAnhUrl": "/uploads/books/images/fahasa/bo-48-nguyen-tac-chu-chot-cua-quyen-luc-tai-ban.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Bộ Bí Mật Của Phan Thiên Ân (Tái Bản 2023)",
@@ -854,14 +741,12 @@
     "nhaXuatBan": "Thế Giới",
     "theLoai": "Kinh Tế",
     "giaBia": 69000,
-    "giaGoc": 69000,
-    "hinhAnhUrl": "https://cdn1.fahasa.com/media/catalog/product/i/m/image_195509_1_30538_1.jpg",
-    "hinhAnhLocal": "images/fahasa/bo-bi-mat-cua-phan-thien-an-tai-ban-2023.jpg",
     "moTa": "Bí Mật Của Phan Thiên Ân Những bài học về tinh thần, tâm linh và trí tuệ đã được chính tiến sĩ Alan Phan chắp bút & phóng tác lại theo nguyên tác của cuốn sách vô giá theo thời gian “Người bán hàng vĩ đại nhất thế giới” của Og Mandino. Lối viết dung dị, đơn giản: dùng một câu chuyện với bối cảnh thân thuộc và mười tờ kinh để thắp nên những bài học thay đổi cuộc đời – tất cả sẽ làm nên những sự thay đổi “diệu kì” khi ta áp dụng triệt để. Trong cuốn sách người đọc sẽ tìm thấy nhiều bất ngờ thú vị về việc khám phá chính bản thân và sức mạnh nội tại của mình qua ngòi bút “không-kinh-tế” và “đầy tính triết lý nhân sinh” của một “triết gia doanh nhân” bậc thầy Alan Phan. “Con đường để đạt được thành công và giàu có đều có những thử thách. Và để thành công hay giàu có cần phải có kinh nghiệm và bí quyết. Tất cả những công thức thành công, hạnh phúc, bình an và tiền bạc của những người giàu nhất thế giới sẽ được gói gọn trong cuốn sách này qua 10 tờ kinh. Mỗi tờ kinh là những lời chỉ dạy của t",
-    "isbn": "9786043920420",
+    "isbn": "DS00050",
     "namSanXuat": 2023,
-    "url": "https://www.fahasa.com/bi-mat-cua-phan-thien-an-tai-ban-2023.html",
-    "nguon": "fahasa"
+    "hinhAnhLocal": "images/fahasa/bo-bi-mat-cua-phan-thien-an-tai-ban-2023.jpg",
+    "hinhAnhUrl": "/uploads/books/images/fahasa/bo-bi-mat-cua-phan-thien-an-tai-ban-2023.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Điềm Dược - Viên Thuốc Ngọt Ngào Mang Tên Em Tập 2",
@@ -869,16 +754,14 @@
       "Diệp Tích Ngữ"
     ],
     "nhaXuatBan": "Dân Trí",
-    "theLoai": "Văn học hiện đại",
+    "theLoai": "Văn Học Hiện Đại",
     "giaBia": 186200,
-    "giaGoc": 196000,
-    "hinhAnhUrl": "https://cdn.hstatic.net/products/200001055148/diem-duoc-vien-thuoc-ngot-ngao-tap2-bia_6c18991a79074b4a8ceabf5b668a5734.jpg",
-    "hinhAnhLocal": "images/phuongnam/diem-duoc-vien-thuoc-ngot-ngao-mang-ten-em-tap-2.jpg",
     "moTa": "Điềm Dược - Viên Thuốc Ngọt Ngào Mang Tên Em Tập 2Có một ngày, Lương Dược phát hiện Sở Trú đã thay đổi, không còn là chàng trai “ngoan hiền” trong ấn tượng thuở nào.Lương Dược định trốn chạy nhưng bị anh giữ chặt cổ tay, gằn giọng nguy hiểm: “Em định đi đâu? Anh là bạn trai của em.”Lương Dược: “…” Biết mọi chuyện đã vỡ lở, cô trịnh trọng thề: “Em không bao giờ lừa anh nữa!”Sở Trú im lặng một lúc rồi nhìn thẳng vào mắt cô: “Em sẽ ở bên anh trọn đời chứ?”Lương Dược thấy anh giận nên gật đầu lia lịa, “Ừm ừm, em sẽ bên anh trọn đời…” Nói đoạn, cô bỗng im bặt trước nụ cười trêu chọc của Sở Trú.Lương Dược đỏ mặt hét lên: “Anh lừa em!”Thông tin chi tiết",
-    "isbn": "893532503744",
+    "isbn": "DS00051",
     "namSanXuat": 2026,
-    "url": "https://nhasachphuongnam.com/products/diem-duoc-vien-thuoc-ngot-ngao-mang-ten-em-tap-2",
-    "nguon": "phuongnam"
+    "hinhAnhLocal": "images/phuongnam/diem-duoc-vien-thuoc-ngot-ngao-mang-ten-em-tap-2.jpg",
+    "hinhAnhUrl": "/uploads/books/images/phuongnam/diem-duoc-vien-thuoc-ngot-ngao-mang-ten-em-tap-2.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Chân Thành Đúng Người, Dịu Dàng Đúng Lúc",
@@ -886,16 +769,14 @@
       "Rhonda Sciortino"
     ],
     "nhaXuatBan": "Phụ Nữ Việt Nam",
-    "theLoai": "Tâm Lý - Giáo Dục",
+    "theLoai": "Tâm Lý - Kỹ Năng",
     "giaBia": 83600,
-    "giaGoc": 88000,
-    "hinhAnhUrl": "https://cdn.hstatic.net/products/200001055148/chan-thanh-dung-nguoi-diu-dang-dung-luc-bia_43c77b395f254e6e8b63b97271666579.jpg",
-    "hinhAnhLocal": "images/phuongnam/chan-thanh-dung-nguoi-diu-dang-dung-luc.jpg",
     "moTa": "Chân Thành Đúng Người, Dịu Dàng Đúng LúcCó khi nào bạn bận lòng vì người tưởng như phù hợp lại chẳng dành tình cảm cho mình? Khổ sở vì đã hết lòng với một người nhưng cuối cùng vẫn nhận về thất vọng? Hoặc đôi khi tự hỏi liệu trên thế gian này có ai từng thật lòng yêu thương mình, và liệu mình có xứng đáng được yêu như bao người khác?Nếu trong lòng vẫn còn những băn khoăn ấy, hãy để \"Chân thành đúng người, dịu dàng đúng lúc\" đồng hành cùng bạn nhé!Cuốn sách sẽ nhẹ nhàng dẫn dắt người đọc nhìn sâu vào những vết xước bên trong mình: nỗi sợ bị bỏ rơi, cảm giác không đủ tốt, những tổn thương âm thầm khiến ta dần đánh mất niềm tin vào bản thân và cuộc sống. Từ đó, tác giả Rhonda Sciortino đã dẫn bước người đọc vào hành trình 30 ngày dọn dẹp lại những đổ vỡ trong lòng, từng chút gỡ bỏ những mặc cảm, tổn thương và nỗi sợ đã âm thầm mà bạn đã chất chứa bấy lâu. Và đôi khi, khởi đầu tốt nhất của sự chữa lành không nằm ở việc tìm kiếm một ai khác, mà bắt đầu từ khoảnh khắc ta biết quay về chăm só",
-    "isbn": "893532503732",
+    "isbn": "DS00052",
     "namSanXuat": 2026,
-    "url": "https://nhasachphuongnam.com/products/chan-thanh-dung-nguoi-diu-dang-dung-luc",
-    "nguon": "phuongnam"
+    "hinhAnhLocal": "images/phuongnam/chan-thanh-dung-nguoi-diu-dang-dung-luc.jpg",
+    "hinhAnhUrl": "/uploads/books/images/phuongnam/chan-thanh-dung-nguoi-diu-dang-dung-luc.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Thời Gian Và Tôi Đều Đang Tiến Về Phía Trước",
@@ -903,16 +784,14 @@
       "Phan Quốc Dũng"
     ],
     "nhaXuatBan": "Phụ Nữ Việt Nam",
-    "theLoai": "Ngôn Ngữ, Thuật Ngữ Học",
+    "theLoai": "Ngoại Ngữ",
     "giaBia": 75050,
-    "giaGoc": 79000,
-    "hinhAnhUrl": "https://cdn.hstatic.net/products/200001055148/thoi-gian-va-toi-deu-dang-tien-ve-phia-truoc_af4ce295760f4511adf47794db93c94f.jpg",
-    "hinhAnhLocal": "images/phuongnam/thoi-gian-va-toi-deu-dang-tien-ve-phia-truoc.jpg",
     "moTa": "Thời Gian Và Tôi Đều Đang Tiến Về Phía TrướcLàm người trưởng thành là cảm giác như thế nào nhỉ?Có lẽ là ban ngày vẫn cười, vẫn nói, vẫn hoàn thành mọi việc như thể cuộc sống chẳng có gì đáng bận lòng. Chỉ đến khi màn đêm buông xuống, bạn mới lặng lẽ nhận ra hóa ra mình cũng có lúc mỏi mệt đến thế.Trưởng thành là công việc ngày một nhiều hơn, là những kỳ vọng vô hình đè nặng trên vai, là bạn bè dần có cuộc sống riêng, là tình yêu không còn là tất cả và là những tâm sự chẳng biết nên kể cùng ai.Nếu bạn cũng đang đi qua những ngày như thế, hãy thử lật mở cuốn tản văn song ngữ Việt - Trung “Thời gian và tôi đều đang tiến về phía trước” của tác giả Phan Quốc Dũng và dịch giả Bùi Nhật Hùng nhé!Cuốn sách không cố gắng dạy bạn phải sống thế nào. Nó chỉ giống như một người bạn tâm giao thầm lặng luôn sẵn sàng sẻ chia, để bạn hiểu rằng cảm thấy yếu lòng hay đôi lúc cô đơn cũng là một phần rất bình thường của hành trình học cách làm người lớn. Có lẽ, điều tốt nhất chúng ta có thể làm là bước tiếp",
-    "isbn": "893532503763",
+    "isbn": "DS00053",
     "namSanXuat": 2026,
-    "url": "https://nhasachphuongnam.com/products/thoi-gian-va-toi-deu-dang-tien-ve-phia-truoc",
-    "nguon": "phuongnam"
+    "hinhAnhLocal": "images/phuongnam/thoi-gian-va-toi-deu-dang-tien-ve-phia-truoc.jpg",
+    "hinhAnhUrl": "/uploads/books/images/phuongnam/thoi-gian-va-toi-deu-dang-tien-ve-phia-truoc.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Đám Trẻ Vượt Đại Dương Đen",
@@ -920,16 +799,14 @@
       "Châu Sa Đáy Mắt"
     ],
     "nhaXuatBan": "Văn Học",
-    "theLoai": "Văn Học Tuổi Mới Lớn",
+    "theLoai": "Văn Học",
     "giaBia": 110200,
-    "giaGoc": 116000,
-    "hinhAnhUrl": "https://cdn.hstatic.net/products/200001055148/dam-tre-vuot-dai-duong-bia_b4fd0ee94ae74258a93e3fd509fb6435.jpg",
-    "hinhAnhLocal": "images/phuongnam/dam-tre-vuot-dai-duong-den.jpg",
     "moTa": "Đám Trẻ Vượt Đại Dương ĐenMọi thứ ổn.Mọi thứ ổn.Mọi thứ ổn.Mình tập câu đó như tập một câu thoại trước khi bước ra sân khấu.Mình nói cho đến khi nó nghe tự nhiên.Mình nói cho đến khi nó nghe giống mình.Mình nói cho đến khi – cho đến khi nó… đúng là như thế.Sau Đám trẻ ở đại dương đen, Châu Sa Đáy Mắt tiếp tục dùng ngòi bút để viết nên tâm tư của những đứa trẻ ôm theo vụn vỡ mà lớn lên “đã có những ngày em thấy mình đứng giữa một ngã tư không phương hướng, nơi quá khứ, hiện tại và tương lai xô vào nhau thành một khối hỗn độn không thể gọi tên.”Qua mỗi trang sách của Đám trẻ vượt đại dương đen, từng lớp tổn thương, bất an và vỡ òa của những đứa trẻ từng tin rằng chỉ cần ngoan ngoãn thì sẽ mãi an toàn dần dần hiện lên, từ năm 10 tuổi đến khi được bao bọc bởi hình hài của một người lớn.Những cảm giác như phải ngoan để được yêu thương, phải luôn giỏi để được công nhận, hay luôn cố gắng làm hài lòng người khác được khắc họa chân thực thông qua văn phong giàu chất độc thoại nội tâm, hình ảnh ",
-    "isbn": "893532503741",
+    "isbn": "DS00054",
     "namSanXuat": 2026,
-    "url": "https://nhasachphuongnam.com/products/dam-tre-vuot-dai-duong-den",
-    "nguon": "phuongnam"
+    "hinhAnhLocal": "images/phuongnam/dam-tre-vuot-dai-duong-den.jpg",
+    "hinhAnhUrl": "/uploads/books/images/phuongnam/dam-tre-vuot-dai-duong-den.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Sau Khi Làm Vô Thường Bán Thời Gian Thì Tôi Hot Tập 2",
@@ -937,16 +814,14 @@
       "Lạp Miên Hoa Đường Đích Thố Tử"
     ],
     "nhaXuatBan": "Dân Trí",
-    "theLoai": "Văn học hiện đại",
+    "theLoai": "Văn Học Hiện Đại",
     "giaBia": 198550,
-    "giaGoc": 209000,
-    "hinhAnhUrl": "https://cdn.hstatic.net/products/200001055148/sau-khi-lam-vo-thuong-ban-thoi-gian-thi-toi-hot-bia_d96f961598bd4c9896b9a14c6f43b004.jpg",
-    "hinhAnhLocal": "images/phuongnam/sau-khi-lam-vo-thuong-ban-thoi-gian-thi-toi-hot-tap-2.jpg",
     "moTa": "Sau Khi Làm Vô Thường Bán Thời Gian Thì Tôi Hot Tập 2Lan Hà thế mà lại hay, chỉ đi làm thời vụ cho âm ty thôi mà không những “bất cẩn” trở thành ngài Lai danh tiếng lẫy lừng cõi âm, còn từ một diễn viên flop hết biết vọt lên thành minh tinh hót hòn họt trên dương thế? Ò v ÓThậm chí, không những đường ăn... à không đường công danh suôn sẻ, đường tình duyên của anh cũng thuận lợi chẳng kém. Từ ngày đầu tình cờ gặp gỡ Tống Phù Đàn với thể chất bệnh thân Hồng Liên, luôn bị yêu ma quỷ quái nhắm vào, anh chưa từng nghĩ sẽ có ngày mình có thể gặp hắn trên dương thế, thẳng thắn nói ra bí mật giấu kín đã lâu. Mà nay, sau những hiểu lầm âm dương cách biệt, sau những cuộc gặp gỡ lúc đêm khuya không hẹn ngày gặp lại, giờ đây hai người đã có thể sóng vai nhau đi dưới ánh mặt trời rồi.Thế nhưng, vật trấn vẫn chưa hoàn thiện, yêu ma quỷ quái vẫn lộng hành. Để bảo vệ sự bình yên của thủ đô, ắt phải có sự hi sinh...Clone Lai Vô Thường: Hức Ọ v Ọ Cái thân phận này sao mà khó giữ thế không biết! Hở ra cá",
-    "isbn": "893532503730",
+    "isbn": "DS00055",
     "namSanXuat": 2026,
-    "url": "https://nhasachphuongnam.com/products/sau-khi-lam-vo-thuong-ban-thoi-gian-thi-toi-hot-tap-2",
-    "nguon": "phuongnam"
+    "hinhAnhLocal": "images/phuongnam/sau-khi-lam-vo-thuong-ban-thoi-gian-thi-toi-hot-tap-2.jpg",
+    "hinhAnhUrl": "/uploads/books/images/phuongnam/sau-khi-lam-vo-thuong-ban-thoi-gian-thi-toi-hot-tap-2.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Nhiệm Vụ Hệ Thống Của Nhân Vật Phản Diện Tập 01",
@@ -954,16 +829,14 @@
       "La Bốc Hoa Thố Tử"
     ],
     "nhaXuatBan": "Dân Trí",
-    "theLoai": "Văn học hiện đại",
+    "theLoai": "Văn Học Hiện Đại",
     "giaBia": 189050,
-    "giaGoc": 199000,
-    "hinhAnhUrl": "https://cdn.hstatic.net/products/200001055148/nhiem-vu-he-thong-cua-nhan-vat-phan-dien-bia_6e76c2c08a6d4b61bdd8422f51ea6be8.jpg",
-    "hinhAnhLocal": "images/phuongnam/nhiem-vu-he-thong-cua-nhan-vat-phan-dien-tap-01.jpg",
     "moTa": "Nhiệm Vụ Hệ Thống Của Nhân Vật Phản Diện Tập 01Lần duy nhất Ôn Trĩ Sơ dũng cảm cứu người thì đó lại là lần cậu tạm biệt cái mạng nhỏ của mình.Nhưng cậu không c.h.ết.Hay đúng hơn là, Ôn Trĩ Sơ xuyên vào một cuốn sách và đóng vai nhân vật phản diện cùng tên. Không những thế, cậu còn bị ràng buộc bởi một hệ thống ép phải thực hiện đúng nhiệm vụ cốt truyện, đó là phá đám cuộc sống của nhân vật chính Tần Gia Thụ.Ôn Trĩ Sơ quyết tâm thực hiện đúng nhiệm vụ để tránh khỏi hình phạt làm ăn m.ày, ngủ bờ ngủ bụi. Chỉ không ngờ rằng những hành động cậu nghĩ là “phá đám” Tần Gia Thụ thì thực tế lại lọt vào mắt xanh của anh ta.Thông tin chi tiết",
-    "isbn": "893532503721",
+    "isbn": "DS00056",
     "namSanXuat": 2026,
-    "url": "https://nhasachphuongnam.com/products/nhiem-vu-he-thong-cua-nhan-vat-phan-dien-tap-01",
-    "nguon": "phuongnam"
+    "hinhAnhLocal": "images/phuongnam/nhiem-vu-he-thong-cua-nhan-vat-phan-dien-tap-01.jpg",
+    "hinhAnhUrl": "/uploads/books/images/phuongnam/nhiem-vu-he-thong-cua-nhan-vat-phan-dien-tap-01.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Mùa Hạ Mang Tên Em (Combo 2 Cuốn)",
@@ -971,16 +844,14 @@
       "Nhậm Bằng Chu"
     ],
     "nhaXuatBan": "Thế Giới",
-    "theLoai": "Văn học hiện đại",
+    "theLoai": "Văn Học Hiện Đại",
     "giaBia": 398050,
-    "giaGoc": 419000,
-    "hinhAnhUrl": "https://cdn.hstatic.net/products/200001055148/mua-ha-mang-ten-em-combo-2c-bia_1117a02d232c47ecab358e8639202924.jpg",
-    "hinhAnhLocal": "images/phuongnam/mua-ha-mang-ten-em-combo-2-cuon.jpg",
     "moTa": "Mùa Hạ Mang Tên Em (Combo 2 Cuốn)Giữa mùa hè oi ả, dưới hàng long não xanh rợp ở Nam Lý, một cuộc gặp gỡ định mệnh đã diễn ra giữa cậu học sinh giỏi bất cần, kiêu ngạo với cô gái đa tài, dịu dàng nhưng kiên định. Hình ảnh giấy trắng tung bay giữa làn gió quạt, hành lang lớp học nhộn nhịp, tiếng nói cười lanh lảnh hòa lẫn với tiếng ve râm ran… tất cả đã trở thành ký ức tuổi trẻ khắc sâu trong tâm trí mỗi người, đặc biệt là bóng lưng của tình đầu ngọt ngào.Trương Chú từng nghĩ cậu sẽ chẳng bao giờ muốn đối xử tốt với bất kỳ ai ngoài chị gái mình, cho đến khi cô gái ấy xuất hiện, tựa cơn gió mùa hạ chạm nhẹ vào tim, khiến cậu chỉ muốn dang tay che chở và bảo bọc cô.“Nghe đồn chúng ta đang ở bên nhau à? Tạm thời đây chỉ là tin đồn thôi, nhưng đó cũng là… mong muốn của tớ.”Thông tin chi tiết",
-    "isbn": "893532503715",
+    "isbn": "DS00057",
     "namSanXuat": 2026,
-    "url": "https://nhasachphuongnam.com/products/mua-ha-mang-ten-em-combo-2-cuon",
-    "nguon": "phuongnam"
+    "hinhAnhLocal": "images/phuongnam/mua-ha-mang-ten-em-combo-2-cuon.jpg",
+    "hinhAnhUrl": "/uploads/books/images/phuongnam/mua-ha-mang-ten-em-combo-2-cuon.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Combo Omniscient Reader’S Viewpoint - Góc Nhìn Của Độc Giả Toàn Tri (Tập 1 + Tập 2)",
@@ -988,16 +859,14 @@
       "singNsong"
     ],
     "nhaXuatBan": "Hà Nội",
-    "theLoai": "Văn học hiện đại",
+    "theLoai": "Văn Học Hiện Đại",
     "giaBia": 426550,
-    "giaGoc": 449000,
-    "hinhAnhUrl": "https://cdn.hstatic.net/products/200001055148/combo-goc-nhin-cua-doc-gia-toan-tri-bia_ea845bae8ae94e1c982d8f795473db1c.jpg",
-    "hinhAnhLocal": "images/phuongnam/combo-omniscient-readers-viewpoint-goc-nhin-cua-doc-gia-toan-tri-tap-1-tap-2.jpg",
     "moTa": "Combo Omniscient Reader’S Viewpoint - Góc Nhìn Của Độc Giả Toàn Tri (Tập 1 + Tập 2)“Omega của anh - Tuyển tập tranh chibi” là tập artbook đáng yêu đầy sắc màu xoay quanh cặp anh em hàng xóm: Anh trai Beta dịu dàng Do Yoon & cậu em “Omega” nũng nịu Soo Ah.Song hành cùng webtoon BL Omega của anh từngđược nhiều độc giả yêu thích, tuyển tập tranh chibi lần này sẽ đưa các bạn bước vào thế giới đáng yêu của Do Yoon và Soo Ah ở rất nhiều phiên bản. Không có những drama phức tạp, chỉ có một cậu em \"Omega\" lúc nào cũng tìm cách bám theo anh trai và một Do Yoon điềm tĩnh luôn mềm lòng trước Soo Ah, chẳng thể nói lời khước từ với cậu nhóc ranh ma thích giả vờ ngoan ngoãn nàyHãy cùng đón đọc “Omega của anh - Tuyển tập tranh chibi”, một cuốn sách cực hài hước và dễ thương của hai anh em này nhéThông tin chi tiết",
-    "isbn": "893532503717",
+    "isbn": "DS00058",
     "namSanXuat": 2026,
-    "url": "https://nhasachphuongnam.com/products/combo-omniscient-reader-s-viewpoint-goc-nhin-cua-doc-gia-toan-tri-tap-1-tap-2",
-    "nguon": "phuongnam"
+    "hinhAnhLocal": "images/phuongnam/combo-omniscient-readers-viewpoint-goc-nhin-cua-doc-gia-toan-tri-tap-1-tap-2.jpg",
+    "hinhAnhUrl": "/uploads/books/images/phuongnam/combo-omniscient-readers-viewpoint-goc-nhin-cua-doc-gia-toan-tri-tap-1-tap-2.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Cảm Ơn Bà Và Những Năm Tháng Ấy",
@@ -1005,16 +874,14 @@
       "Vũ Bình"
     ],
     "nhaXuatBan": "Dân Trí",
-    "theLoai": "Truyện Ngắn, Tạp Văn",
+    "theLoai": "Truyện Ngắn",
     "giaBia": 122550,
-    "giaGoc": 129000,
-    "hinhAnhUrl": "https://cdn.hstatic.net/products/200001055148/cam-on-ba-va-nhung-nam-thang-ay-bia_cff79ce35bbc416abf573dcd77b7a59d.jpg",
-    "hinhAnhLocal": "images/phuongnam/cam-on-ba-va-nhung-nam-thang-ay.jpg",
     "moTa": "Cảm Ơn Bà Và Những Năm Tháng ẤyCảm ơn bà và những năm tháng ấy không đơn thuần chỉ là một cuốn sách, mà là một hành trình chữa lành đầy xúc động về định nghĩa của hai chữ “gia đình”.Cuốn sách xoay quanh cuộc đời của chính tác giả - một cô bé mồ côi, lớn lên trong một viện phúc lợi, ngày ngày đi xin tiền để kiếm ăn, không xin được tiền về thì bị đánh. Điều kiện vật chất nơi đây vô cùng thiếu thốn, có những đứa trẻ sống cùng thì bị bỏ mặc lúc ốm sốt cho đến chết. Sau này, cô được một bà cụ bán hàng rong ngoài 70 tuổi nhận nuôi và họ cùng chuyển tới sống ở thảo nguyên Nội Mông. Những năm tháng bên bà nuôi là quãng thời gian hạnh phúc nhất trong cuộc đời của cô. Tuy hai người không có sự gắn kết về huyết thống, nhưng lại có một sợi dây liên kết bền chặt được dệt nên từ sự tử tế và lòng bao dung vô điều kiện.Hơn hai mươi năm sau, khi bà đã mất, cô mới quay trở về chốn cũ để ngắm cảnh nhớ người và chiêm nghiệm về cuộc sống. Qua ba phần của cuốn sách, độc giả sẽ cùng họ đi qua những năm tháng",
-    "isbn": "893532503511",
+    "isbn": "DS00059",
     "namSanXuat": 2026,
-    "url": "https://nhasachphuongnam.com/products/cam-on-ba-va-nhung-nam-thang-ay",
-    "nguon": "phuongnam"
+    "hinhAnhLocal": "images/phuongnam/cam-on-ba-va-nhung-nam-thang-ay.jpg",
+    "hinhAnhUrl": "/uploads/books/images/phuongnam/cam-on-ba-va-nhung-nam-thang-ay.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Bên Dòng Sông Mùa Hè",
@@ -1024,14 +891,12 @@
     "nhaXuatBan": "Kim Đồng",
     "theLoai": "Văn Học Thiếu Nhi",
     "giaBia": 61750,
-    "giaGoc": 65000,
-    "hinhAnhUrl": "https://cdn.hstatic.net/products/200001055148/ben-dong-song-mua-he-bia_ac2e7a484ad848a1a6b0649d481c1dae.jpg",
-    "hinhAnhLocal": "images/phuongnam/ben-dong-song-mua-he.jpg",
     "moTa": "Bên Dòng Sông Mùa HèBên dòng sông mùa Hè kể về một mùa hè đáng nhớ của những đứa trẻ bên dòng sông quê. Giữa khung cảnh thiên nhiên trong lành với bãi tre, bờ sông, cá tôm và những con đường làng, các nhân vật cùng nhau trải qua những chuyến khám phá, những trò chơi, những bí mật nhỏ và cả những bài học đầu đời.Điểm đặc biệt của tác phẩm là sự kết hợp giữa không gian làng quê truyền thống và hơi thở của cuộc sống hiện đại. Trên bìa sách, hình ảnh cậu bé cầm điện thoại gợi ý rằng câu chuyện không chỉ nói về tuổi thơ ngày xưa mà còn phản ánh cách trẻ em hôm nay khám phá thế giới xung quanh bằng cả công nghệ và sự tò mò. Qua những trải nghiệm ấy, các em học được về tình bạn, sự sẻ chia, lòng dũng cảm và tình yêu thiên nhiên.Thông tin chi tiết",
-    "isbn": "978604241962",
+    "isbn": "DS00060",
     "namSanXuat": 2026,
-    "url": "https://nhasachphuongnam.com/products/ben-dong-song-mua-he",
-    "nguon": "phuongnam"
+    "hinhAnhLocal": "images/phuongnam/ben-dong-song-mua-he.jpg",
+    "hinhAnhUrl": "/uploads/books/images/phuongnam/ben-dong-song-mua-he.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Trong Nhà Tôi Không Có Ai Là Người",
@@ -1039,16 +904,14 @@
       "Trư Lí Trư Khí"
     ],
     "nhaXuatBan": "Dân Trí",
-    "theLoai": "Văn học hiện đại",
+    "theLoai": "Văn Học Hiện Đại",
     "giaBia": 132050,
-    "giaGoc": 139000,
-    "hinhAnhUrl": "https://cdn.hstatic.net/products/200001055148/trong-nha-toi-khong-co-ai-la-nguoi-bia_cbe24211638f4596b57bb57246a43c08.jpg",
-    "hinhAnhLocal": "images/phuongnam/trong-nha-toi-khong-co-ai-la-nguoi.jpg",
     "moTa": "Trong Nhà Tôi Không Có Ai Là NgườiBạn có biết điều gì đáng sợ hơn một con quỷ không?Đó chính là khoảnh khắc bạn nhận ra những người đang sống cùng mình dưới một mái nhà không có một ai là người!Có những cuốn sách khiến bạn phải bật đèn lên giữa đêm rồi quay đầu nhìn về phía cánh cửa phòng ngủ, và Trong Nhà Tôi Không Có Ai Là Người của tác giả Trư Lí Trư Khí là một trong số đó.Nếu là độc giả thường xuyên theo dõi các truyện ngắn nổi tiếng trên Zhihu, cái tên Trư Lí Trư Khí hẳn không còn xa lạ. Khác với nhiều tác giả kinh dị tập trung vào yếu tố siêu nhiên, Trư Lí Trư Khí nổi tiếng nhờ khả năng tạo ra cảm giác bất an từ chính những điều quen thuộc nhất trong cuộc sống. Trong các tác phẩm của mình, căn hộ chung cư, phòng ngủ, thang máy, người thân trong gia đình hay những người hàng xóm bình thường đều có thể trở thành nguồn gốc của nỗi kinh hoàng.Trong Nhà Tôi Không Có Ai Là Người là tuyển tập quy tụ 9 câu chuyện kinh dị đô thị kết hợp với yếu tố phá án mang tính đột phá cao. Tác phẩm đã",
-    "isbn": "893532503719",
+    "isbn": "DS00061",
     "namSanXuat": 2026,
-    "url": "https://nhasachphuongnam.com/products/trong-nha-toi-khong-co-ai-la-nguoi",
-    "nguon": "phuongnam"
+    "hinhAnhLocal": "images/phuongnam/trong-nha-toi-khong-co-ai-la-nguoi.jpg",
+    "hinhAnhUrl": "/uploads/books/images/phuongnam/trong-nha-toi-khong-co-ai-la-nguoi.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Ai Nói Wibu Không Thể Kết Hôn Tập 3",
@@ -1056,16 +919,14 @@
       "Ngạc Nhân Hành Sơn"
     ],
     "nhaXuatBan": "Dân Trí",
-    "theLoai": "Văn học hiện đại",
+    "theLoai": "Văn Học Hiện Đại",
     "giaBia": 179550,
-    "giaGoc": 189000,
-    "hinhAnhUrl": "https://cdn.hstatic.net/products/200001055148/ai-noi-wibu-khong-the-ket-hon-bia_5a2aba73dcae459fba0c984955c758c5.jpg",
-    "hinhAnhLocal": "images/phuongnam/ai-noi-wibu-khong-the-ket-hon-tap-3.jpg",
     "moTa": "Ai Nói Wibu Không Thể Kết Hôn Tập 3Sau khi trải qua những bỡ ngỡ ban đầu để chính thức bước vào thế giới cosplay, Tống Phất Chi dần tìm thấy niềm vui trong đam mê mà mình từng bỏ lỡ. Dưới sự đồng hành của Thời Chương, y không chỉ học cách hóa thân thành những nhân vật yêu thích mà còn từng bước khẳng định bản thân trong cộng đồng này. Thế nhưng, khi danh tiếng của coser Fu Fu ngày càng lan rộng, những tranh cãi, ganh ghét và sóng gió trong giới cũng lần lượt ập đến. Đối mặt với sự công kích từ dư luận và những âm mưu cạnh tranh không lành mạnh, Tống Phất Chi mới nhận ra rằng phía sau vẻ ngoài điềm tĩnh của Thời Chương là một tình yêu sâu sắc đến mức sẵn sàng đứng ra che chở cho y trước mọi tổn thương.Trong khi đó, mối quan hệ giữa coser huyền thoại Bạch Tuộc và tân binh Fu Fu cũng trở thành chủ đề khiến cộng đồng mạng tò mò không ngớt. Những lần công khai bảo vệ đầy mạnh mẽ của Thời Chương khiến khoảng cách giữa bí mật và sự thật ngày càng thu hẹp. Khi tình cảm đã đủ lớn, liệu Tống Phấ",
-    "isbn": "893532503711",
+    "isbn": "DS00062",
     "namSanXuat": 2026,
-    "url": "https://nhasachphuongnam.com/products/ai-noi-wibu-khong-the-ket-hon-tap-3",
-    "nguon": "phuongnam"
+    "hinhAnhLocal": "images/phuongnam/ai-noi-wibu-khong-the-ket-hon-tap-3.jpg",
+    "hinhAnhUrl": "/uploads/books/images/phuongnam/ai-noi-wibu-khong-the-ket-hon-tap-3.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Nếu Ai Cũng Là Pháo Hoa Thì Ai Sẽ Là Bầu Trời",
@@ -1073,16 +934,14 @@
       "Tớ Là Cua Nhỏ"
     ],
     "nhaXuatBan": "Văn Học",
-    "theLoai": "Truyện ngắn, Tạp văn",
+    "theLoai": "Truyện Ngắn",
     "giaBia": 83600,
-    "giaGoc": 88000,
-    "hinhAnhUrl": "https://cdn.hstatic.net/products/200001055148/neu-ai-cung-la-phao-hoa-thi-ai-se-la-bau-troi-bia_d79b4b91d4f0463785e65ff92ee6882d.jpg",
-    "hinhAnhLocal": "images/phuongnam/neu-ai-cung-la-phao-hoa-thi-ai-se-la-bau-troi.jpg",
     "moTa": "Nếu Ai Cũng Là Pháo Hoa Thì Ai Sẽ Là Bầu TrờiCó người sinh ra để trở thành pháo hoa giữa bầu trời đêm, nhưng cũng có người lặng lẽ như bầu trời rộng lớn - âm thầm bao dung, nâng đỡ và dịu dàng ôm lấy những ánh sáng khác theo cách riêng của mình.Chúng mình có thể là những người bình thường, không có tài năng thiên phú, cũng chẳng có gì đặc biệt. Chúng mình có thể không có nhiều thành tích nổi bật, không giỏi ăn nói, cũng không phải là kiểu người được mọi người yêu mến. Nhưng chúng mình mỗi ngày đều đang nỗ lực sống cuộc đời của chính mình, làm tốt những điều nhỏ bé, có thể mệt mỏi, có thể uất ức, nhưng nhất định phải cố gắng để đến được nơi mà mình muốn đến.“Nếu ai cũng là pháo hoa, thì ai sẽ là bầu trời” chính là cuốn sách dành cho những tâm hồn đang học cách yêu thương bản thân sau những lần tự ti, lạc lối và hoài nghi chính mình. Cuốn sách không dạy bạn trở thành người rực rỡ nhất, mà là lời nhắc nhở nhẹ nhàng rằng mỗi người đều có giá trị riêng và xứng đáng được yêu thương, kể cả kh",
-    "isbn": "893532503728",
+    "isbn": "DS00063",
     "namSanXuat": 2026,
-    "url": "https://nhasachphuongnam.com/products/neu-ai-cung-la-phao-hoa-thi-ai-se-la-bau-troi",
-    "nguon": "phuongnam"
+    "hinhAnhLocal": "images/phuongnam/neu-ai-cung-la-phao-hoa-thi-ai-se-la-bau-troi.jpg",
+    "hinhAnhUrl": "/uploads/books/images/phuongnam/neu-ai-cung-la-phao-hoa-thi-ai-se-la-bau-troi.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Còn Ra Thể Thống Gì? - Tập 2",
@@ -1090,16 +949,14 @@
       "Thất Anh Tuấn"
     ],
     "nhaXuatBan": "Văn Học",
-    "theLoai": "Văn học hiện đại",
+    "theLoai": "Văn Học Hiện Đại",
     "giaBia": 189050,
-    "giaGoc": 199000,
-    "hinhAnhUrl": "https://cdn.hstatic.net/products/200001055148/con-ra-the-thong-gi-bia_dc23069b827e45f4aab31f70304f1b29.jpg",
-    "hinhAnhLocal": "images/phuongnam/con-ra-the-thong-gi-tap-2.jpg",
     "moTa": "Còn Ra Thể Thống Gì? - Tập 2Nhờ sự xuất hiện kịp thời của Dữu Vãn Âm, Hạ Hầu Đạm đã thoát khỏi vụ ám sát trên Bội Sơn. Tuy nhiên hắn đã trúng phải kịch độc của nước Khương, tính mạng ngàn cân treo sợi tóc.Đoan vương lúc này không còn kiên nhẫn nữa, y triệu tập ba toán quân biên ải về kinh thành, chuẩn bị soán vị. Tính toán của y vô cùng kín kẽ, bẫy rập muôn trùng.Dữu Vãn Âm và Hạ Hầu Đạm đành tương kế tựu kế, vừa bí mật tìm thuốc giải cho Hạ Hầu Đạm vừa chuẩn bị cho trận đại chiến cuối cùng.“Cô đang đứng ở nơi kết thúc và cũng là khởi đầu của một triều đại, nơi gió lớn nổi lên cúi nhìn dòng lũ cuồn cuộn dưới chân. Thế cuộc đổi dời, nhân duyên sinh diệt, ngày đêm xoay vần, non sông đổi chủ, tất cả đều dựa vào ý muốn của cô.”GIỚI THIỆU TÁC GIẢ:THẤT ANH TUẤNHội viên Hiệp hội Tác giả Trung Quốc, đồng thời là tác giả tiểu thuyết nổi tiếng người Trung Quốc.Văn phong nhẹ nhàng và dí dỏm. Ý tưởng sáng tác độc đáo và đầy bất ngờ.Yêu thích học thêm kỹ năng mới và thám hiểm thế giới.Các tác phẩm ",
-    "isbn": "978632635225",
+    "isbn": "DS00064",
     "namSanXuat": 2026,
-    "url": "https://nhasachphuongnam.com/products/con-ra-the-thong-gi-tap-2",
-    "nguon": "phuongnam"
+    "hinhAnhLocal": "images/phuongnam/con-ra-the-thong-gi-tap-2.jpg",
+    "hinhAnhUrl": "/uploads/books/images/phuongnam/con-ra-the-thong-gi-tap-2.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Sách Kinh Điển - Truyện Cổ Andersen",
@@ -1107,16 +964,14 @@
       "Hans Christian Andersen"
     ],
     "nhaXuatBan": "Văn Học",
-    "theLoai": "Truyện cổ tích - Ngụ ngôn",
+    "theLoai": "Văn Học Thiếu Nhi",
     "giaBia": 159600,
-    "giaGoc": 168000,
-    "hinhAnhUrl": "https://cdn.hstatic.net/products/200001055148/truyen-co-andersen-bia_deb5c47de4b94ebd84468ad331947cf8.jpg",
-    "hinhAnhLocal": "images/phuongnam/sach-kinh-dien-truyen-co-andersen.jpg",
     "moTa": "Sách Kinh Điển - Truyện Cổ AndersenNhà vật lý thiên tài Albert Einstein từng nói: “Nếu bạn muốn những đứa con của mình trở nên thông minh, hãy kể cho chúng nghe truyện cổ tích. Nếu bạn muốn chúng thông minh hơn nữa, hãy kể nhiều truyện cổ tích hơn nữa.” Và khi nhắc đến truyện cổ tích, không thể không nhắc tới Hans Christian Andersen - “ông vua truyện cổ tích” của Đan Mạch, người đã trao cho thế giới những câu chuyện bất hủ nuôi dưỡng tâm hồn bao thế hệ độc giả.Cuốn Truyện cổ Andersen mà bạn đang cầm trên tay là tuyển tập những tác phẩm đặc sắc nhất của ông, do nhà văn kiêm dịch giả Arnica Esterl tuyển chọn và kể lại. Với giọng văn cô đọng, giàu nhịp điệu và giàu hình ảnh, những câu chuyện quen thuộc như Nàng Tiên Cá bé nhỏ, Bộ quần áo mới của Hoàng đế, Chú lính thiếc kiên cường, Bà Chúa Tuyết, Cô bé bán diêm… hiện lên vừa gần gũi, vừa mới mẻ, như những chuyến phiêu lưu đầy mê hoặc mở ra trước mắt người đọc.Một điểm đặc biệt làm nên sức hấp dẫn khó quên của cuốn sách chính là hệ thống t",
-    "isbn": "893528092135",
+    "isbn": "DS00065",
     "namSanXuat": 2026,
-    "url": "https://nhasachphuongnam.com/products/sach-kinh-dien-truyen-co-andersen",
-    "nguon": "phuongnam"
+    "hinhAnhLocal": "images/phuongnam/sach-kinh-dien-truyen-co-andersen.jpg",
+    "hinhAnhUrl": "/uploads/books/images/phuongnam/sach-kinh-dien-truyen-co-andersen.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Đừng Sinh Ly Đừng Tử Biệt",
@@ -1124,16 +979,14 @@
       "Đinh Thanh Tùng"
     ],
     "nhaXuatBan": "Thế Giới",
-    "theLoai": "Văn hóa tâm linh",
+    "theLoai": "Nghệ Thuật & Đời Sống",
     "giaBia": 75050,
-    "giaGoc": 79000,
-    "hinhAnhUrl": "https://cdn.hstatic.net/products/200001055148/dung-sinh-ly-dung-tu-biet_70ecbfdd731f4b88bc18a83d86d77340.jpg",
-    "hinhAnhLocal": "images/phuongnam/dung-sinh-ly-dung-tu-biet.jpg",
     "moTa": "Đừng Sinh Ly Đừng Tử Biệt“Đừng sinh ly, đừng tử biệt” là lời giải đến từ cửa Phật dành cho bài toán quan trọng số một đối với mỗi con người chúng ta: Sinh và tử. Sinh ra mà không ly tán và tử hoại mà không từ biệt. Đó là nội dung trọng tâm được đề cập tới một cách trực diện và súc tích trong cuốn sách này. Hai tâm niệm sinh và tử vốn dĩ luôn được chúng ta xem là những quy luật tất yếu không thể ngoại lệ. Vậy nhưng, dưới ánh sáng đạo Phật, lý lẽ của sinh và tử lại thành ra giống những lời hờn dỗi khi đã không còn hù dọa được con người nữa. Ảo ảnh của sinh và tử bị phá tan tành khi Phật pháp soi chiếu. Khi một ai đó mà quý vị đã từng gắn bó bên cạnh nhưng có ngờ đâu giờ đây phải chịu cách trở chia xa chỉ vì một lẽ sinh tử diễn ra thì cũng đừng buồn lòng. Đừng khóc lóc! Đừng sợ hãi! Đừng hoảng loạn! Đừng tìm người thân ở những phần mộ hay nơi thờ tự. Đừng tìm người thân trong những hình hài hay hương linh. Đừng tìm người thân ở những kí ức hay kỉ niệm. Đừng tìm người thân ở thế gian ngoài",
-    "isbn": "893528092154",
+    "isbn": "DS00066",
     "namSanXuat": 2026,
-    "url": "https://nhasachphuongnam.com/products/dung-sinh-ly-dung-tu-biet",
-    "nguon": "phuongnam"
+    "hinhAnhLocal": "images/phuongnam/dung-sinh-ly-dung-tu-biet.jpg",
+    "hinhAnhUrl": "/uploads/books/images/phuongnam/dung-sinh-ly-dung-tu-biet.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Chung Một Mái Nhà - Tập 6",
@@ -1142,16 +995,14 @@
       "Hiten"
     ],
     "nhaXuatBan": "NXB Kim Đồng",
-    "theLoai": "Truyện tranh tuổi mới lớn",
+    "theLoai": "Truyện Tranh",
     "giaBia": 99750,
-    "giaGoc": 105000,
-    "hinhAnhUrl": "https://cdn.hstatic.net/products/200001055148/chung-mot-mai-nha-tap-6_fc3a872cdc3f49ef916c03825b713612.jpg",
-    "hinhAnhLocal": "images/phuongnam/chung-mot-mai-nha-tap-6.jpg",
     "moTa": "Chung Một Mái Nhà - Tập 6Dù từng quyết sẽ sống một mình, nhưng chẳng biết từ bao giờ, tôi lại muốn được sánh bước bên cạnh một ai đó.Tựa như bị ma lực của Halloween dẫn dắt, Yuuta và Saki đã tìm đến hơi ấm của nhau như một cặp tình nhân.Dù bề ngoài, cả hai vẫn giữ khoảng cách như trước, nhưng bản chất mối quan hệ của họ đã có sự thay đổi rõ rệt.Sinh nhật của đối phương, những bất ngờ và sự \"điều chỉnh\", Giáng sinh, lần đầu tiên cùng đón năm mới, và chuyến về quê. Trong khi đau đầu suy nghĩ về quà tặng, về cách trải qua những ngày kỉ niệm, về cách làm đối phương vui lòng, hai con người vụng về ấy vẫn tìm kiếm con đường hạnh phúc theo cách của riêng mình.Và rồi, hình ảnh của bố mẹ và họ hàng cũng buộc họ phải suy nghĩ về việc trở thành người lớn, về mối liên kết gia đình, và cả về tương lai sau này của một mối quan hệ yêu đương... như là hôn nhân hay con cái...?Đây là câu chuyện về mùa đông đầu tiên của hai con người đã trở thành anh em.Thông tin chi tiết",
-    "isbn": "978604239959",
+    "isbn": "DS00067",
     "namSanXuat": 2026,
-    "url": "https://nhasachphuongnam.com/products/chung-mot-mai-nha-tap-6",
-    "nguon": "phuongnam"
+    "hinhAnhLocal": "images/phuongnam/chung-mot-mai-nha-tap-6.jpg",
+    "hinhAnhUrl": "/uploads/books/images/phuongnam/chung-mot-mai-nha-tap-6.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Có Một Mùa Xuân Trong Rừng Thẳm",
@@ -1159,16 +1010,14 @@
       "Yến Tử (Yan Zi)"
     ],
     "nhaXuatBan": "Hà Nội",
-    "theLoai": "Tâm lý - Giáo dục",
+    "theLoai": "Tâm Lý - Kỹ Năng",
     "giaBia": 197600,
-    "giaGoc": 208000,
-    "hinhAnhUrl": "https://cdn.hstatic.net/products/200001055148/co-mot-mua-xuan-trong-rung-tham-bia_7a4baed6007e4512b67817e13aed0a78.jpg",
-    "hinhAnhLocal": "images/phuongnam/co-mot-mua-xuan-trong-rung-tham.jpg",
     "moTa": "Có Một Mùa Xuân Trong Rừng ThẳmCó một mùa xuân trong rừng thẳm là một tập tản văn – nhật ký chữa lành, ghi lại hành trình của tác giả rời xa nhịp sống thành thị ồn ào để sống một mình trong căn nhà gỗ giữa rừng, nơi mỗi ngày trôi qua cùng sương sớm, ánh nắng xuyên tán lá, tiếng chim, mùi đất ẩm và sự tĩnh lặng gần như tuyệt đối. Cuốn sách không kể những biến cố lớn mà tập trung vào những khoảnh khắc rất nhỏ: pha một ấm trà trong buổi sáng lạnh, ngồi nhìn mưa rơi, nghe gió lùa qua cửa sổ, chặt củi, nấu ăn, đi bộ giữa rừng, rồi lắng nghe những suy nghĩ sâu kín nhất của chính mình. Trong không gian ấy, tác giả đối diện với cô đơn, mệt mỏi, ký ức và những tổn thương tích tụ từ đời sống hiện đại, dần học cách chấp nhận sự im lặng, sống chậm lại, sống tối giản, và cảm nhận rằng con người thực ra cần rất ít để hạnh phúc. Rừng không chỉ là bối cảnh mà trở thành người bạn đồng hành, một nơi trú ẩn tinh thần, giúp tác giả tìm lại nhịp thở tự nhiên, sự bình yên nội tâm và cảm giác được “ở đúng ch",
-    "isbn": "893528092128",
+    "isbn": "DS00068",
     "namSanXuat": 2026,
-    "url": "https://nhasachphuongnam.com/products/co-mot-mua-xuan-trong-rung-tham",
-    "nguon": "phuongnam"
+    "hinhAnhLocal": "images/phuongnam/co-mot-mua-xuan-trong-rung-tham.jpg",
+    "hinhAnhUrl": "/uploads/books/images/phuongnam/co-mot-mua-xuan-trong-rung-tham.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Nhật Ký Mèo Cam",
@@ -1177,16 +1026,14 @@
       "Kiều Chi Art"
     ],
     "nhaXuatBan": "Phụ Nữ Việt Nam",
-    "theLoai": "Tô màu người lớn",
+    "theLoai": "Nghệ Thuật & Đời Sống",
     "giaBia": 75050,
-    "giaGoc": 79000,
-    "hinhAnhUrl": "https://cdn.hstatic.net/products/200001055148/nhat-ky-meo-cam-bia_96d613f6a2cb40a6978a466a7e6a81e4.jpg",
-    "hinhAnhLocal": "images/phuongnam/nhat-ky-meo-cam.jpg",
     "moTa": "Nhật Ký Mèo CamNhật Ký Mèo Cam là cuốn sổ nhỏ dành riêng cho những “con sen” luôn có một góc trái tim thuộc về mèo. Lấy cảm hứng từ hình ảnh chú mèo cam tinh nghịch, đáng yêu nhưng cũng đầy cảm xúc, cuốn sổ là nơi để bạn lưu lại những câu chuyện thường ngày, suy nghĩ vu vơ, kỷ niệm đáng nhớ và cả những khoảnh khắc đáng yêu bên boss.Với thiết kế ấm áp, dễ thương cùng tinh thần chữa lành, Nhật Ký Mèo Cam không chỉ là một cuốn sổ ghi chép mà còn giống như một người bạn nhỏ đồng hành cùng bạn trong những ngày bận rộn.Món quà đáng yêu dành tặng cho chính mình hoặc cho bất kỳ ai yêu mèo, yêu sự dịu dàng và thích lưu giữ những điều nhỏ bé trong cuộc sống.- Hơn 30 trang ghi chép & sáng tạo – Lưu giữ những ngày thật đáng yêu: Mỗi trang giấy là một khoảng không nhỏ để bạn viết nên câu chuyện của riêng mình: vài dòng tâm trạng vu vơ, kế hoạch mỗi ngày, những khoảnh khắc đáng nhớ bên boss hay đơn giản là những suy nghĩ chưa kịp nói thành lời. Một góc nhỏ bình yên dành riêng cho tâm hồn yêu mèo.- T",
-    "isbn": "978632050854",
+    "isbn": "DS00069",
     "namSanXuat": 2026,
-    "url": "https://nhasachphuongnam.com/products/nhat-ky-meo-cam",
-    "nguon": "phuongnam"
+    "hinhAnhLocal": "images/phuongnam/nhat-ky-meo-cam.jpg",
+    "hinhAnhUrl": "/uploads/books/images/phuongnam/nhat-ky-meo-cam.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Bí Mật Tối Thượng",
@@ -1194,16 +1041,14 @@
       "Dan Brown"
     ],
     "nhaXuatBan": "NXB Dân Trí",
-    "theLoai": "Văn học hiện đại",
+    "theLoai": "Văn Học Hiện Đại",
     "giaBia": 406600,
-    "giaGoc": 428000,
-    "hinhAnhUrl": "https://cdn.hstatic.net/products/200001055148/bi-mat-toi-thuong_cc3973cf2229473189bedf7b8b2dd0f6.jpg",
-    "hinhAnhLocal": "images/phuongnam/bi-mat-toi-thuong.jpg",
     "moTa": "BÍ MẬT TỐI THƯỢNG - THE SECRET OF SECRETSĐiều gì đáng mong chờ nhất ở “BÍ MẬT TỐI THƯỢNG”?Điều gì sẽ xảy ra nếu có một bí mật đủ sức phá hủy mọi điều nhân loại từng tin tưởng? Nếu lịch sử mà chúng ta học suốt hàng trăm năm chỉ là một lớp màn được dựng lên để che giấu sự thật khủng khiếp hơn nhiều? Đó chính là cảm giác rợn người mà Bí mật tối thượng mang lại ngay từ những trang đầu tiên.Sau nhiều năm im lặng, Dan Brown trở lại với một câu chuyện được mô tả là táo bạo và nguy hiểm nhất trong sự nghiệp của ông. Không còn đơn thuần là những mật mã cổ hay các hội kín bí ẩn, lần này cuốn tiểu thuyết dường như đào sâu vào một “bí mật cuối cùng”, thứ mà nếu bị phơi bày có thể làm rung chuyển nền tảng của tôn giáo, khoa học và cả quyền lực toàn cầu.Ngay khi nội dung đầu tiên được hé lộ, cộng đồng yêu sách quốc tế đã bùng nổ tranh luận. Những giả thuyết đáng sợ xuất hiện khắp nơi: Dan Brown đang ám chỉ điều gì? Có phải cuốn sách liên quan đến những bí mật bị Vatican che giấu? Hay là một khám phá",
-    "isbn": "978632005757",
+    "isbn": "DS00070",
     "namSanXuat": 2026,
-    "url": "https://nhasachphuongnam.com/products/bi-mat-toi-thuong",
-    "nguon": "phuongnam"
+    "hinhAnhLocal": "images/phuongnam/bi-mat-toi-thuong.jpg",
+    "hinhAnhUrl": "/uploads/books/images/phuongnam/bi-mat-toi-thuong.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Chuyện Tình Thị Trấn (Bìa cứng)",
@@ -1211,16 +1056,14 @@
       "Nguyễn Nhật Ánh"
     ],
     "nhaXuatBan": "NXB Trẻ",
-    "theLoai": "Văn học tuổi mới lớn",
+    "theLoai": "Văn Học",
     "giaBia": 270750,
-    "giaGoc": 285000,
-    "hinhAnhUrl": "https://cdn.hstatic.net/products/200001055148/truyen-dai-chuyen-tinh-thi-tran-bia-cung_5905b2c517374af594b4db0cf8c165f7.jpg",
-    "hinhAnhLocal": "images/phuongnam/chuyen-tinh-thi-tran-bia-cung.jpg",
     "moTa": "Chuyện Tình Thị TrấnChuyện tình thị trấn là tác phẩm dành cho bạn đọc tuổi trưởng thành của nhà văn Nguyễn Nhật Ánh. Tác phẩm mở ra câu chuyện về những nhân vật trong một thị trấn nhỏ với cuộc sống chậm trôi, nhưng đằng sau đó, mỗi người đều có những câu chuyện riêng nối kết với nhau theo cách ít ai ngờ đến. Chàng trai tài hoa, hào hiệp và cô gái xinh đẹp nhất thị trấn ở rất gần nhau, nhưng vì đâu số phận lại đẩy họ ra hai đầu xa nhau tít tắp?Khi bắt đầu một câu chuyện tình, ai cũng mơ về sự viên mãn, nhưng “… cuộc sống thường có những khúc quanh bất ngờ. Khi con người tình cờ bước tới khúc quanh đó, bi kịch sẽ gọi tên. Lỗi đâu tại tình yêu!” (Trích)Tình yêu không có lỗi, nhưng lựa chọn trong tình yêu có thể thay đổi nhiều điều trong cuộc đời mình và những người xung quanh mình.Viết về một chủ đề \"kinh điển\" là tình yêu, Chuyện tình thị trấn hấp dẫn bạn đọc bằng cách kể mới lạ, hài hước và tình tiết chuyển ngoặt bất ngờ như một cuốn phim trinh thám. Mỗi một nhân vật đều có nét đặc trưn",
-    "isbn": "893497421677",
+    "isbn": "DS00071",
     "namSanXuat": 2026,
-    "url": "https://nhasachphuongnam.com/products/chuyen-tinh-thi-tran-bia-cung",
-    "nguon": "phuongnam"
+    "hinhAnhLocal": "images/phuongnam/chuyen-tinh-thi-tran-bia-cung.jpg",
+    "hinhAnhUrl": "/uploads/books/images/phuongnam/chuyen-tinh-thi-tran-bia-cung.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Chuyện Tình Thị Trấn (Bìa mềm)",
@@ -1228,16 +1071,14 @@
       "Nguyễn Nhật Ánh"
     ],
     "nhaXuatBan": "NXB Trẻ",
-    "theLoai": "Văn học tuổi mới lớn",
+    "theLoai": "Văn Học",
     "giaBia": 142500,
-    "giaGoc": 150000,
-    "hinhAnhUrl": "https://cdn.hstatic.net/products/200001055148/truyen-dai-chuyen-tinh-thi-tran-bm_feee32af21014befa31801667f71ef2f.jpg",
-    "hinhAnhLocal": "images/phuongnam/chuyen-tinh-thi-tran-bia-mem.jpg",
     "moTa": "Chuyện Tình Thị TrấnChuyện tình thị trấn là tác phẩm dành cho bạn đọc tuổi trưởng thành của nhà văn Nguyễn Nhật Ánh. Tác phẩm mở ra câu chuyện về những nhân vật trong một thị trấn nhỏ với cuộc sống chậm trôi, nhưng đằng sau đó, mỗi người đều có những câu chuyện riêng nối kết với nhau theo cách ít ai ngờ đến. Chàng trai tài hoa, hào hiệp và cô gái xinh đẹp nhất thị trấn ở rất gần nhau, nhưng vì đâu số phận lại đẩy họ ra hai đầu xa nhau tít tắp?Khi bắt đầu một câu chuyện tình, ai cũng mơ về sự viên mãn, nhưng “… cuộc sống thường có những khúc quanh bất ngờ. Khi con người tình cờ bước tới khúc quanh đó, bi kịch sẽ gọi tên. Lỗi đâu tại tình yêu!” (Trích)Tình yêu không có lỗi, nhưng lựa chọn trong tình yêu có thể thay đổi nhiều điều trong cuộc đời mình và những người xung quanh mình.Viết về một chủ đề \"kinh điển\" là tình yêu, Chuyện tình thị trấn hấp dẫn bạn đọc bằng cách kể mới lạ, hài hước và tình tiết chuyển ngoặt bất ngờ như một cuốn phim trinh thám. Mỗi một nhân vật đều có nét đặc trưn",
-    "isbn": "893497421676",
+    "isbn": "DS00072",
     "namSanXuat": 2026,
-    "url": "https://nhasachphuongnam.com/products/chuyen-tinh-thi-tran-bia-mem",
-    "nguon": "phuongnam"
+    "hinhAnhLocal": "images/phuongnam/chuyen-tinh-thi-tran-bia-mem.jpg",
+    "hinhAnhUrl": "/uploads/books/images/phuongnam/chuyen-tinh-thi-tran-bia-mem.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Nhân Cách Thứ 5",
@@ -1245,16 +1086,14 @@
       "Daniel Keyes"
     ],
     "nhaXuatBan": "Hà Nội",
-    "theLoai": "Văn học hiện đại",
+    "theLoai": "Văn Học Hiện Đại",
     "giaBia": 227050,
-    "giaGoc": 239000,
-    "hinhAnhUrl": "https://cdn.hstatic.net/products/200001055148/nhan-cach-thu-5-bia_ab15f93a6cd04967af4843503302f01b.jpg",
-    "hinhAnhLocal": "images/phuongnam/nhan-cach-thu-5.jpg",
     "moTa": "Nhân Cách Thứ 5Cuốn sách kể về Sally Porter, một phụ nữ 29 tuổi, một cô phục vụ bình thường, sống đơn độc và không có gì nổi bật.Nhưng điều mà chính cô không biết là bên trong mình còn tồn tại bốn nhân cách khác:- Derry: Nhân cách liên kết, người biết rõ mọi chuyện xảy ra trong tâm trí các nhân cách khác, đóng vai trò như một người quan sát.- Bella: Nhân cách quyến rũ, hoang dại, thích nhảy múa và tận hưởng cuộc sống.- Jinx: Một nhân cách đầy giận dữ, bạo lực và sẵn sàng chống trả lại bất cứ mối đe dọa nào.- Nola: Nhân cách có thiên hướng nghệ thuật, sâu sắc nhưng lại đầy những suy nghĩ tiêu cực.Dưới sự điều trị của bác sĩ tâm thần Roger Ash, Sally dần bước vào hành trình gian nan để đối diện với quá khứ chấn và thực hiện quá trình “dung hợp” các nhân cách này thành một con người trọn vẹn.Thông tin về tác giả:Daniel Keyes (1927 – 2014) là một nhà văn người Mỹ nổi tiếng, đặc biệt được biết đến với những tác phẩm văn học xuất sắc khai thác sâu sắc về tâm lý con người và các trạng thái ti",
-    "isbn": "893623047477",
+    "isbn": "DS00073",
     "namSanXuat": 2026,
-    "url": "https://nhasachphuongnam.com/products/nhan-cach-thu-5",
-    "nguon": "phuongnam"
+    "hinhAnhLocal": "images/phuongnam/nhan-cach-thu-5.jpg",
+    "hinhAnhUrl": "/uploads/books/images/phuongnam/nhan-cach-thu-5.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Khu Nhà Ma Ám",
@@ -1262,16 +1101,14 @@
       "Mitsuda Shinzo"
     ],
     "nhaXuatBan": "Hà Nội",
-    "theLoai": "Văn học hiện đại",
+    "theLoai": "Văn Học Hiện Đại",
     "giaBia": 217550,
-    "giaGoc": 229000,
-    "hinhAnhUrl": "https://cdn.hstatic.net/products/200001055148/khu-nha-ma-am-bia_483ea0e7b565460bbaf8052556a6e9f0.jpg",
-    "hinhAnhLocal": "images/phuongnam/khu-nha-ma-am.jpg",
     "moTa": "Khu Nhà Ma ÁmMột nhà văn viết truyện kinh dị và một biên tập viên vô tình tìm được những câu chuyện về năm ngôi nhà ma và họ bị cuốn vào hành trình tìm lời giải về những điều bí ẩn trong mỗi ngôi nhà đó.Những ngôi nhà không liên quan đến nhau về thời đại hay địa điểm, nhưng đều tồn tại những hiện tượng kỳ quái giống nhau một cách khó tin: tiếng động lạ vang trên mái nhà, tiếng xiềng xích bị kéo lê trong bóng tối, những đứa trẻ bỗng dưng biến mất...Đây đơn thuần chỉ là một sự trùng hợp, hay có một thế lực vô hình đang kết nối những điều ấy lại với nhau? Khi đang tìm kiếm câu trả lời, nhà văn và biên tập viên đã phải trải qua những điều đáng sợ tương tự, liệu họ còn đủ can đảm tiếp tục giải đố?Và bí mật thật sự ẩn sau những ngôi nhà ấy là gì?Về tác giảMitsuda Shinzo (sinh năm 1962 tại tỉnh Nara) là một tiểu thuyết gia và cựu biên tập viên nổi tiếng của Nhật Bản, chuyên viết về thể loại kinh dị và trinh thám. Ông tốt nghiệp khoa Văn học tại Đại học Koyasan. Trước khi trở thành nhà văn, ôn",
-    "isbn": "893623047467",
+    "isbn": "DS00074",
     "namSanXuat": 2026,
-    "url": "https://nhasachphuongnam.com/products/khu-nha-ma-am",
-    "nguon": "phuongnam"
+    "hinhAnhLocal": "images/phuongnam/khu-nha-ma-am.jpg",
+    "hinhAnhUrl": "/uploads/books/images/phuongnam/khu-nha-ma-am.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Đời Không Như Là Note",
@@ -1279,16 +1116,14 @@
       "Song Hà"
     ],
     "nhaXuatBan": "Hội Nhà Văn",
-    "theLoai": "Truyện ngắn, Tạp văn",
+    "theLoai": "Truyện Ngắn",
     "giaBia": 379050,
-    "giaGoc": 399000,
-    "hinhAnhUrl": "https://cdn.hstatic.net/products/200001055148/doi-khong-nhu-note-bia_a382811c41f64c0a998b33304acd2a21.jpg",
-    "hinhAnhLocal": "images/phuongnam/doi-khong-nhu-la-note.jpg",
     "moTa": "Đời Không Như Là Note“Ra bãi lấy xe, hắn bước chầm chậm trên sân tòa án để cảm nhận sự thay đổi. Vậy là hắn đã trở lại kiếp độc thân. Sẽ không nghe tiếng vợ léo nhéo gọi về ăn cơm. Không phải nhìn khuôn mặt khắc khổ, cạu cọ của vợ mỗi khi hỏi tiền đi chợ. Sẽ không còn những bữa cơm nghèo, bát canh nước rau muống luộc vắt chanh, đĩa rau và mấy miếng đậu phụ kho. Nhiều hôm vừa ăn hắn vừa nghĩ, không biết sẽ còn kéo dài được đến bao lâu những bữa cơm như thế này. Hắn thấy hận cuộc đời vì nghèo.Phải rồi, vì nghèo mà hắn đâm tính toán quẩn quanh với vợ đôi khi chỉ mười nghìn tiền mua thêm thức ăn. Nghèo khiến hắn hèn đi rất nhiều. Hèn và hư tính với những thứ tủn mủn, nhỏ nhặt và hết sức tầm thường. Nghĩ đến đây, hắn thấy mắt ướt ướt. Hắn thương mình, thương thị. Thị cũng vì hắn mà đâm ra cay nghiệt, cái mặt khó đăm đăm một cách mãn tính vì không mấy khi có tiền trong túi. Sự tù túng, bế tắc nó bào mòn đi tình yêu, sự tôn trọng của vợ chồng dành cho nhau.”Về tác giảSinh ngày 11/12/1974 tại ",
-    "isbn": "893623047494",
+    "isbn": "DS00075",
     "namSanXuat": 2026,
-    "url": "https://nhasachphuongnam.com/products/doi-khong-nhu-la-note",
-    "nguon": "phuongnam"
+    "hinhAnhLocal": "images/phuongnam/doi-khong-nhu-la-note.jpg",
+    "hinhAnhUrl": "/uploads/books/images/phuongnam/doi-khong-nhu-la-note.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Đồi Gió Hú",
@@ -1296,16 +1131,14 @@
       "Emily Bronte"
     ],
     "nhaXuatBan": "Văn Học",
-    "theLoai": "Văn học cổ điển",
+    "theLoai": "Văn Học Cổ Điển",
     "giaBia": 132050,
-    "giaGoc": 139000,
-    "hinhAnhUrl": "https://cdn.hstatic.net/products/200001055148/doi-gio-hu-bia_97466858eb444be89e2ed15ad3068327.jpg",
-    "hinhAnhLocal": "images/phuongnam/doi-gio-hu.jpg",
     "moTa": "Đồi Gió HúĐồi gió hú, câu chuyện cổ điển về tình yêu ngang trái và tham vọng chiếm hữu, cuốn tiểu thuyết dữ dội và bí ẩn về Catherine Earnshaw, cô con gái nổi loạn của gia đình Earnshaw, với gã đàn ông thô ráp và điên rồ mà cha cô mang về nhà rồi đặt tên là Heathcliff, được trình diễn trên cái nền những đồng truông, quả đồi nước Anh cô quạnh và ban sơ không kém gì chính tình yêu của họ. Từ nhỏ đến lớn, sự gắn bó của họ ngày càng trở nên ám ảnh.Gia đình, địa vị xã hội, và cả số phận rắp tâm chống lại họ, bản tính dữ dội và ghen tuông tột độ cũng hủy diệt họ, vậy nên toàn bộ thời gian hai con người yêu nhau đó đã sống trong thù hận và tuyệt vọng, mà cái chết chỉ có ý nghĩa khởi đầu. Một khởi đầu mới để hai linh hồn mãnh liệt đó được tự do tái ngộ, khi những cơn gió hoang vắng và điên cuồng tràn về quanh các lâu đài trong Đồi gió hú...Cuốn tiểu thuyết duy nhất của Emily Brontë, là cuốn sách đã tới tay công chúng với nhiều lời bình trái ngược vào năm 1847, một năm trước khi nữ tác giả qua ",
-    "isbn": "893523001141",
+    "isbn": "DS00076",
     "namSanXuat": 2026,
-    "url": "https://nhasachphuongnam.com/products/doi-gio-hu",
-    "nguon": "phuongnam"
+    "hinhAnhLocal": "images/phuongnam/doi-gio-hu.jpg",
+    "hinhAnhUrl": "/uploads/books/images/phuongnam/doi-gio-hu.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Thành Thiên Đế",
@@ -1313,16 +1146,14 @@
       "Võ Thị Xuân Hà"
     ],
     "nhaXuatBan": "Phụ Nữ Việt Nam",
-    "theLoai": "Tiểu thuyết",
+    "theLoai": "Tiểu Thuyết",
     "giaBia": 189050,
-    "giaGoc": 199000,
-    "hinhAnhUrl": "https://cdn.hstatic.net/products/200001055148/thanh-thien-de_4ed69adf6192435881e3f891e3fa0b41.jpg",
-    "hinhAnhLocal": "images/phuongnam/thanh-thien-de.jpg",
     "moTa": "Thành Thiên ĐếTiểu thuyết Thành Thiên Đế là câu chuyện nhân sinh trên nền xoay vần của một vũ trụ song song đa chiều đa thế giới, trong đó Thành Thiên Đế là nơi trị vì và trông coi các Giới các Cõi. Các nhân vật đều “lịch kiếp” nhiều lần, trải qua các tầng không gian và các chiều thời gian khác nhau, huyền vi biến ảo. Trong đó, mạch truyện chính là mối tình xuyên không gian và thời gian của Nam Mộc và Nàng Thê, đều xuất thân là thần quân giúp Thành Thiên Đế cai quản toàn Giới toàn Cõi. Trải qua bao kiếp nạn luân hồi lưu lạc, từ thiên đình hạ giới cho đến âm gian, mối tình đó chứng kiến muôn mặt thiên sinh, nhân sinh, để sau cùng thì Tình Yêu Thương vẫn ở lại để giúp họ nhận ra nhau sau bao bức màn dối gạt và những thứ tương tự tình yêu.Thông tin chi tiết",
-    "isbn": "978632050105",
+    "isbn": "DS00077",
     "namSanXuat": 2026,
-    "url": "https://nhasachphuongnam.com/products/thanh-thien-de",
-    "nguon": "phuongnam"
+    "hinhAnhLocal": "images/phuongnam/thanh-thien-de.jpg",
+    "hinhAnhUrl": "/uploads/books/images/phuongnam/thanh-thien-de.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Luôn Có Vì Sao Dõi Theo Em",
@@ -1330,16 +1161,14 @@
       "Trúc Dĩ"
     ],
     "nhaXuatBan": "Phụ Nữ Việt Nam",
-    "theLoai": "Văn học hiện đại",
+    "theLoai": "Văn Học Hiện Đại",
     "giaBia": 175750,
-    "giaGoc": 185000,
-    "hinhAnhUrl": "https://cdn.hstatic.net/products/200001055148/luon-co-vi-sao-doi-theo-em-bia_8f165e997f5b43248435063ff914dfd4.jpg",
-    "hinhAnhLocal": "images/phuongnam/luon-co-vi-sao-doi-theo-em.jpg",
     "moTa": "Luôn Có Vì Sao Dõi Theo Em“Này, tôi nói cho anh một bí mật nhé.”“Ừ?”“Trước đây có một vì sao luôn dõi theo tôi đó.\"“Thế à?”“Chắc anh nghĩ đây là chuyện cười đúng không?”“Nếu đó là chuyện cô nghiêm túc nói với tôi, tôi sẽ không coi đó là trò cười.”Vu Thanh cười híp mắt, ngẩng lên nhìn bầu trời. “Nhưng hôm nay lại không thấy ngôi sao đó, định chứng minh cho anh xem mà không được.”“Có lẽ là...” Ôn Tử Tân nhìn theo tầm mắt của cô, khựng lại vài giây rồi mới quay sang khẽ nói: “Nó quyết định không ẩn mình nữa rồi.”Anh quyết định không ẩn mình ở nơi tĩnh lặng hoang vu, không làm bạn với bóng tối, cũng không lặng lẽ dõi theo cô từ xa nữa. Anh chọn quay về bên cạnh, bảo vệ cô.Thông tin chi tiết",
-    "isbn": "893532503674",
+    "isbn": "DS00078",
     "namSanXuat": 2026,
-    "url": "https://nhasachphuongnam.com/products/luon-co-vi-sao-doi-theo-em",
-    "nguon": "phuongnam"
+    "hinhAnhLocal": "images/phuongnam/luon-co-vi-sao-doi-theo-em.jpg",
+    "hinhAnhUrl": "/uploads/books/images/phuongnam/luon-co-vi-sao-doi-theo-em.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Lời Nguyền Của Màn Đêm",
@@ -1347,16 +1176,14 @@
       "V E Schwab"
     ],
     "nhaXuatBan": "Hà Nội",
-    "theLoai": "Văn học hiện đại",
+    "theLoai": "Văn Học Hiện Đại",
     "giaBia": 179550,
-    "giaGoc": 189000,
-    "hinhAnhUrl": "https://cdn.hstatic.net/products/200001055148/loi-nguyen-man-dem-bia_2e25357adbe744e194b421bca23f0941.jpg",
-    "hinhAnhLocal": "images/phuongnam/loi-nguyen-cua-man-dem.jpg",
     "moTa": "Lời Nguyền Của Màn Đêm“The invisible life of Addie LaRue” là câu chuyện về cuộc đời của nhân vật chính Addie LaRue, một cô gái sinh ra tại nước Pháp vào thế kỷ 18, thời kỳ mà phụ nữ vẫn phải chịu nhiều định kiến và ràng buộc. Vì khát khao tự do, muốn thoát khỏi cuộc hôn nhân sắp đặt, Addie đã khẩn cầu các vị thần giúp đỡ.Trong lúc cô tuyệt vọng nhất vì không nhận được lời hồi đáp, một vị thần bí ẩn đã xuất hiện từ trong bóng tối của khu rừng già. Addie được ban cho sự bất tử, nhưng đổi lại, tất cả những ai cô từng gặp đều nhất định sẽ quên cô. Lời nguyền chết chóc đó đã mở đầu cho cuộc đời phi thường, chuyến hành trình tuyệt diệu nhưng cũng đầy mất mát, đau thương và mỏi mệt của Addie LaRue. Cô đã sống qua nhiều thế kỷ, đi xuyên các lục địa, trải qua mọi thăng trầm của lịch sử và nghệ thuật, từ từ khám phá giới hạn của bản thân, xem mình phải đi bao xa mới để lại được dấu ấn trên cuộc đời này.Mọi thứ chỉ thay đổi khi 300 năm sau, trong một cửa tiệm sách bí ẩn, Addie tình cờ gặp một chà",
-    "isbn": "893623047475",
+    "isbn": "DS00079",
     "namSanXuat": 2026,
-    "url": "https://nhasachphuongnam.com/products/loi-nguyen-cua-man-dem",
-    "nguon": "phuongnam"
+    "hinhAnhLocal": "images/phuongnam/loi-nguyen-cua-man-dem.jpg",
+    "hinhAnhUrl": "/uploads/books/images/phuongnam/loi-nguyen-cua-man-dem.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Vị Vua Hiểm Ác",
@@ -1364,16 +1191,14 @@
       "Holly Black"
     ],
     "nhaXuatBan": "Văn Học",
-    "theLoai": "Văn học hiện đại",
+    "theLoai": "Văn Học Hiện Đại",
     "giaBia": 198550,
-    "giaGoc": 209000,
-    "hinhAnhUrl": "https://cdn.hstatic.net/products/200001055148/vi-vua-hiem-ac_4eeb94d80a0d432ba4e118d291dcb508.jpg",
-    "hinhAnhLocal": "images/phuongnam/vi-vua-hiem-ac.jpg",
     "moTa": "Vị Vua Hiểm ÁcCon phải đủ mạnh mẽ để ra đòn, ra đòn và ra đòn, mà không kiệt sức.Bài học đầu tiên là khiến bản thân trở nên mạnh mẽ.Jude Duarte - cô gái phàm trần từng bị khinh miệt ở xứ Tiên giờ đây đã trở thành người nắm giữ quyền lực phía sau ngai vàng Vương quốc Elfhame. Để làm được điều đó, cô buộc phải kiểm soát một vị vua hiểm ác và khó lường hơn bất cứ kẻ thù nào - Cardan. Nhưng Cardan là kẻ không dễ bị điều khiển, hắn liên tục tìm cách sỉ nhục và dồn cô vào đường cùng.Jude phát hiện ra có một kẻ thân cận đang âm mưu phản bội cô và đe dọa đến tính mạng của những người cô yêu thương. Nếu muốn duy trì quyền lực ở xứ Tiên, cô buộc phải tìm cách vạch trần kẻ phản bội, đồng thời đối mặt với những cảm xúc phức tạp dành cho Cardan.-Holly Black là tác giả tiểu thuyết giả tưởng bán chạy số 1 theo tờ The New York Times. Bà hiện sinh sống ở New England cùng gia đình trong một ngôi nhà có thư viện bí mật. Các tác phẩm của bà đã được dịch sang 32 ngôn ngữ trên toàn thế giới và được chuyển t",
-    "isbn": "893532503691",
+    "isbn": "DS00080",
     "namSanXuat": 2026,
-    "url": "https://nhasachphuongnam.com/products/vi-vua-hiem-ac",
-    "nguon": "phuongnam"
+    "hinhAnhLocal": "images/phuongnam/vi-vua-hiem-ac.jpg",
+    "hinhAnhUrl": "/uploads/books/images/phuongnam/vi-vua-hiem-ac.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Sủng Hậu Của Bạo Quân Tập 01",
@@ -1381,16 +1206,14 @@
       "Tú Sinh"
     ],
     "nhaXuatBan": "Hà Nội",
-    "theLoai": "Văn học hiện đại",
+    "theLoai": "Văn Học Hiện Đại",
     "giaBia": 217550,
-    "giaGoc": 229000,
-    "hinhAnhUrl": "https://cdn.hstatic.net/products/200001055148/sung-hau-cua-bao-quan-tap-1_8568ef84ca634bf29c36785291465f65.jpg",
-    "hinhAnhLocal": "images/phuongnam/sung-hau-cua-bao-quan-tap-01.jpg",
     "moTa": "Sủng Hậu Của Bạo Quân Tập 01Thiên hạ đồn rằng Bắc Chiến Vương Tiêu Chỉ Qua tính khí ngang ngược, buồn vui khó đoán, số người chết dưới tay hắn không kể xiết.… Vì tin vào những lời đồn đại ấy, An Trường Khanh cả đời không dám nhìn thẳng vào mắt hắn một lần. Chỉ đến khi rời xa cõi trần, y mới biết tất cả yêu thương hắn chỉ dành cho mình y.Nào ngờ ông trời thương tình, cho y được sống lại vào đêm tân hôn.Cùng thời điểm ấy, trong kinh thành lan truyền một tin huyên náo, rằng Bắc Chiến Vương dám từ chối chỉ hôn của thái hậu, chọn một kẻ là con thứ phủ Thừa tướng làm Vương phi. Ai cũng xì xầm, hết thương tiếc cho đứa con thứ, lại cười cợt mỉa mai, cốt cũng chỉ để hóng một trò cười.Nhưng trò cười mà người đời chờ đợi mãi chẳng xuất hiện, ngược lại chỉ thấy vị Bắc Chiến Vương vốn nổi tiếng tàn bạo ấy lại nâng niu người kia đến tận tâm can.Thông tin chi tiết",
-    "isbn": "893532503676",
+    "isbn": "DS00081",
     "namSanXuat": 2026,
-    "url": "https://nhasachphuongnam.com/products/sung-hau-cua-bao-quan-tap-01",
-    "nguon": "phuongnam"
+    "hinhAnhLocal": "images/phuongnam/sung-hau-cua-bao-quan-tap-01.jpg",
+    "hinhAnhUrl": "/uploads/books/images/phuongnam/sung-hau-cua-bao-quan-tap-01.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Kẽ Gương",
@@ -1398,16 +1221,14 @@
       "Chris Brookmyre"
     ],
     "nhaXuatBan": "Dân Trí",
-    "theLoai": "Văn học hiện đại",
+    "theLoai": "Văn Học Hiện Đại",
     "giaBia": 198550,
-    "giaGoc": 209000,
-    "hinhAnhUrl": "https://cdn.hstatic.net/products/200001055148/ke-guong-bia_687ad7885ec4453ab9ca9076d8bc92b7.jpg",
-    "hinhAnhLocal": "images/phuongnam/ke-guong.jpg",
     "moTa": "Kẽ Gương“FORGET WHAT YOU THINK YOU KNOWTHIS IS NOT THAT CRIME NOVEL”Quên những gì bạn nghĩ là mình biết đi vì “Kẽ gương” không phải là một cuốn tiểu thuyết trinh thám như thế.Trong một ngôi làng Glen Cluthar yên ả bà lão Penelope Coyne – một nữ thám tử được người dân địa phương nể trọng hơn cả cảnh sát, lại một lần nữa bị kéo vào một vụ án mạng kỳ quặc: một thi thể xuất hiện trong buồng xưng tội của nhà thờ cổ.Ở phía bên kia thế giới, Johnny Hawke – điều tra viên Sở Cảnh sát thành phố Los Angeles – một cảnh sát khó ưa đối với cả lũ tội phạm lẫn cấp trên của chính anh, đang lần theo những vụ án giữa Los Angeles ngập nắng, nơi mọi thứ đều có thể bị mua chuộc: thông tin, lòng trung thành, thậm chí cả sự thật nhưng chưa bao giờ ngừng đấu tranh cho công lý cho dù phải trả bất kỳ cái giá nào.Hai thế giới tưởng chừng không bao giờ giao nhau.Cho đến khi họ phải đối mặt với những vụ án “trông có vẻ” là tự vẫn.Càng tiến sâu, những vụ án riêng lẻ bắt đầu phản chiếu lẫn nhau như những mảnh gương n",
-    "isbn": "893532503684",
+    "isbn": "DS00082",
     "namSanXuat": 2026,
-    "url": "https://nhasachphuongnam.com/products/ke-guong",
-    "nguon": "phuongnam"
+    "hinhAnhLocal": "images/phuongnam/ke-guong.jpg",
+    "hinhAnhUrl": "/uploads/books/images/phuongnam/ke-guong.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Bức Họa Múa Rối Xương (Tập 1 + Tập 2)",
@@ -1415,16 +1236,14 @@
       "Tây Tử Tự"
     ],
     "nhaXuatBan": "Hà Nội",
-    "theLoai": "Văn học hiện đại",
+    "theLoai": "Văn Học Hiện Đại",
     "giaBia": 464550,
-    "giaGoc": 489000,
-    "hinhAnhUrl": "https://cdn.hstatic.net/products/200001055148/bo-sach-buc-hoa-mua-roi-xuong-tap-1-tap-2_e053be4bc80b42149b5a72565ea6ae29.jpg",
-    "hinhAnhLocal": "images/phuongnam/buc-hoa-mua-roi-xuong-tap-1-tap-2.jpg",
     "moTa": "Bức Họa Múa Rối Xương (Tập 1 + Tập 2)Lâm Bán Hạ vừa chuyển tới căn hộ 1303 trên tầng 13 của một tòa chung cư im lìm, vắng người qua lại chưa đầy một tuần, nhưng đã có vô số sự việc ma quái xảy ra.Hình như cậu bị một vật nào đó theo dõi.Lúc cậu ở nhà một mình, trong nhà luôn có rất nhiều âm thanh quái dị, ví như tiếng móng tay cào vào cánh tủ quần áo trống không, tiếng nước chảy phát ra từ vòi không có nước, hay tiếng nhai nuốt rợn người ngoài cửa sổ.Cho tới một đêm nọ, cậu đột nhiên tỉnh giấc, mở mắt ra thì thấy một bộ xương khô trắng nhợt đang bám trên trần nhà, nghiêng đầu nhìn cậu, nhếch miệng cười toe toét.Thông tin chi tiết",
-    "isbn": "893532503657",
+    "isbn": "DS00083",
     "namSanXuat": 2026,
-    "url": "https://nhasachphuongnam.com/products/buc-hoa-mua-roi-xuong-tap-1-tap-2",
-    "nguon": "phuongnam"
+    "hinhAnhLocal": "images/phuongnam/buc-hoa-mua-roi-xuong-tap-1-tap-2.jpg",
+    "hinhAnhUrl": "/uploads/books/images/phuongnam/buc-hoa-mua-roi-xuong-tap-1-tap-2.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "13 Kỳ Án Có Thật: Kẻ Sát Nhân Mang Gương Mặt Thân Quen",
@@ -1432,16 +1251,14 @@
       "Vườn Hoa Mạt Dược"
     ],
     "nhaXuatBan": "Văn Học",
-    "theLoai": "Văn học hiện đại",
+    "theLoai": "Văn Học Hiện Đại",
     "giaBia": 132050,
-    "giaGoc": 139000,
-    "hinhAnhUrl": "https://cdn.hstatic.net/products/200001055148/13-ky-an-co-that-ke-sat-nhan-mang-guong-mat-than-quen-bia_d2a437d944d8454f8ceaebe9e871bec7.jpg",
-    "hinhAnhLocal": "images/phuongnam/13-ky-an-co-that-ke-sat-nhan-mang-guong-mat-than-quen.jpg",
     "moTa": "13 Kỳ Án Có Thật: Kẻ Sát Nhân Mang Gương Mặt Thân QuenÁc quỷ đã bước ra khỏi những câu chuyện viễn tưởng chúng ta từng đọc, không còn vô hình vô dạng mà là những con người có thật - lạnh lùng đến tàn nhẫn sát hại người thân yêu, sa đọa và tha hóa, chấp nhận trở thành nô lệ của Cái Ác. Trong cuốn sách “13 kỳ án có thật: Kẻ sát nhân mang gương mặt thân quen”, nỗi đau không chỉ dừng lại ở những vết thương thể xác. Nó là sự rình rập của những ác quỷ đội lốt người quen.Mười ba vụ án, mười ba câu chuyện hoàn toàn có thật được mổ xẻ và phân tích chi tiết. Bạn sẽ gặp một gã thợ mộc mang tâm hồn nghệ sĩ giả tạo, kẻ dùng sự dịu dàng để lừa gạt lòng tin của phụ nữ rồi biến họ thành những bức họa đẫm máu. Hay sự bàng hoàng khi đọc về một nữ sinh ngành Luật tài sắc vẹn toàn lại là kẻ thao túng bạn bè để biến bữa tiệc chia tay thành bản án tử hình cho người yêu.Điều đáng sợ nhất của ác quỷ không phải diện mạo dữ tợn, mà là cách chúng đóng giả làm người tình quấn quýt, người bạn đời thề nguyện, hay n",
-    "isbn": "893532503699",
+    "isbn": "DS00084",
     "namSanXuat": 2026,
-    "url": "https://nhasachphuongnam.com/products/13-ky-an-co-that-ke-sat-nhan-mang-guong-mat-than-quen",
-    "nguon": "phuongnam"
+    "hinhAnhLocal": "images/phuongnam/13-ky-an-co-that-ke-sat-nhan-mang-guong-mat-than-quen.jpg",
+    "hinhAnhUrl": "/uploads/books/images/phuongnam/13-ky-an-co-that-ke-sat-nhan-mang-guong-mat-than-quen.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Ác Nữ Nửa Vời - Truyền Kì Hoán Hồn Đổi Xác - Tập 4 (Light novel)",
@@ -1450,16 +1267,14 @@
       "Kana Yuki"
     ],
     "nhaXuatBan": "NXB Kim Đồng",
-    "theLoai": "Truyện tranh tuổi mới lớn",
+    "theLoai": "Truyện Tranh",
     "giaBia": 109250,
-    "giaGoc": 115000,
-    "hinhAnhUrl": "https://cdn.hstatic.net/products/200001055148/ac_nu_nua_voi_ln_tap_4_bia_c6cf0cff732f46f9b2aa92b17913448f.jpg",
-    "hinhAnhLocal": "images/phuongnam/ac-nu-nua-voi-truyen-ki-hoan-hon-doi-xac-tap-4-light-novel.jpg",
     "moTa": "Ác Nữ Nửa Vời - Truyền Kì Hoán Hồn Đổi Xác - Tập 4 (Light novel)CÂU CHUYỆN HOÁN ĐỔI RUNG CHUYỂN CẢ HẬU CUNG - MÀN HAI: “CHUYẾN XUẤT CUNG ĐẦU TIÊN” KHÉP LẠI!“Tại sao… mình không ngăn cản được họ…”Linh Lâm, trong thân xác của Tuệ Nguyệt chịu sự ghét bỏ, đã bị người dân ấp hạ tiện bắt cóc! Khi bệnh dịch mới lắng xuống một chút, thủ lĩnh Vân Lam bị đâm trọng thương. Chứng kiến cậu hấp hối sắp chết, Linh Lâm trở nên dao động, suy sụp nặng nề, khiến Thần Vũ và Cảnh Hành đều không khỏi lo lắng.Phía bên kia, Tuệ Nguyệt quyết tâm tổ chức “tiệc trà” tập hợp các tú nữ lại, bất chấp sự lo ngại của Nghiêu Minh và Cảnh Chương. Trong cuộc chiến tâm lí giữa các tú nữ, Tuệ Nguyệt đã nhổ bỏ nanh độc của Lam Phương Xuân, kẻ đang rắp tâm bôi nhọ cô, và phản kích trở lại…!?Chuyến xuất cung đầy trắc trở với đủ chuyện xảy ra, Tuệ Nguyệt bị quấy rối, lễ hội gián đoạn, và bệnh dịch bùng phát. Tất cả đều dẫn đến những biến chuyển trong tâm lí của Linh Lâm và Tuệ Nguyệt.Màn hai của bộ truyện được nhiều yêu thích",
-    "isbn": "978604239960",
+    "isbn": "DS00085",
     "namSanXuat": 2026,
-    "url": "https://nhasachphuongnam.com/products/ac-nu-nua-voi-truyen-ki-hoan-hon-doi-xac-tap-4-light-novel",
-    "nguon": "phuongnam"
+    "hinhAnhLocal": "images/phuongnam/ac-nu-nua-voi-truyen-ki-hoan-hon-doi-xac-tap-4-light-novel.jpg",
+    "hinhAnhUrl": "/uploads/books/images/phuongnam/ac-nu-nua-voi-truyen-ki-hoan-hon-doi-xac-tap-4-light-novel.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Khi Thế Giới Chao Nghiêng",
@@ -1467,16 +1282,14 @@
       "Jandy Nelson"
     ],
     "nhaXuatBan": "Văn Học",
-    "theLoai": "Văn học hiện đại",
+    "theLoai": "Văn Học Hiện Đại",
     "giaBia": 318250,
-    "giaGoc": 335000,
-    "hinhAnhUrl": "https://cdn.hstatic.net/products/200001055148/khi-the-gioi-chao-nghieng_1a378072f629488e8623a6b3a1cbbc33.jpg",
-    "hinhAnhLocal": "images/phuongnam/khi-the-gioi-chao-nghieng.jpg",
     "moTa": "Khi Thế Giới Chao NghiêngỞ một thung lũng mang tên Thiên Đường, trong ngôi nhà sơn trắng nằm giữa những vườn nho...... có một cô bé sôi nổi, vô tư, mơ thành nữ chính trong những chuyện tình sến sẩm...... có một cậu thiếu niên hoàn hảo, chói ngời, đứa con mơ ước của mọi gia đình...... có một chàng nghệ sĩ vĩ cầm thiên tài, nổi loạn, ngày ngày khát khao vươn tới đỉnh cao.Họ, ba anh em nhà Fall, lần lượt chạm mặt một cô gái bí ẩn có mái tóc cầu vồng. Cô là ai, là gì, chưa ai kịp hiểu. Nhưng bằng cách nào đó, cô đã kịp trở nên quan trọng với từng người... Trước khi thế giới dưới chân họ đột nhiên chao đảo. Trước khi những vết rạn ẩn sâu trong mỗi người bỗng toác ra. Trước khi họ lật giở lại những bí mật, những lời nguyền, qua nhiều thế hệ, để tìm lại sự trọn vẹn trong tim.Vẫn những hình ảnh đậm chất thơ, vẫn những cảm xúc dữ dội mà tinh tế, Jandy Nelson đã trở lại và làm thỏa lòng độc giả sau cả thập kỷ chờ đợi với một câu chuyện bay bổng, huyền hoặc, lớp lớp tầng tầng và đầy những ngã rẽ ",
-    "isbn": "893523524789",
+    "isbn": "DS00086",
     "namSanXuat": 2026,
-    "url": "https://nhasachphuongnam.com/products/khi-the-gioi-chao-nghieng",
-    "nguon": "phuongnam"
+    "hinhAnhLocal": "images/phuongnam/khi-the-gioi-chao-nghieng.jpg",
+    "hinhAnhUrl": "/uploads/books/images/phuongnam/khi-the-gioi-chao-nghieng.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "David Walliams - Mật Hiệu Quả Chuối",
@@ -1484,16 +1297,14 @@
       "David Walliams"
     ],
     "nhaXuatBan": "Hội Nhà Văn",
-    "theLoai": "Văn học thiếu nhi",
+    "theLoai": "Văn Học Thiếu Nhi",
     "giaBia": 235600,
-    "giaGoc": 248000,
-    "hinhAnhUrl": "https://cdn.hstatic.net/products/200001055148/mat-hieu-qua-chuoi_90fcedeb500a4d7d97f972a528a2c169.jpg",
-    "hinhAnhLocal": "images/phuongnam/david-walliams-mat-hieu-qua-chuoi.jpg",
     "moTa": "David Walliams - Mật Hiệu Quả ChuốiGiữa khói lửa của Thế chiến II, cậu bé 11 tuổi Eric tìm thấy niềm vui duy nhất ở sở thú London, nơi có cô khỉ đột khổng lồ Gertrude, cũng là người bạn chí cốt của cậu. Khi bom đạn và những thế lực đen tối khác đe dọa mạng sống của Gertrude cũng như toàn dân Anh quốc, Eric cùng ông mình – người quản thú thân thiện Sid – dấn thân vào một hành trình táo bạo... Một cuộc phiêu lưu kịch tính, nghẹt thở nhưng đầy ắp tiếng cười, tình bạn và lòng dũng cảm bắt đầu!Thông tin chi tiết",
-    "isbn": "893523524774",
+    "isbn": "DS00087",
     "namSanXuat": 2026,
-    "url": "https://nhasachphuongnam.com/products/david-walliams-mat-hieu-qua-chuoi",
-    "nguon": "phuongnam"
+    "hinhAnhLocal": "images/phuongnam/david-walliams-mat-hieu-qua-chuoi.jpg",
+    "hinhAnhUrl": "/uploads/books/images/phuongnam/david-walliams-mat-hieu-qua-chuoi.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "David Walliams - Chuyện Nhà Ngẫn",
@@ -1501,16 +1312,14 @@
       "David Walliams"
     ],
     "nhaXuatBan": "Hội Nhà Văn",
-    "theLoai": "Văn học thiếu nhi",
+    "theLoai": "Văn Học Thiếu Nhi",
     "giaBia": 194750,
-    "giaGoc": 205000,
-    "hinhAnhUrl": "https://cdn.hstatic.net/products/200001055148/chuyen-nha-ngan_9641c198e9a747c99f08a16069a22dee.jpg",
-    "hinhAnhLocal": "images/phuongnam/david-walliams-chuyen-nha-ngan.jpg",
     "moTa": "David Walliams - Chuyện Nhà NgẫnHãy cùng gặp nhà Ngẫn, gia đình ngẩn ngơ nhất trong lịch sử ngẩn ngơ của xứ ngẩn ngơ. Họ sống trong một biệt thự đồng quê xập xệ có tên là Dinh Ngẫn. Nơi này đã là cơ ngơi của gia tộc suốt hàng trăm năm, tọa lạc giữa miền quê nước Anh. Tranh treo ngược, giấy dán tường bong, cửa sổ nứt, nhưng chẳng có gì phải xoắn. Với gia đình này, Dinh Ngẫn là nhà.Và khi nhà sắp rơi vào tay ngân hàng để biến thành trại cải tạo, nhà Ngẫn sao có thể ngồi yên! Là như thế, khởi đầu của đủ trò rối loạn dở khóc dở cười từ gia đình quý tộc ngớ ngẩn đến bực mình (nhưng đôi lúc cũng đáng yêu) này. Bạn đã sẵn sàng để bị cuốn vào chưa?Thông tin chi tiết",
-    "isbn": "893523524814",
+    "isbn": "DS00088",
     "namSanXuat": 2026,
-    "url": "https://nhasachphuongnam.com/products/david-walliams-chuyen-nha-ngan",
-    "nguon": "phuongnam"
+    "hinhAnhLocal": "images/phuongnam/david-walliams-chuyen-nha-ngan.jpg",
+    "hinhAnhUrl": "/uploads/books/images/phuongnam/david-walliams-chuyen-nha-ngan.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Xóa Đi Dấu Vết",
@@ -1518,16 +1327,14 @@
       "Maekawa Homare"
     ],
     "nhaXuatBan": "Phụ Nữ Việt Nam",
-    "theLoai": "Văn học hiện đại",
+    "theLoai": "Văn Học Hiện Đại",
     "giaBia": 197600,
-    "giaGoc": 208000,
-    "hinhAnhUrl": "https://cdn.hstatic.net/products/200001055148/xoa-di-dau-vet_816e3f8307c64cb780a5ee76b311effd.jpg",
-    "hinhAnhLocal": "images/phuongnam/xoa-di-dau-vet.jpg",
     "moTa": "Xóa Đi Dấu VếtAsai Wataru, một chàng trai sống cuộc đời tự do tự tại với những công việc bán thời gian, tình cờ gặp được Sasagawa Keisuke tại một quán rượu. Cuộc gặp đó đã dẫn lối cho cậu đến với công việc tại Dead Morning, một công ty chuyên dọn dẹp những căn nhà nơi người ta ra đi trong hoàn cảnh đặc biệt, ví như chết trong cô độc hoặc tự tử.Nơi hiện trường còn lưu lại dấu vết của cái chết, Asai không khỏi choáng váng và liên tục mắc những sai lầm. Vậy nhưng ngay cả Sasagawa, người luôn tỏ ra điềm tĩnh trước mọi chuyện, dường như cũng đang mang trong lòng bí mật nào đó...Cảm động nhưng không ủy mị, Xóa đi dấu vết là cuốn tiểu thuyết về hành trình tìm kiếm ý nghĩa cuộc sống bằng cách hòa giải với cái chết, với những chi tiết sắc sảo, xúc động, đầy tính nhân văn và hết mực chân thành.Thông tin chi tiết",
-    "isbn": "893523524812",
+    "isbn": "DS00089",
     "namSanXuat": 2026,
-    "url": "https://nhasachphuongnam.com/products/xoa-di-dau-vet",
-    "nguon": "phuongnam"
+    "hinhAnhLocal": "images/phuongnam/xoa-di-dau-vet.jpg",
+    "hinhAnhUrl": "/uploads/books/images/phuongnam/xoa-di-dau-vet.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Tokio",
@@ -1535,16 +1342,14 @@
       "Keigo Higashino"
     ],
     "nhaXuatBan": "Hà Nội",
-    "theLoai": "Văn học hiện đại",
+    "theLoai": "Văn Học Hiện Đại",
     "giaBia": 237500,
-    "giaGoc": 250000,
-    "hinhAnhUrl": "https://cdn.hstatic.net/products/200001055148/tokio_f7853be123c847deacfc69380d5a7973.jpg",
-    "hinhAnhLocal": "images/phuongnam/tokio.jpg",
     "moTa": "TokioNăm 1979, Asakusa.“Em là con trai của anh đấy, Miyamoto Takumi.Em đến từ tương lai.Vài năm nữa, anh sẽ kết hôn và có một đứa con.Anh sẽ đặt tên đứa trẻ đó là Tokio.Chữ Hán viết là Thời Sinh. ‘Thời’ trong thời gianvà ‘Sinh’ trong sinh mệnh.Năm mười bảy tuổi, vì một lý do nào đó,đứa trẻ ấy sẽ quay trở về quá khứ.Và người đó… chính là em.”Câu chuyện kỳ diệu vượt thời gian.Về người đàn ông dần trở thành một người cha,nhờ cuộc hội ngộ với chàng trai ấy.Khi thời khắc cuối cùng của cậu con trai mắc bệnh nan y đang đến gần, Miyamoto Takumi bắt đầu kể cho vợ nghe về ký ức hơn hai mươi năm trước, câu chuyện về một chàng thanh niên mình từng gặp. Khi đó, Takumi là một người trẻ lạc lối, chẳng biết phải sống cuộc đời của mình ra sao. Anh đã gặp gỡ, rồi cùng chàng trai tự xưng là Tokio lên đường tìm kiếm Chizuru, cô bạn gái đã đột ngột biến mất để lại bao bí ẩn…Một tác phẩm đầy cảm động, nơi quá khứ, hiện tại và tương lai giao hòa, đan xen trong câu chuyện về tình yêu, sự sống và ý nghĩa của v",
-    "isbn": "893523524773",
+    "isbn": "DS00090",
     "namSanXuat": 2026,
-    "url": "https://nhasachphuongnam.com/products/tokio",
-    "nguon": "phuongnam"
+    "hinhAnhLocal": "images/phuongnam/tokio.jpg",
+    "hinhAnhUrl": "/uploads/books/images/phuongnam/tokio.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Tiệm Giặt Là Nửa Đêm",
@@ -1552,16 +1357,14 @@
       "Park Ji Young"
     ],
     "nhaXuatBan": "Hà Nội",
-    "theLoai": "Văn học hiện đại",
+    "theLoai": "Văn Học Hiện Đại",
     "giaBia": 190000,
-    "giaGoc": 200000,
-    "hinhAnhUrl": "https://cdn.hstatic.net/products/200001055148/tiem-giat-la-nua-dem_dfce84632e204f6da93f9304da0e05c0.jpg",
-    "hinhAnhLocal": "images/phuongnam/tiem-giat-la-nua-dem.jpg",
     "moTa": "Tiệm Giặt Là Nửa ĐêmTiệm giặt là Nửa đêm là đơn vị tổ chức workshop Chết cô độc, một workshop kỳ quái kéo dài 12 tuần giúp người tham gia luyện tập để đạt tới sự cô độc lý tưởng. Tại đây, những bậc thầy của nghệ thuật cô độc kiên nhẫn thực hành các nghi thức nhỏ bé và vô dụng: mỗi ngày kể một câu chuyện hài cho lợn; đều đặn dắt một chú chó vô hình đi dạo; tối đến mặc bộ đồ gấu trúc đứng khóc giữa phố; kể cả biết trước không cây táo nào mọc lên vẫn trồng lõi táo vào ly mì rỗng; lang thang trong đêm viết lên thân cây những câu từ lẻ loi dù biết nét chì yếu ớt chẳng đủ sức giữ lại một cái tên.Với văn phong lạ lùng, châm biếm tựa như một vở hài kịch đen, Tiệm giặt là Nửa đêm nhìn trực diện vào nỗi cô đơn không thể tránh khỏi của con người. Giống như vòng quay đơn điệu của máy giặt tự động, cuốn sách mở ra một không gian chất chứa sự lặp đi lặp lại của cuộc sống thường nhật, nhưng cũng chính là nơi tuyệt vời để trải nghiệm sự tĩnh lặng và cô độc. Và ở tận cùng nỗi cô độc ấy, các nhân vật tì",
-    "isbn": "893523524820",
+    "isbn": "DS00091",
     "namSanXuat": 2026,
-    "url": "https://nhasachphuongnam.com/products/tiem-giat-la-nua-dem",
-    "nguon": "phuongnam"
+    "hinhAnhLocal": "images/phuongnam/tiem-giat-la-nua-dem.jpg",
+    "hinhAnhUrl": "/uploads/books/images/phuongnam/tiem-giat-la-nua-dem.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Phá Linh - Lời Nguyền Phong Lan Ma",
@@ -1569,16 +1372,14 @@
       "Hương Cô Tương"
     ],
     "nhaXuatBan": "Văn Học",
-    "theLoai": "Văn học hiện đại",
+    "theLoai": "Văn Học Hiện Đại",
     "giaBia": 349600,
-    "giaGoc": 368000,
-    "hinhAnhUrl": "https://cdn.hstatic.net/products/200001055148/pha-linh_2e35ff87b14947da8ee2f2646a674940.jpg",
-    "hinhAnhLocal": "images/phuongnam/pha-linh-loi-nguyen-phong-lan-ma.jpg",
     "moTa": "Phá Linh - Lời Nguyền Phong Lan MaTương truyền, vật tế của ma núi sẽ bị rút vía dần cho đến chết; nơi nào phong lan ma nở rộ, nơi ấy tất có những vong hồn vất vưởng.Tiến sĩ Dược động học Giang Y đi du lịch một mình tại thị trấn nhỏ miền biên thùy, và trong một tour ghép, cô đã làm quen với ba người trẻ tuổi tính cách hoàn toàn khác biệt. Trên hành trình, cả nhóm liên tiếp vướng vào những sự kiện quỷ dị: khi thì mây trời xuất hiện dị tượng, khi thì bạn đồng hành bỗng dưng “trúng tà”, rồi dân làng hành xử lạ lùng, giết gà lấy máu và treo đèn lồng đỏ rực.Nhưng Giang Y không tin vào quỷ thần, cô liên tục áp dụng kiến thức khoa học để phá bỏ những trò mê tín dị đoan nhằm tự cứu mình thoát khỏi hoàn cảnh éo le nơi rừng sâu núi thẳm.Giữa rừng núi lại xuất hiện phố xá sầm uất? Nguyên lý khúc xạ ánh sáng, môn lý cấp ba đã học rồi.Xác chết bốc cháy là do ma núi trả thù? Hiệu ứng bấc nến có thể giải thích.Người nào từng thấy phong lan ma đều chết thảm? Chỉ là những “Sự kiện thiên nga đen và tê gi",
-    "isbn": "893523524779",
+    "isbn": "DS00092",
     "namSanXuat": 2026,
-    "url": "https://nhasachphuongnam.com/products/pha-linh-loi-nguyen-phong-lan-ma",
-    "nguon": "phuongnam"
+    "hinhAnhLocal": "images/phuongnam/pha-linh-loi-nguyen-phong-lan-ma.jpg",
+    "hinhAnhUrl": "/uploads/books/images/phuongnam/pha-linh-loi-nguyen-phong-lan-ma.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Cú Rời Đất Xanh - Tập 2 - Người Nhà Đao",
@@ -1586,16 +1387,14 @@
       "Vĩ Ngư"
     ],
     "nhaXuatBan": "Hà Nội",
-    "theLoai": "Văn học hiện đại",
+    "theLoai": "Văn Học Hiện Đại",
     "giaBia": 342000,
-    "giaGoc": 360000,
-    "hinhAnhUrl": "https://cdn.hstatic.net/products/200001055148/cu-roi-dat-xanh-tap-2-nguoi-nha-dao_8b1b6fd81ad940df98f78feefe39b41d.jpg",
-    "hinhAnhLocal": "images/phuongnam/cu-roi-dat-xanh-tap-2-nguoi-nha-dao.jpg",
     "moTa": "Cú Rời Đất Xanh - Tập 2 - Người Nhà ĐaoSiêu phẩm tiểu thuyết kỳ ảo kết hợp tài tình giữa truyền thuyết hắc ám và sự kiện lịch sử, xếp thứ hai trong top 10 tiểu thuyết kỳ ảo xuất sắc nhất năm 2024 của Douban.Cha chết, mẹ hôn mê nằm liệt giường hơn hai mươi năm, em gái mất tích, tuy sống trong nhung lụa nhưng đường như cuộc đời Viêm Thác chỉ toàn là những điều bất hạnh.Được Lâm Hỳ Như, một người đàn bà bí ẩn với gương mặt trẻ mãi không già nuôi lớn, Viêm Thác luôn nung nấu quyết tâm tìm ra sự thật về bi kịch của gia đình mình.Chính cuộc gặp gỡ - đối đầu với Nhiệp Cửu La, một trong những hậu duệ của đội quân chích khẩn chuyên săn cú đất từ thời Tần Thủy Hoàng, đã làm hé lộ bức màn che lấp bí mật mà anh vẫn tìm kiếm bấy lâu.Liệu Lâm Hỳ Như và đám tay chân của bà ta có phải là cú đất, sinh vật thần bí trong thần thoại từ thời thượng cổ hay không? Tại sao bà ta lại sống trong gia đình anh, trở thành dì Lâm của anh, chiếm đoạt cái tên của mẹ anh?Để trả lời những câu hỏi ấy, anh phải dấn thân ",
-    "isbn": "893523524799",
+    "isbn": "DS00093",
     "namSanXuat": 2026,
-    "url": "https://nhasachphuongnam.com/products/cu-roi-dat-xanh-tap-2-nguoi-nha-dao",
-    "nguon": "phuongnam"
+    "hinhAnhLocal": "images/phuongnam/cu-roi-dat-xanh-tap-2-nguoi-nha-dao.jpg",
+    "hinhAnhUrl": "/uploads/books/images/phuongnam/cu-roi-dat-xanh-tap-2-nguoi-nha-dao.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Cú Rời Đất Xanh - Tập 1 - Người Nhà Chó",
@@ -1603,16 +1402,14 @@
       "Vĩ Ngư"
     ],
     "nhaXuatBan": "Hà Nội",
-    "theLoai": "Văn học hiện đại",
+    "theLoai": "Văn Học Hiện Đại",
     "giaBia": 304000,
-    "giaGoc": 320000,
-    "hinhAnhUrl": "https://cdn.hstatic.net/products/200001055148/cu-troi-dat-xanh-tap-1-nguoi-nha-cho-bia_2dab661f77fb475ab7ab5d5b6ca15dd7.jpg",
-    "hinhAnhLocal": "images/phuongnam/cu-roi-dat-xanh-tap-1-nguoi-nha-cho.jpg",
     "moTa": "Cú Rời Đất Xanh - Tập 1 - Người Nhà ChóSiêu phẩm tiểu thuyết kỳ ảo kết hợp tài tình giữa truyền thuyết hắc ám và sự kiện lịch sử, xếp thứ hai trong top 10 tiểu thuyết kỳ ảo xuất sắc nhất năm 2024 của Douban.Vào một đêm khuya hơn hai nghìn năm trước, theo lệnh Tần Thủy hoàng, con thuyền lớn chở Từ Phúc vượt biển sang Đông Doanh tìm tiên xin thuốc trường sinh hạ thủy, bắt đầu giương buồm ra khơi. Cùng lúc đó, một đội quân đầu chít khăn đen cũng bí mật tiến vào rừng già Nam Ba bạt ngàn rậm rạp tìm kiếm cửu đất, loài sinh vật thời thượng cổ có khả năng trường sinh bất lão… Nhưng rồi hoàng đế qua đời, đường trường sinh mờ mịt, vật đổi sao dời, chuyện xưa dần thành huyền hoặc phai phôi…Chớp mắt đã nghìn năm, ở thời hiện đại, hậu duệ của đội quân chít khăn năm xưa vẫn giữ nghề săn cửu đất của tổ tiên, nhưng họ không ngờ rằng “con mồi” của mình đã “thay da đổi thịt”.Nhiếp Cửu La là một nghệ sĩ điêu khắc xinh đẹp, nhưng ít ai biết rằng cô còn là hậu duệ của đội quân chít khăn. Dù được đào tạo đ",
-    "isbn": "893523524722",
+    "isbn": "DS00094",
     "namSanXuat": 2026,
-    "url": "https://nhasachphuongnam.com/products/cu-roi-dat-xanh-tap-1-nguoi-nha-cho",
-    "nguon": "phuongnam"
+    "hinhAnhLocal": "images/phuongnam/cu-roi-dat-xanh-tap-1-nguoi-nha-cho.jpg",
+    "hinhAnhUrl": "/uploads/books/images/phuongnam/cu-roi-dat-xanh-tap-1-nguoi-nha-cho.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Án Mạng Bạn Cùng Lớp",
@@ -1620,16 +1417,14 @@
       "Higashino Keigo"
     ],
     "nhaXuatBan": "Dân Trí",
-    "theLoai": "Văn học hiện đại",
+    "theLoai": "Văn Học Hiện Đại",
     "giaBia": 227050,
-    "giaGoc": 239000,
-    "hinhAnhUrl": "https://cdn.hstatic.net/products/200001055148/an-mang-ban-cung-lop-bia_0d9aa1d2ddaf46d2a241ec3b649df86a.jpg",
-    "hinhAnhLocal": "images/phuongnam/an-mang-ban-cung-lop.jpg",
     "moTa": "Án Mạng Bạn Cùng LớpÁn mạng bạn cùng lớp là một cuốn tiểu thuyết trinh thám học đường xoay quanh cái chết bất ngờ của một nữ sinh trung học tên là Yukiko Miyamae. Mọi bằng chứng ban đầu đều cho thấy đó là một tai nạn xe hơi, nhưng có những điều không hợp lý.Shōichi Nishihara, cậu bạn cùng lớp với Yukiko và cũng là người yêu của cô hiện tại đã không tin vào kết luận của cảnh sát và quyết tâm tự điều tra, làm sáng tỏ bí ẩn về cái chết của bạn mình.Khi dấn thân vào cuộc điều tra, một án mạng nữa lại xảy ra ngay sau đó, khiến Shōichi rơi vào vòng xoáy những bí mật và âm mưu đen tối bị che giấu trong ngôi trường tưởng chừng như yên bình ấy. Anh phải đối mặt với những lời nói dối, sự đố kỵ và những mối quan hệ phức tạp giữa các học sinh và giáo viên như thế nào?Án mạng bạn cùng lớp không chỉ là một câu chuyện trinh thám đơn thuần mà đi sâu vào tâm lý con người, đặc biệt là những áp lực và mâu thuẫn trong môi trường học đường.Về tác giả:Higashino Keigo sinh năm 1958 tại Osaka. Tốt nghiệp khoa",
-    "isbn": "893623047193",
+    "isbn": "DS00095",
     "namSanXuat": 2026,
-    "url": "https://nhasachphuongnam.com/products/an-mang-ban-cung-lop",
-    "nguon": "phuongnam"
+    "hinhAnhLocal": "images/phuongnam/an-mang-ban-cung-lop.jpg",
+    "hinhAnhUrl": "/uploads/books/images/phuongnam/an-mang-ban-cung-lop.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Trái Tim Cũng Cần Một Mái Hiên",
@@ -1638,16 +1433,14 @@
       "Rán Art"
     ],
     "nhaXuatBan": "Văn Học",
-    "theLoai": "Tô màu người lớn",
+    "theLoai": "Nghệ Thuật & Đời Sống",
     "giaBia": 114000,
-    "giaGoc": 120000,
-    "hinhAnhUrl": "https://cdn.hstatic.net/products/200001055148/trai-tim-cung-can-mot-mai-hien_1f38e0c5e0d1410192a13a7ecb0f0888.jpg",
-    "hinhAnhLocal": "images/phuongnam/trai-tim-cung-can-mot-mai-hien.jpg",
     "moTa": "Trái Tim Cũng Cần Một Mái HiênBài vở trên lớp còn dang dở, công việc chất chồng chưa kịp giải quyết, tình cảm chẳng mấy suôn sẻ, gia đình lại nhiều rắc rối... Cuộc sống vốn dĩ đầy rẫy những chuyện khiến trái tim ta mệt nhoài. Và ta cũng hiểu rằng không phải cứ cố gắng tỏ ra vui vẻ thì mọi chuyện sẽ tự nhiên qua đi. Cách duy nhất là dũng cảm đối diện với nó. Điều quan trọng không phải là phớt lờ mọi vấn đề, mà là học cách đứng vững trước những chông chênh ấy, để nhận ra rằng sau mỗi cơn mưa, ta sẽ luôn thấy một bầu trời cao rộng, trong xanh.Dám đối diện với bản thân đúng là điều không hề dễ dàng. Nó đòi hỏi ở ta biết bao lòng dũng cảm và sự kiên nhẫn, nhưng quá trình trưởng thành là một dòng sông mà ai cũng phải băng qua. Cuộc đời này vẫn luôn đáng yêu và đáng sống. Mạnh mẽ thêm một chút, dũng cảm thêm một chút, bạn sẽ thấy mọi thứ trở nên nhẹ nhõm hơn rất nhiều.“Trái tim cũng cần một mái hiên” mong có thể đem tới cho tâm hồn bạn một nơi ấm áp, một chút vỗ về dịu dàng trong những ngày t",
-    "isbn": "893532503664",
+    "isbn": "DS00096",
     "namSanXuat": 2026,
-    "url": "https://nhasachphuongnam.com/products/trai-tim-cung-can-mot-mai-hien",
-    "nguon": "phuongnam"
+    "hinhAnhLocal": "images/phuongnam/trai-tim-cung-can-mot-mai-hien.jpg",
+    "hinhAnhUrl": "/uploads/books/images/phuongnam/trai-tim-cung-can-mot-mai-hien.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Legendary",
@@ -1655,16 +1448,14 @@
       "Stephanie Garber"
     ],
     "nhaXuatBan": "Văn Học",
-    "theLoai": "Văn học hiện đại",
+    "theLoai": "Văn Học Hiện Đại",
     "giaBia": 189050,
-    "giaGoc": 199000,
-    "hinhAnhUrl": "https://cdn.hstatic.net/products/200001055148/legendary-bia_e1854620241b4252b942d10462221b79.jpg",
-    "hinhAnhLocal": "images/phuongnam/legendary.jpg",
     "moTa": "LegendarySau khi chiến thắng Caraval, Donatella và Scarlett cuối cùng cũng đã thoát khỏi người cha tàn nhẫn. Nhưng chưa vui mừng được bao lâu, “người bạn bí ẩn” từng giúp chị em cô vào Caraval đã tìm đến và yêu cầu Donatella phải trả món nợ nguy hiểm ấy.Để giữ trọn thời thề, Tella bước vào Caraval một lần nữa, nơi mỗi lựa chọn đều phải đánh đổi bằng gia đình, tình yêu và thậm chí là cả… mạng sống.Chào mừng, chào mừng đến với Caraval!Trò chơi vừa mới bắt đầu.-Về tác giả: Stephanie Garber là tiểu thuyết gia ăn khách người Mỹ chuyên viết dòng sách lãng mạn, kỳ ảo dành cho giới trẻ. Cô nổi tiếng với hai series Caraval, Ngày xửa ngày xưa có một trái tim vụn vỡ. Caraval được phát hành lần đầu tại Mỹ năm 2016 và đạt được nhiều thành tích nổi bật, có mặt trong danh sách bán chạy của tờ New York Times 15 tuần liên tiếp.Bộ sách gồm 3 tập: Caraval – Legendary – Finale, dự kiến phát hành trong năm 2026.Thông tin chi tiết",
-    "isbn": "893532503611",
+    "isbn": "DS00097",
     "namSanXuat": 2026,
-    "url": "https://nhasachphuongnam.com/products/legendary",
-    "nguon": "phuongnam"
+    "hinhAnhLocal": "images/phuongnam/legendary.jpg",
+    "hinhAnhUrl": "/uploads/books/images/phuongnam/legendary.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Khi Tóc Mai Đã Bạc Người Có Còn Bên Ta",
@@ -1672,16 +1463,14 @@
       "Phù Hoa"
     ],
     "nhaXuatBan": "Dân Trí",
-    "theLoai": "Văn học hiện đại",
+    "theLoai": "Văn Học Hiện Đại",
     "giaBia": 179550,
-    "giaGoc": 189000,
-    "hinhAnhUrl": "https://cdn.hstatic.net/products/200001055148/khi-toc-mai-da-bac-nguoi-co-con-ben-ta-bia_f5dc19d2366b48fb9d6305522aa28da7.jpg",
-    "hinhAnhLocal": "images/phuongnam/khi-toc-mai-da-bac-nguoi-co-con-ben-ta.jpg",
     "moTa": "Khi Tóc Mai Đã Bạc Người Có Còn Bên TaVào hôm kỉ niệm ngày cưới, Du Dao đi chợ mua thức ăn, chớp mắt một cái đã xuyên tới bốn mươi năm sau, người chồng hào hoa phong nhã giờ đây đã biến thành một ông giáo sư già điềm đạm.Lúc trẻ, vợ thầy Giang đột nhiên mất tích, được xác nhận là đã qua đời, thầy góa vợ đằng đẵng bốn mươi năm. Không ngờ lại có ngày vợ thầy trở về, đã vậy dung mạo còn chẳng hề thay đổi. Thế là tin đồn giáo sư Giang trâu già gặm cỏ non lan truyền khắp trường, thanh danh, khí tiết thầy gìn giữ cả đời đứng trước nguy cơ bị hoen ố.Thời gian thấm thoắt thoi đưa, khi dung nhan của ta không còn, người vẫn nguyện yêu ta chứ?Thông tin chi tiết",
-    "isbn": "893532503633",
+    "isbn": "DS00098",
     "namSanXuat": 2026,
-    "url": "https://nhasachphuongnam.com/products/khi-toc-mai-da-bac-nguoi-co-con-ben-ta",
-    "nguon": "phuongnam"
+    "hinhAnhLocal": "images/phuongnam/khi-toc-mai-da-bac-nguoi-co-con-ben-ta.jpg",
+    "hinhAnhUrl": "/uploads/books/images/phuongnam/khi-toc-mai-da-bac-nguoi-co-con-ben-ta.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "99 Lá Thư Chia Tay",
@@ -1689,16 +1478,14 @@
       "Mai Trang"
     ],
     "nhaXuatBan": "Thế Giới",
-    "theLoai": "Truyện ngắn, Tạp văn",
+    "theLoai": "Truyện Ngắn",
     "giaBia": 81700,
-    "giaGoc": 86000,
-    "hinhAnhUrl": "https://cdn.hstatic.net/products/200001055148/99-la-thu-chia-tay-bia_132c36024dbf48e89627493c19c259c4.jpg",
-    "hinhAnhLocal": "images/phuongnam/99-la-thu-chia-tay.jpg",
     "moTa": "99 Lá Thư Chia TayỞ đây, có một ai đó đã từng yêu rất nhiều.Yêu đến mức chấp nhận chịu đựng.Yêu đến mức tự biện minh cho sự lạnh nhạt của người kia.Và yêu đến mức… quên mất bản thân mình xứng đáng được yêu thương, trân trọng.“99 lá thư chia tay” không phải là một cuốn sách để đọc khi bạn đang hạnh phúc. Cuốn sách là nơi gom nhặt những mảnh cảm xúc vỡ vụn, rời rạc nhưng chân thật đến đau lòng. Đọc từng trang thư cảm xúc, có lẽ sẽ giúp bạn tự soi chiếu chính mình, tình cảm ngu ngơ, dại khờ và hoang dã ngày đó, giờ chỉ như câu chuyện cười được nhắc lại.“99 lá thư chia tay” không thúc ép bạn phải cố quên một người, cũng không vẽ ra một hành trình chữa lành màu hồng mà chỉ nhẹ nhàng nói với bạn một điều:Bạn có quyền đau. Nhưng bạn cũng có quyền bước tiếp. Bạn vẫn xứng đáng với một tình yêu đúng nghĩa.Một người không khiến bạn phải nghi ngờ giá trị của chính mình.Một mối quan hệ mà bạn không cần phải “chịu đựng” để tồn tại.“Ai rồi cũng phải học cách nuốt xuống những tủi hờn, không còn nhắc đ",
-    "isbn": "893532503685",
+    "isbn": "DS00099",
     "namSanXuat": 2026,
-    "url": "https://nhasachphuongnam.com/products/99-la-thu-chia-tay",
-    "nguon": "phuongnam"
+    "hinhAnhLocal": "images/phuongnam/99-la-thu-chia-tay.jpg",
+    "hinhAnhUrl": "/uploads/books/images/phuongnam/99-la-thu-chia-tay.jpg",
+    "nguon": "real_database"
   },
   {
     "tenSach": "Quế Hương - Những Truyện Hay Viết Cho Thiếu Nhi",
@@ -1706,15 +1493,13 @@
       "Quế Hương"
     ],
     "nhaXuatBan": "Kim Đồng",
-    "theLoai": "Văn học thiếu nhi",
+    "theLoai": "Văn Học Thiếu Nhi",
     "giaBia": 80750,
-    "giaGoc": 85000,
-    "hinhAnhUrl": "https://cdn.hstatic.net/products/200001055148/nhung-truyen-hay-viet-cho-thieu-nhi-bia_aa0325cbba29478c90022b20c0997b0b.jpg",
-    "hinhAnhLocal": "images/phuongnam/que-huong-nhung-truyen-hay-viet-cho-thieu-nhi.jpg",
     "moTa": "Quế Hương - Những Truyện Hay Viết Cho Thiếu NhiTrẻ con bây giờ già dặn hơn, thông minh hơn, đa đoan hơn thời chúng tôi, bởi thế giới trước mắt các em rộng mở, phong phú hơn và cũng phức tạp, đáng sợ hơn. Tâm hồn các em là những thực thể mong manh dễ vỡ và cũng dễ thăng hoa. Văn học thiếu nhi phải đúng như tầm vóc của nó, đa dạng, phong phú như tâm hồn và cuộc sống của các em.Tập truyện này tôi dành tặng:Những đứa trẻ non tơ như nụ trên cànhNhững đứa trẻ chóng già trong thế giới người lớnNhững người lớn đang sống với trẻ conThông tin chi tiết",
-    "isbn": "978604241829",
+    "isbn": "DS00100",
     "namSanXuat": 2026,
-    "url": "https://nhasachphuongnam.com/products/que-huong-nhung-truyen-hay-viet-cho-thieu-nhi",
-    "nguon": "phuongnam"
+    "hinhAnhLocal": "images/phuongnam/que-huong-nhung-truyen-hay-viet-cho-thieu-nhi.jpg",
+    "hinhAnhUrl": "/uploads/books/images/phuongnam/que-huong-nhung-truyen-hay-viet-cho-thieu-nhi.jpg",
+    "nguon": "real_database"
   }
 ]

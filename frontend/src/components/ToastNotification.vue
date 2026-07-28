@@ -13,14 +13,19 @@
     >
       <div 
         class="p-2.5 rounded-xl flex-shrink-0"
-        :class="toastStore.type === 'success' ? 'bg-green-50 text-green-500' : 'bg-red-50 text-red-500'"
+        :class="{
+          'bg-green-50 text-green-500': toastStore.type === 'success',
+          'bg-amber-50 text-amber-500': toastStore.type === 'warning',
+          'bg-red-50 text-red-500': toastStore.type !== 'success' && toastStore.type !== 'warning'
+        }"
       >
         <CheckCircle v-if="toastStore.type === 'success'" class="h-6 w-6" />
+        <AlertTriangle v-else-if="toastStore.type === 'warning'" class="h-6 w-6" />
         <AlertCircle v-else class="h-6 w-6" />
       </div>
       <div class="flex-grow">
         <p class="text-sm font-extrabold text-slate-900 leading-tight">
-          {{ toastStore.type === 'success' ? 'Thành công' : 'Thông báo' }}
+          {{ toastStore.type === 'success' ? 'Thành công' : (toastStore.type === 'warning' ? 'Cảnh báo' : 'Thông báo') }}
         </p>
         <p class="text-xs font-bold text-slate-500 mt-1 leading-snug">
           {{ toastStore.message }}
@@ -38,7 +43,7 @@
 
 <script setup>
 import { useToastStore } from '../stores/toast';
-import { CheckCircle, AlertCircle, X } from '@lucide/vue';
+import { CheckCircle, AlertCircle, AlertTriangle, X } from '@lucide/vue';
 
 const toastStore = useToastStore();
 </script>

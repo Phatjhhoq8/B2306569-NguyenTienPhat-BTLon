@@ -24,11 +24,12 @@ const getPlans = async (req, res, next) => {
  */
 const subscribePlan = async (req, res, next) => {
   try {
-    if (!req.user || req.user.role === 'STAFF') {
+    const userRole = req.user.role || (req.user.chucVu ? 'STAFF' : 'READER');
+    if (!req.user || userRole === 'STAFF') {
       return resultResponse.err(res, 'Chỉ độc giả mới có thể đăng ký gói hội viên', 403);
     }
 
-    const { goiId } = req.body;
+    const { goiId, phuongThucThanhToan, thongTinThe } = req.body;
     if (!goiId) {
       return resultResponse.err(res, 'ID gói hội viên là bắt buộc', 400);
     }
@@ -47,7 +48,10 @@ const subscribePlan = async (req, res, next) => {
       ngayBatDau,
       ngayKetThuc,
       tongTien: plan.giaTien,
-      trangThai: 'DANG_HIEU_LUC'
+      trangThai: 'DANG_HIEU_LUC',
+      phuongThucThanhToan: phuongThucThanhToan || 'VIETQR',
+      tuDongGiaHan: phuongThucThanhToan === 'THE_TIN_DUNG',
+      thongTinThe: phuongThucThanhToan === 'THE_TIN_DUNG' ? thongTinThe : undefined
     });
 
     await subscription.save();
@@ -61,11 +65,11 @@ const subscribePlan = async (req, res, next) => {
 
 const createPlan = async (req, res, next) => {
   try {
-    const { tenGoi, giaTien, soNgayHieuLuc, soSachToiDa, soNgayMuonToiDa, mienTienCoc } = req.body;
+    const { tenGoi, giaTien, soNgayHieuLuc, soSachToiDa, soNgayMuonToiDa, mienTienCoc, choPhepGiaHanOnline, quayNhanUuTien, chiaSeNhomGiaDinh, docEbookKhongGioiHan, giaoSachTanNha, workshopDocQuyen, loaiGoi, khuyenDung, phiMuonSachGiay, phiPhatTreHan, tienDatCoc } = req.body;
     if (!tenGoi || soNgayHieuLuc === undefined || soSachToiDa === undefined || soNgayMuonToiDa === undefined) {
       return resultResponse.err(res, 'Thiếu thông tin bắt buộc để tạo gói', 400);
     }
-    const plan = await MembershipPlan.create({ tenGoi, giaTien, soNgayHieuLuc, soSachToiDa, soNgayMuonToiDa, mienTienCoc });
+    const plan = await MembershipPlan.create({ tenGoi, giaTien, soNgayHieuLuc, soSachToiDa, soNgayMuonToiDa, mienTienCoc, choPhepGiaHanOnline, quayNhanUuTien, chiaSeNhomGiaDinh, docEbookKhongGioiHan, giaoSachTanNha, workshopDocQuyen, loaiGoi, khuyenDung, phiMuonSachGiay, phiPhatTreHan, tienDatCoc });
     return resultResponse.ok(res, plan, 201);
   } catch (error) { next(error); }
 };
@@ -74,7 +78,7 @@ const updatePlan = async (req, res, next) => {
   try {
     const plan = await MembershipPlan.findById(req.params.id);
     if (!plan) return resultResponse.err(res, 'Không tìm thấy gói hội viên', 404);
-    const allowedUpdates = ['tenGoi', 'giaTien', 'soNgayHieuLuc', 'soSachToiDa', 'soNgayMuonToiDa', 'mienTienCoc'];
+    const allowedUpdates = ['tenGoi', 'giaTien', 'soNgayHieuLuc', 'soSachToiDa', 'soNgayMuonToiDa', 'mienTienCoc', 'choPhepGiaHanOnline', 'quayNhanUuTien', 'chiaSeNhomGiaDinh', 'docEbookKhongGioiHan', 'giaoSachTanNha', 'workshopDocQuyen', 'loaiGoi', 'khuyenDung', 'phiMuonSachGiay', 'phiPhatTreHan', 'tienDatCoc'];
     allowedUpdates.forEach((f) => { if (req.body[f] !== undefined) plan[f] = req.body[f]; });
     await plan.save();
     return resultResponse.ok(res, plan);
@@ -92,11 +96,88 @@ const deletePlan = async (req, res, next) => {
 
 // ==================== Độc giả: Xem subscription cá nhân ====================
 
+// Helper tự động gia hạn / hủy gia hạn khi hết hạn của 1 user
+const checkAndUpdateSubscriptions = async (userId) => {
+  const now = new Date();
+  const expiredSubs = await Subscription.find({
+    docGia: userId,
+    trangThai: 'DANG_HIEU_LUC',
+    ngayKetThuc: { $lt: now }
+  }).populate('goiDocGia');
+
+  for (const sub of expiredSubs) {
+    if (sub.tuDongGiaHan && sub.goiDocGia) {
+      // Đổi sub cũ thành HET_HAN
+      sub.trangThai = 'HET_HAN';
+      await sub.save();
+
+      // Sinh sub mới tự động gia hạn tiếp nối
+      const ngayBatDau = new Date(sub.ngayKetThuc);
+      const ngayKetThuc = new Date(ngayBatDau.getTime() + sub.goiDocGia.soNgayHieuLuc * 24 * 60 * 60 * 1000);
+
+      const newSub = new Subscription({
+        docGia: userId,
+        goiDocGia: sub.goiDocGia._id,
+        ngayBatDau,
+        ngayKetThuc,
+        tongTien: sub.goiDocGia.giaTien,
+        trangThai: 'DANG_HIEU_LUC',
+        phuongThucThanhToan: 'THE_TIN_DUNG',
+        tuDongGiaHan: true,
+        thongTinThe: sub.thongTinThe
+      });
+      await newSub.save();
+    } else {
+      sub.trangThai = 'HET_HAN';
+      await sub.save();
+    }
+  }
+};
+
+// Helper tự động gia hạn / hủy gia hạn khi hết hạn của TOÀN BỘ hệ thống (dành cho Admin)
+const checkAndUpdateAllSubscriptions = async () => {
+  const now = new Date();
+  const expiredSubs = await Subscription.find({
+    trangThai: 'DANG_HIEU_LUC',
+    ngayKetThuc: { $lt: now }
+  }).populate('goiDocGia');
+
+  for (const sub of expiredSubs) {
+    if (sub.tuDongGiaHan && sub.goiDocGia) {
+      sub.trangThai = 'HET_HAN';
+      await sub.save();
+
+      const ngayBatDau = new Date(sub.ngayKetThuc);
+      const ngayKetThuc = new Date(ngayBatDau.getTime() + sub.goiDocGia.soNgayHieuLuc * 24 * 60 * 60 * 1000);
+
+      const newSub = new Subscription({
+        docGia: sub.docGia,
+        goiDocGia: sub.goiDocGia._id,
+        ngayBatDau,
+        ngayKetThuc,
+        tongTien: sub.goiDocGia.giaTien,
+        trangThai: 'DANG_HIEU_LUC',
+        phuongThucThanhToan: 'THE_TIN_DUNG',
+        tuDongGiaHan: true,
+        thongTinThe: sub.thongTinThe
+      });
+      await newSub.save();
+    } else {
+      sub.trangThai = 'HET_HAN';
+      await sub.save();
+    }
+  }
+};
+
 const getMySubscription = async (req, res, next) => {
   try {
-    if (!req.user || req.user.role === 'STAFF') {
+    const userRole = req.user.role || (req.user.chucVu ? 'STAFF' : 'READER');
+    if (!req.user || userRole === 'STAFF') {
       return resultResponse.err(res, 'Chỉ độc giả mới có thể xem subscription', 403);
     }
+    
+    await checkAndUpdateSubscriptions(req.user._id);
+
     // Tìm gói do bản thân đăng ký HOẶC gói được mời tham gia nhóm gia đình
     const subscriptions = await Subscription.find({
       $or: [
@@ -115,7 +196,8 @@ const getMySubscription = async (req, res, next) => {
  */
 const linkFamilyInvite = async (req, res, next) => {
   try {
-    if (!req.user || req.user.role === 'STAFF') {
+    const userRole = req.user.role || (req.user.chucVu ? 'STAFF' : 'READER');
+    if (!req.user || userRole === 'STAFF') {
       return resultResponse.err(res, 'Chỉ độc giả mới có thể tham gia nhóm gia đình', 403);
     }
 
@@ -173,6 +255,56 @@ const linkFamilyInvite = async (req, res, next) => {
   }
 };
 
+const cancelAutoRenew = async (req, res, next) => {
+  try {
+    const userRole = req.user.role || (req.user.chucVu ? 'STAFF' : 'READER');
+    if (!req.user || userRole === 'STAFF') {
+      return resultResponse.err(res, 'Chỉ độc giả mới có thể hủy gia hạn', 403);
+    }
+
+    const subscription = await Subscription.findOne({
+      docGia: req.user._id,
+      trangThai: 'DANG_HIEU_LUC',
+      phuongThucThanhToan: 'THE_TIN_DUNG',
+      tuDongGiaHan: true
+    });
+
+    if (!subscription) {
+      return resultResponse.err(res, 'Không tìm thấy gói gia hạn tự động nào đang hoạt động', 404);
+    }
+
+    subscription.tuDongGiaHan = false;
+    await subscription.save();
+
+    return resultResponse.ok(res, {
+      message: 'Đã hủy tự động gia hạn thành công. Gói sẽ kết thúc khi hết hạn.',
+      subscription
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getAllSubscriptions = async (req, res, next) => {
+  try {
+    const userRole = req.user.role || (req.user.chucVu ? 'STAFF' : 'READER');
+    if (!req.user || userRole !== 'STAFF') {
+      return resultResponse.err(res, 'Chỉ nhân viên mới có thể xem tất cả đăng ký gói', 403);
+    }
+
+    await checkAndUpdateAllSubscriptions();
+
+    const subscriptions = await Subscription.find({})
+      .populate('docGia')
+      .populate('goiDocGia')
+      .sort({ createdAt: -1 });
+
+    return resultResponse.ok(res, subscriptions);
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getPlans,
   subscribePlan,
@@ -180,5 +312,7 @@ module.exports = {
   updatePlan,
   deletePlan,
   getMySubscription,
-  linkFamilyInvite
+  linkFamilyInvite,
+  cancelAutoRenew,
+  getAllSubscriptions
 };

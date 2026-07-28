@@ -10,12 +10,19 @@ const dotenv = require('dotenv');
 // Nạp biến môi trường từ file .env ở thư mục backend
 dotenv.config({ path: path.join(__dirname, '../../.env') });
 
+const isTest = process.env.NODE_ENV === 'test' || process.argv.some(arg => arg.includes('test') || arg.includes('mocha'));
+if (isTest) {
+  process.env.NODE_ENV = 'test';
+}
+
 module.exports = {
   env: process.env.NODE_ENV || 'development',
   port: parseInt(process.env.PORT, 10) || 3000,
   
   db: {
-    uri: process.env.MONGODB_URI || 'mongodb://localhost:27017/book_borrowing'
+    uri: isTest 
+      ? 'mongodb://localhost:27017/book_borrowing_test'
+      : (process.env.MONGODB_URI || 'mongodb://localhost:27017/book_borrowing')
   },
   
   jwt: {

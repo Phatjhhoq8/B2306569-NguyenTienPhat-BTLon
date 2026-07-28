@@ -46,6 +46,21 @@ const subscriptionSchema = new mongoose.Schema({
     enum: ['DANG_HIEU_LUC', 'HET_HAN', 'HUY'],
     default: 'DANG_HIEU_LUC'
   },
+  phuongThucThanhToan: {
+    type: String,
+    enum: ['THE_TIN_DUNG', 'VIETQR'],
+    default: 'VIETQR'
+  },
+  tuDongGiaHan: {
+    type: Boolean,
+    default: false
+  },
+  thongTinThe: {
+    soThe: String,
+    tenTrenThe: String,
+    ngayHetHan: String,
+    maCVC: String
+  },
   nguoiDuocMoi: {
     type: [String],
     ref: 'Reader',

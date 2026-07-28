@@ -14,14 +14,14 @@ const presets = {
     heroTitle: "KHÁM PHÁ THẾ GIỚI TRI THỨC TẠI CTU",
     heroSubtitle: "Tìm kiếm nhanh giáo trình môn học, công trình nghiên cứu khoa học và đăng ký mượn sách giấy trực tuyến dễ dàng tại Đại học Cần Thơ.",
     heroBanner: "/hero_banner.png",
-    step1Title: "1. Chọn sách & Đăng ký",
-    step1Desc: "Tìm kiếm cuốn sách cần thiết trong kho tài liệu số khổng lồ, nhấn nút đăng ký và lựa chọn gói dịch vụ phù hợp nhất.",
-    step2Title: "2. Nhận mã xác nhận",
-    step2Desc: "Hệ thống sẽ tự động phê duyệt nhanh chóng và gửi mã vạch xác nhận mượn sách trực tiếp qua thư điện tử/SMS.",
-    step3Title: "3. Đến quầy thủ thư",
-    step3Desc: "Mang mã xác nhận (hoặc thẻ độc giả) đến quầy thư viện trung tâm để nhận sách giấy trong thời gian hoạt động.",
-    step4Title: "4. Trả sách đúng hẹn",
-    step4Desc: "Độc giả trả sách tại quầy hoặc thùng trả tự động trước khi hết hạn để tránh phát sinh chi phí phạt không đáng có.",
+    step1Title: "Tìm kiếm & Chọn sách",
+    step1Desc: "Tra cứu đầu sách mong muốn trên hệ thống cổng thư viện điện tử CTU eLibrary với bộ lọc thông minh.",
+    step2Title: "Thêm vào giỏ mượn",
+    step2Desc: "Đưa các cuốn sách cần mượn vào giỏ trực tuyến và xác nhận thời hạn cùng chi nhánh nhận sách mong muốn.",
+    step3Title: "Nhận mã phiếu hẹn",
+    step3Desc: "Hệ thống cấp ngay mã phiếu hẹn điện tử ghi rõ hạn giữ sách và gửi thông tin xác nhận trực tiếp.",
+    step4Title: "Đến nhận sách giấy",
+    step4Desc: "Độc giả xuất trình mã phiếu hẹn tại quầy thủ thư chi nhánh đã chọn để nhận sách giấy trong 5 phút.",
     faqs: [
       {
         question: "Làm thế nào để đăng ký tài khoản độc giả mới?",
@@ -46,17 +46,17 @@ const presets = {
     ]
   },
   aboutpage: {
-    title: "Thư Viện Trung Tâm Đại Học Cần Thơ",
-    description: "Thư viện Trung tâm Trường Đại học Cần Thơ là trung tâm thông tin học thuật hiện đại, đóng vai trò then chốt trong việc hỗ trợ đào tạo, nghiên cứu khoa học và chuyển giao công nghệ cho toàn vùng Đồng bằng sông Cửu Long.",
-    historyTitle: "Lịch sử phát triển",
-    historyContent: "Được thành lập cùng với sự phát triển của Trường Đại học Cần Thơ, Thư viện Trung tâm đã không ngừng được đầu tư nâng cấp cả về cơ sở vật chất, trang thiết bị lẫn nguồn học liệu số phong phú nhằm đáp ứng tiêu chuẩn quốc tế.",
-    vision: "Trở thành trung tâm học liệu số hiện đại hàng đầu Việt Nam, kết nối tri thức toàn cầu.",
-    mission: "Cung cấp nguồn thông tin khoa học chất lượng cao, không gian học tập nghiên cứu tiện nghi và dịch vụ thư viện chuyên nghiệp.",
-    values: "Độc giả là trung tâm - Sáng tạo không ngừng - Kết nối tri thức - Minh bạch & Trách nhiệm.",
+    title: "Hệ Thống Thư Viện Điện Tử CTU eLibrary",
+    description: "Đơn vị thư viện học thuật uy tín hàng đầu chuyên cung cấp giải pháp tra cứu sách giấy, giáo trình, nghiên cứu khoa học chất lượng cao cho sinh viên và cán bộ giảng viên Trường Đại học Cần Thơ.",
+    historyTitle: "Hành trình Kết nối Tri thức & Phát triển Tương lai",
+    historyContent: "Được phát triển nhằm nâng cao năng lực tự học và nghiên cứu của sinh viên Trường Đại học Cần Thơ, CTU eLibrary bắt đầu sứ mệnh mang đến trải nghiệm mượn sách giấy online tiện lợi, minh bạch và nhanh chóng. Trải qua thời gian dài nâng cấp, chúng tôi tự hào đồng hành cùng hàng chục ngàn sinh viên trên con đường học vấn.",
+    vision: "Trở thành hệ thống cổng thông tin thư viện điện tử kết hợp mượn trả sách giấy tự động hiện đại nhất khu vực Đồng bằng sông Cửu Long, tiên phong áp dụng công nghệ số và hệ thống quản lý thẻ hội viên thông minh.",
+    mission: "Cung cấp giải pháp tra cứu và đăng ký mượn sách giấy trực tuyến nhanh gọn, khoa học và hoàn toàn minh bạch. Hỗ trợ sinh viên tối ưu hóa thời gian nghiên cứu và tiếp cận nguồn tri thức chính thống giá trị.",
+    values: "Mọi hoạt động quản lý sách và hỗ trợ độc giả của thư viện đều được chuẩn hóa nghiêm ngặt để mang lại sự tiện lợi tốt nhất cho sinh viên.",
     stats: {
       years: "10+",
       readers: "50,000+",
-      branches: "02"
+      branches: "01"
     },
     teamMembers: [
       { name: "Nguyễn Tiến Phát", role: "Giám đốc Thư viện", avatarText: "P" },
@@ -117,6 +117,32 @@ const updateSetting = async (req, res, next) => {
       const error = new Error('Giá trị cấu hình là bắt buộc');
       error.status = 400;
       throw error;
+    }
+
+    // Bắt lỗi số điện thoại hotline ở backend cho trang liên hệ
+    if (key === 'contactpage') {
+      const phoneRegex = /^(0\d{1,4}[.\s-]?\d{3,4}[.\s-]?\d{3,4}|(1800|1900)\d{4}|(\+84|0)\d{9,10})$/;
+      const isValidPhone = (phone) => {
+        if (!phone) return false;
+        return phoneRegex.test(phone.trim());
+      };
+
+      if (!isValidPhone(value.hotline)) {
+        const error = new Error('Số điện thoại Hotline Trụ sở chính không hợp lệ! Vui lòng nhập đúng định dạng số điện thoại Việt Nam.');
+        error.status = 400;
+        throw error;
+      }
+
+      if (value.branches && Array.isArray(value.branches)) {
+        for (let i = 0; i < value.branches.length; i++) {
+          const branch = value.branches[i];
+          if (!isValidPhone(branch.hotline)) {
+            const error = new Error(`Số điện thoại Hotline của Chi nhánh #${i + 1} (${branch.name || 'Chưa đặt tên'}) không hợp lệ!`);
+            error.status = 400;
+            throw error;
+          }
+        }
+      }
     }
 
     const setting = await SystemSetting.findOneAndUpdate(

@@ -17,7 +17,9 @@ router.get('/authors', bookController.getAuthors);
 router.get('/publishers', bookController.getPublishers);
 
 // ==================== Độc giả: Đánh giá & Bình luận ====================
-router.post('/books/:id/reviews', authMiddleware.authenticate, bookController.addBookReview);
+router.post('/books/:id/reviews', authMiddleware.authenticate, authMiddleware.authorize('READER'), bookController.addBookReview);
+router.delete('/books/:id/reviews', authMiddleware.authenticate, authMiddleware.authorize('READER'), bookController.deleteBookReview);
+router.post('/books/:id/like-toggle', authMiddleware.authenticate, authMiddleware.authorize('READER'), bookController.toggleLikeBook);
 
 // ==================== Admin: Category ====================
 router.post('/categories', authMiddleware.authenticate, authMiddleware.authorize('STAFF'), bookController.createCategory);

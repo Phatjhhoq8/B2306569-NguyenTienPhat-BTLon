@@ -39,7 +39,20 @@ const returnBorrowReceipt = async (receiptId, { chiTietMuon, ngayTraThucTe } = {
   if (!receipt) throw new Error('Không tìm thấy phiếu mượn');
 
   if (chiTietMuon) {
-    receipt.chiTietMuon = chiTietMuon;
+    // Duyệt qua và cập nhật từng item để giữ nguyên các thông tin cũ (như tinhTrangLucMuon)
+    for (const updateItem of chiTietMuon) {
+      const dbItem = receipt.chiTietMuon.find(item => String(item.sach) === String(updateItem.sach));
+      if (dbItem) {
+        dbItem.daTraChua = updateItem.daTraChua;
+        if (updateItem.tinhTrangSauMuon !== undefined) {
+          dbItem.tinhTrangSauMuon = updateItem.tinhTrangSauMuon;
+        }
+        if (updateItem.daTraChua && !dbItem.ngayTraThucTe) {
+          dbItem.ngayTraThucTe = ngayTraThucTe || new Date();
+        }
+      }
+    }
+    receipt.markModified('chiTietMuon');
   } else {
     receipt.trangThai = 'DA_TRA';
     receipt.ngayTraThucTe = ngayTraThucTe || new Date();

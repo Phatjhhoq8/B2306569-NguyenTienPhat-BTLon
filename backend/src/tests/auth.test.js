@@ -130,6 +130,103 @@ test.describe('Auth & Users API Tests', () => {
       assert.ok(res.headers['set-cookie'], 'Phải gửi lại Set-Cookie');
       assert.ok(res.headers['set-cookie'].includes('token='), 'Cookie phải chứa token');
     });
+
+    test('Nên đăng nhập Độc giả thành công bằng số điện thoại', async () => {
+      const res = await makeRequest('/api/auth/reader/login', {
+        method: 'POST',
+        body: {
+          email: '0988888888', // Nhập số điện thoại vào trường email/identifier
+          matKhau: 'reader123'
+        }
+      });
+
+      assert.strictEqual(res.status, 200);
+      assert.strictEqual(res.body.success, true);
+      assert.ok(res.headers['set-cookie']);
+    });
+
+    test('Kiểm tra cơ chế Xóa mềm, Đăng ký trùng và Khôi phục tài khoản độc giả', async () => {
+      // 1. Tạo Staff quản lý để lấy quyền gọi API admin
+      const adminStaff = await Staff.create({
+        hoTenNV: 'Quản lý test',
+        matKhau: 'admin123',
+        chucVu: 'QUAN_LY',
+        diachi: 'Cần Thơ',
+        soDienThoai: '0912345678'
+      });
+
+      const loginRes = await makeRequest('/api/auth/staff/login', {
+        method: 'POST',
+        body: {
+          maSoNV: adminStaff.maSoNV,
+          matKhau: 'admin123'
+        }
+      });
+      const adminCookie = loginRes.headers['set-cookie'];
+
+      // 2. Đăng ký độc giả A
+      const regARes = await makeRequest('/api/auth/reader/register', {
+        method: 'POST',
+        body: {
+          hoLot: 'Lê',
+          ten: 'Độc Giả A',
+          email: 'readera@library.local',
+          matKhau: 'pass123',
+          ngaySinh: '1999-01-01',
+          diachi: 'Đà Nẵng',
+          dienThoai: '0911111111',
+          gioiTinh: 'NAM'
+        }
+      });
+      const readerAId = regARes.body.data.maDocGia;
+
+      // 3. Xóa mềm độc giả A
+      const delARes = await makeRequest(`/api/admin/readers/${readerAId}`, {
+        method: 'DELETE',
+        headers: { 'Cookie': adminCookie }
+      });
+      assert.strictEqual(delARes.status, 200);
+
+      // 4. Đăng ký độc giả B mới sử dụng đúng email và SĐT của A. Phải thành công vì A đã bị xóa mềm giải phóng tài nguyên.
+      const regBRes = await makeRequest('/api/auth/reader/register', {
+        method: 'POST',
+        body: {
+          hoLot: 'Trần',
+          ten: 'Độc Giả B',
+          email: 'readera@library.local', // trùng email của A
+          matKhau: 'pass123',
+          ngaySinh: '1999-02-02',
+          diachi: 'Nha Trang',
+          dienThoai: '0911111111', // trùng SĐT của A
+          gioiTinh: 'NAM'
+        }
+      });
+      assert.strictEqual(regBRes.status, 201, 'Phải cho phép đăng ký mới khi email/SĐT cũ đã bị xóa mềm');
+      const readerBId = regBRes.body.data.maDocGia;
+
+      // 5. Thử khôi phục lại độc giả A. Phải thất bại 409 do trùng lặp với B đang hoạt động.
+      const restoreARes1 = await makeRequest(`/api/admin/readers/${readerAId}/restore`, {
+        method: 'POST',
+        headers: { 'Cookie': adminCookie }
+      });
+      assert.strictEqual(restoreARes1.status, 409, 'Khôi phục trùng lặp phải báo Conflict 409');
+
+      // 6. Xóa mềm độc giả B
+      const delBRes = await makeRequest(`/api/admin/readers/${readerBId}`, {
+        method: 'DELETE',
+        headers: { 'Cookie': adminCookie }
+      });
+      assert.strictEqual(delBRes.status, 200);
+
+      // 7. Khôi phục lại độc giả A. Lúc này phải thành công vì B đã bị xóa mềm.
+      const restoreARes2 = await makeRequest(`/api/admin/readers/${readerAId}/restore`, {
+        method: 'POST',
+        headers: { 'Cookie': adminCookie }
+      });
+      assert.strictEqual(restoreARes2.status, 200, 'Khôi phục phải thành công khi email/SĐT trùng không còn tài khoản nào hoạt động');
+      assert.strictEqual(restoreARes2.body.data.reader.email, 'readera@library.local');
+      assert.strictEqual(restoreARes2.body.data.reader.dienThoai, '0911111111');
+    });
   });
 
   test.describe('2. Staff Auth Tests', () => {

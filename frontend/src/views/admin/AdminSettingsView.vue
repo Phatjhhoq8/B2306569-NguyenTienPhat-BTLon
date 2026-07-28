@@ -1,13 +1,20 @@
 <template>
   <div class="space-y-12">
     <!-- Tab selector -->
-    <div class="flex bg-white p-1 rounded-2xl border border-slate-200 w-full sm:w-[420px] shadow-sm">
+    <div class="flex bg-white p-1 rounded-2xl border border-slate-200 w-full sm:w-[580px] shadow-sm">
       <button 
         @click="activeTab = 'plans'"
         class="flex-1 text-center py-2 text-xs font-bold rounded-xl transition-all"
         :class="activeTab === 'plans' ? 'bg-primary text-white shadow-sm' : 'text-slate-600 hover:text-slate-900'"
       >
         Gói hội viên
+      </button>
+      <button 
+        @click="activeTab = 'subscriptions'"
+        class="flex-1 text-center py-2 text-xs font-bold rounded-xl transition-all"
+        :class="activeTab === 'subscriptions' ? 'bg-primary text-white shadow-sm' : 'text-slate-600 hover:text-slate-900'"
+      >
+        Thống kê &amp; Đăng ký
       </button>
       <button 
         @click="activeTab = 'discounts'"
@@ -28,7 +35,7 @@
     <!-- ==================== GÓI HỘI VIÊN ==================== -->
     <section v-if="activeTab === 'plans'" class="space-y-6">
       <div class="flex justify-between items-center border-b pb-3">
-        <div>
+        <div class="space-y-1.5">
           <h2 class="font-sans text-2xl font-extrabold text-slate-900">Quản Lý Gói Hội Viên</h2>
           <p class="text-sm text-slate-500 font-medium">Tạo lập, sửa đổi các gói cước độc giả</p>
         </div>
@@ -40,33 +47,65 @@
         </button>
       </div>
 
+      <!-- Tab Phân loại Gói hội viên -->
+      <div class="flex space-x-2 bg-slate-50 p-1 rounded-2xl border border-slate-200 w-full sm:w-80 shadow-inner">
+        <button 
+          @click="adminPlansTab = 'INDIVIDUAL'"
+          class="flex-1 text-center py-2 text-xs font-bold rounded-xl transition-all"
+          :class="adminPlansTab === 'INDIVIDUAL' ? 'bg-primary text-white shadow-sm' : 'text-slate-650 hover:text-slate-900'"
+        >
+          Cá nhân (Individual)
+        </button>
+        <button 
+          @click="adminPlansTab = 'TEAM'"
+          class="flex-1 text-center py-2 text-xs font-bold rounded-xl transition-all"
+          :class="adminPlansTab === 'TEAM' ? 'bg-primary text-white shadow-sm' : 'text-slate-650 hover:text-slate-900'"
+        >
+          Nhóm & Business (Team)
+        </button>
+      </div>
+
       <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm overflow-x-auto">
         <table class="w-full text-left border-collapse">
           <thead>
             <tr class="border-b border-slate-100 text-xs font-bold text-slate-400 uppercase tracking-wider">
               <th class="pb-3">Tên gói</th>
               <th class="pb-3">Mã gói</th>
+              <th class="pb-3">Phân loại</th>
               <th class="pb-3">Giá tiền</th>
               <th class="pb-3">Thời hạn sử dụng</th>
               <th class="pb-3 text-center">Sách tối đa</th>
               <th class="pb-3 text-center">Ngày mượn tối đa</th>
-              <th class="pb-3 text-center">Miễn cọc sách</th>
+              <th class="pb-3 text-center">Phí mượn</th>
+              <th class="pb-3 text-center">Tiền cọc</th>
+              <th class="pb-3 text-center">Phạt trễ/ngày</th>
               <th class="pb-3 text-right">Thao tác</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-50 text-sm font-medium text-slate-700">
-            <tr v-for="plan in plans" :key="plan._id" class="hover:bg-slate-50/55 transition-colors">
-              <td class="py-4 font-bold text-slate-950">{{ plan.tenGoi }}</td>
-              <td class="py-4 font-mono text-xs text-slate-400">{{ plan.maGoi }}</td>
-              <td class="py-4">{{ formatCurrency(plan.giaTien) }}</td>
-              <td class="py-4">{{ plan.soNgayHieuLuc }} ngày</td>
-              <td class="py-4 text-center font-bold text-slate-800">{{ plan.soSachToiDa }} cuốn</td>
-              <td class="py-4 text-center font-bold text-slate-800">{{ plan.soNgayMuonToiDa }} ngày</td>
-              <td class="py-4 text-center">
-                <span class="text-xs font-bold" :class="plan.mienTienCoc ? 'text-green-600' : 'text-slate-400'">
-                  {{ plan.mienTienCoc ? 'Có' : 'Không' }}
+            <tr v-for="plan in filteredPlansForAdmin" :key="plan._id" class="hover:bg-slate-50/55 transition-colors">
+              <td class="py-4 font-bold text-slate-955 flex items-center gap-1.5">
+                {{ plan.tenGoi }}
+                <span v-if="plan.khuyenDung" class="px-1.5 py-0.5 rounded text-[8px] font-black uppercase tracking-wider bg-amber-500/10 text-amber-600 border border-amber-500/20">
+                  Khuyên dùng
                 </span>
               </td>
+              <td class="py-4 font-mono text-xs text-slate-400">{{ plan.maGoi }}</td>
+              <td class="py-4 text-xs">
+                <span class="px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wide text-[9px]" :class="plan.loaiGoi === 'TEAM' ? 'bg-indigo-50 text-indigo-650' : 'bg-slate-100 text-slate-600'">
+                  {{ plan.loaiGoi === 'TEAM' ? 'Nhóm & Gia đình' : 'Cá nhân' }}
+                </span>
+              </td>
+              <td class="py-4">{{ formatCurrency(plan.giaTien) }}</td>
+              <td class="py-4">
+                <span v-if="plan.giaTien > 0 && plan.soNgayHieuLuc !== 99999">{{ plan.soNgayHieuLuc }} ngày</span>
+                <span v-else class="text-slate-400 font-bold italic">Vĩnh viễn</span>
+              </td>
+              <td class="py-4 text-center font-bold text-slate-800">{{ plan.soSachToiDa }} cuốn</td>
+              <td class="py-4 text-center font-bold text-slate-800">{{ plan.soNgayMuonToiDa }} ngày</td>
+              <td class="py-4 text-center font-bold text-slate-800">{{ formatCurrency(plan.phiMuonSachGiay) }}</td>
+              <td class="py-4 text-center font-bold text-slate-800">{{ formatCurrency(plan.tienDatCoc) }}</td>
+              <td class="py-4 text-center font-bold text-red-500">{{ formatCurrency(plan.phiPhatTreHan) }}</td>
               <td class="py-4 text-right space-x-2">
                 <button @click="editPlan(plan)" class="text-xs font-bold text-primary hover:underline">Sửa</button>
                 <button @click="deletePlan(plan._id)" class="text-xs font-bold text-red-600 hover:text-red-800 transition-colors">Xóa</button>
@@ -77,10 +116,270 @@
       </div>
     </section>
 
+    <!-- ==================== THỐNG KÊ & ĐĂNG KÝ GÓI ==================== -->
+    <section v-if="activeTab === 'subscriptions'" class="space-y-8">
+      <div class="border-b pb-3 space-y-1.5">
+        <h2 class="font-sans text-2xl font-extrabold text-slate-900">Thống Kê &amp; Lịch Sử Đăng Ký</h2>
+        <p class="text-sm text-slate-500 font-medium">Theo dõi doanh thu, mức độ phổ biến của gói và hoạt động của độc giả</p>
+      </div>
+
+      <!-- Overview Stats Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex items-center justify-between">
+          <div class="space-y-1">
+            <span class="text-[10px] text-slate-400 uppercase font-bold tracking-wider block">Tổng doanh thu gói</span>
+            <p class="text-2xl font-black text-primary">{{ formatCurrency(totalRevenue) }}</p>
+          </div>
+          <div class="h-11 w-11 rounded-xl bg-green-500/10 text-green-600 flex items-center justify-center">
+            <Award class="h-5.5 w-5.5" />
+          </div>
+        </div>
+        
+        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex items-center justify-between">
+          <div class="space-y-1">
+            <span class="text-[10px] text-slate-400 uppercase font-bold tracking-wider block">Lượt đăng ký Premium</span>
+            <p class="text-2xl font-black text-slate-900">{{ premiumSubCount }}</p>
+          </div>
+          <div class="h-11 w-11 rounded-xl bg-indigo-500/10 text-indigo-600 flex items-center justify-center">
+            <Users class="h-5.5 w-5.5" />
+          </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex items-center justify-between">
+          <div class="space-y-1">
+            <span class="text-[10px] text-slate-400 uppercase font-bold tracking-wider block">Sách hội viên đã mượn</span>
+            <p class="text-2xl font-black text-slate-900">{{ vipBorrowedBooksCount }} cuốn</p>
+          </div>
+          <div class="h-11 w-11 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center">
+            <BookMarked class="h-5.5 w-5.5" />
+          </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex items-center justify-between">
+          <div class="space-y-1">
+            <span class="text-[10px] text-slate-400 uppercase font-bold tracking-wider block">Đang gia hạn qua Thẻ</span>
+            <p class="text-2xl font-black text-slate-900">{{ activeCardAutoRenewCount }}</p>
+          </div>
+          <div class="h-11 w-11 rounded-xl bg-red-500/10 text-red-600 flex items-center justify-center">
+            <CreditCard class="h-5.5 w-5.5" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Split Layout: Left is Package Popularity, Right is Top Books -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <!-- Popularity Table (7/12) -->
+        <div class="lg:col-span-7 bg-white rounded-3xl border border-slate-200 p-6 shadow-sm space-y-4 flex flex-col">
+          <h3 class="text-sm font-extrabold text-slate-800 uppercase tracking-wider flex items-center gap-1.5 flex-shrink-0">
+            <Award class="h-4.5 w-4.5 text-primary" /> Xếp hạng độ phổ biến của gói
+          </h3>
+          <div class="overflow-x-auto overflow-y-auto max-h-[380px] flex-grow pr-1">
+            <table class="w-full text-left border-collapse text-xs font-semibold text-slate-650">
+              <thead class="sticky top-0 bg-white z-10">
+                <tr class="border-b border-slate-100 text-slate-400 uppercase tracking-wider">
+                  <th class="pb-2.5 bg-white">Tên gói cước</th>
+                  <th class="pb-2.5 text-center bg-white">Lượt đăng ký</th>
+                  <th class="pb-2.5 text-right bg-white">Doanh thu cước</th>
+                  <th class="pb-2.5 text-right bg-white">Sách đã mượn</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-50">
+                <tr v-for="item in planPopularity" :key="item.name" class="hover:bg-slate-50/50">
+                  <td class="py-3 font-bold text-slate-900">{{ item.name }}</td>
+                  <td class="py-3 text-center text-slate-800 font-bold">{{ item.count }} lượt</td>
+                  <td class="py-3 text-right text-emerald-600 font-bold">{{ formatCurrency(item.revenue) }}</td>
+                  <td class="py-3 text-right text-slate-800 font-bold">{{ item.booksCount }} cuốn</td>
+                </tr>
+                <tr v-if="planPopularity.length === 0">
+                  <td colspan="4" class="py-8 text-center text-slate-400">Chưa có số liệu thống kê gói.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Top Books Borrowed by Members (5/12) -->
+        <div class="lg:col-span-5 bg-white rounded-3xl border border-slate-200 p-6 shadow-sm space-y-4 flex flex-col">
+          <div class="flex flex-col space-y-3 flex-shrink-0">
+            <h3 class="text-sm font-extrabold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
+              <BookMarked class="h-4.5 w-4.5 text-primary" /> Xếp hạng sách hội viên
+            </h3>
+            
+            <!-- 3 Tabs để cô lập -->
+            <div class="flex bg-slate-50 p-0.5 rounded-xl border border-slate-200">
+              <button 
+                @click="activeTopBookTab = 'borrow'"
+                class="flex-1 text-[10px] font-bold py-1.5 rounded-lg transition-all"
+                :class="activeTopBookTab === 'borrow' ? 'bg-primary text-white shadow-sm' : 'text-slate-650 hover:text-slate-900'"
+              >
+                Mượn nhiều
+              </button>
+              <button 
+                @click="activeTopBookTab = 'ratingCount'"
+                class="flex-1 text-[10px] font-bold py-1.5 rounded-lg transition-all"
+                :class="activeTopBookTab === 'ratingCount' ? 'bg-primary text-white shadow-sm' : 'text-slate-650 hover:text-slate-900'"
+              >
+                Đánh giá nhiều
+              </button>
+              <button 
+                @click="activeTopBookTab = 'rating'"
+                class="flex-1 text-[10px] font-bold py-1.5 rounded-lg transition-all"
+                :class="activeTopBookTab === 'rating' ? 'bg-primary text-white shadow-sm' : 'text-slate-650 hover:text-slate-900'"
+              >
+                Điểm cao nhất
+              </button>
+            </div>
+          </div>
+
+          <div class="overflow-y-auto max-h-[380px] flex-grow pr-1 space-y-3">
+            <div 
+              v-for="(book, index) in displayedTopBooks" 
+              :key="book._id"
+              class="flex items-start space-x-3 bg-slate-50 p-3 rounded-2xl border border-slate-150 relative hover:shadow-md transition-all duration-200"
+            >
+              <!-- Rank -->
+              <span class="text-xs font-black text-slate-400 w-5 text-center mt-0.5">#{{ index + 1 }}</span>
+              
+              <!-- Book Info -->
+              <div class="flex-grow min-w-0">
+                <span class="text-xs font-bold text-slate-900 truncate block">{{ book.title }}</span>
+                <span class="text-[10px] text-slate-450 font-semibold block mb-1">Tác giả: {{ book.author }}</span>
+                
+                <!-- Sub info -->
+                <div class="flex items-center space-x-2 text-[10px] text-slate-500">
+                  <template v-if="book.ratingCount > 0">
+                    <span class="flex items-center text-amber-500 font-bold" v-if="activeTopBookTab !== 'rating'">
+                      ★ <span class="ml-0.5">{{ book.rating }}</span>
+                    </span>
+                    <span class="text-slate-300" v-if="activeTopBookTab !== 'rating' && activeTopBookTab !== 'ratingCount'">|</span>
+                    <span class="font-semibold" v-if="activeTopBookTab === 'borrow'">{{ book.ratingCount }} đánh giá</span>
+                    <span class="font-semibold text-primary-dark" v-if="activeTopBookTab === 'ratingCount'">★ {{ book.rating }} sao trung bình</span>
+                    <span class="font-semibold text-primary-dark" v-if="activeTopBookTab === 'rating'">{{ book.count }} lượt mượn</span>
+                    <span class="text-slate-300" v-if="activeTopBookTab === 'rating'">|</span>
+                    <span class="font-semibold" v-if="activeTopBookTab === 'rating'">{{ book.ratingCount }} đánh giá</span>
+                  </template>
+                  <template v-else>
+                    <span class="text-slate-400 font-medium italic">Chưa có đánh giá</span>
+                    <span class="text-slate-300" v-if="activeTopBookTab === 'rating'">|</span>
+                    <span class="font-semibold text-primary-dark" v-if="activeTopBookTab === 'rating'">{{ book.count }} lượt mượn</span>
+                  </template>
+                </div>
+              </div>
+
+              <!-- Action badge (Dynamic based on Tab) -->
+              <span 
+                v-if="activeTopBookTab === 'borrow'"
+                class="text-[10px] font-bold bg-primary-light text-primary px-2.5 py-1 rounded-full whitespace-nowrap self-center"
+              >
+                {{ book.count }} lượt mượn
+              </span>
+              <span 
+                v-else-if="activeTopBookTab === 'ratingCount'"
+                class="text-[10px] font-bold bg-indigo-50 text-indigo-750 px-2.5 py-1 rounded-full whitespace-nowrap self-center"
+              >
+                {{ book.ratingCount }} đánh giá
+              </span>
+              <span 
+                v-else
+                class="text-[10px] font-bold bg-amber-50 text-amber-700 px-2.5 py-1 rounded-full whitespace-nowrap self-center"
+              >
+                ★ {{ book.rating }} sao
+              </span>
+            </div>
+            <div v-if="displayedTopBooks.length === 0" class="text-center py-8 text-xs text-slate-400">
+              Chưa có dữ liệu sách.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Detail Subscription Table with Filters -->
+      <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm space-y-6">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b pb-4">
+          <h3 class="text-sm font-extrabold text-slate-800 uppercase tracking-wider">Danh sách độc giả đăng ký</h3>
+          
+          <!-- Filters -->
+          <div class="flex flex-wrap items-center gap-3">
+            <input 
+              v-model="searchSubQuery" 
+              type="text" 
+              placeholder="Tìm độc giả, mã đăng ký..." 
+              class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-semibold text-slate-700 focus:outline-none w-52"
+            />
+            
+            <select v-model="filterPlan" class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-semibold text-slate-700 focus:outline-none">
+              <option value="">Tất cả các gói</option>
+              <option v-for="plan in plans" :key="plan._id" :value="plan._id">{{ plan.tenGoi }}</option>
+            </select>
+            
+            <select v-model="filterStatus" class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-semibold text-slate-700 focus:outline-none">
+              <option value="">Tất cả trạng thái</option>
+              <option value="DANG_HIEU_LUC">Đang hiệu lực</option>
+              <option value="HET_HAN">Hết hạn</option>
+              <option value="HUY">Đã hủy</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs font-semibold text-slate-700">
+            <thead>
+              <tr class="border-b border-slate-100 text-slate-400 uppercase tracking-wider">
+                <th class="pb-3">Mã Đăng ký</th>
+                <th class="pb-3">Độc giả</th>
+                <th class="pb-3">Gói cước</th>
+                <th class="pb-3">Số tiền</th>
+                <th class="pb-3">Thanh toán</th>
+                <th class="pb-3">Thời hạn sử dụng</th>
+                <th class="pb-3">Trạng thái</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-50">
+              <tr v-for="sub in filteredSubscriptions" :key="sub._id" class="hover:bg-slate-50/50">
+                <td class="py-4 font-mono text-slate-900">{{ sub.maDangKy }}</td>
+                <td class="py-4">
+                  <span class="font-bold text-slate-900 block">{{ sub.docGia?.hoLot }} {{ sub.docGia?.ten }}</span>
+                  <span class="text-[10px] text-slate-450 block font-mono">Mã: {{ sub.docGia?.maDocGia || sub.docGia?._id }}</span>
+                </td>
+                <td class="py-4 font-bold">{{ sub.goiDocGia?.tenGoi || 'Standard' }}</td>
+                <td class="py-4 font-bold text-primary">{{ formatCurrency(sub.tongTien) }}</td>
+                <td class="py-4">
+                  <span class="block">{{ sub.phuongThucThanhToan === 'THE_TIN_DUNG' ? 'Thẻ tín dụng' : 'VietQR' }}</span>
+                  <span v-if="sub.phuongThucThanhToan === 'THE_TIN_DUNG'" class="text-[9px] text-slate-450 block">
+                    Gia hạn: {{ sub.tuDongGiaHan ? 'Bật' : 'Tắt' }}
+                  </span>
+                </td>
+                <td class="py-4 text-slate-500 font-medium">
+                  {{ formatDate(sub.ngayBatDau) }} - {{ formatDate(sub.ngayKetThuc) }}
+                </td>
+                <td class="py-4">
+                  <span 
+                    class="text-[9px] font-bold px-2.5 py-0.5 rounded-full uppercase"
+                    :class="[
+                      sub.trangThai === 'DANG_HIEU_LUC' ? 'bg-green-100 text-green-700' :
+                      sub.trangThai === 'HUY' ? 'bg-red-50 text-red-500' :
+                      'bg-slate-100 text-slate-500'
+                    ]"
+                  >
+                    {{ sub.trangThai === 'DANG_HIEU_LUC' ? 'Đang hiệu lực' : sub.trangThai === 'HUY' ? 'Đã hủy' : 'Hết hạn' }}
+                  </span>
+                </td>
+              </tr>
+              <tr v-if="filteredSubscriptions.length === 0">
+                <td colspan="7" class="py-12 text-center text-slate-450 font-medium bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                  Không tìm thấy đăng ký gói nào khớp với bộ lọc.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
     <!-- ==================== MÃ GIẢM GIÁ ==================== -->
     <section v-if="activeTab === 'discounts'" class="space-y-6">
       <div class="flex justify-between items-center border-b pb-3">
-        <div>
+        <div class="space-y-1.5">
           <h2 class="font-sans text-2xl font-extrabold text-slate-900">Quản Lý Mã Giảm Giá</h2>
           <p class="text-sm text-slate-500 font-medium">Cấu hình mã khuyến mãi cho phí mượn sách</p>
         </div>
@@ -130,7 +429,7 @@
     <!-- ==================== CẤU HÌNH GIAO DIỆN ==================== -->
     <section v-if="activeTab === 'interface'" class="space-y-6">
       <div class="border-b pb-4 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-        <div>
+        <div class="space-y-1.5">
           <h2 class="font-sans text-2xl font-extrabold text-slate-900">Cấu Hình Giao Diện</h2>
           <p class="text-sm text-slate-500 font-medium">Cập nhật nội dung động hiển thị trên các trang cổng thông tin</p>
         </div>
@@ -227,9 +526,14 @@
                   </div>
                 </div>
               </div>
+              <div class="flex justify-end pt-4 border-t border-slate-100">
+                <button type="submit" class="bg-primary hover:bg-primary-dark text-white font-bold py-2.5 px-6 rounded-xl transition-all shadow-md text-xs">
+                  Lưu cấu hình trang chủ
+                </button>
+              </div>
             </div>
           </div>
-
+ 
           <!-- Section 2: Steps -->
           <div class="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm">
             <div 
@@ -293,9 +597,14 @@
                   </div>
                 </div>
               </div>
+              <div class="flex justify-end pt-4 border-t border-slate-100">
+                <button type="submit" class="bg-primary hover:bg-primary-dark text-white font-bold py-2.5 px-6 rounded-xl transition-all shadow-md text-xs">
+                  Lưu cấu hình trang chủ
+                </button>
+              </div>
             </div>
           </div>
-
+ 
           <!-- Section 3: FAQs -->
           <div class="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm">
             <div 
@@ -350,13 +659,12 @@
                   </div>
                 </div>
               </div>
+              <div class="flex justify-end pt-4 border-t border-slate-100">
+                <button type="submit" class="bg-primary hover:bg-primary-dark text-white font-bold py-2.5 px-6 rounded-xl transition-all shadow-md text-xs">
+                  Lưu cấu hình trang chủ
+                </button>
+              </div>
             </div>
-          </div>
-
-          <div class="flex justify-end pt-4">
-            <button type="submit" class="bg-primary hover:bg-primary-dark text-white font-bold py-3 px-8 rounded-xl transition-all shadow-md text-xs">
-              Lưu Cấu Hình Trang Chủ
-            </button>
           </div>
         </form>
       </div>
@@ -387,9 +695,14 @@
                   <textarea v-model="aboutpageForm.description" rows="4" required class="w-full bg-slate-50 px-4 py-3 rounded-xl border border-slate-200 focus:outline-none leading-relaxed"></textarea>
                 </div>
               </div>
+              <div class="flex justify-end pt-4 border-t border-slate-100">
+                <button type="submit" class="bg-primary hover:bg-primary-dark text-white font-bold py-2.5 px-6 rounded-xl transition-all shadow-md text-xs">
+                  Lưu cấu hình trang giới thiệu
+                </button>
+              </div>
             </div>
           </div>
-
+ 
           <!-- Section 2: History -->
           <div class="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm">
             <div 
@@ -413,9 +726,14 @@
                   <textarea v-model="aboutpageForm.historyContent" rows="4" required class="w-full bg-slate-50 px-4 py-3 rounded-xl border border-slate-200 focus:outline-none leading-relaxed"></textarea>
                 </div>
               </div>
+              <div class="flex justify-end pt-4 border-t border-slate-100">
+                <button type="submit" class="bg-primary hover:bg-primary-dark text-white font-bold py-2.5 px-6 rounded-xl transition-all shadow-md text-xs">
+                  Lưu cấu hình trang giới thiệu
+                </button>
+              </div>
             </div>
           </div>
-
+ 
           <!-- Section 3: Vision & Values -->
           <div class="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm">
             <div 
@@ -443,9 +761,14 @@
                   <textarea v-model="aboutpageForm.values" rows="3" required class="w-full bg-slate-50 px-4 py-3 rounded-xl border border-slate-200 focus:outline-none leading-relaxed"></textarea>
                 </div>
               </div>
+              <div class="flex justify-end pt-4 border-t border-slate-100">
+                <button type="submit" class="bg-primary hover:bg-primary-dark text-white font-bold py-2.5 px-6 rounded-xl transition-all shadow-md text-xs">
+                  Lưu cấu hình trang giới thiệu
+                </button>
+              </div>
             </div>
           </div>
-
+ 
           <!-- Section 4: Stats -->
           <div class="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm">
             <div 
@@ -473,9 +796,14 @@
                   <input v-model="aboutpageForm.stats.branches" type="text" required class="w-full bg-slate-50 px-4 py-3 rounded-xl border border-slate-200 focus:outline-none font-bold" />
                 </div>
               </div>
+              <div class="flex justify-end pt-4 border-t border-slate-100">
+                <button type="submit" class="bg-primary hover:bg-primary-dark text-white font-bold py-2.5 px-6 rounded-xl transition-all shadow-md text-xs">
+                  Lưu cấu hình trang giới thiệu
+                </button>
+              </div>
             </div>
           </div>
-
+ 
           <!-- Section 5: Team Members -->
           <div class="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm">
             <div 
@@ -500,11 +828,11 @@
                   <span>Thêm thành viên</span>
                 </button>
               </div>
-
+ 
               <div v-if="!aboutpageForm.teamMembers || aboutpageForm.teamMembers.length === 0" class="text-center py-6 text-slate-400 text-xs font-medium bg-slate-50 rounded-2xl border border-dashed border-slate-200">
                 Chưa có thành viên nào được thiết lập. Nhấn "Thêm thành viên" để tạo mới.
               </div>
-
+ 
               <div v-else class="space-y-4">
                 <div 
                   v-for="(member, index) in aboutpageForm.teamMembers" 
@@ -553,13 +881,12 @@
                   </div>
                 </div>
               </div>
+              <div class="flex justify-end pt-4 border-t border-slate-100">
+                <button type="submit" class="bg-primary hover:bg-primary-dark text-white font-bold py-2.5 px-6 rounded-xl transition-all shadow-md text-xs">
+                  Lưu cấu hình trang giới thiệu
+                </button>
+              </div>
             </div>
-          </div>
-
-          <div class="flex justify-end pt-4">
-            <button type="submit" class="bg-primary hover:bg-primary-dark text-white font-bold py-3 px-8 rounded-xl transition-all shadow-md text-xs">
-              Lưu Cấu Hình Trang Giới Thiệu
-            </button>
           </div>
         </form>
       </div>
@@ -627,9 +954,14 @@
                   <textarea v-model="membershippageForm.heroSubtitle" rows="3" required class="w-full bg-slate-50 px-4 py-3 rounded-xl border border-slate-200 focus:outline-none leading-relaxed"></textarea>
                 </div>
               </div>
+              <div class="flex justify-end pt-4 border-t border-slate-100">
+                <button type="submit" class="bg-primary hover:bg-primary-dark text-white font-bold py-2.5 px-6 rounded-xl transition-all shadow-md text-xs">
+                  Lưu cấu hình gói hội viên
+                </button>
+              </div>
             </div>
           </div>
-
+ 
           <!-- Section 2: QR Payment -->
           <div class="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm">
             <div 
@@ -653,13 +985,12 @@
                   <textarea v-model="membershippageForm.qrInstruction" rows="3" required class="w-full bg-slate-50 px-4 py-3 rounded-xl border border-slate-200 focus:outline-none leading-relaxed"></textarea>
                 </div>
               </div>
+              <div class="flex justify-end pt-4 border-t border-slate-100">
+                <button type="submit" class="bg-primary hover:bg-primary-dark text-white font-bold py-2.5 px-6 rounded-xl transition-all shadow-md text-xs">
+                  Lưu cấu hình gói hội viên
+                </button>
+              </div>
             </div>
-          </div>
-
-          <div class="flex justify-end pt-4">
-            <button type="submit" class="bg-primary hover:bg-primary-dark text-white font-bold py-3 px-8 rounded-xl transition-all shadow-md text-xs">
-              Lưu Cấu Hình Gói Hội Viên
-            </button>
           </div>
         </form>
       </div>
@@ -694,16 +1025,21 @@
                   <input v-model="contactpageForm.mapUrl" type="text" required class="w-full bg-slate-50 px-4 py-3 rounded-xl border border-slate-200 focus:outline-none font-mono text-xs" />
                 </div>
               </div>
+              <div class="flex justify-end pt-4 border-t border-slate-100">
+                <button type="submit" class="bg-primary hover:bg-primary-dark text-white font-bold py-2.5 px-6 rounded-xl transition-all shadow-md text-xs">
+                  Lưu cấu hình trang liên hệ
+                </button>
+              </div>
             </div>
           </div>
-
-          <!-- Section 2: Basic Info -->
+ 
+          <!-- Section 2: Headquarters Info -->
           <div class="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm">
             <div 
               @click="toggleSection('contact_info')" 
               class="flex justify-between items-center bg-slate-50/70 px-6 py-4 border-b border-slate-100 cursor-pointer hover:bg-slate-50 transition-all select-none"
             >
-              <h3 class="font-sans font-bold text-slate-800 text-xs uppercase">Phần 2: Thông tin liên hệ cơ bản</h3>
+              <h3 class="font-sans font-bold text-slate-800 text-xs uppercase">Phần 2: Thông tin Trụ sở chính (Headquarters)</h3>
               <ChevronDown 
                 :class="collapsedSections.contact_info ? '' : 'rotate-180'" 
                 class="h-4 w-4 text-slate-400 transition-transform duration-200" 
@@ -712,25 +1048,30 @@
             <div v-show="!collapsedSections.contact_info" class="p-6 md:p-8 space-y-6">
               <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
                 <div class="space-y-1">
-                  <label class="text-xs font-bold text-slate-600 uppercase">Tên đơn vị thư viện</label>
+                  <label class="text-xs font-bold text-slate-600 uppercase">Tên đơn vị thư viện (Trụ sở chính)</label>
                   <input v-model="contactpageForm.libraryName" type="text" required class="w-full bg-slate-50 px-4 py-3 rounded-xl border border-slate-200 focus:outline-none font-bold" />
                 </div>
                 <div class="space-y-1">
-                  <label class="text-xs font-bold text-slate-600 uppercase">Địa chỉ chi tiết</label>
+                  <label class="text-xs font-bold text-slate-600 uppercase">Địa chỉ chi tiết Trụ sở chính</label>
                   <input v-model="contactpageForm.address" type="text" required class="w-full bg-slate-50 px-4 py-3 rounded-xl border border-slate-200 focus:outline-none" />
                 </div>
                 <div class="space-y-1">
-                  <label class="text-xs font-bold text-slate-600 uppercase">Số điện thoại Hotline</label>
+                  <label class="text-xs font-bold text-slate-600 uppercase">Số điện thoại Hotline Trụ sở chính</label>
                   <input v-model="contactpageForm.hotline" type="text" required class="w-full bg-slate-50 px-4 py-3 rounded-xl border border-slate-200 focus:outline-none" />
                 </div>
                 <div class="space-y-1">
-                  <label class="text-xs font-bold text-slate-600 uppercase">Địa chỉ Email</label>
+                  <label class="text-xs font-bold text-slate-600 uppercase">Địa chỉ Email Trụ sở chính</label>
                   <input v-model="contactpageForm.email" type="email" required class="w-full bg-slate-50 px-4 py-3 rounded-xl border border-slate-200 focus:outline-none" />
                 </div>
               </div>
+              <div class="flex justify-end pt-4 border-t border-slate-100">
+                <button type="submit" class="bg-primary hover:bg-primary-dark text-white font-bold py-2.5 px-6 rounded-xl transition-all shadow-md text-xs">
+                  Lưu cấu hình trang liên hệ
+                </button>
+              </div>
             </div>
           </div>
-
+ 
           <!-- Section 3: Extra Info -->
           <div class="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm">
             <div 
@@ -758,13 +1099,90 @@
                   <textarea v-model="contactpageForm.moreNote" rows="2" required class="w-full bg-slate-50 px-4 py-3 rounded-xl border border-slate-200 focus:outline-none leading-relaxed"></textarea>
                 </div>
               </div>
+              <div class="flex justify-end pt-4 border-t border-slate-100">
+                <button type="submit" class="bg-primary hover:bg-primary-dark text-white font-bold py-2.5 px-6 rounded-xl transition-all shadow-md text-xs">
+                  Lưu cấu hình trang liên hệ
+                </button>
+              </div>
             </div>
           </div>
-
-          <div class="flex justify-end pt-4">
-            <button type="submit" class="bg-primary hover:bg-primary-dark text-white font-bold py-3 px-8 rounded-xl transition-all shadow-md text-xs">
-              Lưu Cấu Hình Liên Hệ
-            </button>
+ 
+          <!-- Section 4: Branches Info -->
+          <div class="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm">
+            <div 
+              @click="toggleSection('contact_branches')" 
+              class="flex justify-between items-center bg-slate-50/70 px-6 py-4 border-b border-slate-100 cursor-pointer hover:bg-slate-50 transition-all select-none"
+            >
+              <h3 class="font-sans font-bold text-slate-800 text-xs uppercase">Phần 4: Danh sách chi nhánh bổ sung</h3>
+              <ChevronDown 
+                :class="collapsedSections.contact_branches ? '' : 'rotate-180'" 
+                class="h-4 w-4 text-slate-400 transition-transform duration-200" 
+              />
+            </div>
+            <div v-show="!collapsedSections.contact_branches" class="p-6 md:p-8 space-y-6">
+              <div class="flex justify-between items-center">
+                <span class="text-xs font-bold text-slate-500 uppercase">Danh sách chi nhánh phụ</span>
+                <button 
+                  type="button" 
+                  @click="addBranch" 
+                  class="bg-primary hover:bg-primary-dark text-white font-bold py-2 px-4 rounded-xl shadow-sm text-[10px] transition-all flex items-center space-x-1"
+                >
+                  <Plus class="h-3.5 w-3.5" />
+                  <span>Thêm chi nhánh mới</span>
+                </button>
+              </div>
+ 
+              <div v-if="!contactpageForm.branches || contactpageForm.branches.length === 0" class="text-center py-6 text-slate-400 text-xs font-medium bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                Chưa có chi nhánh bổ sung nào. Hãy bấm "Thêm chi nhánh mới" để thêm.
+              </div>
+ 
+              <div v-else class="space-y-6">
+                <div 
+                  v-for="(branch, index) in contactpageForm.branches" 
+                  :key="index"
+                  class="bg-slate-50 p-6 rounded-2xl border border-slate-200 relative group/item"
+                >
+                  <button 
+                    type="button" 
+                    @click="removeBranch(index)" 
+                    class="absolute top-4 right-4 bg-red-50 hover:bg-red-100 text-red-600 p-2 rounded-xl transition-all"
+                    title="Xóa chi nhánh"
+                  >
+                    <Trash2 class="h-4 w-4" />
+                  </button>
+ 
+                  <h4 class="text-xs font-extrabold text-primary uppercase mb-4">Chi nhánh #{{ index + 1 }}</h4>
+ 
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                    <div class="space-y-1">
+                      <label class="font-bold text-slate-600 uppercase">Tên chi nhánh</label>
+                      <input v-model="branch.name" type="text" required class="w-full bg-white px-3 py-2 rounded-xl border border-slate-200 focus:outline-none font-bold" />
+                    </div>
+                    <div class="space-y-1">
+                      <label class="font-bold text-slate-600 uppercase">Địa chỉ chi tiết</label>
+                      <input v-model="branch.address" type="text" required class="w-full bg-white px-3 py-2 rounded-xl border border-slate-200 focus:outline-none" />
+                    </div>
+                    <div class="space-y-1">
+                      <label class="font-bold text-slate-600 uppercase">Số điện thoại Hotline</label>
+                      <input v-model="branch.hotline" type="text" required class="w-full bg-white px-3 py-2 rounded-xl border border-slate-200 focus:outline-none" />
+                    </div>
+                    <div class="space-y-1">
+                      <label class="font-bold text-slate-600 uppercase">Địa chỉ Email</label>
+                      <input v-model="branch.email" type="email" required class="w-full bg-white px-3 py-2 rounded-xl border border-slate-200 focus:outline-none" />
+                    </div>
+                    <div class="space-y-1 md:col-span-2">
+                      <label class="font-bold text-slate-600 uppercase">Đường dẫn nhúng bản đồ Google Maps (Embed Map Iframe URL)</label>
+                      <input v-model="branch.mapUrl" type="text" required class="w-full bg-white px-3 py-2 rounded-xl border border-slate-200 focus:outline-none font-mono text-[10px]" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="flex justify-end pt-4 border-t border-slate-100">
+                <button type="submit" class="bg-primary hover:bg-primary-dark text-white font-bold py-2.5 px-6 rounded-xl transition-all shadow-md text-xs">
+                  Lưu cấu hình trang liên hệ
+                </button>
+              </div>
+            </div>
           </div>
         </form>
       </div>
@@ -798,8 +1216,26 @@
               <input v-model="planForm.giaTien" type="number" required placeholder="99000" class="w-full bg-slate-50 px-3 py-2 rounded-xl border border-slate-200 focus:outline-none" />
             </div>
             <div class="space-y-1">
-              <label class="text-xs font-bold text-slate-600 uppercase">Thời hạn (ngày)</label>
-              <input v-model="planForm.soNgayHieuLuc" type="number" required placeholder="30" class="w-full bg-slate-50 px-3 py-2 rounded-xl border border-slate-200 focus:outline-none" />
+              <div class="flex justify-between items-center">
+                <label class="text-xs font-bold text-slate-600 uppercase">Thời hạn (ngày)</label>
+                <label class="inline-flex items-center text-[10px] font-bold text-primary cursor-pointer select-none">
+                  <input 
+                    type="checkbox" 
+                    :checked="planForm.soNgayHieuLuc === 99999" 
+                    @change="e => planForm.soNgayHieuLuc = e.target.checked ? 99999 : 30"
+                    class="h-3 w-3 rounded text-primary focus:ring-primary mr-1"
+                  />
+                  Vĩnh viễn
+                </label>
+              </div>
+              <input 
+                v-model="planForm.soNgayHieuLuc" 
+                type="number" 
+                required 
+                placeholder="30" 
+                :disabled="planForm.soNgayHieuLuc === 99999"
+                class="w-full bg-slate-50 px-3 py-2 rounded-xl border border-slate-200 focus:outline-none disabled:opacity-60" 
+              />
             </div>
           </div>
 
@@ -814,9 +1250,124 @@
             </div>
           </div>
 
+          <div class="grid grid-cols-3 gap-4">
+            <div class="space-y-1">
+              <label class="text-xs font-bold text-slate-600 uppercase">Phí mượn sách giấy (VND)</label>
+              <input v-model="planForm.phiMuonSachGiay" type="number" required placeholder="5000" class="w-full bg-slate-50 px-3 py-2 rounded-xl border border-slate-200 focus:outline-none" />
+            </div>
+            <div class="space-y-1">
+              <label class="text-xs font-bold text-slate-600 uppercase">Tiền đặt cọc (VND)</label>
+              <input v-model="planForm.tienDatCoc" type="number" required placeholder="100000" class="w-full bg-slate-50 px-3 py-2 rounded-xl border border-slate-200 focus:outline-none" />
+            </div>
+            <div class="space-y-1">
+              <label class="text-xs font-bold text-slate-600 uppercase">Phạt trễ/ngày (VND)</label>
+              <input v-model="planForm.phiPhatTreHan" type="number" required placeholder="5000" class="w-full bg-slate-50 px-3 py-2 rounded-xl border border-slate-200 focus:outline-none" />
+            </div>
+          </div>
+
           <div class="flex items-center space-x-2 pt-2">
-            <input type="checkbox" v-model="planForm.mienTienCoc" id="mienTienCoc" class="h-4 w-4 rounded text-primary focus:ring-primary" />
-            <label for="mienTienCoc" class="text-xs font-bold text-slate-600 uppercase">Miễn tiền đặt cọc sách</label>
+            <input 
+              v-model="planForm.mienTienCoc" 
+              type="checkbox" 
+              id="mienTienCoc"
+              class="h-4 w-4 rounded border-slate-355 text-primary focus:ring-primary"
+            />
+            <label for="mienTienCoc" class="text-xs font-bold text-slate-700 cursor-pointer select-none">
+              Miễn phí đặt cọc khi mượn sách giấy (So sánh gói)
+            </label>
+          </div>
+
+          <div class="flex items-center space-x-2 pt-1">
+            <input 
+              v-model="planForm.choPhepGiaHanOnline" 
+              type="checkbox" 
+              id="choPhepGiaHanOnline"
+              class="h-4 w-4 rounded border-slate-355 text-primary focus:ring-primary"
+            />
+            <label for="choPhepGiaHanOnline" class="text-xs font-bold text-slate-700 cursor-pointer select-none">
+              Cho phép gia hạn trả sách trực tuyến (Online)
+            </label>
+          </div>
+
+          <div class="flex items-center space-x-2 pt-1">
+            <input 
+              v-model="planForm.quayNhanUuTien" 
+              type="checkbox" 
+              id="quayNhanUuTien"
+              class="h-4 w-4 rounded border-slate-355 text-primary focus:ring-primary"
+            />
+            <label for="quayNhanUuTien" class="text-xs font-bold text-slate-700 cursor-pointer select-none">
+              Quầy nhận sách ưu tiên (Không xếp hàng)
+            </label>
+          </div>
+
+          <div class="flex items-center space-x-2 pt-1">
+            <input 
+              v-model="planForm.chiaSeNhomGiaDinh" 
+              type="checkbox" 
+              id="chiaSeNhomGiaDinh"
+              class="h-4 w-4 rounded border-slate-355 text-primary focus:ring-primary"
+            />
+            <label for="chiaSeNhomGiaDinh" class="text-xs font-bold text-slate-700 cursor-pointer select-none">
+              Chia sẻ quyền lợi nhóm gia đình (Tối đa 3 thành viên)
+            </label>
+          </div>
+
+          <div class="flex items-center space-x-2 pt-1">
+            <input 
+              v-model="planForm.docEbookKhongGioiHan" 
+              type="checkbox" 
+              id="docEbookKhongGioiHan"
+              class="h-4 w-4 rounded border-slate-355 text-primary focus:ring-primary"
+            />
+            <label for="docEbookKhongGioiHan" class="text-xs font-bold text-slate-700 cursor-pointer select-none">
+              Đọc sách điện tử (Ebook) bản quyền không giới hạn
+            </label>
+          </div>
+
+          <div class="flex items-center space-x-2 pt-1">
+            <input 
+              v-model="planForm.giaoSachTanNha" 
+              type="checkbox" 
+              id="giaoSachTanNha"
+              class="h-4 w-4 rounded border-slate-355 text-primary focus:ring-primary"
+            />
+            <label for="giaoSachTanNha" class="text-xs font-bold text-slate-700 cursor-pointer select-none">
+              Hỗ trợ dịch vụ giao/trả sách tận nhà miễn phí
+            </label>
+          </div>
+
+          <div class="flex items-center space-x-2 pt-1">
+            <input 
+              v-model="planForm.workshopDocQuyen" 
+              type="checkbox" 
+              id="workshopDocQuyen"
+              class="h-4 w-4 rounded border-slate-355 text-primary focus:ring-primary"
+            />
+            <label for="workshopDocQuyen" class="text-xs font-bold text-slate-700 cursor-pointer select-none">
+              Tham gia câu lạc bộ sách &amp; Workshop sự kiện độc quyền
+            </label>
+          </div>
+
+          <div class="space-y-1 pt-2">
+            <label class="text-[10px] font-bold text-slate-500 uppercase">Phân loại gói</label>
+            <select v-model="planForm.loaiGoi" class="w-full bg-slate-50 px-3 py-2.5 rounded-xl border border-slate-200 focus:outline-none text-xs font-semibold text-slate-700">
+              <option value="INDIVIDUAL">Cá nhân (Individual)</option>
+              <option value="TEAM">Nhóm &amp; Gia định (Team)</option>
+            </select>
+          </div>
+
+          <!-- Gói khuyên dùng -->
+          <div class="flex items-center space-x-2.5 py-1">
+            <input 
+              v-model="planForm.khuyenDung" 
+              type="checkbox" 
+              id="planKhuyenDung"
+              class="h-4.5 w-4.5 rounded border-slate-350 text-primary focus:ring-primary cursor-pointer" 
+            />
+            <label for="planKhuyenDung" class="text-xs font-bold text-slate-750 cursor-pointer select-none">
+              Gói khuyên dùng (Highlight trên giao diện độc giả)
+            </label>
           </div>
 
           <button type="submit" class="w-full bg-primary hover:bg-primary-dark text-white font-semibold py-3 rounded-xl transition-all shadow-md">
@@ -895,9 +1446,9 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import api from '../../services/api';
-import { X, ChevronDown, Plus, Trash2 } from '@lucide/vue';
+import { X, ChevronDown, Plus, Trash2, Award, Users, BookMarked, CreditCard, Star } from '@lucide/vue';
 import ConfirmModal from '../../components/ConfirmModal.vue';
 import { useToastStore } from '../../stores/toast';
 
@@ -925,7 +1476,8 @@ const collapsedSections = ref({
   // Contactpage
   contact_hero: false,
   contact_info: false,
-  contact_more: false
+  contact_more: false,
+  contact_branches: false
 });
 
 const toggleSection = (sectionName) => {
@@ -933,6 +1485,11 @@ const toggleSection = (sectionName) => {
 };
 
 const plans = ref([]);
+const adminPlansTab = ref('INDIVIDUAL');
+const filteredPlansForAdmin = computed(() => {
+  return plans.value.filter(plan => plan.loaiGoi === adminPlansTab.value);
+});
+
 const discounts = ref([]);
 
 const showPlanModal = ref(false);
@@ -944,7 +1501,11 @@ const planForm = ref({
   soNgayHieuLuc: 30,
   soSachToiDa: 10,
   soNgayMuonToiDa: 30,
-  mienTienCoc: true
+  mienTienCoc: true,
+  khuyenDung: false,
+  phiMuonSachGiay: 0,
+  phiPhatTreHan: 2000,
+  tienDatCoc: 0
 });
 
 const showDiscountModal = ref(false);
@@ -991,7 +1552,25 @@ const fetchDiscounts = async () => {
 const openPlanModal = () => {
   isPlanEdit.value = false;
   planEditId.value = null;
-  planForm.value = { tenGoi: '', giaTien: 99000, soNgayHieuLuc: 30, soSachToiDa: 10, soNgayMuonToiDa: 30, mienTienCoc: true };
+  planForm.value = { 
+    tenGoi: '', 
+    giaTien: 99000, 
+    soNgayHieuLuc: 30, 
+    soSachToiDa: 10, 
+    soNgayMuonToiDa: 30, 
+    mienTienCoc: false,
+    choPhepGiaHanOnline: false,
+    quayNhanUuTien: false,
+    chiaSeNhomGiaDinh: false,
+    docEbookKhongGioiHan: false,
+    giaoSachTanNha: false,
+    workshopDocQuyen: false,
+    loaiGoi: 'INDIVIDUAL',
+    khuyenDung: false,
+    phiMuonSachGiay: 0,
+    phiPhatTreHan: 2000,
+    tienDatCoc: 0
+  };
   showPlanModal.value = true;
 };
 
@@ -1021,7 +1600,10 @@ const savePlan = async () => {
 };
 
 const deletePlan = async (id) => {
-  const ok = await confirmModal.value.ask({ message: 'Bạn có chắc chắn muốn xóa gói hội viên này không?' });
+  const ok = await confirmModal.value.ask({ 
+    message: 'Bạn có chắc chắn muốn xóa gói hội viên này không?',
+    isDestructive: true 
+  });
   if (!ok) return;
   try {
     await api.delete(`/memberships/plans/${id}`);
@@ -1078,7 +1660,10 @@ const saveDiscount = async () => {
 };
 
 const deleteDiscount = async (id) => {
-  const ok = await confirmModal.value.ask({ message: 'Bạn có chắc chắn muốn xóa mã giảm giá này không?' });
+  const ok = await confirmModal.value.ask({ 
+    message: 'Bạn có chắc chắn muốn xóa mã giảm giá này không?',
+    isDestructive: true 
+  });
   if (!ok) return;
   try {
     await api.delete(`/discounts/${id}`);
@@ -1105,9 +1690,7 @@ const homepageForm = ref({
   faqs: []
 });
 
-const addFaq = async () => {
-  const ok = await confirmModal.value.ask({ message: 'Bạn có chắc chắn muốn thêm một câu hỏi thường gặp (FAQ) mới không?' });
-  if (!ok) return;
+const addFaq = () => {
   if (!homepageForm.value.faqs) {
     homepageForm.value.faqs = [];
   }
@@ -1115,7 +1698,10 @@ const addFaq = async () => {
 };
 
 const removeFaq = async (index) => {
-  const ok = await confirmModal.value.ask({ message: 'Bạn có chắc chắn muốn xóa câu hỏi thường gặp này không?' });
+  const ok = await confirmModal.value.ask({ 
+    message: 'Bạn có chắc chắn muốn xóa câu hỏi thường gặp này không?',
+    isDestructive: true
+  });
   if (!ok) return;
   homepageForm.value.faqs.splice(index, 1);
 };
@@ -1136,9 +1722,7 @@ const aboutpageForm = ref({
   teamMembers: []
 });
 
-const addTeamMember = async () => {
-  const ok = await confirmModal.value.ask({ message: 'Bạn có chắc chắn muốn thêm một thành viên ban điều hành mới không?' });
-  if (!ok) return;
+const addTeamMember = () => {
   if (!aboutpageForm.value.teamMembers) {
     aboutpageForm.value.teamMembers = [];
   }
@@ -1146,9 +1730,28 @@ const addTeamMember = async () => {
 };
 
 const removeTeamMember = async (index) => {
-  const ok = await confirmModal.value.ask({ message: 'Bạn có chắc chắn muốn xóa thành viên này khỏi ban điều hành không?' });
+  const ok = await confirmModal.value.ask({ 
+    message: 'Bạn có chắc chắn muốn xóa thành viên này khỏi ban điều hành không?',
+    isDestructive: true
+  });
   if (!ok) return;
   aboutpageForm.value.teamMembers.splice(index, 1);
+};
+
+const addBranch = () => {
+  if (!contactpageForm.value.branches) {
+    contactpageForm.value.branches = [];
+  }
+  contactpageForm.value.branches.push({ name: '', address: '', hotline: '', email: '', mapUrl: '' });
+};
+
+const removeBranch = async (index) => {
+  const ok = await confirmModal.value.ask({ 
+    message: 'Bạn có chắc chắn muốn xóa chi nhánh này không?',
+    isDestructive: true
+  });
+  if (!ok) return;
+  contactpageForm.value.branches.splice(index, 1);
 };
 
 const catalogpageForm = ref({
@@ -1173,7 +1776,8 @@ const contactpageForm = ref({
   email: '',
   moreTitle: '',
   moreHours: '',
-  moreNote: ''
+  moreNote: '',
+  branches: []
 });
 
 const fetchSettings = async () => {
@@ -1212,7 +1816,12 @@ const fetchSettings = async () => {
     if (membershipRes.success) membershippageForm.value = membershipRes.data;
 
     const contactRes = await api.get('/settings/contactpage');
-    if (contactRes.success) contactpageForm.value = contactRes.data;
+    if (contactRes.success) {
+      contactpageForm.value = { branches: [], ...contactRes.data };
+      if (!contactpageForm.value.branches) {
+        contactpageForm.value.branches = [];
+      }
+    }
   } catch (error) {
     console.error('Fetch settings error:', error);
   }
@@ -1311,7 +1920,32 @@ const saveMembershippageSettings = async () => {
   }
 };
 
+const isValidPhoneNumber = (phone) => {
+  if (!phone) return false;
+  const cleanPhone = phone.trim();
+  // Regex hỗ trợ di động VN, số cố định VN, và tổng đài 1900/1800
+  const phoneRegex = /^(0\d{1,4}[.\s-]?\d{3,4}[.\s-]?\d{3,4}|(1800|1900)\d{4}|(\+84|0)\d{9,10})$/;
+  return phoneRegex.test(cleanPhone);
+};
+
 const saveContactpageSettings = async () => {
+  // Bắt lỗi số điện thoại Trụ sở chính
+  if (!isValidPhoneNumber(contactpageForm.value.hotline)) {
+    toast.show('Số điện thoại Hotline Trụ sở chính không hợp lệ! Vui lòng nhập đúng định dạng số điện thoại Việt Nam (ví dụ: 0292 3832 663 hoặc 0912345678).', 'error');
+    return;
+  }
+
+  // Bắt lỗi số điện thoại các chi nhánh bổ sung
+  if (contactpageForm.value.branches && contactpageForm.value.branches.length > 0) {
+    for (let i = 0; i < contactpageForm.value.branches.length; i++) {
+      const branch = contactpageForm.value.branches[i];
+      if (!isValidPhoneNumber(branch.hotline)) {
+        toast.show(`Số điện thoại Hotline của Chi nhánh #${i + 1} (${branch.name || 'Chưa đặt tên'}) không hợp lệ! Vui lòng nhập đúng định dạng.`, 'error');
+        return;
+      }
+    }
+  }
+
   const ok = await confirmModal.value.ask({ message: 'Bạn có chắc chắn muốn lưu cấu hình trang liên hệ không?' });
   if (!ok) return;
   try {
@@ -1362,9 +1996,173 @@ const handleMemberAvatarUpload = async (event, index) => {
   };
 };
 
+// Subscriptions & Receipts statistics states
+const subscriptions = ref([]);
+const receipts = ref([]);
+
+const fetchSubscriptions = async () => {
+  try {
+    const res = await api.get('/memberships/subscriptions');
+    if (res.success) {
+      subscriptions.value = res.data;
+    }
+  } catch (error) {
+    console.error('Fetch subscriptions error:', error);
+  }
+};
+
+const fetchReceipts = async () => {
+  try {
+    const res = await api.get('/borrowing/receipts');
+    if (res.success) {
+      receipts.value = res.data;
+    }
+  } catch (error) {
+    console.error('Fetch receipts error:', error);
+  }
+};
+
+const filterPlan = ref('');
+const filterStatus = ref('');
+const searchSubQuery = ref('');
+
+const filteredSubscriptions = computed(() => {
+  return subscriptions.value.filter(sub => {
+    const matchPlan = !filterPlan.value || (sub.goiDocGia && sub.goiDocGia._id === filterPlan.value);
+    const matchStatus = !filterStatus.value || sub.trangThai === filterStatus.value;
+    
+    let matchQuery = true;
+    if (searchSubQuery.value.trim()) {
+      const q = searchSubQuery.value.trim().toLowerCase();
+      const hoTen = `${sub.docGia?.hoLot || ''} ${sub.docGia?.ten || ''}`.toLowerCase();
+      const email = (sub.docGia?.email || '').toLowerCase();
+      const maDocGia = (sub.docGia?.maDocGia || sub.docGia?._id || '').toLowerCase();
+      const maDangKy = (sub.maDangKy || '').toLowerCase();
+      matchQuery = hoTen.includes(q) || email.includes(q) || maDocGia.includes(q) || maDangKy.includes(q);
+    }
+    
+    return matchPlan && matchStatus && matchQuery;
+  });
+});
+
+// Computed statistics variables
+const totalRevenue = computed(() => {
+  return subscriptions.value
+    .filter(sub => sub.trangThai !== 'HUY' && sub.goiDocGia && sub.goiDocGia.giaTien > 0)
+    .reduce((sum, sub) => sum + (sub.tongTien || 0), 0);
+});
+
+const premiumSubCount = computed(() => {
+  return subscriptions.value.filter(sub => sub.goiDocGia && sub.goiDocGia.giaTien > 0 && sub.trangThai === 'DANG_HIEU_LUC').length;
+});
+
+const activeCardAutoRenewCount = computed(() => {
+  return subscriptions.value.filter(sub => sub.phuongThucThanhToan === 'THE_TIN_DUNG' && sub.tuDongGiaHan && sub.trangThai === 'DANG_HIEU_LUC').length;
+});
+
+const vipReaderIds = computed(() => {
+  return subscriptions.value
+    .filter(sub => sub.trangThai === 'DANG_HIEU_LUC' && sub.goiDocGia && sub.goiDocGia.giaTien > 0)
+    .map(sub => {
+      if (!sub.docGia) return null;
+      return typeof sub.docGia === 'object' ? sub.docGia._id : sub.docGia;
+    })
+    .filter(id => id !== null);
+});
+
+const vipReceipts = computed(() => {
+  const ids = vipReaderIds.value;
+  return receipts.value.filter(r => {
+    if (!r.docGia) return false;
+    const rReaderId = typeof r.docGia === 'object' ? r.docGia._id : r.docGia;
+    return ids.includes(rReaderId);
+  });
+});
+
+const vipBorrowedBooksCount = computed(() => {
+  return vipReceipts.value.reduce((sum, r) => {
+    return sum + (r.chiTietMuon ? r.chiTietMuon.length : 0);
+  }, 0);
+});
+
+const topBooksByVip = computed(() => {
+  if (realBooks.value.length === 0) return [];
+  
+  return realBooks.value.map(book => {
+    return {
+      _id: book._id,
+      title: book.tenSach,
+      author: book.tacGia ? book.tacGia.map(t => t.tenTacGia || t).join(', ') : 'Chưa rõ',
+      count: book.soLuotMuon || 0,
+      rating: book.rating !== undefined ? book.rating : 0,
+      ratingCount: book.soLuotDanhGia || 0
+    };
+  });
+});
+
+const activeTopBookTab = ref('borrow');
+const displayedTopBooks = computed(() => {
+  const books = [...topBooksByVip.value];
+  if (activeTopBookTab.value === 'borrow') {
+    return books.sort((a, b) => b.count - a.count).slice(0, 5);
+  } else if (activeTopBookTab.value === 'ratingCount') {
+    return books.sort((a, b) => b.ratingCount - a.ratingCount).slice(0, 5);
+  } else {
+    return books.sort((a, b) => parseFloat(b.rating) - parseFloat(a.rating)).slice(0, 5);
+  }
+});
+
+const planPopularity = computed(() => {
+  return plans.value.map(plan => {
+    const subsOfPlan = subscriptions.value.filter(sub => sub.goiDocGia && sub.goiDocGia._id === plan._id);
+    const count = subsOfPlan.length;
+    const revenue = subsOfPlan
+      .filter(sub => sub.trangThai !== 'HUY')
+      .reduce((sum, sub) => sum + (sub.tongTien || 0), 0);
+      
+    const readersOfPlan = subsOfPlan
+      .filter(sub => sub.trangThai === 'DANG_HIEU_LUC')
+      .map(sub => {
+        if (!sub.docGia) return null;
+        return typeof sub.docGia === 'object' ? sub.docGia._id : sub.docGia;
+      })
+      .filter(id => id !== null);
+
+    const booksCount = receipts.value
+      .filter(r => {
+        if (!r.docGia) return false;
+        const rReaderId = typeof r.docGia === 'object' ? r.docGia._id : r.docGia;
+        return readersOfPlan.includes(rReaderId);
+      })
+      .reduce((sum, r) => sum + (r.chiTietMuon ? r.chiTietMuon.length : 0), 0);
+
+    return {
+      name: plan.tenGoi,
+      count,
+      revenue,
+      booksCount
+    };
+  }).sort((a, b) => b.count - a.count);
+});
+
+const realBooks = ref([]);
+const fetchRealBooks = async () => {
+  try {
+    const res = await api.get('/books?limit=100');
+    if (res.success && res.data && res.data.books) {
+      realBooks.value = res.data.books;
+    }
+  } catch (error) {
+    console.error('Fetch real books error:', error);
+  }
+};
+
 onMounted(() => {
   fetchPlans();
   fetchDiscounts();
   fetchSettings();
+  fetchSubscriptions();
+  fetchReceipts();
+  fetchRealBooks();
 });
 </script>

@@ -101,10 +101,10 @@
 
             <!-- Head Group -->
             <g class="head-group">
-              <!-- Bushy beard -->
-              <path d="M 166,62 Q 200,102 234,62 Q 232,92 200,96 Q 168,92 166,62 Z" fill="#334155" class="beard" />
               <!-- Face -->
               <circle cx="200" cy="62" r="19" fill="#fdba74" class="skin face" />
+              <!-- Bushy beard -->
+              <path d="M 166,56 Q 200,120 234,56 Q 220,46 200,68 Q 180,46 166,56 Z" fill="#334155" class="beard" />
               <!-- Big Nose -->
               <circle cx="200" cy="65" r="5.5" fill="#f87171" class="nose" />
               
@@ -127,7 +127,7 @@
               <path d="M 194,74 Q 188,80 180,75 Q 186,70 195,73 Z" fill="#ef4444" class="tongue" />
 
               <!-- Hair -->
-              <path d="M 166,56 Q 200,20 234,56 Q 242,38 200,36 Q 158,38 166,56 Z" fill="#334155" class="hair" />
+              <path d="M 166,56 Q 200,15 234,56 Q 220,48 200,50 Q 180,48 166,56 Z" fill="#334155" class="hair" />
             </g>
 
             <!-- Left Arm -->
@@ -179,7 +179,7 @@
 </template>
 
 <script setup>
-// NotFoundView.vue - Trang lỗi 404 hoạt họa SVG người tiền sử nếm dây điện, lộ xương sườn (phiên bản gốc)
+// NotFoundView.vue - Trang lỗi 404 hoạt họa SVG người tiền sử nếm dây điện, lộ xương sườn (phiên bản gốc đã sửa râu tóc)
 // Lý do tạo: Khôi phục lại bản vẽ SVG nguyên bản theo yêu cầu người dùng
 </script>
 
@@ -230,14 +230,23 @@
   51%, 100% { fill: #ea580c; }
 }
 
-.beard, .hair {
+.head-group {
   transform-origin: 200px 62px;
-  animation: hair-burn 6.5s infinite ease-in-out;
+  animation: head-shock 6.5s infinite ease-in-out;
 }
-@keyframes hair-burn {
-  0%, 25% { fill: #334155; transform: scale(1); }
-  26%, 50% { fill: #0f172a; transform: scale(1.15) skewX(2deg); }
-  51%, 100% { fill: #334155; transform: scale(1); }
+@keyframes head-shock {
+  0%, 25% { transform: scale(1) skewX(0deg); }
+  26%, 50% { transform: scale(1.15) skewX(2deg); }
+  51%, 100% { transform: scale(1) skewX(0deg); }
+}
+
+.beard, .hair {
+  animation: hair-color-burn 6.5s infinite step-end;
+}
+@keyframes hair-color-burn {
+  0%, 25% { fill: #334155; }
+  26%, 50% { fill: #0f172a; }
+  51%, 100% { fill: #334155; }
 }
 
 /* 3. Skeleton Overlay */

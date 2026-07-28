@@ -18,6 +18,7 @@ let baseUrl;
 let readerCookie = '';
 let staffCookie = '';
 let testPlanId;
+let testReaderId;
 
 // Helper thực hiện cuộc gọi API thực tế qua fetch
 const makeRequest = async (path, options = {}) => {
@@ -91,6 +92,7 @@ test.describe('Memberships API Tests', () => {
       diachi: 'Đà Lạt',
       dienThoai: '0944555555'
     });
+    testReaderId = reader._id;
 
     const readerToken = jwtHelper.signToken({ id: reader._id, role: 'READER' });
     readerCookie = `token=${readerToken}`;
@@ -136,6 +138,107 @@ test.describe('Memberships API Tests', () => {
       assert.strictEqual(res.body.success, true);
       assert.ok(res.body.data.maDangKy);
       assert.strictEqual(res.body.data.trangThai, 'DANG_HIEU_LUC');
+    });
+
+    test('Độc giả nên đăng ký gói hội viên qua Thẻ tín dụng thành công với tự động gia hạn', async () => {
+      const vipPlan = await MembershipPlan.create({
+        tenGoi: 'Đọc VIP TDD',
+        giaTien: 99000,
+        soNgayHieuLuc: 30,
+        soSachToiDa: 5,
+        soNgayMuonToiDa: 21,
+        mienTienCoc: true
+      });
+
+      const payload = {
+        goiId: vipPlan._id,
+        phuongThucThanhToan: 'THE_TIN_DUNG',
+        thongTinThe: {
+          soThe: '1234567812345678',
+          tenTrenThe: 'TDD READER',
+          ngayHetHan: '12/29',
+          maCVC: '123'
+        }
+      };
+
+      const res = await makeRequest('/api/memberships/subscribe', {
+        method: 'POST',
+        headers: { Cookie: readerCookie },
+        body: payload
+      });
+
+      assert.strictEqual(res.status, 201);
+      assert.strictEqual(res.body.success, true);
+      assert.strictEqual(res.body.data.phuongThucThanhToan, 'THE_TIN_DUNG');
+      assert.strictEqual(res.body.data.tuDongGiaHan, true);
+      assert.strictEqual(res.body.data.thongTinThe.soThe, '1234567812345678');
+    });
+
+    test('Độc giả nên hủy gia hạn gói tự động thành công', async () => {
+      const res = await makeRequest('/api/memberships/cancel-auto-renew', {
+        method: 'POST',
+        headers: { Cookie: readerCookie }
+      });
+
+      assert.strictEqual(res.status, 200);
+      assert.strictEqual(res.body.success, true);
+      assert.strictEqual(res.body.data.subscription.tuDongGiaHan, false);
+    });
+
+    test('Nhân viên nên lấy được toàn bộ danh sách đăng ký gói', async () => {
+      const res = await makeRequest('/api/memberships/subscriptions', {
+        headers: { Cookie: staffCookie }
+      });
+
+      assert.strictEqual(res.status, 200);
+      assert.strictEqual(res.body.success, true);
+      assert.ok(Array.isArray(res.body.data));
+    });
+
+    test('Độc giả thường không được phép xem toàn bộ đăng ký', async () => {
+      const res = await makeRequest('/api/memberships/subscriptions', {
+        headers: { Cookie: readerCookie }
+      });
+
+      assert.strictEqual(res.status, 403);
+    });
+
+    test('Gói tự động gia hạn hết hạn nên tự động sinh gói mới khi gọi lấy gói cá nhân', async () => {
+      await Subscription.deleteMany({});
+      
+      const vipPlan = await MembershipPlan.findOne({ giaTien: { $gt: 0 } });
+      const now = new Date();
+      
+      const expiredSub = await Subscription.create({
+        docGia: testReaderId, // mã độc giả trong test.before liên quan
+        goiDocGia: vipPlan._id,
+        ngayBatDau: new Date(now.getTime() - 32 * 24 * 60 * 60 * 1000),
+        ngayKetThuc: new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000),
+        tongTien: vipPlan.giaTien,
+        trangThai: 'DANG_HIEU_LUC',
+        phuongThucThanhToan: 'THE_TIN_DUNG',
+        tuDongGiaHan: true,
+        thongTinThe: { soThe: '1111222233334444' }
+      });
+
+      // Gọi API lấy gói cá nhân của Độc giả
+      const res = await makeRequest('/api/memberships/my-subscriptions', {
+        headers: { Cookie: readerCookie }
+      });
+
+      assert.strictEqual(res.status, 200);
+      assert.strictEqual(res.body.success, true);
+      
+      const updatedExpiredSub = await Subscription.findById(expiredSub._id);
+      assert.strictEqual(updatedExpiredSub.trangThai, 'HET_HAN');
+      
+      const newSub = await Subscription.findOne({
+        docGia: testReaderId,
+        trangThai: 'DANG_HIEU_LUC'
+      });
+      assert.ok(newSub, 'Subscription tự động gia hạn mới phải được tạo');
+      assert.strictEqual(newSub.phuongThucThanhToan, 'THE_TIN_DUNG');
+      assert.strictEqual(newSub.tuDongGiaHan, true);
     });
   });
 

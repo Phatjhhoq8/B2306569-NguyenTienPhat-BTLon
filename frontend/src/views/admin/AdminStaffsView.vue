@@ -2,7 +2,7 @@
   <div class="space-y-8">
     <!-- Header -->
     <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 border-b pb-3">
-      <div>
+      <div class="space-y-1.5">
         <h1 class="font-sans text-3xl font-extrabold text-slate-900">Quản Lý Nhân Viên</h1>
         <p class="text-sm text-slate-500 font-medium">Thêm nhân viên mới, phân vai trò quản lý hoặc thủ thư (Quản lý mới có quyền xem)</p>
       </div>
@@ -19,40 +19,66 @@
     <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm space-y-6">
       <div class="flex flex-col sm:flex-row gap-4 items-center justify-between">
         <!-- Search -->
-        <div class="flex items-center space-x-2 bg-slate-50 px-3 py-2 rounded-xl border border-slate-200 w-full sm:w-80 shadow-inner relative z-30">
-          <Search class="h-4 w-4 text-slate-400 flex-shrink-0" />
-          <div class="relative flex-grow">
-            <input 
-              v-model="searchQuery" 
-              type="text" 
-              placeholder="Tìm tên, mã số, sđt..." 
-              class="w-full focus:outline-none text-sm bg-transparent font-medium"
-              @input="[fetchStaffs(), fetchStaffSuggestions()]"
-              @focus="showStaffSuggestions = true"
-              @blur="setTimeout(() => { showStaffSuggestions = false; activeSuggestionIndex = -1; }, 200)"
-              @keydown.down.prevent="onKeyDown"
-              @keydown.up.prevent="onKeyUp"
-              @keydown.enter.prevent="onKeyEnter"
-              @keydown.esc="showStaffSuggestions = false"
-            />
-            
-            <!-- Suggestions Dropdown -->
-            <div 
-              v-if="showStaffSuggestions && staffSuggestions.length > 0" 
-              class="absolute left-0 right-0 mt-3 bg-white border border-slate-200 rounded-xl shadow-xl z-50 max-h-48 overflow-y-auto w-64 sm:w-72"
-            >
+        <div class="flex flex-wrap items-center gap-3">
+          <!-- Search -->
+          <div class="flex items-center space-x-2 bg-slate-50 px-3 py-2 rounded-xl border border-slate-200 w-full sm:w-80 shadow-inner relative z-30">
+            <Search class="h-4 w-4 text-slate-400 flex-shrink-0" />
+            <div class="relative flex-grow">
+              <input 
+                v-model="searchQuery" 
+                type="text" 
+                placeholder="Tìm tên, mã số, sđt..." 
+                class="w-full focus:outline-none text-sm bg-transparent font-medium"
+                @input="[fetchStaffs(), fetchStaffSuggestions()]"
+                @focus="showStaffSuggestions = true"
+                @blur="setTimeout(() => { showStaffSuggestions = false; activeSuggestionIndex = -1; }, 200)"
+                @keydown.down.prevent="onKeyDown"
+                @keydown.up.prevent="onKeyUp"
+                @keydown.enter.prevent="onKeyEnter"
+                @keydown.esc="showStaffSuggestions = false"
+              />
+              
+              <!-- Suggestions Dropdown -->
               <div 
-                v-for="(item, idx) in staffSuggestions" 
-                :key="item.id"
-                class="px-4 py-2.5 hover:bg-slate-50 cursor-pointer text-sm font-bold text-slate-700 flex items-center justify-between border-b border-slate-50 last:border-b-0"
-                :class="{ 'bg-slate-100': activeSuggestionIndex === idx }"
-                @mousedown="selectStaffSuggestion(item)"
+                v-if="showStaffSuggestions && staffSuggestions.length > 0" 
+                class="absolute left-0 right-0 mt-3 bg-white border border-slate-200 rounded-xl shadow-xl z-50 max-h-48 overflow-y-auto w-64 sm:w-72"
               >
-                <span class="truncate max-w-[180px] sm:max-w-[200px]">{{ item.text }}</span>
-                <span class="text-[10px] md:text-xs text-slate-400 font-semibold font-mono">Nhân viên</span>
+                <div 
+                  v-for="(item, idx) in staffSuggestions" 
+                  :key="item.id"
+                  class="px-4 py-2.5 hover:bg-slate-50 cursor-pointer text-sm font-bold text-slate-700 flex items-center justify-between border-b border-slate-50 last:border-b-0"
+                  :class="{ 'bg-slate-100': activeSuggestionIndex === idx }"
+                  @mousedown="selectStaffSuggestion(item)"
+                >
+                  <span class="truncate max-w-[180px] sm:max-w-[200px]">{{ item.text }}</span>
+                  <span class="text-[10px] md:text-xs text-slate-400 font-semibold font-mono">Nhân viên</span>
+                </div>
               </div>
             </div>
           </div>
+
+          <!-- Filter Role -->
+          <div class="w-full sm:w-44">
+            <select 
+              v-model="filterRole" 
+              @change="fetchStaffs"
+              class="w-full bg-slate-50 px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-650 focus:outline-none"
+            >
+              <option value="">Tất cả chức vụ</option>
+              <option value="QUAN_LY">Quản lý (Manager)</option>
+              <option value="THU_THU">Thủ thư (Librarian)</option>
+            </select>
+          </div>
+
+          <!-- Reset Button -->
+          <button 
+            v-if="filterRole || searchQuery"
+            @click="resetFilters"
+            class="text-xs font-bold text-primary hover:underline flex items-center space-x-1"
+          >
+            <XIcon class="h-4 w-4" />
+            <span>Đặt lại</span>
+          </button>
         </div>
       </div>
 
@@ -179,7 +205,7 @@
 import { ref, onMounted } from 'vue';
 import { useAuthStore } from '../../stores/auth';
 import api from '../../services/api';
-import { Plus, X, Search } from '@lucide/vue';
+import { Plus, X as XIcon, Search } from '@lucide/vue';
 import ConfirmModal from '../../components/ConfirmModal.vue';
 import { useToastStore } from '../../stores/toast';
 
@@ -196,6 +222,14 @@ const searchQuery = ref('');
 const staffSuggestions = ref([]);
 const showStaffSuggestions = ref(false);
 const activeSuggestionIndex = ref(-1);
+
+const filterRole = ref('');
+
+const resetFilters = () => {
+  searchQuery.value = '';
+  filterRole.value = '';
+  fetchStaffs();
+};
 
 const form = ref({
   hoTenNV: '',
@@ -258,9 +292,12 @@ const onKeyEnter = () => {
 
 const fetchStaffs = async () => {
   try {
-    let url = '/admin/staffs';
+    let url = '/admin/staffs?';
     if (searchQuery.value.trim()) {
-      url += `?q=${encodeURIComponent(searchQuery.value.trim())}`;
+      url += `q=${encodeURIComponent(searchQuery.value.trim())}&`;
+    }
+    if (filterRole.value) {
+      url += `role=${encodeURIComponent(filterRole.value)}&`;
     }
     const res = await api.get(url);
     if (res.success) {
@@ -325,7 +362,10 @@ const saveStaff = async () => {
 };
 
 const deleteStaff = async (id) => {
-  const ok = await confirmModal.value.ask({ message: 'Bạn có chắc chắn muốn xóa nhân viên này ra khỏi hệ thống không?' });
+  const ok = await confirmModal.value.ask({ 
+    message: 'Bạn có chắc chắn muốn xóa nhân viên này ra khỏi hệ thống không?',
+    isDestructive: true 
+  });
   if (!ok) return;
   try {
     const res = await api.delete(`/admin/staffs/${id}`);
