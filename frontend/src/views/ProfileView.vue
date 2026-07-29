@@ -234,6 +234,13 @@
                   >
                     Gia hạn
                   </button>
+                  <button 
+                    v-if="receipt.trangThai === 'CHO_THANH_TOAN'"
+                    @click="openPaymentModal(receipt)"
+                    class="bg-emerald-50 hover:bg-emerald-100 text-emerald-600 font-bold text-[10px] py-1 px-2.5 rounded-lg border border-emerald-200 transition-colors shadow-sm"
+                  >
+                    Thanh toán
+                  </button>
                 </div>
               </div>
 
@@ -436,6 +443,300 @@
       </div>
     </Teleport>
 
+    <!-- Payment Modal -->
+    <Teleport to="body">
+      <div 
+        v-if="isPaymentModalOpen" 
+        class="fixed inset-0 bg-slate-900/65 z-[9999] flex items-center justify-center p-4 backdrop-blur-sm transition-all duration-300"
+        @click.self="isPaymentModalOpen = false"
+      >
+        <div class="bg-white rounded-3xl max-w-4xl w-full p-6 space-y-4 shadow-2xl border border-slate-150 transform scale-100 transition-all duration-300 max-h-[95vh] overflow-y-auto">
+          <!-- Header -->
+          <div class="flex items-center justify-between border-b pb-3">
+            <div class="flex items-center space-x-3 text-emerald-600">
+              <div class="bg-emerald-50 p-2.5 rounded-xl">
+                <CreditCard class="h-6 w-6 text-emerald-600" />
+              </div>
+              <h3 class="font-sans font-extrabold text-slate-900 text-base uppercase tracking-wide">
+                Thanh toán hóa đơn mượn sách
+              </h3>
+            </div>
+            <button @click="isPaymentModalOpen = false" class="text-slate-400 hover:text-slate-600">
+              <span class="text-xl">✕</span>
+            </button>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6" v-if="paymentReceipt">
+            <!-- Left Panel (7/12): Checkout options (THE_TIN_DUNG / VIETQR) -->
+            <div class="lg:col-span-7 space-y-4">
+              <!-- Chọn phương thức -->
+              <div class="space-y-2">
+                <label class="block text-slate-700 font-bold text-xs uppercase tracking-wider">Chọn phương thức thanh toán</label>
+                <div class="grid grid-cols-2 gap-3">
+                  <!-- Thẻ tín dụng option -->
+                  <label 
+                    class="border-2 rounded-2xl p-4 flex flex-col items-center justify-center space-y-2 cursor-pointer transition-all hover:bg-slate-50"
+                    :class="selectedPaymentMethod === 'THE_TIN_DUNG' ? 'border-primary bg-primary-light/10 text-primary-dark shadow-sm' : 'border-slate-200 text-slate-600'"
+                  >
+                    <input type="radio" value="THE_TIN_DUNG" v-model="selectedPaymentMethod" class="sr-only" />
+                    <CreditCard class="h-6 w-6" />
+                    <span class="text-xs font-bold">Thẻ Tín dụng / Ghi nợ</span>
+                    <span class="text-[9px] font-semibold text-slate-400">Hỗ trợ VISA / Mastercard</span>
+                  </label>
+
+                  <!-- VietQR option -->
+                  <label 
+                    class="border-2 rounded-2xl p-4 flex flex-col items-center justify-center space-y-2 cursor-pointer transition-all hover:bg-slate-50"
+                    :class="selectedPaymentMethod === 'VIETQR' ? 'border-primary bg-primary-light/10 text-primary-dark shadow-sm' : 'border-slate-200 text-slate-600'"
+                  >
+                    <input type="radio" value="VIETQR" v-model="selectedPaymentMethod" class="sr-only" />
+                    <QrCode class="h-6 w-6" />
+                    <span class="text-xs font-bold">Chuyển khoản VietQR</span>
+                    <span class="text-[9px] font-semibold text-slate-400">Quét mã thanh toán tức thời</span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Detail Form for THE_TIN_DUNG -->
+              <div v-show="selectedPaymentMethod === 'THE_TIN_DUNG'" class="space-y-6 pt-2">
+                <div class="flex flex-col md:flex-row gap-6 items-center justify-center bg-slate-50/50 p-4 rounded-3xl border border-slate-100">
+                  <!-- Credit Card Visual Mock -->
+                  <div class="flex-shrink-0">
+                    <div class="relative w-[280px] h-[170px] bg-gradient-to-br from-indigo-950 via-slate-900 to-indigo-950 rounded-2xl p-4 text-white shadow-lg flex flex-col justify-between border border-white/10 select-none overflow-hidden">
+                      <div class="absolute -right-12 -top-12 w-28 h-28 bg-primary/20 rounded-full blur-2xl"></div>
+                      
+                      <div class="flex justify-between items-start">
+                        <div class="space-y-0.5">
+                          <span class="text-[7px] uppercase font-bold tracking-widest text-slate-400">Hóa đơn sách</span>
+                          <h4 class="text-[9px] font-extrabold text-secondary tracking-wide uppercase">{{ paymentReceipt.maPhieu }}</h4>
+                        </div>
+                        <div class="h-5 w-8 bg-white/10 rounded flex items-center justify-center border border-white/5">
+                          <span class="text-[9px] font-black italic tracking-tighter text-white">VISA</span>
+                        </div>
+                      </div>
+
+                      <div class="flex items-center space-x-3">
+                        <div class="w-8 h-6 bg-gradient-to-br from-amber-300 via-yellow-400 to-amber-500 rounded relative overflow-hidden border border-amber-200/50 shadow-inner flex flex-col justify-between p-0.5">
+                          <div class="grid grid-cols-3 gap-0.5 w-full h-full opacity-60">
+                            <div class="border border-amber-950/30"></div>
+                            <div class="border border-amber-950/30"></div>
+                            <div class="border border-amber-950/30"></div>
+                          </div>
+                        </div>
+                        <svg class="h-3.5 w-3.5 text-white/50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                          <path d="M5 12a10 10 0 0 1 14 0" />
+                          <path d="M8 15a6 6 0 0 1 8 0" />
+                        </svg>
+                      </div>
+
+                      <div class="space-y-2">
+                        <div class="font-mono text-xs tracking-widest text-white/95 font-semibold text-center">
+                          {{ formattedCardNumber || '•••• •••• •••• ••••' }}
+                        </div>
+                        <div class="flex justify-between items-center text-[8px] font-medium text-slate-300">
+                          <div>
+                            <span class="text-[6px] uppercase tracking-wider text-slate-500 block mb-0.5">Chủ thẻ</span>
+                            <span class="font-bold tracking-wider uppercase text-white truncate max-w-[100px] block">
+                              {{ cardName || 'TÊN CHỦ THẺ' }}
+                            </span>
+                          </div>
+                          <div>
+                            <span class="text-[6px] uppercase tracking-wider text-slate-500 block mb-0.5">Hạn dùng</span>
+                            <span class="font-bold text-white block">{{ cardExpiry || 'MM/YY' }}</span>
+                          </div>
+                          <div>
+                            <span class="text-[6px] uppercase tracking-wider text-slate-500 block mb-0.5">CVC</span>
+                            <span class="font-bold text-white block">{{ cardCvc || '•••' }}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Input fields for Credit Card -->
+                  <div class="flex-grow space-y-3 w-full text-xs">
+                    <div class="space-y-1">
+                      <label class="text-[10px] font-bold text-slate-500 uppercase">Số thẻ</label>
+                      <input 
+                        v-model="cardNumber" 
+                        type="text" 
+                        maxlength="19" 
+                        @input="formatCardInput" 
+                        class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:border-primary text-slate-800" 
+                        placeholder="4111 2222 3333 4444" 
+                      />
+                    </div>
+                    <div class="space-y-1">
+                      <label class="text-[10px] font-bold text-slate-500 uppercase">Tên in trên thẻ</label>
+                      <input 
+                        v-model="cardName" 
+                        type="text" 
+                        class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:border-primary uppercase text-slate-800" 
+                        placeholder="NGUYEN VAN A" 
+                      />
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                      <div class="space-y-1">
+                        <label class="text-[10px] font-bold text-slate-500 uppercase">Hạn dùng (MM/YY)</label>
+                        <input 
+                          v-model="cardExpiry" 
+                          type="text" 
+                          maxlength="5" 
+                          @input="formatExpiryInput"
+                          class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:border-primary text-slate-800" 
+                          placeholder="12/29" 
+                        />
+                      </div>
+                      <div class="space-y-1">
+                        <label class="text-[10px] font-bold text-slate-500 uppercase">Mã bảo mật CVC</label>
+                        <input 
+                          v-model="cardCvc" 
+                          type="password" 
+                          maxlength="3" 
+                          @input="formatCvcInput"
+                          class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:border-primary text-slate-800" 
+                          placeholder="123" 
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Detail QR for VietQR -->
+              <div v-show="selectedPaymentMethod === 'VIETQR'" class="space-y-4 pt-2">
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center justify-center">
+                  <!-- QR Code (5/12) -->
+                  <div class="md:col-span-5 flex flex-col items-center">
+                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 shadow-inner flex flex-col items-center text-center w-full">
+                      <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider mb-2">Mã thanh toán VietQR</span>
+                      <img 
+                        :src="getVietQrUrl(appliedDiscount ? appliedDiscount.finalAmount : paymentReceipt.phiMuon, paymentReceipt.maPhieu)" 
+                        alt="VietQR Code" 
+                        class="w-36 h-36 object-contain bg-white p-2 rounded-xl border border-slate-100"
+                      />
+                      <div class="mt-2.5 text-[9px] font-bold text-slate-700 space-y-0.5">
+                        <p>Số tiền: {{ formatCurrency(appliedDiscount ? appliedDiscount.finalAmount : paymentReceipt.phiMuon) }}</p>
+                        <p>Nội dung: <span class="text-primary uppercase font-mono">TT {{ paymentReceipt.maPhieu }}</span></p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- physical simulator phone (7/12) -->
+                  <div class="md:col-span-7 flex flex-col items-center">
+                    <div class="relative w-48 h-[340px] bg-slate-950 rounded-[30px] p-2 shadow-2xl ring-6 ring-slate-800 border-2 border-slate-900 overflow-visible flex flex-col justify-between">
+                      <div class="absolute top-2 left-1/2 -translate-x-1/2 bg-black h-3.5 w-12 rounded-full z-30 flex items-center justify-end px-1.5">
+                        <div class="h-1 w-1 rounded-full bg-green-500 opacity-80 animate-pulse"></div>
+                      </div>
+                      <div class="relative flex-grow bg-slate-950 rounded-[24px] overflow-hidden flex flex-col justify-between p-2 pt-4 text-white text-center border border-white/5">
+                        <div class="flex justify-between items-center text-[7px] text-slate-400 font-semibold px-1.5">
+                          <span>9:41</span>
+                          <span class="flex items-center space-x-1">
+                            <Wifi class="h-2 w-2" />
+                            <span class="text-[6px]">5G</span>
+                            <Battery class="h-2.5 w-2.5" />
+                          </span>
+                        </div>
+                        <div class="flex-grow bg-slate-900 rounded-xl flex flex-col items-center justify-center p-2 relative border border-slate-800 overflow-hidden shadow-inner mt-2">
+                          <QrCode class="h-8 w-8 text-green-400/90 mb-1 animate-pulse" />
+                          <span class="text-[8px] font-black text-green-400 tracking-wider">CAMERA GIẢ LẬP</span>
+                          <p class="text-[7px] text-slate-400 mt-1 max-w-[100px] leading-tight">Đang quét mã VietQR tự động...</p>
+                          <div class="absolute left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-green-400 to-transparent shadow-[0_0_8px_rgba(74,222,128,0.8)] scan-laser z-10"></div>
+                        </div>
+                        <div class="mt-2">
+                          <button 
+                            @click="submitPayment"
+                            class="w-full bg-green-500 hover:bg-green-600 text-slate-950 font-black py-1.5 rounded-xl text-[9px] transition-all shadow-md active:scale-95 flex items-center justify-center space-x-1"
+                          >
+                            <CheckCircle class="h-3 w-3" />
+                            <span>Mô phỏng thanh toán QR</span>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Panel (5/12): Bill breakdown -->
+            <div class="lg:col-span-5 bg-slate-50 p-5 rounded-3xl border border-slate-200 space-y-5 text-xs">
+              <h3 class="text-xs font-bold text-slate-800 uppercase tracking-wider border-b pb-2">Tóm tắt hóa đơn</h3>
+              
+              <div class="space-y-3 font-medium text-slate-600">
+                <div class="flex justify-between items-center">
+                  <span>Mã phiếu mượn:</span>
+                  <span class="text-slate-900 font-bold font-mono">{{ paymentReceipt.maPhieu }}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                  <span>Phí mượn tạm tính:</span>
+                  <span class="text-slate-950 font-bold">{{ formatCurrency(paymentReceipt.phiMuon) }}</span>
+                </div>
+                <div v-if="paymentReceipt.tienCoc > 0" class="flex justify-between items-center text-slate-400">
+                  <span>Tiền cọc sách (hoàn trả):</span>
+                  <span>{{ formatCurrency(paymentReceipt.tienCoc) }}</span>
+                </div>
+
+                <!-- Mã giảm giá -->
+                <div class="space-y-1.5 pt-1">
+                  <label class="block text-slate-700 font-bold">Mã giảm giá</label>
+                  <div class="flex space-x-2">
+                    <input 
+                      type="text" 
+                      v-model="discountCodeInput"
+                      placeholder="Nhập mã giảm giá..."
+                      :disabled="appliedDiscount"
+                      class="flex-1 bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs text-slate-700 focus:outline-none focus:border-primary uppercase font-bold"
+                    />
+                    <button 
+                      v-if="!appliedDiscount"
+                      @click="applyDiscountCode"
+                      :disabled="isApplyingDiscount || !discountCodeInput"
+                      class="bg-primary hover:bg-primary-dark text-white font-bold px-3 py-1.5 rounded-xl transition-all shadow-sm text-[10px] disabled:opacity-50"
+                    >
+                      Áp dụng
+                    </button>
+                    <button 
+                      v-else
+                      @click="removeDiscountCode"
+                      class="bg-red-50 hover:bg-red-100 text-red-600 font-bold px-3 py-1.5 rounded-xl border border-red-200 transition-colors shadow-sm text-[10px]"
+                    >
+                      Gỡ bỏ
+                    </button>
+                  </div>
+                  <p v-if="discountError" class="text-[9px] text-red-500 font-bold mt-1">{{ discountError }}</p>
+                  <p v-if="appliedDiscount" class="text-[9px] text-green-600 font-bold mt-1">
+                    ✓ Đã giảm: {{ formatCurrency(appliedDiscount.discountAmount) }}
+                  </p>
+                </div>
+
+                <hr class="border-slate-200" />
+
+                <!-- Tổng thanh toán thực tế -->
+                <div class="flex justify-between items-center pt-2">
+                  <span class="text-slate-800 font-bold text-xs uppercase tracking-wider">Tổng cần trả:</span>
+                  <span class="text-base font-black text-emerald-650">
+                    {{ formatCurrency(appliedDiscount ? appliedDiscount.finalAmount : paymentReceipt.phiMuon) }}
+                  </span>
+                </div>
+              </div>
+
+              <!-- Nút xác nhận thanh toán (chỉ hiển thị khi chọn Thẻ) -->
+              <div v-show="selectedPaymentMethod === 'THE_TIN_DUNG'" class="pt-3">
+                <button 
+                  @click="submitPayment"
+                  :disabled="isPaymentSubmitting || !isCardFormValid"
+                  class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold py-3 rounded-2xl text-xs transition-all shadow-md disabled:opacity-50"
+                >
+                  {{ isPaymentSubmitting ? 'Đang xử lý...' : `Thanh toán ${formatCurrency(appliedDiscount ? appliedDiscount.finalAmount : paymentReceipt.phiMuon)}` }}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </Teleport>
+
     <!-- Edit Profile Modal -->
     <Teleport to="body">
       <div 
@@ -610,7 +911,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { useAuthStore } from '../stores/auth';
 import api from '../services/api';
-import { User, Mail, Phone, MapPin, Calendar, Award, BookOpen, AlertTriangle, Banknote, Edit, Lock } from '@lucide/vue';
+import { User, Mail, Phone, MapPin, Calendar, Award, BookOpen, AlertTriangle, Banknote, Edit, Lock, CreditCard, QrCode, Wifi, Battery, CheckCircle } from '@lucide/vue';
 import { useToastStore } from '../stores/toast';
 import ConfirmModal from '../components/ConfirmModal.vue';
 
@@ -806,6 +1107,132 @@ const submitRenew = async () => {
   }
 };
 
+// Payment logic
+const isPaymentModalOpen = ref(false);
+const paymentReceipt = ref(null);
+const discountCodeInput = ref('');
+const discountError = ref('');
+const appliedDiscount = ref(null);
+const isApplyingDiscount = ref(false);
+const selectedPaymentMethod = ref('THE_TIN_DUNG');
+const isPaymentSubmitting = ref(false);
+
+const cardNumber = ref('');
+const cardName = ref('');
+const cardExpiry = ref('');
+const cardCvc = ref('');
+
+const formattedCardNumber = computed(() => {
+  if (!cardNumber.value) return '';
+  return cardNumber.value;
+});
+
+const isCardFormValid = computed(() => {
+  const cleanNum = cardNumber.value.replace(/\s+/g, '');
+  return cleanNum.length === 16 && 
+         cardName.value.trim().length > 3 && 
+         cardExpiry.value.length === 5 && 
+         cardCvc.value.length === 3;
+});
+
+const formatCardInput = (e) => {
+  let val = e.target.value.replace(/\D/g, '');
+  if (val.length > 16) val = val.substring(0, 16);
+  let formatted = '';
+  for (let i = 0; i < val.length; i++) {
+    if (i > 0 && i % 4 === 0) {
+      formatted += ' ';
+    }
+    formatted += val[i];
+  }
+  cardNumber.value = formatted;
+};
+
+const formatExpiryInput = (e) => {
+  let val = e.target.value.replace(/\D/g, '');
+  if (val.length > 4) val = val.substring(0, 4);
+  if (val.length >= 2) {
+    cardExpiry.value = val.substring(0, 2) + '/' + val.substring(2);
+  } else {
+    cardExpiry.value = val;
+  }
+};
+
+const formatCvcInput = (e) => {
+  cardCvc.value = e.target.value.replace(/\D/g, '');
+};
+
+const openPaymentModal = (receipt) => {
+  paymentReceipt.value = receipt;
+  discountCodeInput.value = '';
+  discountError.value = '';
+  appliedDiscount.value = null;
+  selectedPaymentMethod.value = 'THE_TIN_DUNG';
+  cardNumber.value = '';
+  cardName.value = (authStore.user ? `${authStore.user.hoLot} ${authStore.user.ten}`.toUpperCase() : '');
+  cardExpiry.value = '';
+  cardCvc.value = '';
+  isPaymentModalOpen.value = true;
+};
+
+const applyDiscountCode = async () => {
+  if (!discountCodeInput.value.trim()) return;
+  isApplyingDiscount.value = true;
+  discountError.value = '';
+  try {
+    const res = await api.post('/discounts/validate', {
+      code: discountCodeInput.value.trim().toUpperCase(),
+      orderAmount: paymentReceipt.value.phiMuon,
+      apDungCho: 'MUON_SACH'
+    });
+    if (res.success) {
+      appliedDiscount.value = res.data;
+      toast.show('Áp dụng mã giảm giá thành công!', 'success');
+    }
+  } catch (error) {
+    discountError.value = error.message || 'Mã giảm giá không hợp lệ';
+    appliedDiscount.value = null;
+  } finally {
+    isApplyingDiscount.value = false;
+  }
+};
+
+const removeDiscountCode = () => {
+  discountCodeInput.value = '';
+  appliedDiscount.value = null;
+  discountError.value = '';
+};
+
+const submitPayment = async () => {
+  if (selectedPaymentMethod.value === 'THE_TIN_DUNG' && !isCardFormValid.value) {
+    toast.show('Vui lòng điền đầy đủ thông tin thẻ tín dụng', 'error');
+    return;
+  }
+  isPaymentSubmitting.value = true;
+  try {
+    const res = await api.post(`/borrowing/receipts/${paymentReceipt.value._id}/pay`, {
+      maGiamGia: appliedDiscount.value ? appliedDiscount.value.discountCode?.maCode : '',
+      phuongThucThanhToan: selectedPaymentMethod.value
+    });
+    if (res.success) {
+      toast.show('Thanh toán thành công! Trạng thái phiếu đã chuyển sang Đã trả.', 'success');
+      isPaymentModalOpen.value = false;
+      loadData();
+    }
+  } catch (error) {
+    toast.show(error.message || 'Thanh toán thất bại', 'error');
+  } finally {
+    isPaymentSubmitting.value = false;
+  }
+};
+
+const getVietQrUrl = (amount, maPhieu) => {
+  const bankId = 'MB';
+  const accountNo = '0339569696';
+  const addInfo = encodeURIComponent(`Thanh toan phieu muon ${maPhieu}`);
+  return `https://img.vietqr.io/image/${bankId}-${accountNo}-compact2.png?amount=${amount}&addInfo=${addInfo}`;
+};
+
 const activeSubs = ref([]);
 const receipts = ref([]);
 const penalties = ref([]);
@@ -821,7 +1248,11 @@ const myFinancials = ref({
   soGoiDaMua: 0,
   tongTienCoc: 0,
   soPhieuDangMuon: 0,
-  tongDaChi: 0
+  tongDaChi: 0,
+  soSachDaMuon: 0,
+  borrowRank: null,
+  totalRankedReaders: 0,
+  previousRankBookCount: null
 });
 const renewLoading = ref(false);
 const activeTab = ref('loans');
@@ -865,11 +1296,25 @@ const profileStats = computed(() => {
   const activeLoans = receipts.value.filter(r => ['DANG_MUON', 'QUA_HAN', 'SAN_SANG'].includes(r.trangThai)).length;
   const overdue = receipts.value.filter(r => r.trangThai === 'QUA_HAN').length;
   const unpaidFine = penalties.value.filter(p => !p.daThanhToan).reduce((sum, p) => sum + (p.soTienPhat || 0), 0);
+  const borrowRank = myFinancials.value.borrowRank;
+  const totalRankedReaders = myFinancials.value.totalRankedReaders || 0;
+  const borrowedBooks = myFinancials.value.soSachDaMuon || 0;
+  const previousRankBookCount = myFinancials.value.previousRankBookCount;
+  const borrowRankCaption = borrowedBooks === 0
+    ? 'Chưa phát sinh lượt mượn'
+    : (borrowRank === 1
+      ? `Bạn đang dẫn đầu với ${borrowedBooks} cuốn`
+      : `Bạn: ${borrowedBooks} cuốn · Hạng trên: ${previousRankBookCount || 0} cuốn`);
   return [
     { label: 'Phiếu đang xử lý', value: activeLoans, caption: overdue > 0 ? `${overdue} phiếu quá hạn` : 'Không có quá hạn', tone: overdue > 0 ? 'text-red-600' : 'text-emerald-600' },
     { label: 'Tổng phiếu mượn', value: receipts.value.length, caption: 'Toàn bộ lịch sử', tone: 'text-slate-500' },
     { label: 'Phạt chưa trả', value: formatCurrency(unpaidFine), caption: unpaidFine > 0 ? 'Cần thanh toán' : 'Đã hoàn tất', tone: unpaidFine > 0 ? 'text-red-600' : 'text-emerald-600' },
-    { label: 'Tổng đã chi', value: formatCurrency(myFinancials.value.tongDaChi), caption: 'Phí mượn + phạt + hội viên', tone: 'text-primary' }
+    {
+      label: 'Xếp hạng mượn sách',
+      value: borrowRank ? `#${borrowRank}` : 'Chưa xếp hạng',
+      caption: totalRankedReaders > 0 ? `${borrowRankCaption} / ${totalRankedReaders} độc giả` : borrowRankCaption,
+      tone: borrowRank ? 'text-primary' : 'text-slate-500'
+    }
   ];
 });
 
@@ -1007,6 +1452,7 @@ const getReceiptStatusText = (status) => {
     'CHO_DUYET': 'Chờ duyệt',
     'SAN_SANG': 'Sẵn sàng lấy sách',
     'DANG_MUON': 'Đang mượn',
+    'CHO_THANH_TOAN': 'Chờ thanh toán',
     'DA_TRA': 'Đã trả sách',
     'QUA_HAN': 'Quá hạn trả',
     'HUY': 'Đã hủy'
@@ -1019,6 +1465,7 @@ const getReceiptStatusClass = (status) => {
     'CHO_DUYET': 'bg-slate-100 text-slate-700',
     'SAN_SANG': 'bg-amber-100 text-amber-700',
     'DANG_MUON': 'bg-primary-light text-primary-dark',
+    'CHO_THANH_TOAN': 'bg-blue-100 text-blue-700 border border-blue-200',
     'DA_TRA': 'bg-green-100 text-green-700',
     'QUA_HAN': 'bg-red-100 text-red-700',
     'HUY': 'bg-red-50 text-red-400'

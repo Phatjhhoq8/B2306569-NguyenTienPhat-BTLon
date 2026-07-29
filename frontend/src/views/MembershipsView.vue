@@ -687,7 +687,7 @@
 
     <!-- Join/Manage Family Group Form (Nếu là Độc giả và có liên quan đến nhóm gia đình) -->
     <div 
-      v-if="authStore.isAuthenticated && authStore.isReader && activeSub && (activeSub.docGia !== authStore.user?._id || activeSub.goiDocGia?.chiaSeNhomGiaDinh)" 
+      v-if="authStore.isAuthenticated && authStore.isReader && activeSub && (!isActiveSubOwner || activeSub.goiDocGia?.chiaSeNhomGiaDinh)" 
       class="max-w-md mx-auto mt-16 bg-gradient-to-br from-slate-50 to-white rounded-3xl border border-slate-200 p-8 space-y-6 shadow-sm text-center"
     >
       <div class="space-y-2">
@@ -700,10 +700,11 @@
 
       <!-- Hiển thị nếu đang trong một nhóm do người khác chia sẻ -->
       <div 
-        v-if="activeSub && activeSub.docGia !== authStore.user?._id" 
+        v-if="activeSub && !isActiveSubOwner" 
         class="bg-primary-light/50 border border-primary-light text-primary-dark text-xs font-semibold p-4 rounded-2xl"
       >
-        🎉 Bạn đang sử dụng gói hội viên dùng chung chia sẻ từ chủ nhóm: <span class="font-bold text-primary">{{ activeSub.docGia }}</span>
+        Bạn đang sử dụng gói hội viên dùng chung chia sẻ từ chủ nhóm:
+        <span class="font-bold text-primary">{{ formatReaderName(activeSub.docGia) }}</span>
       </div>
 
       <!-- Hiển thị nếu là chủ nhóm gói Vàng/Family -->
@@ -711,17 +712,33 @@
         v-else-if="activeSub && activeSub.goiDocGia?.chiaSeNhomGiaDinh" 
         class="space-y-4"
       >
-        <div class="bg-green-50 border border-green-100 text-green-800 text-xs font-semibold p-4 rounded-2xl space-y-1">
-          <p class="font-bold">👑 Bạn là chủ nhóm Gói {{ activeSub.goiDocGia?.tenGoi || 'Family' }}</p>
-          <p class="text-[10px] text-green-650" v-if="activeSub.nguoiDuocMoi?.length > 0">
-            Thành viên đã thêm: <span class="font-bold text-slate-900">{{ activeSub.nguoiDuocMoi.join(', ') }}</span>
-          </p>
-          <p class="text-[10px] text-slate-400" v-else>Chưa có thành viên nào trong nhóm</p>
+        <div class="bg-green-50 border border-green-100 text-green-800 text-xs font-semibold p-4 rounded-2xl space-y-3 text-left">
+          <div class="text-center space-y-1">
+            <p class="font-bold">Bạn là chủ nhóm Gói {{ activeSub.goiDocGia?.tenGoi || 'Family' }}</p>
+            <p class="text-[10px] text-green-700 font-black uppercase tracking-wider">
+              Thành viên phụ: {{ familyMembers.length }}/{{ familyMemberLimit }} · Còn {{ remainingFamilySlots }} chỗ
+            </p>
+          </div>
+
+          <div v-if="familyMembers.length > 0" class="space-y-2">
+            <div
+              v-for="member in familyMembers"
+              :key="getReaderCode(member)"
+              class="flex items-center justify-between gap-3 rounded-2xl border border-green-100 bg-white/80 px-3 py-2"
+            >
+              <div class="min-w-0">
+                <p class="text-xs font-black text-slate-900 truncate">{{ formatReaderName(member) }}</p>
+                <p class="text-[10px] font-bold text-slate-400 truncate">{{ getReaderCode(member) }}</p>
+              </div>
+              <span class="rounded-full bg-green-100 px-2 py-0.5 text-[9px] font-black uppercase text-green-700">Thành viên</span>
+            </div>
+          </div>
+          <p class="text-[10px] text-slate-400 text-center" v-else>Chưa có thành viên nào trong nhóm</p>
         </div>
 
         <!-- Form để chủ nhóm thêm thành viên phụ -->
-        <div v-if="!activeSub.nguoiDuocMoi || activeSub.nguoiDuocMoi.length < 2" class="space-y-3 pt-2 text-left">
-          <label class="text-xs font-bold text-slate-600 uppercase">Thêm thành viên phụ (Tối đa 2 người)</label>
+        <div v-if="!isFamilyFull" class="space-y-3 pt-2 text-left">
+          <label class="text-xs font-bold text-slate-600 uppercase">Thêm thành viên phụ (còn {{ remainingFamilySlots }} chỗ)</label>
           <div class="flex space-x-2">
             <input 
               v-model="inviterCode" 
@@ -738,7 +755,7 @@
             </button>
           </div>
         </div>
-        <p v-else class="text-[10px] text-slate-400 font-bold mt-2">⚠️ Nhóm của bạn đã đạt số lượng thành viên tối đa.</p>
+        <p v-else class="text-[10px] text-slate-400 font-bold mt-2">Nhóm của bạn đã đủ 2 thành viên phụ. Không thể thêm mã mời mới.</p>
       </div>
     </div>
     <!-- Custom Confirm Dialog -->
@@ -868,6 +885,25 @@ const setActiveSubscriptions = (subscriptions = []) => {
     .sort((a, b) => (b.goiDocGia.giaTien || 0) - (a.goiDocGia.giaTien || 0));
   activeSub.value = activeSubs.value[0] || subscriptions[0] || null;
 };
+
+const familyMemberLimit = 2;
+const familyMembers = computed(() => activeSub.value?.nguoiDuocMoi || []);
+const remainingFamilySlots = computed(() => Math.max(0, familyMemberLimit - familyMembers.value.length));
+const isFamilyFull = computed(() => remainingFamilySlots.value === 0);
+
+const getReaderId = (reader) => reader?._id || reader?.maDocGia || reader || '';
+const getReaderCode = (reader) => reader?.maDocGia || reader?._id || reader || '';
+const formatReaderName = (reader) => {
+  if (!reader || typeof reader === 'string') return reader || 'Không rõ độc giả';
+  const fullName = `${reader.hoLot || ''} ${reader.ten || ''}`.trim();
+  const code = reader.maDocGia || reader._id || '';
+  return fullName ? `${code} - ${fullName}` : code || 'Không rõ độc giả';
+};
+
+const isActiveSubOwner = computed(() => {
+  if (!activeSub.value || !authStore.user?._id) return false;
+  return String(getReaderId(activeSub.value.docGia)) === String(authStore.user._id);
+});
 
 const getPlanDescription = (plan) => {
   if (!plan) return '';

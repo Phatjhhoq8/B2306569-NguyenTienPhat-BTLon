@@ -55,7 +55,7 @@ const returnBorrowReceipt = async (receiptId, { chiTietMuon, ngayTraThucTe } = {
     }
     receipt.markModified('chiTietMuon');
   } else {
-    receipt.trangThai = 'DA_TRA';
+    receipt.trangThai = 'CHO_THANH_TOAN';
     receipt.ngayTraThucTe = ngayTraThucTe || new Date();
   }
 
@@ -173,6 +173,40 @@ const softDeleteBookTitle = async (bookTitleId) => withTransaction(async (sessio
   return bookTitle;
 });
 
+const payBorrowReceipt = async (receiptId, { maGiamGia, phuongThucThanhToan } = {}) => withTransaction(async (session) => {
+  const receipt = await BorrowReceipt.findById(receiptId).session(session);
+  if (!receipt) throw new Error('Không tìm thấy phiếu mượn');
+  if (receipt.trangThai !== 'CHO_THANH_TOAN') {
+    throw new Error('Chỉ có thể thanh toán phiếu mượn ở trạng thái chờ thanh toán');
+  }
+
+  let finalAmount = receipt.phiMuon;
+  let discountAmount = 0;
+  let codeApplied = '';
+
+  if (maGiamGia) {
+    const discountService = require('../discounts/discount.service');
+    const discountResult = await discountService.applyDiscountCode(maGiamGia, receipt.phiMuon, {
+      session,
+      consume: true,
+      apDungCho: 'MUON_SACH'
+    });
+    discountAmount = discountResult.discountAmount;
+    finalAmount = discountResult.finalAmount;
+    codeApplied = discountResult.discountCode.maCode;
+  }
+
+  receipt.soTienGiam = discountAmount;
+  receipt.maGiamGia = codeApplied || receipt.maGiamGia;
+  receipt.phuongThucThanhToan = phuongThucThanhToan || receipt.phuongThucThanhToan;
+  
+  receipt.tongTienThanhToan = finalAmount < 0 ? 0 : finalAmount;
+  receipt.trangThai = 'DA_TRA';
+
+  await receipt.save({ session });
+  return receipt;
+});
+
 module.exports = {
   createBorrowReceipt,
   returnBorrowReceipt,
@@ -180,6 +214,7 @@ module.exports = {
   approveBorrowReceipt,
   pickupBorrowReceipt,
   renewBorrowReceipt,
+  payBorrowReceipt,
   markOverdueReceipts,
   discontinueBookTitle,
   softDeleteBookTitle

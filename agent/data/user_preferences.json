@@ -29,8 +29,12 @@
     "updated_at": "2026-07-29T08:41:48.232175+00:00"
   },
   "DG00001": {
-    "favorite_categories": [],
-    "favorite_authors": [],
+    "favorite_categories": [
+      "TL002"
+    ],
+    "favorite_authors": [
+      "TG0002"
+    ],
     "favorite_keywords": [
       "tôi",
       "muôn",
@@ -38,14 +42,30 @@
       "gói",
       "hội",
       "viên",
-      "hello"
+      "hello",
+      "mật",
+      "tối",
+      "thượng",
+      "the",
+      "secret",
+      "secrets",
+      "bìa",
+      "cứng",
+      "xin",
+      "chào",
+      "muốn",
+      "đăng"
     ],
-    "borrowed_book_ids": [],
+    "borrowed_book_ids": [
+      "DS00001"
+    ],
     "recent_queries": [
       "hi",
       "tôi muôn smua gói hội viên",
-      "hello"
+      "hello",
+      "xin chào",
+      "tôi muốn đăng kí gói"
     ],
-    "updated_at": "2026-07-29T15:58:53.445697+00:00"
+    "updated_at": "2026-07-29T17:55:38.414936+00:00"
   }
 }

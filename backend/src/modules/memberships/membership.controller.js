@@ -236,7 +236,9 @@ const getMySubscription = async (req, res, next) => {
         { nguoiDuocMoi: req.user._id }
       ]
     })
+      .populate('docGia', 'maDocGia hoLot ten email')
       .populate('goiDocGia')
+      .populate('nguoiDuocMoi', 'maDocGia hoLot ten email')
       .sort({ createdAt: -1 });
     return resultResponse.ok(res, subscriptions);
   } catch (error) { next(error); }
@@ -390,6 +392,7 @@ const getAllSubscriptions = async (req, res, next) => {
     const subscriptions = await Subscription.find({})
       .populate('docGia')
       .populate('goiDocGia')
+      .populate('nguoiDuocMoi', 'maDocGia hoLot ten email')
       .sort({ createdAt: -1 });
 
     return resultResponse.ok(res, subscriptions);

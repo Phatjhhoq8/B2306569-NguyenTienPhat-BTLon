@@ -61,6 +61,7 @@ router.post(
 router.post(
   '/borrowing/receipts/:id/renew',
   authMiddleware.authenticate,
+  authMiddleware.authorize('READER'),
   borrowController.renewReceipt
 );
 
@@ -112,6 +113,12 @@ router.get(
   authMiddleware.authenticate,
   authMiddleware.authorize('STAFF'),
   borrowController.getFinancialStats
+);
+
+router.post(
+  '/borrowing/receipts/:id/pay',
+  authMiddleware.authenticate,
+  borrowController.payReceipt
 );
 
 module.exports = router;

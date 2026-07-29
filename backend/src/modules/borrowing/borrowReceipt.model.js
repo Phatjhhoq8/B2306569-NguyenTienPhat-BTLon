@@ -106,7 +106,7 @@ const borrowReceiptSchema = new mongoose.Schema({
   },
   trangThai: {
     type: String,
-    enum: ['CHO_DUYET', 'SAN_SANG', 'DANG_MUON', 'DA_TRA', 'QUA_HAN', 'HUY'],
+    enum: ['CHO_DUYET', 'SAN_SANG', 'DANG_MUON', 'CHO_THANH_TOAN', 'DA_TRA', 'QUA_HAN', 'HUY'],
     default: 'DANG_MUON',
     index: true
   }
@@ -472,16 +472,16 @@ borrowReceiptSchema.pre('save', async function (next) {
           }
         }
 
-        // Auto-complete: Tất cả sách đã trả → tự động chuyển trạng thái phiếu sang DA_TRA
+        // Auto-complete: Tất cả sách đã trả → tự động chuyển trạng thái phiếu sang CHO_THANH_TOAN
         const allReturned = this.chiTietMuon.every(item => item.daTraChua);
         if (allReturned && ['DANG_MUON', 'QUA_HAN'].includes(this.trangThai)) {
-          this.trangThai = 'DA_TRA';
+          this.trangThai = 'CHO_THANH_TOAN';
         }
       }
     }
 
-    // B. Trả toàn bộ (DA_TRA) hoặc Hủy phiếu (HUY) - chỉ xử lý sách chưa trả
-    if (this.isModified('trangThai') && (this.trangThai === 'DA_TRA' || this.trangThai === 'HUY')) {
+    // B. Trả toàn bộ (DA_TRA / CHO_THANH_TOAN) hoặc Hủy phiếu (HUY) - chỉ xử lý sách chưa trả
+    if (this.isModified('trangThai') && (['DA_TRA', 'CHO_THANH_TOAN', 'HUY'].includes(this.trangThai))) {
       const isCancel = this.trangThai === 'HUY';
       const defaultReturnDate = this.ngayTraThucTe || new Date();
 
@@ -498,7 +498,7 @@ borrowReceiptSchema.pre('save', async function (next) {
   }
 
   // Cập nhật lại phí mượn dựa trên ngày trả thực tế nếu sách đã trả sớm
-  if (['DANG_MUON', 'DA_TRA', 'QUA_HAN'].includes(this.trangThai)) {
+  if (['DANG_MUON', 'DA_TRA', 'CHO_THANH_TOAN', 'QUA_HAN'].includes(this.trangThai)) {
     const membershipPlan = await getEffectiveMembershipPlan(this.docGia, { session });
     if (membershipPlan) {
       const basePhiMuonPerBook = membershipPlan.phiMuonSachGiay !== undefined ? membershipPlan.phiMuonSachGiay : 0;

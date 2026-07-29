@@ -223,7 +223,19 @@ test.describe('Borrowing & Penalties API Tests', () => {
       assert.strictEqual(res.body.data.tongTienThanhToan, 20000);
     });
 
-    test('Thủ thư nên ghi nhận trả sách thành công', async () => {
+    test('Nhân viên (Staff) không được phép gia hạn phiếu mượn (403)', async () => {
+      const ngayHenTraMoi = new Date(Date.now() + 10 * 24 * 60 * 60 * 1000);
+      const res = await makeRequest(`/api/borrowing/receipts/${createdReceiptId}/renew`, {
+        method: 'POST',
+        headers: { Cookie: staffCookie },
+        body: { ngayHenTraMoi }
+      });
+
+      assert.strictEqual(res.status, 403);
+      assert.strictEqual(res.body.success, false);
+    });
+
+    test('Thủ thư nên ghi nhận trả sách thành công, chuyển sang CHO_THANH_TOAN', async () => {
       const res = await makeRequest(`/api/borrowing/receipts/${createdReceiptId}/return`, {
         method: 'POST',
         headers: { Cookie: staffCookie }
@@ -231,11 +243,24 @@ test.describe('Borrowing & Penalties API Tests', () => {
 
       assert.strictEqual(res.status, 200);
       assert.strictEqual(res.body.success, true);
-      assert.strictEqual(res.body.data.trangThai, 'DA_TRA');
+      assert.strictEqual(res.body.data.trangThai, 'CHO_THANH_TOAN');
 
       // Sách phải được giải phóng về CHO_MUON
       const copy = await BookCopy.findById(testBookCopyId);
       assert.strictEqual(copy.tinhTrang, 'CHO_MUON', 'Sách phải được giải phóng về CHO_MUON');
+    });
+
+    test('Độc giả thanh toán hóa đơn mượn sách thành công, chuyển sang DA_TRA', async () => {
+      const res = await makeRequest(`/api/borrowing/receipts/${createdReceiptId}/pay`, {
+        method: 'POST',
+        headers: { Cookie: readerCookie },
+        body: { phuongThucThanhToan: 'VIETQR' }
+      });
+
+      assert.strictEqual(res.status, 200);
+      assert.strictEqual(res.body.success, true);
+      assert.strictEqual(res.body.data.trangThai, 'DA_TRA');
+      assert.strictEqual(res.body.data.phuongThucThanhToan, 'VIETQR');
     });
 
     test('Độc giả nên xem thống kê tài chính cá nhân thành công', async () => {
@@ -249,6 +274,9 @@ test.describe('Borrowing & Penalties API Tests', () => {
       assert.strictEqual(res.body.data.soPhieuDaTra, 1);
       assert.strictEqual(res.body.data.phiMuonDangXuLy, 0);
       assert.strictEqual(res.body.data.soPhieuDangXuLyPhi, 0);
+      assert.strictEqual(res.body.data.soSachDaMuon, 1);
+      assert.strictEqual(res.body.data.borrowRank, 1);
+      assert.strictEqual(res.body.data.totalRankedReaders, 1);
     });
 
     test('Nhân viên nên xem thống kê tài chính hệ thống thành công', async () => {

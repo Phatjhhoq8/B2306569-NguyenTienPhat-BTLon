@@ -166,8 +166,7 @@ const renewReceipt = async (req, res, next) => {
     if (!receipt) return resultResponse.err(res, 'Không tìm thấy phiếu mượn', 404);
 
     const isReaderOwner = req.user && !req.user.chucVu && String(receipt.docGia) === String(req.user._id);
-    const isStaff = req.user && req.user.chucVu;
-    if (!isReaderOwner && !isStaff) {
+    if (!isReaderOwner) {
       return resultResponse.err(res, 'Bạn không có quyền gia hạn phiếu mượn này', 403);
     }
 
@@ -404,6 +403,29 @@ const getFinancialStats = async (req, res, next) => {
     const Subscription = mongoose.model('Subscription');
 
     const now = new Date();
+    const parseRangeDate = (value, endOfDay = false) => {
+      if (!value) return null;
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return null;
+      date.setHours(endOfDay ? 23 : 0, endOfDay ? 59 : 0, endOfDay ? 59 : 0, endOfDay ? 999 : 0);
+      return date;
+    };
+    const rangeStart = parseRangeDate(req.query.startDate);
+    const rangeEnd = parseRangeDate(req.query.endDate, true);
+    if (rangeStart && rangeEnd && rangeStart > rangeEnd) {
+      return resultResponse.err(res, 'Ngày bắt đầu không được lớn hơn ngày kết thúc', 400);
+    }
+    const inSelectedRange = (date) => {
+      const value = date ? new Date(date) : null;
+      if (!value || Number.isNaN(value.getTime())) return false;
+      if (rangeStart && value < rangeStart) return false;
+      if (rangeEnd && value > rangeEnd) return false;
+      return true;
+    };
+    const filterBySelectedRange = (items, getDate) => {
+      if (!rangeStart && !rangeEnd) return items;
+      return items.filter(item => inSelectedRange(getDate(item)));
+    };
     const startOfDay = (date) => new Date(date.getFullYear(), date.getMonth(), date.getDate());
     const startOfWeek = (date) => {
       const d = startOfDay(date);
@@ -455,17 +477,20 @@ const getFinancialStats = async (req, res, next) => {
     };
 
     // Tính tổng phí mượn sách từ các phiếu đã trả (DA_TRA)
-    const paidReceipts = await BorrowReceipt.find({ trangThai: 'DA_TRA' }).select('tongTienThanhToan tienCoc ngayTraThucTe updatedAt createdAt');
+    const paidReceiptsRaw = await BorrowReceipt.find({ trangThai: 'DA_TRA' }).select('tongTienThanhToan tienCoc ngayTraThucTe updatedAt createdAt');
+    const paidReceipts = filterBySelectedRange(paidReceiptsRaw, getReceiptRevenueDate);
     const tongPhiMuon = paidReceipts.reduce((sum, r) => sum + (r.tongTienThanhToan || 0), 0);
     const soPhieuDaTra = paidReceipts.length;
-    const pendingReceipts = await BorrowReceipt.find({
-      trangThai: { $in: ['SAN_SANG', 'DANG_MUON', 'QUA_HAN'] }
-    }).select('tongTienThanhToan');
+    const pendingReceiptsRaw = await BorrowReceipt.find({
+      trangThai: { $in: ['SAN_SANG', 'DANG_MUON', 'QUA_HAN', 'CHO_THANH_TOAN'] }
+    }).select('tongTienThanhToan ngayMuon createdAt updatedAt');
+    const pendingReceipts = filterBySelectedRange(pendingReceiptsRaw, r => r.ngayMuon || r.createdAt);
     const phiMuonDangXuLy = pendingReceipts.reduce((sum, r) => sum + (r.tongTienThanhToan || 0), 0);
     const soPhieuDangXuLyPhi = pendingReceipts.length;
 
     // Tính tổng tiền phạt
-    const allPenalties = await PenaltyTicket.find().select('soTienPhat daThanhToan ngayLap updatedAt createdAt');
+    const allPenaltiesRaw = await PenaltyTicket.find().select('soTienPhat daThanhToan ngayLap updatedAt createdAt');
+    const allPenalties = filterBySelectedRange(allPenaltiesRaw, p => p.daThanhToan ? (p.updatedAt || p.ngayLap || p.createdAt) : (p.ngayLap || p.createdAt));
     const tongTienPhat = allPenalties.reduce((sum, p) => sum + (p.soTienPhat || 0), 0);
     const tienPhatDaThu = allPenalties
       .filter(p => p.daThanhToan)
@@ -473,16 +498,18 @@ const getFinancialStats = async (req, res, next) => {
     const tienPhatChuaThu = tongTienPhat - tienPhatDaThu;
 
     // Doanh thu từ gói hội viên (Subscription có trạng thái DANG_HIEU_LUC hoặc HET_HAN — đã mua)
-    const allSubs = await Subscription.find({
+    const allSubsRaw = await Subscription.find({
       trangThai: { $in: ['DANG_HIEU_LUC', 'HET_HAN'] }
     }).select('tongTien tongTienThanhToan giaGoc ngayBatDau createdAt');
+    const allSubs = filterBySelectedRange(allSubsRaw, s => s.createdAt || s.ngayBatDau);
     const doanhThuHoiVien = allSubs.reduce((sum, s) => sum + getSubscriptionPaidAmount(s), 0);
     const soGoiDaBan = allSubs.length;
 
     // Tổng tiền cọc đang giữ (phiếu DANG_MUON hoặc QUA_HAN)
-    const activeReceipts = await BorrowReceipt.find({
+    const activeReceiptsRaw = await BorrowReceipt.find({
       trangThai: { $in: ['DANG_MUON', 'QUA_HAN'] }
-    }).select('tienCoc');
+    }).select('tienCoc ngayMuon createdAt');
+    const activeReceipts = filterBySelectedRange(activeReceiptsRaw, r => r.ngayMuon || r.createdAt);
     const tongTienCoc = activeReceipts.reduce((sum, r) => sum + (r.tienCoc || 0), 0);
     const soPhieuDangMuon = activeReceipts.length;
 
@@ -519,7 +546,7 @@ const getFinancialStats = async (req, res, next) => {
         .sort({ createdAt: -1 })
     ]);
 
-    const membershipPurchases = membershipPurchasesRaw.map((sub) => ({
+    const membershipPurchases = filterBySelectedRange(membershipPurchasesRaw, sub => sub.createdAt || sub.ngayBatDau).map((sub) => ({
       id: sub._id,
       maDangKy: sub.maDangKy,
       docGia: sub.docGia ? {
@@ -547,7 +574,7 @@ const getFinancialStats = async (req, res, next) => {
       createdAt: sub.createdAt
     }));
 
-    const borrowPayments = borrowPaymentsRaw.map((receipt) => ({
+    const borrowPayments = filterBySelectedRange(borrowPaymentsRaw, receipt => receipt.ngayTraThucTe || receipt.ngayMuon || receipt.createdAt).map((receipt) => ({
       id: receipt._id,
       maPhieu: receipt.maPhieu,
       docGia: receipt.docGia ? {
@@ -577,7 +604,7 @@ const getFinancialStats = async (req, res, next) => {
       createdAt: receipt.createdAt
     }));
 
-    const penaltyPayments = penaltyPaymentsRaw.map((penalty) => ({
+    const penaltyPayments = filterBySelectedRange(penaltyPaymentsRaw, penalty => penalty.daThanhToan ? (penalty.updatedAt || penalty.ngayLap || penalty.createdAt) : (penalty.ngayLap || penalty.createdAt)).map((penalty) => ({
       id: penalty._id,
       maPhieuPhat: penalty.maPhieuPhat,
       phieuMuon: penalty.phieuMuon ? {
@@ -644,6 +671,10 @@ const getFinancialStats = async (req, res, next) => {
         membershipPurchases,
         borrowPayments,
         penaltyPayments
+      },
+      dateRange: {
+        startDate: rangeStart ? rangeStart.toISOString() : null,
+        endDate: rangeEnd ? rangeEnd.toISOString() : null
       }
     });
   } catch (error) { next(error); }
@@ -670,7 +701,7 @@ const getMyFinancialStats = async (req, res, next) => {
 
     const tongPhiMuon = paidReceipts.reduce((sum, r) => sum + (r.tongTienThanhToan || 0), 0);
     const soPhieuDaTra = paidReceipts.length;
-    const pendingReceipts = receipts.filter(r => ['SAN_SANG', 'DANG_MUON', 'QUA_HAN'].includes(r.trangThai));
+    const pendingReceipts = receipts.filter(r => ['SAN_SANG', 'DANG_MUON', 'QUA_HAN', 'CHO_THANH_TOAN'].includes(r.trangThai));
     const phiMuonDangXuLy = pendingReceipts.reduce((sum, r) => sum + (r.tongTienThanhToan || 0), 0);
     const soPhieuDangXuLyPhi = pendingReceipts.length;
     const tongTienPhat = penalties.reduce((sum, p) => sum + (p.soTienPhat || 0), 0);
@@ -686,6 +717,32 @@ const getMyFinancialStats = async (req, res, next) => {
     const tongTienCoc = activeReceipts.reduce((sum, r) => sum + (r.tienCoc || 0), 0);
     const soPhieuDangMuon = activeReceipts.length;
     const tongDaChi = tongPhiMuon + tienPhatDaTra + doanhThuHoiVien;
+    const borrowRankings = await BorrowReceipt.aggregate([
+      { $match: { trangThai: { $ne: 'HUY' } } },
+      {
+        $project: {
+          docGia: 1,
+          soSachTrongPhieu: { $size: { $ifNull: ['$chiTietMuon', []] } }
+        }
+      },
+      {
+        $group: {
+          _id: '$docGia',
+          soSachDaMuon: { $sum: '$soSachTrongPhieu' }
+        }
+      },
+      { $match: { soSachDaMuon: { $gt: 0 } } },
+      { $sort: { soSachDaMuon: -1, _id: 1 } }
+    ]);
+    const myBorrowRank = borrowRankings.find(row => String(row._id) === String(req.user._id));
+    const soSachDaMuon = myBorrowRank?.soSachDaMuon || 0;
+    const borrowRank = myBorrowRank
+      ? borrowRankings.filter(row => row.soSachDaMuon > soSachDaMuon).length + 1
+      : null;
+    const totalRankedReaders = borrowRankings.length;
+    const previousRankBookCount = borrowRank && borrowRank > 1
+      ? borrowRankings[borrowRank - 2]?.soSachDaMuon || 0
+      : null;
 
     return resultResponse.ok(res, {
       tongPhiMuon,
@@ -700,6 +757,10 @@ const getMyFinancialStats = async (req, res, next) => {
       tongTienCoc,
       soPhieuDangMuon,
       tongDaChi,
+      soSachDaMuon,
+      borrowRank,
+      totalRankedReaders,
+      previousRankBookCount,
       breakdown: {
         phiMuon: { amount: tongPhiMuon, count: soPhieuDaTra },
         phiMuonDangXuLy: { amount: phiMuonDangXuLy, count: soPhieuDangXuLyPhi },
@@ -710,6 +771,32 @@ const getMyFinancialStats = async (req, res, next) => {
       }
     });
   } catch (error) { next(error); }
+};
+
+const payReceipt = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { maGiamGia, phuongThucThanhToan } = req.body;
+
+    const receipt = await BorrowReceipt.findById(id);
+    if (!receipt) return resultResponse.err(res, 'Không tìm thấy phiếu mượn', 404);
+
+    const isStaff = req.user && req.user.chucVu;
+    const isReaderOwner = req.user && !req.user.chucVu && String(receipt.docGia) === String(req.user._id);
+
+    if (!isStaff && !isReaderOwner) {
+      return resultResponse.err(res, 'Bạn không có quyền thực hiện thanh toán cho phiếu mượn này', 403);
+    }
+
+    if (phuongThucThanhToan === 'TAI_QUAY' && !isStaff) {
+      return resultResponse.err(res, 'Chỉ thủ thư mới có quyền xác nhận thanh toán trực tiếp tại quầy', 403);
+    }
+
+    const updated = await borrowService.payBorrowReceipt(id, { maGiamGia, phuongThucThanhToan });
+    return resultResponse.ok(res, updated);
+  } catch (error) {
+    next(error);
+  }
 };
 
 module.exports = {
@@ -727,5 +814,6 @@ module.exports = {
   getMyPenalties,
   payPenalty,
   getFinancialStats,
-  getMyFinancialStats
+  getMyFinancialStats,
+  payReceipt
 };

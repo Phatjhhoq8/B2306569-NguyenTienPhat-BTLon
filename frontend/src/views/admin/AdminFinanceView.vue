@@ -5,9 +5,22 @@
         <h1 class="font-sans text-3xl font-extrabold text-slate-900">Thống Kê Tài Chính</h1>
         <p class="text-sm text-slate-500 font-medium">Theo dõi tổng quan doanh thu và chi tiết ai mua gói gì, ai mượn sách gì, phiếu phạt nào đã thu.</p>
       </div>
-      <button @click="loadData" class="bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-xl text-xs font-black shadow">
-        Làm mới dữ liệu
-      </button>
+      <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-[160px_160px_auto_auto] gap-2 xl:items-end">
+        <label class="space-y-1">
+          <span class="block text-[10px] font-black uppercase tracking-wider text-slate-400">Từ ngày</span>
+          <input v-model="startDate" type="date" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:border-primary" />
+        </label>
+        <label class="space-y-1">
+          <span class="block text-[10px] font-black uppercase tracking-wider text-slate-400">Đến ngày</span>
+          <input v-model="endDate" type="date" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:border-primary" />
+        </label>
+        <button @click="loadData" class="bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-xl text-xs font-black shadow">
+          Lọc thống kê
+        </button>
+        <button @click="resetDateRange" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-xs font-black">
+          Tất cả
+        </button>
+      </div>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -170,6 +183,8 @@ const StatusPill = defineComponent({
 const activeTab = ref('overview');
 const searchQuery = ref('');
 const timeFilter = ref('');
+const startDate = ref('');
+const endDate = ref('');
 const financials = ref({
   tongDoanhThu: 0,
   tongPhiMuon: 0,
@@ -254,11 +269,20 @@ const receiptStatusTone = (status) => ({ DA_TRA: 'green', DANG_MUON: 'blue', QUA
 
 const loadData = async () => {
   try {
-    const res = await api.get('/borrowing/financial-stats');
+    const params = {};
+    if (startDate.value) params.startDate = startDate.value;
+    if (endDate.value) params.endDate = endDate.value;
+    const res = await api.get('/borrowing/financial-stats', { params });
     if (res.success) financials.value = res.data;
   } catch (error) {
-    console.error('Finance load error:', error);
+    toast.show(error.message || 'Lỗi khi tải thống kê tài chính', 'error');
   }
+};
+
+const resetDateRange = () => {
+  startDate.value = '';
+  endDate.value = '';
+  loadData();
 };
 
 onMounted(loadData);
