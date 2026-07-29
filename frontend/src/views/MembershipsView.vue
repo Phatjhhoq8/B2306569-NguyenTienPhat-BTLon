@@ -962,9 +962,17 @@ const isPlanActive = (plan) => {
   return activeSub.value && activeSub.value.goiDocGia?._id === plan._id;
 };
 
-const subscribe = (plan) => {
+const subscribe = async (plan) => {
   if (!authStore.isAuthenticated) {
-    router.push('/login');
+    const ok = await confirmModal.value.ask({
+      title: 'Yêu cầu đăng nhập',
+      message: 'Bạn cần đăng nhập tài khoản Độc giả để nâng cấp gói hội viên. Đi đến trang đăng nhập?',
+      confirmText: 'Đăng nhập ngay',
+      cancelText: 'Hủy bỏ'
+    });
+    if (ok) {
+      router.push('/login');
+    }
     return;
   }
   if (authStore.isStaff) {

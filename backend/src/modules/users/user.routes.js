@@ -29,6 +29,12 @@ router.post(
 );
 
 router.post(
+  '/auth/reader/reset-password',
+  validateMiddleware.requiredFields(['email', 'matKhauMoi']),
+  userController.resetReaderPassword
+);
+
+router.post(
   '/auth/logout',
   authMiddleware.authenticate,
   userController.logout

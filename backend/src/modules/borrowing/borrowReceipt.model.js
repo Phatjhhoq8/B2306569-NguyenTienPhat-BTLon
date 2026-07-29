@@ -305,7 +305,7 @@ borrowReceiptSchema.pre('save', async function (next) {
 
     const activeReceipts = await mongoose.model('BorrowReceipt').find({
       docGia: this.docGia,
-      trangThai: { $in: ['DANG_MUON', 'QUA_HAN', 'SAN_SANG'] }
+      trangThai: { $in: ['DANG_MUON', 'QUA_HAN', 'SAN_SANG', 'CHO_DUYET'] }
     }).session(session);
 
     let currentBorrowedCount = 0;
@@ -344,10 +344,10 @@ borrowReceiptSchema.pre('save', async function (next) {
     // Chỉ ghi nhận nhân viên duyệt
   }
 
-  // === PHẦN 1C: Giao sách (SAN_SANG → DANG_MUON) — BẮT ĐẦU TÍNH THỜI HẠN & PHÍ ===
-  if (isPickingUp) {
+  // Chốt chặn giới hạn mượn sách bổ sung khi duyệt phiếu hoặc giao sách từ CHO_DUYET
+  if (isApproving || isPickingUp) {
     const oldBorrow = await mongoose.model('BorrowReceipt').findById(this._id).session(session);
-    if (oldBorrow && oldBorrow.trangThai === 'SAN_SANG') {
+    if (oldBorrow && oldBorrow.trangThai === 'CHO_DUYET') {
       const activeSub = await Subscription.findOne({
         docGia: this.docGia,
         trangThai: 'DANG_HIEU_LUC',
@@ -356,46 +356,92 @@ borrowReceiptSchema.pre('save', async function (next) {
       }).populate('goiDocGia').session(session);
 
       if (!activeSub || !activeSub.goiDocGia) {
-        throw new Error('Độc giả không có gói hội viên còn hiệu lực');
+        throw new Error('Độc giả không có gói hội viên còn hiệu lực để mượn sách');
       }
+
       const membershipPlan = activeSub.goiDocGia;
 
-      // Cập nhật ngày mượn = thời điểm giao sách, tính lại hạn trả
-      const now = new Date();
-      const originalBorrowDays = Math.ceil(
-        (new Date(oldBorrow.ngayHenTra).getTime() - new Date(oldBorrow.ngayMuon).getTime()) / (1000 * 60 * 60 * 24)
-      );
-      const borrowDays = Math.min(originalBorrowDays, membershipPlan.soNgayMuonToiDa);
-      this.ngayMuon = now;
-      this.ngayHenTra = new Date(now.getTime() + borrowDays * 24 * 60 * 60 * 1000);
+      // Tìm tất cả phiếu mượn đang hoạt động thực tế khác (không tính chính phiếu đang duyệt)
+      const activeReceipts = await mongoose.model('BorrowReceipt').find({
+        docGia: this.docGia,
+        _id: { $ne: this._id },
+        trangThai: { $in: ['DANG_MUON', 'QUA_HAN', 'SAN_SANG'] }
+      }).session(session);
 
-      // Tính phí mượn & tiền cọc
-      const basePhiMuonPerBook = membershipPlan.phiMuonSachGiay !== undefined ? membershipPlan.phiMuonSachGiay : 0;
-      const baseTienCoc = membershipPlan.tienDatCoc !== undefined ? membershipPlan.tienDatCoc : 0;
-      this.tienCoc = baseTienCoc;
-
-      let totalPhiMuon = 0;
-      for (const item of this.chiTietMuon) {
-        const copyCheck = await BookCopy.findById(item.sach).populate('dauSach').session(session);
-        if (copyCheck && copyCheck.dauSach) {
-          const title = copyCheck.dauSach;
-          const isGiaoTrinh = (title.tenSach || '').toLowerCase().includes('giáo trình') ||
-                               (title.tenSach || '').toLowerCase().includes('bài tập') ||
-                               (title.tenSach || '').toLowerCase().includes('sách giáo khoa') ||
-                               (title.theLoai || '').toString().toLowerCase().includes('giáo dục') ||
-                               (title.theLoai || '').toString().toLowerCase().includes('ngoại ngữ') ||
-                               (title.theLoai || '').toString().toLowerCase().includes('khoa học');
-          if (!isGiaoTrinh) {
-            totalPhiMuon += basePhiMuonPerBook;
-          }
-          // Tăng lượt mượn thực tế
-          await BookTitle.findByIdAndUpdate(title._id, { $inc: { soLuotMuon: 1 } }).session(session);
-        }
+      let currentBorrowedCount = 0;
+      for (const r of activeReceipts) {
+        currentBorrowedCount += r.chiTietMuon.filter(d => !d.daTraChua).length;
       }
 
-      this.phiMuon = totalPhiMuon;
-      this.tongTienThanhToan = totalPhiMuon;
+      if (currentBorrowedCount + this.chiTietMuon.length > membershipPlan.soSachToiDa) {
+        throw new Error(`Duyệt phiếu mượn thất bại: Tổng số sách mượn vượt quá giới hạn tối đa của gói thẻ (Đã mượn: ${currentBorrowedCount}, Duyệt thêm: ${this.chiTietMuon.length}, Giới hạn: ${membershipPlan.soSachToiDa})`);
+      }
     }
+  }
+
+  // === PHẦN 1C: Giao sách (SAN_SANG → DANG_MUON hoặc trực tiếp tạo mới DANG_MUON) — BẮT ĐẦU TÍNH THỜI HẠN & PHÍ ===
+  const isDirectBorrow = this.isNew && this.trangThai === 'DANG_MUON';
+  if (isPickingUp || isDirectBorrow) {
+    const activeSub = await Subscription.findOne({
+      docGia: this.docGia,
+      trangThai: 'DANG_HIEU_LUC',
+      ngayBatDau: { $lte: new Date() },
+      ngayKetThuc: { $gte: new Date() }
+    }).populate('goiDocGia').session(session);
+
+    if (!activeSub || !activeSub.goiDocGia) {
+      throw new Error('Độc giả không có gói hội viên còn hiệu lực');
+    }
+    const membershipPlan = activeSub.goiDocGia;
+
+    // A. Chỉ cập nhật ngày mượn / ngày hẹn trả khi chuyển trạng thái (bàn giao sách thực tế)
+    if (isPickingUp) {
+      const oldBorrow = await mongoose.model('BorrowReceipt').findById(this._id).session(session);
+      if (oldBorrow) {
+        const originalBorrowDays = Math.ceil(
+          (new Date(oldBorrow.ngayHenTra).getTime() - new Date(oldBorrow.ngayMuon).getTime()) / (1000 * 60 * 60 * 24)
+        );
+        const borrowDays = Math.min(originalBorrowDays, membershipPlan.soNgayMuonToiDa);
+        const now = new Date();
+        this.ngayMuon = now;
+        this.ngayHenTra = new Date(now.getTime() + borrowDays * 24 * 60 * 60 * 1000);
+      }
+    }
+
+    // B. Tính phí mượn & tiền cọc (cho cả isPickingUp và isDirectBorrow)
+    const basePhiMuonPerBook = membershipPlan.phiMuonSachGiay !== undefined ? membershipPlan.phiMuonSachGiay : 0;
+    const baseTienCoc = membershipPlan.tienDatCoc !== undefined ? membershipPlan.tienDatCoc : 0;
+    this.tienCoc = baseTienCoc;
+
+    let totalPhiMuon = 0;
+    for (const item of this.chiTietMuon) {
+      const copyCheck = await BookCopy.findById(item.sach).populate('dauSach').session(session);
+      if (copyCheck && copyCheck.dauSach) {
+        const title = copyCheck.dauSach;
+        const isGiaoTrinh = (title.tenSach || '').toLowerCase().includes('giáo trình') ||
+                             (title.tenSach || '').toLowerCase().includes('bài tập') ||
+                             (title.tenSach || '').toLowerCase().includes('sách giáo khoa') ||
+                             (title.theLoai || '').toString().toLowerCase().includes('giáo dục') ||
+                             (title.theLoai || '').toString().toLowerCase().includes('ngoại ngữ') ||
+                             (title.theLoai || '').toString().toLowerCase().includes('khoa học');
+        if (!isGiaoTrinh) {
+          totalPhiMuon += basePhiMuonPerBook;
+        }
+        
+        // Tăng lượt mượn thực tế
+        await BookTitle.findByIdAndUpdate(title._id, { $inc: { soLuotMuon: 1 } }).session(session);
+      }
+    }
+
+    // Tính số ngày mượn để nhân phí mượn
+    const borrowDays = Math.ceil(
+      (new Date(this.ngayHenTra).getTime() - new Date(this.ngayMuon || new Date()).getTime()) / (1000 * 60 * 60 * 24)
+    );
+    const validBorrowDays = borrowDays > 0 ? borrowDays : 1;
+
+    this.phiMuon = totalPhiMuon * validBorrowDays;
+    const tongTien = this.phiMuon - this.soTienGiam;
+    this.tongTienThanhToan = tongTien < 0 ? 0 : tongTien;
   }
 
   // === PHẦN 2: Cập nhật phiếu mượn đã tồn tại ===

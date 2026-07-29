@@ -97,9 +97,16 @@
                 <button 
                   v-if="receipt.trangThai === 'DANG_MUON' || receipt.trangThai === 'QUA_HAN'"
                   @click="openReturnModal(receipt)"
-                  class="bg-primary hover:bg-primary-dark text-white font-bold text-xs py-1.5 px-3 rounded-xl transition-all shadow"
+                  class="bg-primary hover:bg-primary-dark text-white font-bold text-xs py-1.5 px-3 rounded-xl transition-all shadow inline-block"
                 >
                   Ghi nhận trả
+                </button>
+                <button 
+                  v-if="receipt.trangThai === 'DANG_MUON' || receipt.trangThai === 'QUA_HAN'"
+                  @click="openRenewModal(receipt)"
+                  class="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs py-1.5 px-3 rounded-xl transition-all shadow inline-block"
+                >
+                  Gia hạn
                 </button>
                 <button 
                   v-if="receipt.trangThai === 'CHO_DUYET'"
@@ -222,19 +229,214 @@
     </div>
     </Teleport>
     
+    <!-- Renew Date Modal (Admin) -->
+    <Teleport to="body">
+      <div 
+        v-if="isRenewModalOpen" 
+        class="fixed inset-0 bg-slate-900/65 z-[9999] flex items-center justify-center p-4 backdrop-blur-sm transition-all duration-300"
+        @click.self="isRenewModalOpen = false"
+      >
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl border border-slate-150 transform scale-100 transition-all duration-300">
+          <div class="flex items-center space-x-3 text-primary">
+            <div class="bg-blue-50 p-2.5 rounded-xl">
+              <span class="text-xl">📅</span>
+            </div>
+            <h3 class="font-sans font-extrabold text-slate-900 text-sm uppercase tracking-wide">
+              Gia hạn phiếu mượn (Thủ thư)
+            </h3>
+          </div>
+
+          <div v-if="loadingSub" class="text-center py-4 text-xs font-semibold text-slate-400">
+            Đang tải thông tin gói hội viên của độc giả...
+          </div>
+          <div v-else-if="renewingReceipt" class="space-y-3 text-xs text-slate-600 font-medium">
+            <p><strong>Mã phiếu:</strong> {{ renewingReceipt.maPhieu }}</p>
+            <p><strong>Độc giả:</strong> {{ renewingReceipt.docGia?.hoLot }} {{ renewingReceipt.docGia?.ten }} ({{ renewingReceipt.docGia?.maDocGia }})</p>
+            <p><strong>Ngày mượn gốc:</strong> {{ formatDate(renewingReceipt.ngayMuon) }}</p>
+            <p><strong>Hạn trả hiện tại:</strong> {{ formatDate(renewingReceipt.ngayHenTra) }}</p>
+            <p><strong>Hạn trả tối đa cho phép:</strong> {{ formatDate(getMaxRenewDate(renewingReceipt)) }}</p>
+            
+            <div v-if="activeSub" class="space-y-1 pt-2">
+              <label class="block text-slate-700 font-bold">Chọn ngày hẹn trả mới:</label>
+              <input 
+                type="date" 
+                v-model="newDueDateStr"
+                :min="getMinRenewDateStr(renewingReceipt)"
+                :max="getMaxRenewDateStr(renewingReceipt)"
+                class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm font-semibold text-slate-700 focus:outline-none focus:border-primary"
+              />
+            </div>
+            <div v-else class="p-3 bg-red-50 rounded-xl border border-red-100 text-red-800 font-bold">
+              Độc giả này không có gói hội viên còn hiệu lực hoặc gói không hỗ trợ gia hạn online. Không thể thực hiện gia hạn phiếu mượn.
+            </div>
+
+            <!-- Phí phát sinh dự tính -->
+            <div v-if="activeSub && estimatedExtraFee > 0" class="p-3 bg-amber-50 rounded-xl border border-amber-100 text-amber-900 font-bold space-y-1">
+              <p>Phí gia hạn phát sinh thêm: {{ formatCurrency(estimatedExtraFee) }}</p>
+              <p class="text-[10px] text-slate-500 font-normal">
+                (Số ngày gia hạn thêm: {{ estimatedRenewDays }} ngày × {{ formatCurrency(activeSub.goiDocGia?.phiMuonSachGiay) }}/ngày/sách)
+              </p>
+            </div>
+            <div v-else-if="activeSub" class="p-3 bg-green-50 rounded-xl border border-green-100 text-green-800 font-bold">
+              Gia hạn miễn phí (giáo trình hoặc gói mượn miễn phí).
+            </div>
+          </div>
+
+          <div class="flex space-x-3 pt-2">
+            <button 
+              @click="isRenewModalOpen = false"
+              class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-extrabold py-2.5 rounded-xl text-xs transition-colors"
+            >
+              Hủy bỏ
+            </button>
+            <button 
+              @click="submitRenew"
+              :disabled="!activeSub || !newDueDateStr || isRenewSubmitting"
+              class="flex-1 bg-primary hover:bg-primary-dark text-white font-extrabold py-2.5 rounded-xl text-xs transition-all shadow-md disabled:opacity-50"
+            >
+              {{ isRenewSubmitting ? 'Đang xử lý...' : 'Xác nhận gia hạn' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </Teleport>
+
     <!-- Custom Confirm Dialog -->
     <ConfirmModal ref="confirmModal" />
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import api from '../../services/api';
 import { X as XIcon, Search } from '@lucide/vue';
 import ConfirmModal from '../../components/ConfirmModal.vue';
 import { useToastStore } from '../../stores/toast';
 
 const confirmModal = ref(null);
+
+const isRenewModalOpen = ref(false);
+const renewingReceipt = ref(null);
+const newDueDateStr = ref('');
+const isRenewSubmitting = ref(false);
+const activeSub = ref(null);
+const loadingSub = ref(false);
+
+const formatCurrency = (val) => {
+  return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(val || 0);
+};
+
+const fetchReaderSubscription = async (readerId) => {
+  activeSub.value = null;
+  loadingSub.value = true;
+  try {
+    const res = await api.get('/memberships/subscriptions');
+    if (res.success) {
+      const readerSub = res.data.find(sub => 
+        sub.docGia && 
+        String(sub.docGia._id) === String(readerId) && 
+        sub.trangThai === 'DANG_HIEU_LUC'
+      );
+      activeSub.value = readerSub || null;
+    }
+  } catch (error) {
+    console.error('Fetch reader subscription error:', error);
+  } finally {
+    loadingSub.value = false;
+  }
+};
+
+const getMinRenewDateStr = (receipt) => {
+  if (!receipt) return '';
+  const date = new Date(receipt.ngayHenTra);
+  date.setDate(date.getDate() + 1);
+  return date.toISOString().split('T')[0];
+};
+
+const getMaxRenewDate = (receipt) => {
+  if (!receipt || !activeSub.value || !activeSub.value.goiDocGia) return null;
+  const maxDays = activeSub.value.goiDocGia.soNgayMuonToiDa || 14;
+  const date = new Date(receipt.ngayMuon);
+  date.setDate(date.getDate() + maxDays);
+  return date;
+};
+
+const getMaxRenewDateStr = (receipt) => {
+  const maxDate = getMaxRenewDate(receipt);
+  return maxDate ? maxDate.toISOString().split('T')[0] : '';
+};
+
+const estimatedRenewDays = computed(() => {
+  if (!renewingReceipt.value || !newDueDateStr.value) return 0;
+  const newDate = new Date(newDueDateStr.value);
+  const oldDate = new Date(renewingReceipt.value.ngayHenTra);
+  newDate.setHours(12, 0, 0, 0);
+  oldDate.setHours(12, 0, 0, 0);
+  const diffTime = newDate.getTime() - oldDate.getTime();
+  const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+  return diffDays > 0 ? diffDays : 0;
+});
+
+const estimatedExtraFee = computed(() => {
+  if (!renewingReceipt.value || !newDueDateStr.value || !activeSub.value || !activeSub.value.goiDocGia) return 0;
+  const days = estimatedRenewDays.value;
+  const baseRate = activeSub.value.goiDocGia.phiMuonSachGiay || 0;
+  
+  let chargeableCount = 0;
+  for (const item of renewingReceipt.value.chiTietMuon) {
+    if (item.sach && item.sach.dauSach) {
+      const title = item.sach.dauSach;
+      const isGiaoTrinh = (title.tenSach || '').toLowerCase().includes('giáo trình') ||
+                           (title.tenSach || '').toLowerCase().includes('bài tập') ||
+                           (title.tenSach || '').toLowerCase().includes('sách giáo khoa') ||
+                           (title.theLoai || '').toString().toLowerCase().includes('giáo dục') ||
+                           (title.theLoai || '').toString().toLowerCase().includes('ngoại ngữ') ||
+                           (title.theLoai || '').toString().toLowerCase().includes('khoa học');
+      if (!isGiaoTrinh) {
+        chargeableCount++;
+      }
+    }
+  }
+  return days * baseRate * chargeableCount;
+});
+
+const openRenewModal = async (receipt) => {
+  renewingReceipt.value = receipt;
+  isRenewModalOpen.value = true;
+  await fetchReaderSubscription(receipt.docGia?._id);
+  
+  if (activeSub.value) {
+    const minDateStr = getMinRenewDateStr(receipt);
+    const maxDateStr = getMaxRenewDateStr(receipt);
+    
+    if (minDateStr > maxDateStr) {
+      toast.show('Phiếu mượn đã đạt thời hạn tối đa của gói hội viên, không thể gia hạn thêm!', 'error');
+      isRenewModalOpen.value = false;
+      return;
+    }
+    
+    newDueDateStr.value = minDateStr;
+  }
+};
+
+const submitRenew = async () => {
+  if (!renewingReceipt.value || !newDueDateStr.value) return;
+  isRenewSubmitting.value = true;
+  try {
+    const res = await api.post(`/borrowing/receipts/${renewingReceipt.value._id}/renew`, {
+      ngayHenTraMoi: newDueDateStr.value
+    });
+    if (res.success) {
+      toast.show('Gia hạn phiếu mượn thành công!', 'success');
+      isRenewModalOpen.value = false;
+      fetchReceipts();
+    }
+  } catch (error) {
+    toast.show(error.message || 'Lỗi khi gia hạn phiếu mượn', 'error');
+  } finally {
+    isRenewSubmitting.value = false;
+  }
+};
 const toast = useToastStore();
 const receipts = ref([]);
 const selectedStatus = ref('');

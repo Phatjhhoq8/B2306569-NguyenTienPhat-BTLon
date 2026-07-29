@@ -44,14 +44,23 @@
       <aside class="lg:col-span-4 space-y-6">
         <!-- Personal Info Card -->
         <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm space-y-4">
-          <div class="flex items-center space-x-3">
-            <div class="bg-primary text-white h-12 w-12 rounded-full flex items-center justify-center font-bold text-lg">
-              {{ authStore.user?.ten?.charAt(0) }}
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+              <div class="bg-primary text-white h-12 w-12 rounded-full flex items-center justify-center font-bold text-lg">
+                {{ authStore.user?.ten?.charAt(0) }}
+              </div>
+              <div>
+                <h3 class="font-bold text-slate-800">{{ authStore.user?.hoLot }} {{ authStore.user?.ten }}</h3>
+                <span class="text-xs font-semibold text-slate-400">ĐỘC GIẢ ({{ authStore.user?.maDocGia }})</span>
+              </div>
             </div>
-            <div>
-              <h3 class="font-bold text-slate-800">{{ authStore.user?.hoLot }} {{ authStore.user?.ten }}</h3>
-              <span class="text-xs font-semibold text-slate-400">ĐỘC GIẢ ({{ authStore.user?.maDocGia }})</span>
-            </div>
+            <button 
+              @click="openEditProfileModal"
+              class="text-primary hover:text-primary-dark p-1.5 rounded-lg hover:bg-slate-50 transition-colors"
+              title="Chỉnh sửa hồ sơ"
+            >
+              <Edit class="h-4 w-4" />
+            </button>
           </div>
 
           <hr class="border-slate-100" />
@@ -176,12 +185,28 @@
                   <span class="text-xs text-slate-400 font-bold">MÃ PHIẾU: {{ receipt.maPhieu }}</span>
                   <span class="text-[10px] text-slate-500 block">Mượn ngày: {{ formatDate(receipt.ngayMuon) }} | Hẹn trả: {{ formatDate(receipt.ngayHenTra) }}</span>
                 </div>
-                <span 
-                  class="text-xs font-bold px-3 py-1 rounded-full uppercase"
-                  :class="getReceiptStatusClass(receipt.trangThai)"
-                >
-                  {{ getReceiptStatusText(receipt.trangThai) }}
-                </span>
+                <div class="flex items-center gap-2">
+                  <span 
+                    class="text-xs font-bold px-3 py-1 rounded-full uppercase"
+                    :class="getReceiptStatusClass(receipt.trangThai)"
+                  >
+                    {{ getReceiptStatusText(receipt.trangThai) }}
+                  </span>
+                  <button 
+                    v-if="['CHO_DUYET', 'SAN_SANG'].includes(receipt.trangThai)"
+                    @click="cancelBorrow(receipt)"
+                    class="bg-red-50 hover:bg-red-100 text-red-600 font-bold text-[10px] py-1 px-2.5 rounded-lg border border-red-200 transition-colors shadow-sm"
+                  >
+                    Hủy yêu cầu
+                  </button>
+                  <button 
+                    v-if="['DANG_MUON', 'QUA_HAN'].includes(receipt.trangThai) && activeSub?.goiDocGia?.choPhepGiaHanOnline"
+                    @click="openRenewModal(receipt)"
+                    class="bg-blue-50 hover:bg-blue-100 text-primary font-bold text-[10px] py-1 px-2.5 rounded-lg border border-blue-200 transition-colors shadow-sm"
+                  >
+                    Gia hạn
+                  </button>
+                </div>
               </div>
 
               <!-- Books inside Receipt -->
@@ -314,6 +339,167 @@
         </div>
       </div>
     </div>
+    <!-- Renew Date Modal -->
+    <Teleport to="body">
+      <div 
+        v-if="isRenewModalOpen" 
+        class="fixed inset-0 bg-slate-900/60 z-[99999] flex items-center justify-center p-4 backdrop-blur-sm transition-all duration-300"
+      >
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl border border-slate-150 transform scale-100 transition-all duration-300">
+          <div class="flex items-center space-x-3 text-primary">
+            <div class="bg-blue-50 p-2.5 rounded-xl">
+              <Calendar class="h-6 w-6 text-primary" />
+            </div>
+            <h3 class="font-sans font-extrabold text-slate-900 text-sm uppercase tracking-wide">
+              Gia hạn phiếu mượn
+            </h3>
+          </div>
+
+          <div class="space-y-3 text-xs text-slate-600 font-medium">
+            <p><strong>Mã phiếu:</strong> {{ renewingReceipt?.maPhieu }}</p>
+            <p><strong>Ngày mượn gốc:</strong> {{ formatDate(renewingReceipt?.ngayMuon) }}</p>
+            <p><strong>Hạn trả hiện tại:</strong> {{ formatDate(renewingReceipt?.ngayHenTra) }}</p>
+            <p><strong>Hạn trả tối đa cho phép:</strong> {{ formatDate(getMaxRenewDate(renewingReceipt)) }}</p>
+            
+            <div class="space-y-1 pt-2">
+              <label class="block text-slate-700 font-bold">Chọn ngày hẹn trả mới:</label>
+              <input 
+                type="date" 
+                v-model="newDueDateStr"
+                :min="getMinRenewDateStr(renewingReceipt)"
+                :max="getMaxRenewDateStr(renewingReceipt)"
+                class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm font-semibold text-slate-700 focus:outline-none focus:border-primary"
+              />
+            </div>
+
+            <!-- Phí phát sinh dự tính -->
+            <div v-if="estimatedExtraFee > 0" class="p-3 bg-amber-50 rounded-xl border border-amber-100 text-amber-900 font-bold space-y-1">
+              <p>Phí gia hạn phát sinh thêm: {{ formatCurrency(estimatedExtraFee) }}</p>
+              <p class="text-[10px] text-slate-500 font-normal">
+                (Số ngày gia hạn thêm: {{ estimatedRenewDays }} ngày × {{ formatCurrency(activeSub?.goiDocGia?.phiMuonSachGiay) }}/ngày/sách)
+              </p>
+            </div>
+            <div v-else class="p-3 bg-green-50 rounded-xl border border-green-100 text-green-800 font-bold">
+              Gia hạn miễn phí (giáo trình hoặc gói mượn miễn phí).
+            </div>
+          </div>
+
+          <div class="flex space-x-3 pt-2">
+            <button 
+              @click="isRenewModalOpen = false"
+              class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-extrabold py-2.5 rounded-xl text-xs transition-colors"
+            >
+              Hủy bỏ
+            </button>
+            <button 
+              @click="submitRenew"
+              :disabled="!newDueDateStr || isRenewSubmitting"
+              class="flex-1 bg-primary hover:bg-primary-dark text-white font-extrabold py-2.5 rounded-xl text-xs transition-all shadow-md disabled:opacity-50"
+            >
+              {{ isRenewSubmitting ? 'Đang xử lý...' : 'Xác nhận gia hạn' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </Teleport>
+
+    <!-- Edit Profile Modal -->
+    <Teleport to="body">
+      <div 
+        v-if="isEditProfileModalOpen" 
+        class="fixed inset-0 bg-slate-900/65 z-[9999] flex items-center justify-center p-4 backdrop-blur-sm transition-all duration-300"
+        @click.self="isEditProfileModalOpen = false"
+      >
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 space-y-4 shadow-2xl border border-slate-150 transform scale-100 transition-all duration-300">
+          <div class="flex items-center space-x-3 text-primary">
+            <div class="bg-blue-50 p-2.5 rounded-xl">
+              <span class="text-xl">👤</span>
+            </div>
+            <h3 class="font-sans font-extrabold text-slate-900 text-sm uppercase tracking-wide">
+              Chỉnh sửa thông tin cá nhân
+            </h3>
+          </div>
+
+          <div class="space-y-3 text-xs">
+            <div class="grid grid-cols-2 gap-3">
+              <div class="space-y-1">
+                <label class="block text-slate-600 font-bold">Họ lót <span class="text-red-500">*</span>:</label>
+                <input 
+                  type="text" 
+                  v-model="editForm.hoLot"
+                  class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm font-semibold text-slate-700 focus:outline-none focus:border-primary"
+                />
+              </div>
+              <div class="space-y-1">
+                <label class="block text-slate-600 font-bold">Tên <span class="text-red-500">*</span>:</label>
+                <input 
+                  type="text" 
+                  v-model="editForm.ten"
+                  class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm font-semibold text-slate-700 focus:outline-none focus:border-primary"
+                />
+              </div>
+            </div>
+
+            <div class="space-y-1">
+              <label class="block text-slate-600 font-bold">Số điện thoại <span class="text-red-500">*</span>:</label>
+              <input 
+                type="text" 
+                v-model="editForm.dienThoai"
+                class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm font-semibold text-slate-700 focus:outline-none focus:border-primary"
+              />
+            </div>
+
+            <div class="space-y-1">
+              <label class="block text-slate-600 font-bold">Địa chỉ <span class="text-red-500">*</span>:</label>
+              <input 
+                type="text" 
+                v-model="editForm.diachi"
+                class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm font-semibold text-slate-700 focus:outline-none focus:border-primary"
+              />
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div class="space-y-1">
+                <label class="block text-slate-600 font-bold">Ngày sinh:</label>
+                <input 
+                  type="date" 
+                  v-model="editForm.ngaySinh"
+                  class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm font-semibold text-slate-700 focus:outline-none focus:border-primary"
+                />
+              </div>
+              <div class="space-y-1">
+                <label class="block text-slate-600 font-bold">Giới tính:</label>
+                <select 
+                  v-model="editForm.gioiTinh"
+                  class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm font-semibold text-slate-700 focus:outline-none focus:border-primary"
+                >
+                  <option value="NAM">Nam</option>
+                  <option value="NU">Nữ</option>
+                  <option value="KHAC">Khác</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex space-x-3 pt-2">
+            <button 
+              @click="isEditProfileModalOpen = false"
+              class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-extrabold py-2.5 rounded-xl text-xs transition-colors"
+            >
+              Hủy bỏ
+            </button>
+            <button 
+              @click="submitEditProfile"
+              :disabled="isSubmittingProfile"
+              class="flex-1 bg-primary hover:bg-primary-dark text-white font-extrabold py-2.5 rounded-xl text-xs transition-all shadow-md disabled:opacity-50"
+            >
+              {{ isSubmittingProfile ? 'Đang cập nhật...' : 'Lưu thay đổi' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </Teleport>
+
     <!-- Custom Confirm Dialog -->
     <ConfirmModal ref="confirmModal" />
   </div>
@@ -323,13 +509,151 @@
 import { ref, computed, onMounted } from 'vue';
 import { useAuthStore } from '../stores/auth';
 import api from '../services/api';
-import { User, Mail, Phone, MapPin, Calendar, Award, BookOpen, AlertTriangle, Banknote } from '@lucide/vue';
+import { User, Mail, Phone, MapPin, Calendar, Award, BookOpen, AlertTriangle, Banknote, Edit } from '@lucide/vue';
 import { useToastStore } from '../stores/toast';
 import ConfirmModal from '../components/ConfirmModal.vue';
 
 const authStore = useAuthStore();
 const toast = useToastStore();
 const confirmModal = ref(null);
+
+// Edit Profile logic
+const isEditProfileModalOpen = ref(false);
+const isSubmittingProfile = ref(false);
+const editForm = ref({
+  hoLot: '',
+  ten: '',
+  dienThoai: '',
+  diachi: '',
+  ngaySinh: '',
+  gioiTinh: 'NAM'
+});
+
+const openEditProfileModal = () => {
+  if (authStore.user) {
+    editForm.value = {
+      hoLot: authStore.user.hoLot || '',
+      ten: authStore.user.ten || '',
+      dienThoai: authStore.user.dienThoai || '',
+      diachi: authStore.user.diachi || '',
+      ngaySinh: authStore.user.ngaySinh ? authStore.user.ngaySinh.split('T')[0] : '',
+      gioiTinh: authStore.user.gioiTinh || 'NAM'
+    };
+    isEditProfileModalOpen.value = true;
+  }
+};
+
+const submitEditProfile = async () => {
+  if (!editForm.value.hoLot || !editForm.value.ten || !editForm.value.dienThoai || !editForm.value.diachi) {
+    toast.show('Vui lòng nhập đầy đủ thông tin bắt buộc!', 'error');
+    return;
+  }
+  isSubmittingProfile.value = true;
+  try {
+    const res = await api.put('/users/me', editForm.value);
+    if (res.success) {
+      toast.show('Cập nhật thông tin cá nhân thành công!', 'success');
+      isEditProfileModalOpen.value = false;
+      await authStore.fetchUser(); // Cập nhật lại thông tin hiển thị trên toàn trang
+    }
+  } catch (error) {
+    toast.show(error.message || 'Lỗi khi cập nhật thông tin cá nhân', 'error');
+  } finally {
+    isSubmittingProfile.value = false;
+  }
+};
+
+const isRenewModalOpen = ref(false);
+const renewingReceipt = ref(null);
+const newDueDateStr = ref('');
+const isRenewSubmitting = ref(false);
+
+const getMinRenewDateStr = (receipt) => {
+  if (!receipt) return '';
+  const date = new Date(receipt.ngayHenTra);
+  date.setDate(date.getDate() + 1);
+  return date.toISOString().split('T')[0];
+};
+
+const getMaxRenewDate = (receipt) => {
+  if (!receipt || !activeSub.value || !activeSub.value.goiDocGia) return null;
+  const maxDays = activeSub.value.goiDocGia.soNgayMuonToiDa || 14;
+  const date = new Date(receipt.ngayMuon);
+  date.setDate(date.getDate() + maxDays);
+  return date;
+};
+
+const getMaxRenewDateStr = (receipt) => {
+  const maxDate = getMaxRenewDate(receipt);
+  return maxDate ? maxDate.toISOString().split('T')[0] : '';
+};
+
+const estimatedRenewDays = computed(() => {
+  if (!renewingReceipt.value || !newDueDateStr.value) return 0;
+  const newDate = new Date(newDueDateStr.value);
+  const oldDate = new Date(renewingReceipt.value.ngayHenTra);
+  newDate.setHours(12, 0, 0, 0);
+  oldDate.setHours(12, 0, 0, 0);
+  const diffTime = newDate.getTime() - oldDate.getTime();
+  const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+  return diffDays > 0 ? diffDays : 0;
+});
+
+const estimatedExtraFee = computed(() => {
+  if (!renewingReceipt.value || !newDueDateStr.value || !activeSub.value || !activeSub.value.goiDocGia) return 0;
+  const days = estimatedRenewDays.value;
+  const baseRate = activeSub.value.goiDocGia.phiMuonSachGiay || 0;
+  
+  let chargeableCount = 0;
+  for (const item of renewingReceipt.value.chiTietMuon) {
+    if (item.sach && item.sach.dauSach) {
+      const title = item.sach.dauSach;
+      const isGiaoTrinh = (title.tenSach || '').toLowerCase().includes('giáo trình') ||
+                           (title.tenSach || '').toLowerCase().includes('bài tập') ||
+                           (title.tenSach || '').toLowerCase().includes('sách giáo khoa') ||
+                           (title.theLoai || '').toString().toLowerCase().includes('giáo dục') ||
+                           (title.theLoai || '').toString().toLowerCase().includes('ngoại ngữ') ||
+                           (title.theLoai || '').toString().toLowerCase().includes('khoa học');
+      if (!isGiaoTrinh) {
+        chargeableCount++;
+      }
+    }
+  }
+  return days * baseRate * chargeableCount;
+});
+
+const openRenewModal = (receipt) => {
+  renewingReceipt.value = receipt;
+  const minDateStr = getMinRenewDateStr(receipt);
+  const maxDateStr = getMaxRenewDateStr(receipt);
+  
+  if (minDateStr > maxDateStr) {
+    toast.show('Phiếu mượn đã đạt thời hạn tối đa của gói hội viên, không thể gia hạn thêm!', 'error');
+    return;
+  }
+  
+  newDueDateStr.value = minDateStr;
+  isRenewModalOpen.value = true;
+};
+
+const submitRenew = async () => {
+  if (!renewingReceipt.value || !newDueDateStr.value) return;
+  isRenewSubmitting.value = true;
+  try {
+    const res = await api.post(`/borrowing/receipts/${renewingReceipt.value._id}/renew`, {
+      ngayHenTraMoi: newDueDateStr.value
+    });
+    if (res.success) {
+      toast.show('Gia hạn phiếu mượn thành công!', 'success');
+      isRenewModalOpen.value = false;
+      loadData();
+    }
+  } catch (error) {
+    toast.show(error.message || 'Lỗi khi gia hạn phiếu mượn', 'error');
+  } finally {
+    isRenewSubmitting.value = false;
+  }
+};
 
 const activeSub = ref(null);
 const receipts = ref([]);
@@ -533,6 +857,26 @@ const payPenalty = async (ticket) => {
     }
   } catch (error) {
     toast.show(error.message || 'Lỗi khi thanh toán phạt', 'error');
+  }
+};
+
+const cancelBorrow = async (receipt) => {
+  const ok = await confirmModal.value.ask({
+    title: 'Xác nhận hủy phiếu mượn',
+    message: `Bạn có chắc chắn muốn hủy phiếu mượn ${receipt.maPhieu}? Sách đã đăng ký mượn sẽ được giải phóng.`,
+    confirmText: 'Xác nhận hủy',
+    cancelText: 'Quay lại'
+  });
+  if (!ok) return;
+
+  try {
+    const res = await api.post(`/borrowing/receipts/${receipt._id}/cancel`);
+    if (res.success) {
+      toast.show('Đã hủy phiếu mượn thành công!', 'success');
+      loadData();
+    }
+  } catch (error) {
+    toast.show(error.message || 'Lỗi khi hủy phiếu mượn', 'error');
   }
 };
 

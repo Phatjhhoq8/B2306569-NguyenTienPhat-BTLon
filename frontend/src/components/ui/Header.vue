@@ -19,6 +19,14 @@
 
         <!-- Right Menu Controls -->
         <div class="flex items-center space-x-4">
+          <button
+            @click="chatStore.toggleChat"
+            class="relative p-2 hover:bg-primary-dark rounded-full transition-colors group"
+            title="Mở trợ lý AI"
+          >
+            <Bot class="h-6 w-6 text-white group-hover:text-secondary transition-colors" />
+          </button>
+
           <!-- Cart Link (Chỉ độc giả đã đăng nhập mới thấy) -->
           <router-link 
             v-if="authStore.isAuthenticated && authStore.isReader"
@@ -186,12 +194,14 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '../../stores/auth';
 import { useCartStore } from '../../stores/cart';
-import { Eye, BookOpen, ShoppingBag, User, LogOut, LayoutDashboard, UserCheck, Menu, X } from '@lucide/vue';
+import { useChatStore } from '../../stores/chat';
+import { Eye, ShoppingBag, User, LogOut, LayoutDashboard, UserCheck, Menu, X, Bot } from '@lucide/vue';
 import ConfirmModal from '../ConfirmModal.vue';
 
 const router = useRouter();
 const authStore = useAuthStore();
 const cartStore = useCartStore();
+const chatStore = useChatStore();
 
 const isMobileMenuOpen = ref(false);
 const confirmModal = ref(null);
@@ -206,6 +216,7 @@ const handleLogout = async () => {
   if (!ok) return;
 
   await authStore.logout();
+  chatStore.clearSession();
   cartStore.clearCart(); // Xóa sạch giỏ mượn khi đăng xuất
   router.push('/login');
 };

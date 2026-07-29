@@ -13,6 +13,8 @@
     
     <!-- Toast Notification Global -->
     <ToastNotification />
+
+    <ChatWidget v-if="!isAdminRoute" />
   </div>
 </template>
 
@@ -22,6 +24,7 @@ import { useRoute } from 'vue-router';
 import Header from './components/ui/Header.vue';
 import Footer from './components/ui/Footer.vue';
 import ToastNotification from './components/ToastNotification.vue';
+import ChatWidget from './components/ui/ChatWidget.vue';
 
 const route = useRoute();
 const isAdminRoute = computed(() => route.path.startsWith('/admin'));

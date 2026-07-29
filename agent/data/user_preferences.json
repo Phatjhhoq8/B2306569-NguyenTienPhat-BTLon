@@ -1,0 +1,31 @@
+{
+  "web_user_01": {
+    "favorite_categories": [],
+    "favorite_authors": [],
+    "favorite_keywords": [
+      "chào",
+      "bạn",
+      "tôi",
+      "muốn",
+      "kiếm",
+      "sách",
+      "con",
+      "mèo",
+      "máy",
+      "màu",
+      "xanh",
+      "túi",
+      "thần",
+      "kuf",
+      "doramon"
+    ],
+    "borrowed_book_ids": [],
+    "recent_queries": [
+      "hi",
+      "chào bạn",
+      "tôi muốn kiếm sách gì mà có con mèo máy màu xanh có túi thần kuf",
+      "con doramon gì đó"
+    ],
+    "updated_at": "2026-07-29T08:41:48.232175+00:00"
+  }
+}

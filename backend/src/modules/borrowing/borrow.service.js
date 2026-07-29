@@ -114,11 +114,41 @@ const renewBorrowReceipt = async (receiptId, newDueDate) => withTransaction(asyn
   }).populate('goiDocGia').session(session);
 
   if (!activeSub || !activeSub.goiDocGia) throw new Error('Độc giả không có gói hội viên còn hiệu lực để gia hạn');
+  
+  if (!activeSub.goiDocGia.choPhepGiaHanOnline) {
+    throw new Error('Gói hội viên của bạn không hỗ trợ gia hạn trực tuyến');
+  }
 
   const borrowDays = Math.ceil((dueDate.getTime() - new Date(receipt.ngayMuon).getTime()) / (1000 * 60 * 60 * 24));
   if (borrowDays > activeSub.goiDocGia.soNgayMuonToiDa) {
     throw new Error(`Ngày gia hạn vượt quá số ngày mượn tối đa của gói thẻ (${activeSub.goiDocGia.soNgayMuonToiDa} ngày)`);
   }
+
+  // Tính phí gia hạn phát sinh thêm
+  const extraDays = Math.round((dueDate.getTime() - new Date(receipt.ngayHenTra).getTime()) / (1000 * 60 * 60 * 24));
+  const basePhiMuonPerBook = activeSub.goiDocGia.phiMuonSachGiay !== undefined ? activeSub.goiDocGia.phiMuonSachGiay : 0;
+  
+  const BookCopy = mongoose.model('BookCopy');
+  let chargeableBooksCount = 0;
+  for (const item of receipt.chiTietMuon) {
+    const copyCheck = await BookCopy.findById(item.sach).populate('dauSach').session(session);
+    if (copyCheck && copyCheck.dauSach) {
+      const title = copyCheck.dauSach;
+      const isGiaoTrinh = (title.tenSach || '').toLowerCase().includes('giáo trình') ||
+                           (title.tenSach || '').toLowerCase().includes('bài tập') ||
+                           (title.tenSach || '').toLowerCase().includes('sách giáo khoa') ||
+                           (title.theLoai || '').toString().toLowerCase().includes('giáo dục') ||
+                           (title.theLoai || '').toString().toLowerCase().includes('ngoại ngữ') ||
+                           (title.theLoai || '').toString().toLowerCase().includes('khoa học');
+      if (!isGiaoTrinh) {
+        chargeableBooksCount++;
+      }
+    }
+  }
+
+  const extraFee = extraDays * basePhiMuonPerBook * chargeableBooksCount;
+  receipt.phiMuon = (receipt.phiMuon || 0) + extraFee;
+  receipt.tongTienThanhToan = (receipt.tongTienThanhToan || 0) + extraFee;
 
   receipt.ngayHenTra = dueDate;
   if (receipt.trangThai === 'QUA_HAN') receipt.trangThai = 'DANG_MUON';

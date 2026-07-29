@@ -107,7 +107,9 @@ test.describe('Borrowing & Penalties API Tests', () => {
       soNgayHieuLuc: 30,
       soSachToiDa: 5,
       soNgayMuonToiDa: 14,
-      mienTienCoc: true
+      mienTienCoc: true,
+      choPhepGiaHanOnline: true,
+      phiMuonSachGiay: 2000
     });
 
     const reader = await Reader.create({
@@ -189,6 +191,25 @@ test.describe('Borrowing & Penalties API Tests', () => {
       assert.strictEqual(res.body.success, true);
       assert.ok(Array.isArray(res.body.data));
       assert.ok(res.body.data.length > 0);
+    });
+
+    test('Độc giả nên gia hạn phiếu mượn thành công và tính thêm phí mượn', async () => {
+      const ngayHenTraMoi = new Date(Date.now() + 10 * 24 * 60 * 60 * 1000); // Gia hạn thành 10 ngày (thêm 3 ngày)
+      const res = await makeRequest(`/api/borrowing/receipts/${createdReceiptId}/renew`, {
+        method: 'POST',
+        headers: { Cookie: readerCookie },
+        body: { ngayHenTraMoi }
+      });
+
+      assert.strictEqual(res.status, 200);
+      assert.strictEqual(res.body.success, true);
+      
+      const updatedDate = new Date(res.body.data.ngayHenTra);
+      assert.strictEqual(updatedDate.getDate(), ngayHenTraMoi.getDate());
+
+      // Phí mượn gốc: 2,000 * 7 ngày = 14,000. Phí gia hạn thêm: 2,000 * 3 ngày = 6,000. Tổng: 20,000.
+      assert.strictEqual(res.body.data.phiMuon, 20000);
+      assert.strictEqual(res.body.data.tongTienThanhToan, 20000);
     });
 
     test('Thủ thư nên ghi nhận trả sách thành công', async () => {

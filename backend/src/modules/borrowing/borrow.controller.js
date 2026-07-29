@@ -215,8 +215,18 @@ const returnReceipt = async (req, res, next) => {
 const cancelReceipt = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const receipt = await borrowService.cancelBorrowReceipt(id);
-    return resultResponse.ok(res, receipt);
+    const receipt = await BorrowReceipt.findById(id);
+    if (!receipt) {
+      return resultResponse.err(res, 'Không tìm thấy phiếu mượn', 404);
+    }
+
+    const isReader = req.user && req.user.role === 'READER';
+    if (isReader && String(receipt.docGia) !== String(req.user._id)) {
+      return resultResponse.err(res, 'Bạn không có quyền hủy phiếu mượn này', 403);
+    }
+
+    const cancelled = await borrowService.cancelBorrowReceipt(id);
+    return resultResponse.ok(res, cancelled);
   } catch (error) {
     next(error);
   }

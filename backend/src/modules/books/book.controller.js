@@ -109,9 +109,19 @@ const getBooks = async (req, res, next) => {
     const { q, category, author, publisher, status, page = 1, limit = 10 } = req.query;
     const filter = { isDeleted: false };
     if (q) {
+      const regex = { $regex: String(q), $options: 'i' };
+      const [matchedAuthors, matchedCategories, matchedPublishers] = await Promise.all([
+        Author.find({ tenTacGia: regex }).select('_id'),
+        Category.find({ tenTheLoai: regex }).select('_id'),
+        Publisher.find({ tenNXB: regex }).select('_id')
+      ]);
       filter.$or = [
-        { tenSach: { $regex: String(q), $options: 'i' } },
-        { maDauSach: { $regex: String(q), $options: 'i' } }
+        { tenSach: regex },
+        { maDauSach: regex },
+        { moTa: regex },
+        { tacGia: { $in: matchedAuthors.map(a => a._id) } },
+        { theLoai: { $in: matchedCategories.map(c => c._id) } },
+        { nhaXuatBan: { $in: matchedPublishers.map(p => p._id) } }
       ];
     }
     if (category) filter.theLoai = category;

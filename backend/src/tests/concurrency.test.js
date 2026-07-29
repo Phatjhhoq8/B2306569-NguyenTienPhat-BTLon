@@ -1064,4 +1064,282 @@ test.describe('Backend Core & Concurrency Safety Tests', () => {
     assert.strictEqual(penaltiesFinal.length, 2, 'Phải có đúng 2 phiếu phạt (cuốn 2 + cuốn 3 trả trễ hạn)');
   });
 
+  test('20. Kiểm tra chốt chặn giới hạn mượn sách khi có phiếu chờ duyệt (pending)', async () => {
+    const nxb = await Publisher.create({ maNXB: await nextCode('publisher'), tenNXB: 'NXB Test 20', soDienThoai: '0977000020' });
+    const tacGia = await Author.create({ maTacGia: await nextCode('author'), tenTacGia: 'Tác Giả Test 20' });
+    const theLoai = await Category.create({ maTheLoai: await nextCode('category'), tenTheLoai: 'Thể Loại Test 20' });
+    const bookTitle = await BookTitle.create({
+      tenSach: 'Sách Test 20',
+      tacGia: [tacGia._id],
+      nhaXuatBan: nxb._id,
+      theLoai: theLoai._id,
+      namSanXuat: 2024,
+      tongSoLuong: 5,
+      giaBia: 50000,
+      soLuongKhaDung: 5
+    });
+    const copies = [];
+    for (let i = 0; i < 5; i++) {
+      const copy = await BookCopy.create({
+        dauSach: bookTitle._id,
+        viTriKe: 'KE-A1',
+        tinhTrang: 'CHO_MUON'
+      });
+      copies.push(copy);
+    }
+
+    const readerPendingTest = await Reader.create({
+      hoLot: 'Nguyễn Văn',
+      ten: 'Chờ Duyệt',
+      email: `pending_test_${Date.now()}_${Math.random()}@library.local`,
+      matKhau: 'reader123',
+      ngaySinh: new Date('1997-01-01'),
+      diachi: 'Đồng Nai',
+      dienThoai: '0977' + Math.floor(100000 + Math.random() * 900000)
+    });
+
+    const limitPlan = await MembershipPlan.create({
+      maGoi: await nextCode('membershipPlan'),
+      tenGoi: `Plan Test 20 ${Date.now()}`,
+      giaTien: 0,
+      soNgayHieuLuc: 30,
+      soSachToiDa: 2,
+      soNgayMuonToiDa: 7,
+      mienTienCoc: true,
+      phiPhatTreHan: 5000,
+      phiMuonSachGiay: 0,
+      tienDatCoc: 0
+    });
+
+    await Subscription.create({
+      maDangKy: await nextCode('subscription'),
+      docGia: readerPendingTest._id,
+      goiDocGia: limitPlan._id,
+      ngayBatDau: new Date(),
+      ngayKetThuc: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+      tongTien: 0,
+      trangThai: 'DANG_HIEU_LUC'
+    });
+
+    // Tạo phiếu mượn 1 (1 cuốn) -> CHO_DUYET -> Phải thành công
+    const borrowPending1 = new BorrowReceipt({
+      docGia: readerPendingTest._id,
+      chiTietMuon: [
+        { sach: copies[0]._id, tinhTrangLucMuon: 'Tốt' }
+      ],
+      ngayHenTra: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      trangThai: 'CHO_DUYET'
+    });
+    await borrowPending1.save();
+
+    // Tạo phiếu mượn 2 (2 cuốn) -> CHO_DUYET -> Phải thất bại do tổng là 3 vượt giới hạn 2
+    const borrowPending2 = new BorrowReceipt({
+      docGia: readerPendingTest._id,
+      chiTietMuon: [
+        { sach: copies[1]._id, tinhTrangLucMuon: 'Tốt' },
+        { sach: copies[2]._id, tinhTrangLucMuon: 'Tốt' }
+      ],
+      ngayHenTra: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      trangThai: 'CHO_DUYET'
+    });
+
+    await assert.rejects(
+      borrowPending2.save(),
+      /vượt quá giới hạn/i,
+      'Phải ném ra lỗi vượt quá giới hạn vì tính cả phiếu đang chờ duyệt'
+    );
+  });
+
+  test('21. Kiểm tra chốt chặn khi duyệt phiếu mượn có tổng số sách vượt giới hạn', async () => {
+    const nxb = await Publisher.create({ maNXB: await nextCode('publisher'), tenNXB: 'NXB Test 21', soDienThoai: '0977000021' });
+    const tacGia = await Author.create({ maTacGia: await nextCode('author'), tenTacGia: 'Tác Giả Test 21' });
+    const theLoai = await Category.create({ maTheLoai: await nextCode('category'), tenTheLoai: 'Thể Loại Test 21' });
+    const bookTitle = await BookTitle.create({
+      tenSach: 'Sách Test 21',
+      tacGia: [tacGia._id],
+      nhaXuatBan: nxb._id,
+      theLoai: theLoai._id,
+      namSanXuat: 2024,
+      tongSoLuong: 5,
+      giaBia: 50000,
+      soLuongKhaDung: 5
+    });
+    const copies = [];
+    for (let i = 0; i < 5; i++) {
+      const copy = await BookCopy.create({
+        dauSach: bookTitle._id,
+        viTriKe: 'KE-A1',
+        tinhTrang: 'CHO_MUON'
+      });
+      copies.push(copy);
+    }
+
+    const readerApproveTest = await Reader.create({
+      hoLot: 'Trần Văn',
+      ten: 'Duyệt Trễ',
+      email: `approve_test_${Date.now()}_${Math.random()}@library.local`,
+      matKhau: 'reader123',
+      ngaySinh: new Date('1997-01-01'),
+      diachi: 'Đồng Nai',
+      dienThoai: '0977' + Math.floor(100000 + Math.random() * 900000)
+    });
+
+    const limitPlan = await MembershipPlan.create({
+      maGoi: await nextCode('membershipPlan'),
+      tenGoi: `Plan Test 21 ${Date.now()}`,
+      giaTien: 0,
+      soNgayHieuLuc: 30,
+      soSachToiDa: 2,
+      soNgayMuonToiDa: 7,
+      mienTienCoc: true,
+      phiPhatTreHan: 5000,
+      phiMuonSachGiay: 0,
+      tienDatCoc: 0
+    });
+
+    await Subscription.create({
+      maDangKy: await nextCode('subscription'),
+      docGia: readerApproveTest._id,
+      goiDocGia: limitPlan._id,
+      ngayBatDau: new Date(),
+      ngayKetThuc: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+      tongTien: 0,
+      trangThai: 'DANG_HIEU_LUC'
+    });
+
+    // Tạo phiếu mượn 1 (1 cuốn) -> CHO_DUYET
+    const b1 = new BorrowReceipt({
+      docGia: readerApproveTest._id,
+      chiTietMuon: [
+        { sach: copies[0]._id, tinhTrangLucMuon: 'Tốt' }
+      ],
+      ngayHenTra: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      trangThai: 'CHO_DUYET'
+    });
+    await b1.save();
+
+    // Tạo phiếu mượn 2 (1 cuốn) -> CHO_DUYET
+    const b2 = new BorrowReceipt({
+      docGia: readerApproveTest._id,
+      chiTietMuon: [
+        { sach: copies[1]._id, tinhTrangLucMuon: 'Tốt' }
+      ],
+      ngayHenTra: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      trangThai: 'CHO_DUYET'
+    });
+    await b2.save(); // Tổng là 2 cuốn (bằng giới hạn)
+    
+    // Mượn thêm phiếu b3 (1 cuốn nữa) -> Vượt giới hạn.
+    // Lách tạm bằng cách tạm chuyển b1 sang HUY trong DB
+    await BorrowReceipt.updateOne({ _id: b1._id }, { $set: { trangThai: 'HUY' } });
+    
+    const b3 = new BorrowReceipt({
+      docGia: readerApproveTest._id,
+      chiTietMuon: [
+        { sach: copies[2]._id, tinhTrangLucMuon: 'Tốt' }
+      ],
+      ngayHenTra: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      trangThai: 'CHO_DUYET'
+    });
+    await b3.save(); // Lưu b3 thành công vì lúc này b1 ở trạng thái HUY (chỉ tính b2: 1 + 1 = 2 <= 2)
+
+    // Khôi phục b1 về CHO_DUYET trực tiếp trong DB
+    await BorrowReceipt.updateOne({ _id: b1._id }, { $set: { trangThai: 'CHO_DUYET' } });
+
+    // Thủ thư duyệt b1 -> SAN_SANG -> Thành công
+    b1.trangThai = 'SAN_SANG';
+    await b1.save();
+
+    // Thủ thư duyệt b2 -> SAN_SANG -> Thành công
+    b2.trangThai = 'SAN_SANG';
+    await b2.save();
+
+    // Thủ thư duyệt b3 -> SAN_SANG -> Thất bại do tổng đã duyệt là 2 + 1 = 3 > 2
+    b3.trangThai = 'SAN_SANG';
+    await assert.rejects(
+      b3.save(),
+      /vượt quá giới hạn/i,
+      'Duyệt b3 phải thất bại vì tổng số sách mượn thực tế vượt quá giới hạn tối đa'
+    );
+  });
+
+  test('22. Kiểm tra tính phí mượn nhân theo ngày mượn thực tế khi bàn giao sách', async () => {
+    const nxb = await Publisher.create({ maNXB: await nextCode('publisher'), tenNXB: 'NXB Test 22', soDienThoai: '0977000022' });
+    const tacGia = await Author.create({ maTacGia: await nextCode('author'), tenTacGia: 'Tác Giả Test 22' });
+    const theLoai = await Category.create({ maTheLoai: await nextCode('category'), tenTheLoai: 'Thể Loại Test 22' });
+    const bookTitle = await BookTitle.create({
+      tenSach: 'Sách Test 22',
+      tacGia: [tacGia._id],
+      nhaXuatBan: nxb._id,
+      theLoai: theLoai._id,
+      namSanXuat: 2024,
+      tongSoLuong: 5,
+      giaBia: 50000,
+      soLuongKhaDung: 5
+    });
+    const copies = [];
+    for (let i = 0; i < 5; i++) {
+      const copy = await BookCopy.create({
+        dauSach: bookTitle._id,
+        viTriKe: 'KE-A1',
+        tinhTrang: 'CHO_MUON'
+      });
+      copies.push(copy);
+    }
+
+    const readerRentTest = await Reader.create({
+      hoLot: 'Nguyễn Văn',
+      ten: 'Thuê Ngày',
+      email: `rent_test_${Date.now()}_${Math.random()}@library.local`,
+      matKhau: 'reader123',
+      ngaySinh: new Date('1997-01-01'),
+      diachi: 'Đồng Nai',
+      dienThoai: '0977' + Math.floor(100000 + Math.random() * 900000)
+    });
+
+    const rentPlan = await MembershipPlan.create({
+      tenGoi: `Gói Thuê Ngày ${Date.now()}`,
+      giaTien: 50000,
+      soNgayHieuLuc: 30,
+      soSachToiDa: 5,
+      soNgayMuonToiDa: 10,
+      phiMuonSachGiay: 2000,
+      tienDatCoc: 50000,
+      mienTienCoc: false
+    });
+
+    await Subscription.create({
+      maDangKy: await nextCode('subscription'),
+      docGia: readerRentTest._id,
+      goiDocGia: rentPlan._id,
+      ngayBatDau: new Date(),
+      ngayKetThuc: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+      tongTien: 50000,
+      trangThai: 'DANG_HIEU_LUC'
+    });
+
+    // Tạo phiếu mượn 2 cuốn sách trong 5 ngày
+    const now = new Date();
+    const ngayHenTra = new Date(now.getTime() + 5 * 24 * 60 * 60 * 1000);
+    const borrow = new BorrowReceipt({
+      docGia: readerRentTest._id,
+      chiTietMuon: [
+        { sach: copies[0]._id, tinhTrangLucMuon: 'Tốt' },
+        { sach: copies[1]._id, tinhTrangLucMuon: 'Tốt' }
+      ],
+      ngayMuon: now,
+      ngayHenTra: ngayHenTra,
+      trangThai: 'SAN_SANG'
+    });
+    await borrow.save();
+
+    // Bàn giao sách -> DANG_MUON. Phí mượn phải được tính lại = 2 cuốn * 2000đ * 5 ngày = 20.000đ
+    borrow.trangThai = 'DANG_MUON';
+    await borrow.save();
+
+    assert.strictEqual(borrow.phiMuon, 20000, 'Phí mượn khi bàn giao phải được nhân với số ngày mượn thực tế');
+    assert.strictEqual(borrow.tongTienThanhToan, 20000, 'Tổng tiền thanh toán phải bằng phí mượn trừ giảm giá');
+  });
+
 });
+

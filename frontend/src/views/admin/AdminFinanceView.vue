@@ -100,7 +100,16 @@
                 <td class="py-4">{{ row.docGia?.hoTen || 'Không rõ' }}<span class="block text-[10px] text-slate-400">{{ row.docGia?.maDocGia }} · {{ row.phieuMuon?.maPhieu }}</span></td>
                 <td class="py-4 min-w-80 text-xs font-bold">{{ row.lyDoPhat }}</td>
                 <td class="py-4 font-black text-red-700">{{ formatCurrency(row.soTienPhat) }}</td>
-                <td class="py-4"><StatusPill :text="row.daThanhToan ? 'Đã thu' : 'Chưa thu'" :tone="row.daThanhToan ? 'green' : 'red'" /></td>
+                <td class="py-4 flex items-center space-x-2">
+                  <StatusPill :text="row.daThanhToan ? 'Đã thu' : 'Chưa thu'" :tone="row.daThanhToan ? 'green' : 'red'" />
+                  <button 
+                    v-if="!row.daThanhToan"
+                    @click="confirmPayPenalty(row)"
+                    class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[10px] py-1 px-2.5 rounded-lg transition-colors whitespace-nowrap shadow-sm"
+                  >
+                    Thu tiền
+                  </button>
+                </td>
                 <td class="py-4 text-xs">{{ row.nhanVien?.hoTenNV || 'Hệ thống' }}</td>
                 <td class="py-4 text-xs">{{ formatDate(row.ngayLap || row.createdAt) }}</td>
               </template>
@@ -110,6 +119,7 @@
         <div v-if="activeRows.length === 0" class="text-center py-10 text-sm text-slate-400 font-bold">Không có dữ liệu phù hợp.</div>
       </div>
     </div>
+    <ConfirmModal ref="confirmModal" />
   </div>
 </template>
 
@@ -117,6 +127,31 @@
 import { computed, defineComponent, h, onMounted, ref } from 'vue';
 import { Banknote } from '@lucide/vue';
 import api from '../../services/api';
+import ConfirmModal from '../../components/ConfirmModal.vue';
+import { useToastStore } from '../../stores/toast';
+
+const confirmModal = ref(null);
+const toast = useToastStore();
+
+const confirmPayPenalty = async (row) => {
+  const ok = await confirmModal.value.ask({
+    title: 'Xác nhận thu tiền phạt',
+    message: `Độc giả đã đóng tiền phạt số tiền ${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(row.soTienPhat)} trực tiếp tại quầy?`,
+    confirmText: 'Xác nhận đã thu',
+    cancelText: 'Hủy bỏ'
+  });
+  if (!ok) return;
+
+  try {
+    const res = await api.post(`/borrowing/penalties/${row.id || row._id}/pay`);
+    if (res.success) {
+      toast.show('Xác nhận thanh toán tiền phạt thành công!', 'success');
+      loadData();
+    }
+  } catch (error) {
+    toast.show(error.message || 'Lỗi khi thanh toán tiền phạt', 'error');
+  }
+};
 
 const StatusPill = defineComponent({
   props: { text: String, tone: String },

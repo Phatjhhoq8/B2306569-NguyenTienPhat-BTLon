@@ -86,7 +86,7 @@ const seedMembershipPlans = async () => {
     "loaiGoi": "INDIVIDUAL",
     "khuyenDung": false,
     "phiMuonSachGiay": 5000,
-    "phiPhatTreHan": 5000,
+    "phiPhatTreHan": 10000,
     "tienDatCoc": 100000
   },
   {
@@ -105,7 +105,7 @@ const seedMembershipPlans = async () => {
     "loaiGoi": "INDIVIDUAL",
     "khuyenDung": false,
     "phiMuonSachGiay": 3000,
-    "phiPhatTreHan": 3000,
+    "phiPhatTreHan": 6000,
     "tienDatCoc": 50000
   },
   {
@@ -124,7 +124,7 @@ const seedMembershipPlans = async () => {
     "loaiGoi": "INDIVIDUAL",
     "khuyenDung": true,
     "phiMuonSachGiay": 0,
-    "phiPhatTreHan": 2000,
+    "phiPhatTreHan": 4000,
     "tienDatCoc": 0
   },
   {
@@ -143,7 +143,7 @@ const seedMembershipPlans = async () => {
     "loaiGoi": "TEAM",
     "khuyenDung": false,
     "phiMuonSachGiay": 0,
-    "phiPhatTreHan": 2000,
+    "phiPhatTreHan": 4000,
     "tienDatCoc": 0
   },
   {
@@ -162,7 +162,7 @@ const seedMembershipPlans = async () => {
     "loaiGoi": "TEAM",
     "khuyenDung": true,
     "phiMuonSachGiay": 0,
-    "phiPhatTreHan": 1000,
+    "phiPhatTreHan": 2000,
     "tienDatCoc": 0
   }
 ];

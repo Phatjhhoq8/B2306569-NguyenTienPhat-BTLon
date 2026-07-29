@@ -227,6 +227,38 @@ test.describe('Auth & Users API Tests', () => {
       assert.strictEqual(restoreARes2.body.data.reader.email, 'readera@library.local');
       assert.strictEqual(restoreARes2.body.data.reader.dienThoai, '0911111111');
     });
+
+    test('Độc giả nên đổi mật khẩu thành công bằng API reset-password', async () => {
+      const res = await makeRequest('/api/auth/reader/reset-password', {
+        method: 'POST',
+        body: {
+          email: 'tdd.reader@library.local',
+          matKhauMoi: 'newpassword123'
+        }
+      });
+
+      assert.strictEqual(res.status, 200);
+      assert.strictEqual(res.body.success, true);
+
+      const loginOldRes = await makeRequest('/api/auth/reader/login', {
+        method: 'POST',
+        body: {
+          email: 'tdd.reader@library.local',
+          matKhau: 'reader123'
+        }
+      });
+      assert.strictEqual(loginOldRes.status, 401);
+
+      const loginNewRes = await makeRequest('/api/auth/reader/login', {
+        method: 'POST',
+        body: {
+          email: 'tdd.reader@library.local',
+          matKhau: 'newpassword123'
+        }
+      });
+      assert.strictEqual(loginNewRes.status, 200);
+      assert.strictEqual(loginNewRes.body.success, true);
+    });
   });
 
   test.describe('2. Staff Auth Tests', () => {

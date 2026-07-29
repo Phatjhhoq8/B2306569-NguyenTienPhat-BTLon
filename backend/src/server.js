@@ -61,3 +61,5 @@ const startServer = async () => {
 };
 
 startServer();
+
+// Trigger nodemon reload for new .env configuration (12h expiration)

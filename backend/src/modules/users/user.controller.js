@@ -532,9 +532,34 @@ const restoreStaff = async (req, res, next) => {
   } catch (error) { next(error); }
 };
 
+/**
+ * Đặt lại mật khẩu độc giả (Quên mật khẩu)
+ */
+const resetReaderPassword = async (req, res, next) => {
+  try {
+    const { email, matKhauMoi } = req.body;
+    if (!email || !matKhauMoi) {
+      return resultResponse.err(res, 'Email và mật khẩu mới là bắt buộc', 400);
+    }
+
+    const reader = await Reader.findOne({ email: email.toLowerCase(), isDeleted: false });
+    if (!reader) {
+      return resultResponse.err(res, 'Không tìm thấy tài khoản độc giả với email này', 404);
+    }
+
+    reader.matKhau = matKhauMoi;
+    await reader.save();
+
+    return resultResponse.ok(res, { message: 'Đặt lại mật khẩu độc giả thành công!' });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   registerReader,
   loginReader,
+  resetReaderPassword,
   loginStaff,
   logout,
   getMe,
