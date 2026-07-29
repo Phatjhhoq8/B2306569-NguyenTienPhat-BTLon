@@ -330,13 +330,64 @@ const getFinancialStats = async (req, res, next) => {
   try {
     const Subscription = mongoose.model('Subscription');
 
+    const now = new Date();
+    const startOfDay = (date) => new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    const startOfWeek = (date) => {
+      const d = startOfDay(date);
+      const day = d.getDay() || 7;
+      d.setDate(d.getDate() - day + 1);
+      return d;
+    };
+    const startOfMonth = (date) => new Date(date.getFullYear(), date.getMonth(), 1);
+    const weekStart = startOfWeek(now);
+    const prevWeekStart = new Date(weekStart);
+    prevWeekStart.setDate(prevWeekStart.getDate() - 7);
+    const monthStart = startOfMonth(now);
+    const prevMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+
+    const getReceiptRevenueDate = (receipt) => receipt.ngayTraThucTe || receipt.updatedAt || receipt.createdAt;
+    const getRevenueInRange = ({ receipts, penalties, subscriptions }, from, to) => {
+      const inRange = (date) => {
+        const value = date ? new Date(date) : null;
+        return value && value >= from && value < to;
+      };
+
+      const phiMuon = receipts
+        .filter(r => inRange(getReceiptRevenueDate(r)))
+        .reduce((sum, r) => sum + (r.tongTienThanhToan || 0), 0);
+      const tienPhatDaThu = penalties
+        .filter(p => p.daThanhToan && inRange(p.updatedAt || p.ngayLap || p.createdAt))
+        .reduce((sum, p) => sum + (p.soTienPhat || 0), 0);
+      const doanhThuHoiVien = subscriptions
+        .filter(s => inRange(s.createdAt || s.ngayBatDau))
+        .reduce((sum, s) => sum + (s.tongTien || 0), 0);
+
+      return {
+        phiMuon,
+        tienPhatDaThu,
+        doanhThuHoiVien,
+        tongDoanhThu: phiMuon + tienPhatDaThu + doanhThuHoiVien
+      };
+    };
+    const compareRevenue = (current, previous) => {
+      const diff = current - previous;
+      const percent = previous > 0 ? (diff / previous) * 100 : (current > 0 ? 100 : 0);
+      return {
+        current,
+        previous,
+        diff,
+        percent: Number(percent.toFixed(2)),
+        trend: diff > 0 ? 'UP' : (diff < 0 ? 'DOWN' : 'FLAT')
+      };
+    };
+
     // Tính tổng phí mượn sách từ các phiếu đã trả (DA_TRA)
-    const paidReceipts = await BorrowReceipt.find({ trangThai: 'DA_TRA' }).select('tongTienThanhToan tienCoc');
+    const paidReceipts = await BorrowReceipt.find({ trangThai: 'DA_TRA' }).select('tongTienThanhToan tienCoc ngayTraThucTe updatedAt createdAt');
     const tongPhiMuon = paidReceipts.reduce((sum, r) => sum + (r.tongTienThanhToan || 0), 0);
     const soPhieuDaTra = paidReceipts.length;
 
     // Tính tổng tiền phạt
-    const allPenalties = await PenaltyTicket.find().select('soTienPhat daThanhToan');
+    const allPenalties = await PenaltyTicket.find().select('soTienPhat daThanhToan ngayLap updatedAt createdAt');
     const tongTienPhat = allPenalties.reduce((sum, p) => sum + (p.soTienPhat || 0), 0);
     const tienPhatDaThu = allPenalties
       .filter(p => p.daThanhToan)
@@ -346,7 +397,7 @@ const getFinancialStats = async (req, res, next) => {
     // Doanh thu từ gói hội viên (Subscription có trạng thái DANG_HIEU_LUC hoặc HET_HAN — đã mua)
     const allSubs = await Subscription.find({
       trangThai: { $in: ['DANG_HIEU_LUC', 'HET_HAN'] }
-    }).select('tongTien');
+    }).select('tongTien ngayBatDau createdAt');
     const doanhThuHoiVien = allSubs.reduce((sum, s) => sum + (s.tongTien || 0), 0);
     const soGoiDaBan = allSubs.length;
 
@@ -358,6 +409,118 @@ const getFinancialStats = async (req, res, next) => {
     const soPhieuDangMuon = activeReceipts.length;
 
     const tongDoanhThu = tongPhiMuon + tienPhatDaThu + doanhThuHoiVien;
+    const periodSource = {
+      receipts: paidReceipts,
+      penalties: allPenalties,
+      subscriptions: allSubs
+    };
+    const weekThis = getRevenueInRange(periodSource, weekStart, now);
+    const weekPrevious = getRevenueInRange(periodSource, prevWeekStart, weekStart);
+    const monthThis = getRevenueInRange(periodSource, monthStart, now);
+    const monthPrevious = getRevenueInRange(periodSource, prevMonthStart, monthStart);
+    const breakdown = {
+      phiMuon: { amount: tongPhiMuon, count: soPhieuDaTra },
+      tienPhatDaThu: { amount: tienPhatDaThu, count: allPenalties.filter(p => p.daThanhToan).length },
+      tienPhatChuaThu: { amount: tienPhatChuaThu, count: allPenalties.filter(p => !p.daThanhToan).length },
+      doanhThuHoiVien: { amount: doanhThuHoiVien, count: soGoiDaBan },
+      tienCocDangGiu: { amount: tongTienCoc, count: soPhieuDangMuon }
+    };
+
+    const [membershipPurchasesRaw, borrowPaymentsRaw, penaltyPaymentsRaw] = await Promise.all([
+      Subscription.find({ trangThai: { $in: ['DANG_HIEU_LUC', 'HET_HAN'] } })
+        .populate('docGia')
+        .populate('goiDocGia')
+        .sort({ createdAt: -1 }),
+      BorrowReceipt.find({})
+        .populate('docGia')
+        .populate({ path: 'chiTietMuon.sach', populate: { path: 'dauSach' } })
+        .sort({ createdAt: -1 }),
+      PenaltyTicket.find({})
+        .populate({ path: 'phieuMuon', populate: { path: 'docGia' } })
+        .populate('nhanVien')
+        .sort({ createdAt: -1 })
+    ]);
+
+    const membershipPurchases = membershipPurchasesRaw.map((sub) => ({
+      id: sub._id,
+      maDangKy: sub.maDangKy,
+      docGia: sub.docGia ? {
+        id: sub.docGia._id,
+        maDocGia: sub.docGia.maDocGia,
+        hoTen: `${sub.docGia.hoLot || ''} ${sub.docGia.ten || ''}`.trim(),
+        email: sub.docGia.email,
+        dienThoai: sub.docGia.dienThoai
+      } : null,
+      goiDocGia: sub.goiDocGia ? {
+        id: sub.goiDocGia._id,
+        maGoi: sub.goiDocGia.maGoi,
+        tenGoi: sub.goiDocGia.tenGoi
+      } : null,
+      tongTien: sub.tongTien || 0,
+      phuongThucThanhToan: sub.phuongThucThanhToan,
+      tuDongGiaHan: sub.tuDongGiaHan,
+      ngayBatDau: sub.ngayBatDau,
+      ngayKetThuc: sub.ngayKetThuc,
+      trangThai: sub.trangThai,
+      createdAt: sub.createdAt
+    }));
+
+    const borrowPayments = borrowPaymentsRaw.map((receipt) => ({
+      id: receipt._id,
+      maPhieu: receipt.maPhieu,
+      docGia: receipt.docGia ? {
+        id: receipt.docGia._id,
+        maDocGia: receipt.docGia.maDocGia,
+        hoTen: `${receipt.docGia.hoLot || ''} ${receipt.docGia.ten || ''}`.trim(),
+        email: receipt.docGia.email,
+        dienThoai: receipt.docGia.dienThoai
+      } : null,
+      books: (receipt.chiTietMuon || []).map((item) => ({
+        maSach: item.sach && item.sach.maSach,
+        tenSach: item.sach && item.sach.dauSach && item.sach.dauSach.tenSach,
+        viTriKe: item.sach && item.sach.viTriKe,
+        daTraChua: item.daTraChua,
+        ngayTraThucTe: item.ngayTraThucTe,
+        tinhTrangSauMuon: item.tinhTrangSauMuon
+      })),
+      soCuon: (receipt.chiTietMuon || []).length,
+      phiMuon: receipt.phiMuon || 0,
+      tienCoc: receipt.tienCoc || 0,
+      soTienGiam: receipt.soTienGiam || 0,
+      tongTienThanhToan: receipt.tongTienThanhToan || 0,
+      ngayMuon: receipt.ngayMuon,
+      ngayHenTra: receipt.ngayHenTra,
+      ngayTraThucTe: receipt.ngayTraThucTe,
+      trangThai: receipt.trangThai,
+      createdAt: receipt.createdAt
+    }));
+
+    const penaltyPayments = penaltyPaymentsRaw.map((penalty) => ({
+      id: penalty._id,
+      maPhieuPhat: penalty.maPhieuPhat,
+      phieuMuon: penalty.phieuMuon ? {
+        id: penalty.phieuMuon._id,
+        maPhieu: penalty.phieuMuon.maPhieu
+      } : null,
+      docGia: penalty.phieuMuon && penalty.phieuMuon.docGia ? {
+        id: penalty.phieuMuon.docGia._id,
+        maDocGia: penalty.phieuMuon.docGia.maDocGia,
+        hoTen: `${penalty.phieuMuon.docGia.hoLot || ''} ${penalty.phieuMuon.docGia.ten || ''}`.trim(),
+        email: penalty.phieuMuon.docGia.email,
+        dienThoai: penalty.phieuMuon.docGia.dienThoai
+      } : null,
+      nhanVien: penalty.nhanVien ? {
+        id: penalty.nhanVien._id,
+        maSoNV: penalty.nhanVien.maSoNV,
+        hoTenNV: penalty.nhanVien.hoTenNV
+      } : null,
+      lyDoPhat: penalty.lyDoPhat,
+      soTienPhat: penalty.soTienPhat || 0,
+      daThanhToan: penalty.daThanhToan,
+      ngayLap: penalty.ngayLap,
+      updatedAt: penalty.updatedAt,
+      createdAt: penalty.createdAt
+    }));
 
     return resultResponse.ok(res, {
       tongPhiMuon,
@@ -369,7 +532,88 @@ const getFinancialStats = async (req, res, next) => {
       soGoiDaBan,
       tongTienCoc,
       soPhieuDangMuon,
-      tongDoanhThu
+      tongDoanhThu,
+      summary: {
+        tongDoanhThu,
+        tongPhiMuon,
+        tienPhatDaThu,
+        tienPhatChuaThu,
+        doanhThuHoiVien,
+        tongTienCoc
+      },
+      breakdown,
+      periods: {
+        week: {
+          current: weekThis,
+          previous: weekPrevious
+        },
+        month: {
+          current: monthThis,
+          previous: monthPrevious
+        }
+      },
+      comparison: {
+        week: compareRevenue(weekThis.tongDoanhThu, weekPrevious.tongDoanhThu),
+        month: compareRevenue(monthThis.tongDoanhThu, monthPrevious.tongDoanhThu)
+      },
+      details: {
+        membershipPurchases,
+        borrowPayments,
+        penaltyPayments
+      }
+    });
+  } catch (error) { next(error); }
+};
+
+/**
+ * Thống kê tài chính cá nhân của độc giả hiện tại, dùng cùng công thức với dashboard admin.
+ */
+const getMyFinancialStats = async (req, res, next) => {
+  try {
+    if (!req.user || req.user.role === 'STAFF') {
+      return resultResponse.err(res, 'Chỉ độc giả mới có thể xem thống kê tài chính cá nhân', 403);
+    }
+
+    const Subscription = mongoose.model('Subscription');
+    const receipts = await BorrowReceipt.find({ docGia: req.user._id });
+    const receiptIds = receipts.map(r => r._id);
+    const paidReceipts = receipts.filter(r => r.trangThai === 'DA_TRA');
+    const penalties = await PenaltyTicket.find({ phieuMuon: { $in: receiptIds } });
+    const subscriptions = await Subscription.find({
+      docGia: req.user._id,
+      trangThai: { $in: ['DANG_HIEU_LUC', 'HET_HAN'] }
+    });
+
+    const tongPhiMuon = paidReceipts.reduce((sum, r) => sum + (r.tongTienThanhToan || 0), 0);
+    const soPhieuDaTra = paidReceipts.length;
+    const tongTienPhat = penalties.reduce((sum, p) => sum + (p.soTienPhat || 0), 0);
+    const tienPhatDaTra = penalties.filter(p => p.daThanhToan).reduce((sum, p) => sum + (p.soTienPhat || 0), 0);
+    const tienPhatChuaTra = tongTienPhat - tienPhatDaTra;
+    const doanhThuHoiVien = subscriptions.reduce((sum, s) => sum + (s.tongTien || 0), 0);
+    const soGoiDaMua = subscriptions.length;
+    const activeReceipts = receipts.filter(r => ['DANG_MUON', 'QUA_HAN'].includes(r.trangThai));
+    const tongTienCoc = activeReceipts.reduce((sum, r) => sum + (r.tienCoc || 0), 0);
+    const soPhieuDangMuon = activeReceipts.length;
+    const tongDaChi = tongPhiMuon + tienPhatDaTra + doanhThuHoiVien;
+
+    return resultResponse.ok(res, {
+      tongPhiMuon,
+      soPhieuDaTra,
+      tongTienPhat,
+      tienPhatDaTra,
+      tienPhatChuaTra,
+      doanhThuHoiVien,
+      soGoiDaMua,
+      tongTienCoc,
+      soPhieuDangMuon,
+      tongDaChi,
+      breakdown: {
+        phiMuon: { amount: tongPhiMuon, count: soPhieuDaTra },
+        tienPhatDaTra: { amount: tienPhatDaTra, count: penalties.filter(p => p.daThanhToan).length },
+        tienPhatChuaTra: { amount: tienPhatChuaTra, count: penalties.filter(p => !p.daThanhToan).length },
+        hoiVien: { amount: doanhThuHoiVien, count: soGoiDaMua },
+        tienCocDangGiu: { amount: tongTienCoc, count: soPhieuDangMuon }
+      }
     });
   } catch (error) { next(error); }
 };
@@ -388,5 +632,6 @@ module.exports = {
   createPenalty,
   getMyPenalties,
   payPenalty,
-  getFinancialStats
+  getFinancialStats,
+  getMyFinancialStats
 };

@@ -59,6 +59,13 @@ router.put(
   userController.updateMePassword
 );
 
+router.put(
+  '/staff/me/password',
+  authMiddleware.authenticate,
+  authMiddleware.authorize('STAFF'),
+  userController.updateStaffPassword
+);
+
 // ==================== ADMIN: Quản lý Độc giả ====================
 router.get('/admin/readers/search-suggestions', authMiddleware.authenticate, authMiddleware.authorize('STAFF'), userController.getReaderSuggestions);
 router.get('/admin/readers', authMiddleware.authenticate, authMiddleware.authorize('STAFF'), userController.getReaders);

@@ -70,6 +70,24 @@ export const useAuthStore = defineStore('auth', {
         this.loading = false;
       }
     },
+    async changeStaffPassword(payload) {
+      this.loading = true;
+      this.error = null;
+      try {
+        const res = await api.put('/staff/me/password', payload);
+        if (res.success) {
+          const u = res.data.staff;
+          if (u) u.role = 'STAFF';
+          this.user = u;
+          return res;
+        }
+      } catch (err) {
+        this.error = err.message;
+        throw err;
+      } finally {
+        this.loading = false;
+      }
+    },
     async registerReader(payload) {
       this.loading = true;
       this.error = null;

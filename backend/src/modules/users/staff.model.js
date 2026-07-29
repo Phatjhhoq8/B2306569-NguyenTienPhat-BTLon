@@ -27,6 +27,14 @@ const staffSchema = new mongoose.Schema({
     required: [true, 'Mật khẩu là bắt buộc'],
     minlength: [6, 'Mật khẩu phải có tối thiểu 6 ký tự']
   },
+  mustChangePassword: {
+    type: Boolean,
+    default: true
+  },
+  passwordChangedAt: {
+    type: Date,
+    default: null
+  },
   chucVu: {
     type: String,
     enum: {

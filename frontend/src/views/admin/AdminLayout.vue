@@ -47,6 +47,13 @@
             </span>
           </div>
         </div>
+        <router-link
+          to="/admin/change-password"
+          class="w-full bg-slate-800 hover:bg-slate-700 hover:text-white text-slate-400 font-bold py-2 rounded-xl text-xs transition-colors flex items-center justify-center space-x-1"
+        >
+          <Lock class="h-3.5 w-3.5" />
+          <span>Đổi mật khẩu</span>
+        </router-link>
         <button 
           @click="handleLogout"
           class="w-full bg-slate-800 hover:bg-red-900 hover:text-white text-slate-400 font-bold py-2 rounded-xl text-xs transition-colors flex items-center justify-center space-x-1"
@@ -107,7 +114,9 @@ import {
   LogOut,
   UserCheck,
   Home,
-  Menu
+  Menu,
+  Banknote,
+  Lock
 } from '@lucide/vue';
 
 const route = useRoute();
@@ -125,6 +134,7 @@ const menuItems = computed(() => {
     { name: 'admin-dashboard', label: 'Dashboard', icon: LayoutDashboard, to: '/admin' },
     { name: 'admin-books', label: 'Quản lý Đầu sách', icon: BookMarked, to: '/admin/books' },
     { name: 'admin-borrowing', label: 'Mượn / Trả Sách', icon: GitCompare, to: '/admin/borrowing' },
+    { name: 'admin-finance', label: 'Tài chính', icon: Banknote, to: '/admin/finance' },
     { name: 'admin-readers', label: 'Quản lý Độc giả', icon: Users, to: '/admin/readers' },
   ];
 
@@ -141,7 +151,7 @@ const menuItems = computed(() => {
 
 const handleLogout = async () => {
   await authStore.logout();
-  router.push('/login');
+  router.push({ name: 'admin-login' });
 };
 </script>
 

@@ -92,6 +92,13 @@ router.get(
   borrowController.getMyPenalties
 );
 
+router.get(
+  '/borrowing/my-financial-stats',
+  authMiddleware.authenticate,
+  authMiddleware.authorize('READER'),
+  borrowController.getMyFinancialStats
+);
+
 router.post(
   '/borrowing/penalties/:id/pay',
   authMiddleware.authenticate,

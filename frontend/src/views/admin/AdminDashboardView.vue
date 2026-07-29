@@ -29,6 +29,35 @@
       <h2 class="font-sans text-xl font-extrabold text-slate-800 flex items-center border-b pb-3">
         <Banknote class="h-5 w-5 mr-2 text-green-600" /> Thống Kê Tài Chính
       </h2>
+      <div class="flex justify-end -mt-2">
+        <router-link to="/admin/finance" class="text-xs font-black text-primary hover:underline">
+          Xem chi tiết tài chính
+        </router-link>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="rounded-2xl border border-emerald-100 bg-emerald-50/60 p-5 flex items-center justify-between">
+          <div class="space-y-1">
+            <span class="text-[10px] text-emerald-600 uppercase font-black tracking-wider">Tuần này so với tuần trước</span>
+            <p class="text-2xl font-black text-slate-900">{{ formatCurrency(financials.comparison?.week?.current || 0) }}</p>
+            <span class="text-xs font-bold" :class="getTrendClass(financials.comparison?.week)">
+              {{ formatDiff(financials.comparison?.week) }} ({{ formatPercent(financials.comparison?.week?.percent) }})
+            </span>
+          </div>
+          <TrendingUp class="h-9 w-9 text-emerald-500" />
+        </div>
+
+        <div class="rounded-2xl border border-indigo-100 bg-indigo-50/60 p-5 flex items-center justify-between">
+          <div class="space-y-1">
+            <span class="text-[10px] text-indigo-600 uppercase font-black tracking-wider">Tháng này so với tháng trước</span>
+            <p class="text-2xl font-black text-slate-900">{{ formatCurrency(financials.comparison?.month?.current || 0) }}</p>
+            <span class="text-xs font-bold" :class="getTrendClass(financials.comparison?.month)">
+              {{ formatDiff(financials.comparison?.month) }} ({{ formatPercent(financials.comparison?.month?.percent) }})
+            </span>
+          </div>
+          <TrendingUp class="h-9 w-9 text-indigo-500" />
+        </div>
+      </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <!-- Tổng phí mượn sách -->
@@ -66,6 +95,14 @@
           <p class="text-3xl font-black">{{ formatCurrency(financials.tongDoanhThu) }}</p>
         </div>
         <TrendingUp class="h-10 w-10 opacity-40" />
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-5 gap-3">
+        <div v-for="item in financialBreakdown" :key="item.label" class="rounded-2xl border border-slate-100 bg-slate-50 p-4 space-y-1">
+          <span class="text-[10px] uppercase tracking-wider font-black text-slate-400">{{ item.label }}</span>
+          <p class="text-lg font-black text-slate-900">{{ formatCurrency(item.amount) }}</p>
+          <span class="text-[10px] text-slate-500 font-bold">{{ item.countLabel }}</span>
+        </div>
       </div>
     </div>
 
@@ -177,7 +214,12 @@ const financials = ref({
   soGoiDaBan: 0,
   tongTienCoc: 0,
   soPhieuDangMuon: 0,
-  tongDoanhThu: 0
+  tongDoanhThu: 0,
+  breakdown: {},
+  comparison: {
+    week: { current: 0, previous: 0, diff: 0, percent: 0, trend: 'FLAT' },
+    month: { current: 0, previous: 0, diff: 0, percent: 0, trend: 'FLAT' }
+  }
 });
 
 const allReceipts = ref([]);
@@ -202,6 +244,17 @@ const filteredReceipts = computed(() => {
   }).slice(0, 5);
 });
 
+const financialBreakdown = computed(() => {
+  const data = financials.value.breakdown || {};
+  return [
+    { label: 'Phí mượn', amount: data.phiMuon?.amount ?? financials.value.tongPhiMuon, countLabel: `${data.phiMuon?.count ?? financials.value.soPhieuDaTra} phiếu đã trả` },
+    { label: 'Phạt đã thu', amount: data.tienPhatDaThu?.amount ?? financials.value.tienPhatDaThu, countLabel: `${data.tienPhatDaThu?.count ?? 0} phiếu đã thu` },
+    { label: 'Phạt chưa thu', amount: data.tienPhatChuaThu?.amount ?? financials.value.tienPhatChuaThu, countLabel: `${data.tienPhatChuaThu?.count ?? 0} phiếu chưa thu` },
+    { label: 'Hội viên', amount: data.doanhThuHoiVien?.amount ?? financials.value.doanhThuHoiVien, countLabel: `${data.doanhThuHoiVien?.count ?? financials.value.soGoiDaBan} gói đã bán` },
+    { label: 'Cọc đang giữ', amount: data.tienCocDangGiu?.amount ?? financials.value.tongTienCoc, countLabel: `${data.tienCocDangGiu?.count ?? financials.value.soPhieuDangMuon} phiếu đang mượn` }
+  ];
+});
+
 const formatDate = (dateStr) => {
   if (!dateStr) return '';
   return new Date(dateStr).toLocaleDateString('vi-VN');
@@ -210,6 +263,22 @@ const formatDate = (dateStr) => {
 const formatCurrency = (value) => {
   if (!value && value !== 0) return '0 ₫';
   return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
+};
+
+const formatPercent = (value) => {
+  const numeric = Number(value || 0);
+  return `${numeric > 0 ? '+' : ''}${numeric.toFixed(2)}%`;
+};
+
+const formatDiff = (comparison) => {
+  const diff = comparison?.diff || 0;
+  return `${diff > 0 ? '+' : ''}${formatCurrency(diff)}`;
+};
+
+const getTrendClass = (comparison) => {
+  if (comparison?.trend === 'UP') return 'text-emerald-600';
+  if (comparison?.trend === 'DOWN') return 'text-red-600';
+  return 'text-slate-500';
 };
 
 const getReceiptStatusText = (status) => {

@@ -7,6 +7,7 @@ const Reader = require('./reader.model');
 const Staff = require('./staff.model');
 const passwordService = require('../../services/passwordService');
 const jwtHelper = require('../../utils/jwtHelper');
+const mongoose = require('mongoose');
 
 /**
  * Đăng ký tài khoản độc giả mới

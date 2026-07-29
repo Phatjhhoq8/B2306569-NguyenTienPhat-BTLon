@@ -41,6 +41,12 @@ const routes = [
     meta: { guestOnly: true }
   },
   {
+    path: '/admin/change-password',
+    name: 'admin-change-password',
+    component: () => import('../views/admin/AdminChangePasswordView.vue'),
+    meta: { requiresStaff: true }
+  },
+  {
     path: '/register',
     name: 'register',
     component: () => import('../views/RegisterView.vue'),
@@ -93,6 +99,11 @@ const routes = [
         component: () => import('../views/admin/AdminBorrowingView.vue')
       },
       {
+        path: 'finance',
+        name: 'admin-finance',
+        component: () => import('../views/admin/AdminFinanceView.vue')
+      },
+      {
         path: 'readers',
         name: 'admin-readers',
         component: () => import('../views/admin/AdminReadersView.vue')
@@ -143,10 +154,11 @@ router.beforeEach(async (to, from, next) => {
   const isReader = authStore.isReader;
   const isStaff = authStore.isStaff;
   const isAdmin = authStore.isAdmin;
+  const mustChangePassword = isStaff && authStore.user?.mustChangePassword === true;
 
   // 1. Chỉ dành cho khách chưa đăng nhập
   if (to.meta.guestOnly && isLoggedIn) {
-    return next(isStaff ? { name: 'admin-dashboard' } : { name: 'home' });
+    return next(isStaff ? { name: mustChangePassword ? 'admin-change-password' : 'admin-dashboard' } : { name: 'home' });
   }
 
   // 2. Yêu cầu quyền Độc giả
@@ -157,6 +169,10 @@ router.beforeEach(async (to, from, next) => {
   // 3. Yêu cầu quyền Nhân viên
   if (to.meta.requiresStaff && (!isLoggedIn || !isStaff)) {
     return next({ name: 'admin-login' });
+  }
+
+  if (mustChangePassword && to.name !== 'admin-change-password') {
+    return next({ name: 'admin-change-password' });
   }
 
   // 4. Yêu cầu quyền Quản lý (Admin) cấp cao

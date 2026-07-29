@@ -95,7 +95,7 @@ const handleLogin = async () => {
   loading.value = true;
   try {
     await authStore.loginStaff(maSoNV.value.toUpperCase().trim(), password.value);
-    router.push({ name: 'admin-dashboard' });
+    router.push({ name: authStore.user?.mustChangePassword ? 'admin-change-password' : 'admin-dashboard' });
   } catch (err) {
     error.value = err.message || 'Mã nhân viên hoặc mật khẩu quản trị không đúng';
   } finally {

@@ -27,7 +27,7 @@ module.exports = {
   
   jwt: {
     secret: process.env.JWT_SECRET || 'fallback_secret_key',
-    expire: process.env.JWT_EXPIRE || '15m'
+    expire: process.env.JWT_EXPIRE || '12h'
   },
   
   app: {
@@ -41,7 +41,7 @@ module.exports = {
   },
 
   cookie: {
-    maxAge: parseInt(process.env.COOKIE_MAX_AGE, 10) || 15 * 60 * 1000,
+    maxAge: parseInt(process.env.COOKIE_MAX_AGE, 10) || 12 * 60 * 60 * 1000,
     domain: process.env.COOKIE_DOMAIN || undefined
   }
 };

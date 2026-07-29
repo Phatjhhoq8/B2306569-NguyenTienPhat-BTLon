@@ -202,6 +202,52 @@ const updateMePassword = async (req, res, next) => {
   }
 };
 
+/**
+ * Nhân viên tự đổi mật khẩu, dùng cho mật khẩu tạm thời lần đầu
+ */
+const updateStaffPassword = async (req, res, next) => {
+  try {
+    if (!req.user || !req.user.chucVu) {
+      return resultResponse.err(res, 'Chức năng chỉ dành cho nhân viên', 403);
+    }
+
+    const { matKhauCu, matKhauMoi, xacNhanMatKhau } = req.body;
+    if (!matKhauCu || !matKhauMoi || !xacNhanMatKhau) {
+      return resultResponse.err(res, 'Mật khẩu cũ, mật khẩu mới và xác nhận mật khẩu là bắt buộc', 400);
+    }
+    if (matKhauMoi.length < 6) {
+      return resultResponse.err(res, 'Mật khẩu mới phải có tối thiểu 6 ký tự', 400);
+    }
+    if (matKhauMoi !== xacNhanMatKhau) {
+      return resultResponse.err(res, 'Xác nhận mật khẩu mới không khớp', 400);
+    }
+    if (matKhauMoi === matKhauCu) {
+      return resultResponse.err(res, 'Mật khẩu mới phải khác mật khẩu hiện tại', 400);
+    }
+
+    const staff = await Staff.findById(req.user._id);
+    if (!staff || staff.isDeleted) {
+      return resultResponse.err(res, 'Không tìm thấy tài khoản nhân viên', 404);
+    }
+
+    const isMatch = await passwordService.verifyPassword(matKhauCu, staff.matKhau);
+    if (!isMatch) {
+      return resultResponse.err(res, 'Mật khẩu hiện tại không chính xác', 400);
+    }
+
+    staff.matKhau = matKhauMoi;
+    staff.mustChangePassword = false;
+    staff.passwordChangedAt = new Date();
+    await staff.save();
+
+    const obj = staff.toObject();
+    delete obj.matKhau;
+    return resultResponse.ok(res, { message: 'Đổi mật khẩu thành công', staff: obj });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // ==================== ADMIN: Quản lý Độc giả ====================
 
 /**
@@ -318,7 +364,7 @@ const createStaff = async (req, res, next) => {
     if (!hoTenNV || !matKhau || !diachi || !soDienThoai) {
       return resultResponse.err(res, 'Thiếu thông tin bắt buộc', 400);
     }
-    const staff = await Staff.create({ hoTenNV, matKhau, chucVu, diachi, soDienThoai });
+    const staff = await Staff.create({ hoTenNV, matKhau, chucVu, diachi, soDienThoai, mustChangePassword: true });
     const obj = staff.toObject(); delete obj.matKhau;
     return resultResponse.ok(res, obj, 201);
   } catch (error) { next(error); }
@@ -333,7 +379,11 @@ const updateStaff = async (req, res, next) => {
     if (!staff || staff.isDeleted) return resultResponse.err(res, 'Không tìm thấy nhân viên', 404);
     const allowedUpdates = ['hoTenNV', 'chucVu', 'diachi', 'soDienThoai'];
     allowedUpdates.forEach((field) => { if (req.body[field] !== undefined) staff[field] = req.body[field]; });
-    if (req.body.matKhau) staff.matKhau = req.body.matKhau;
+    if (req.body.matKhau) {
+      staff.matKhau = req.body.matKhau;
+      staff.mustChangePassword = true;
+      staff.passwordChangedAt = null;
+    }
     await staff.save();
     const obj = staff.toObject(); delete obj.matKhau;
     return resultResponse.ok(res, obj);
@@ -490,6 +540,7 @@ module.exports = {
   getMe,
   updateMeProfile,
   updateMePassword,
+  updateStaffPassword,
   // Admin: Quản lý Độc giả
   getReaders,
   getReaderById,

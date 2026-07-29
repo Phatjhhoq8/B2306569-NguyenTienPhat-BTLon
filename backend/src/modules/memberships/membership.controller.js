@@ -6,6 +6,7 @@
 const MembershipPlan = require('./membershipPlan.model');
 const Subscription = require('./subscription.model');
 const resultResponse = require('../../utils/resultResponse');
+const mongoose = require('mongoose');
 
 /**
  * Lấy danh sách gói hội viên
@@ -292,6 +293,45 @@ const cancelAutoRenew = async (req, res, next) => {
   }
 };
 
+const enableAutoRenew = async (req, res, next) => {
+  try {
+    const userRole = req.user.role || (req.user.chucVu ? 'STAFF' : 'READER');
+    if (!req.user || userRole === 'STAFF') {
+      return resultResponse.err(res, 'Chỉ độc giả mới có thể bật tự động gia hạn', 403);
+    }
+
+    const now = new Date();
+    const subscription = await Subscription.findOne({
+      docGia: req.user._id,
+      trangThai: 'DANG_HIEU_LUC',
+      ngayBatDau: { $lte: now },
+      ngayKetThuc: { $gte: now }
+    }).populate('goiDocGia');
+
+    if (!subscription) {
+      return resultResponse.err(res, 'Không tìm thấy gói hội viên đang hiệu lực để bật tự động gia hạn', 404);
+    }
+    if (subscription.phuongThucThanhToan !== 'THE_TIN_DUNG') {
+      return resultResponse.err(res, 'Chỉ gói thanh toán bằng thẻ tín dụng/ghi nợ mới hỗ trợ tự động gia hạn', 400);
+    }
+
+    const cardInfo = subscription.thongTinThe || {};
+    if (!cardInfo.soThe || !cardInfo.tenTrenThe || !cardInfo.ngayHetHan || !cardInfo.maCVC) {
+      return resultResponse.err(res, 'Không tìm thấy thông tin thẻ hợp lệ để bật tự động gia hạn', 400);
+    }
+
+    subscription.tuDongGiaHan = true;
+    await subscription.save();
+
+    return resultResponse.ok(res, {
+      message: 'Đã bật lại tự động gia hạn thành công.',
+      subscription
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const getAllSubscriptions = async (req, res, next) => {
   try {
     const userRole = req.user.role || (req.user.chucVu ? 'STAFF' : 'READER');
@@ -321,5 +361,6 @@ module.exports = {
   getMySubscription,
   linkFamilyInvite,
   cancelAutoRenew,
+  enableAutoRenew,
   getAllSubscriptions
 };
