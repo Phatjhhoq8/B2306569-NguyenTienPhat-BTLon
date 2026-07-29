@@ -286,7 +286,8 @@ const submitBorrowRequest = async () => {
       ngayHenTra: ngayHenTra.value,
       phiMuon: phiMuon.value,
       soTienGiam: soTienGiam.value,
-      tongTienThanhToan: tongTienThanhToan.value
+      tongTienThanhToan: tongTienThanhToan.value,
+      choDuyet: true
     };
 
     const res = await api.post('/borrowing/receipts', payload);

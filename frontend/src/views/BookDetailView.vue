@@ -838,7 +838,8 @@ const handleQuickBorrow = async () => {
       ngayHenTra: ngayHenTra.value,
       phiMuon: phi,
       soTienGiam: 0,
-      tongTienThanhToan: phi
+      tongTienThanhToan: phi,
+      choDuyet: true
     };
 
     const res = await api.post('/borrowing/receipts', payload);

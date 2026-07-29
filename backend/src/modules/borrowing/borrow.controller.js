@@ -84,6 +84,19 @@ const approveReceipt = async (req, res, next) => {
   }
 };
 
+/**
+ * Nhân viên giao sách cho độc giả (SAN_SANG → DANG_MUON)
+ * Thời điểm này mới bắt đầu tính ngày mượn, hạn trả và phí
+ */
+const pickupReceipt = async (req, res, next) => {
+  try {
+    const receipt = await borrowService.pickupBorrowReceipt(req.params.id, req.user && req.user._id);
+    return resultResponse.ok(res, receipt);
+  } catch (error) {
+    next(error);
+  }
+};
+
 const renewReceipt = async (req, res, next) => {
   try {
     const receipt = await BorrowReceipt.findById(req.params.id);
@@ -137,7 +150,7 @@ const getReceipts = async (req, res, next) => {
     const filter = {};
 
     if (status) {
-      filter.trangThai = status;
+      filter.trangThai = status === 'PENDING' ? 'CHO_DUYET' : status;
     }
     if (readerId) {
       filter.docGia = readerId;
@@ -277,10 +290,15 @@ const getMyPenalties = async (req, res, next) => {
 const payPenalty = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const penalty = await PenaltyTicket.findById(id);
+    const penalty = await PenaltyTicket.findById(id).populate('phieuMuon');
     
     if (!penalty) {
       return resultResponse.err(res, 'Không tìm thấy phiếu phạt', 404);
+    }
+
+    const userRole = req.user.role || (req.user.chucVu ? 'STAFF' : 'READER');
+    if (userRole === 'READER' && penalty.phieuMuon && String(penalty.phieuMuon.docGia) !== String(req.user._id)) {
+      return resultResponse.err(res, 'Bạn không có quyền thanh toán phiếu phạt này', 403);
     }
 
     penalty.daThanhToan = true;
@@ -305,17 +323,70 @@ const getReceiptById = async (req, res, next) => {
   } catch (error) { next(error); }
 };
 
+/**
+ * Thống kê tài chính hệ thống (Admin/Staff)
+ */
+const getFinancialStats = async (req, res, next) => {
+  try {
+    const Subscription = mongoose.model('Subscription');
+
+    // Tính tổng phí mượn sách từ các phiếu đã trả (DA_TRA)
+    const paidReceipts = await BorrowReceipt.find({ trangThai: 'DA_TRA' }).select('tongTienThanhToan tienCoc');
+    const tongPhiMuon = paidReceipts.reduce((sum, r) => sum + (r.tongTienThanhToan || 0), 0);
+    const soPhieuDaTra = paidReceipts.length;
+
+    // Tính tổng tiền phạt
+    const allPenalties = await PenaltyTicket.find().select('soTienPhat daThanhToan');
+    const tongTienPhat = allPenalties.reduce((sum, p) => sum + (p.soTienPhat || 0), 0);
+    const tienPhatDaThu = allPenalties
+      .filter(p => p.daThanhToan)
+      .reduce((sum, p) => sum + (p.soTienPhat || 0), 0);
+    const tienPhatChuaThu = tongTienPhat - tienPhatDaThu;
+
+    // Doanh thu từ gói hội viên (Subscription có trạng thái DANG_HIEU_LUC hoặc HET_HAN — đã mua)
+    const allSubs = await Subscription.find({
+      trangThai: { $in: ['DANG_HIEU_LUC', 'HET_HAN'] }
+    }).select('tongTien');
+    const doanhThuHoiVien = allSubs.reduce((sum, s) => sum + (s.tongTien || 0), 0);
+    const soGoiDaBan = allSubs.length;
+
+    // Tổng tiền cọc đang giữ (phiếu DANG_MUON hoặc QUA_HAN)
+    const activeReceipts = await BorrowReceipt.find({
+      trangThai: { $in: ['DANG_MUON', 'QUA_HAN'] }
+    }).select('tienCoc');
+    const tongTienCoc = activeReceipts.reduce((sum, r) => sum + (r.tienCoc || 0), 0);
+    const soPhieuDangMuon = activeReceipts.length;
+
+    const tongDoanhThu = tongPhiMuon + tienPhatDaThu + doanhThuHoiVien;
+
+    return resultResponse.ok(res, {
+      tongPhiMuon,
+      soPhieuDaTra,
+      tongTienPhat,
+      tienPhatDaThu,
+      tienPhatChuaThu,
+      doanhThuHoiVien,
+      soGoiDaBan,
+      tongTienCoc,
+      soPhieuDangMuon,
+      tongDoanhThu
+    });
+  } catch (error) { next(error); }
+};
+
 module.exports = {
   createReceipt,
   getMyReceipts,
   getReceipts,
   getReceiptById,
   approveReceipt,
+  pickupReceipt,
   renewReceipt,
   returnReceipt,
   cancelReceipt,
   getPenalties,
   createPenalty,
   getMyPenalties,
-  payPenalty
+  payPenalty,
+  getFinancialStats
 };

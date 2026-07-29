@@ -52,6 +52,13 @@ router.post(
 );
 
 router.post(
+  '/borrowing/receipts/:id/pickup',
+  authMiddleware.authenticate,
+  authMiddleware.authorize('STAFF'),
+  borrowController.pickupReceipt
+);
+
+router.post(
   '/borrowing/receipts/:id/renew',
   authMiddleware.authenticate,
   borrowController.renewReceipt
@@ -88,8 +95,16 @@ router.get(
 router.post(
   '/borrowing/penalties/:id/pay',
   authMiddleware.authenticate,
-  authMiddleware.authorize('STAFF'),
+  authMiddleware.authorize('STAFF', 'READER'),
   borrowController.payPenalty
+);
+
+// API Thống kê tài chính (STAFF only)
+router.get(
+  '/borrowing/financial-stats',
+  authMiddleware.authenticate,
+  authMiddleware.authorize('STAFF'),
+  borrowController.getFinancialStats
 );
 
 module.exports = router;

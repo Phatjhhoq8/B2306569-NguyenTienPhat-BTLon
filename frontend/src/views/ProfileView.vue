@@ -123,9 +123,15 @@
                   </div>
                   <span 
                     class="text-[10px] font-bold px-2 py-0.5 rounded-full"
-                    :class="item.daTraChua ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'"
+                    :class="receipt.trangThai === 'HUY' ? 'bg-slate-100 text-slate-500' : 
+                            (item.daTraChua ? 
+                              (item.ngayTraThucTe && new Date(item.ngayTraThucTe) > new Date(receipt.ngayHenTra) ? 'bg-orange-100 text-orange-700' : 'bg-green-100 text-green-700') 
+                              : 'bg-amber-100 text-amber-700')"
                   >
-                    {{ item.daTraChua ? 'Đã trả' : 'Chưa trả' }}
+                    {{ receipt.trangThai === 'HUY' ? 'Đã hủy' : 
+                       (item.daTraChua ? 
+                         (item.ngayTraThucTe && new Date(item.ngayTraThucTe) > new Date(receipt.ngayHenTra) ? 'Trả trễ' : 'Đã trả') 
+                         : 'Chưa trả') }}
                   </span>
                 </div>
               </div>
@@ -142,6 +148,40 @@
           
           <div v-else class="text-center py-8 text-sm text-slate-400 font-medium">
             Bạn chưa thực hiện phiếu mượn sách nào.
+          </div>
+        </div>
+
+        <!-- Thống kê tài chính cá nhân -->
+        <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm space-y-4">
+          <h2 class="font-serif text-xl font-bold text-slate-800 border-b pb-2 flex items-center">
+            <Banknote class="h-5 w-5 mr-2 text-green-600" /> Thống Kê Tài Chính Cá Nhân
+          </h2>
+
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+            <!-- Tiền mượn sách đã trả -->
+            <div class="bg-gradient-to-br from-blue-50 to-white border border-blue-100 rounded-2xl p-4 space-y-0.5">
+              <span class="text-[10px] text-blue-400 uppercase font-bold tracking-wider block">Phí mượn sách</span>
+              <p class="text-lg font-black text-blue-700">{{ formatCurrency(myFinancials.tongPhiMuon) }}</p>
+              <span class="text-[10px] text-slate-400 font-medium">{{ myFinancials.soPhieuDaTra }} phiếu đã trả</span>
+            </div>
+            <!-- Tiền phạt -->
+            <div class="bg-gradient-to-br from-red-50 to-white border border-red-100 rounded-2xl p-4 space-y-0.5">
+              <span class="text-[10px] text-red-400 uppercase font-bold tracking-wider block">Tiền phạt</span>
+              <p class="text-lg font-black text-red-700">{{ formatCurrency(myFinancials.tongTienPhat) }}</p>
+              <span class="text-[10px] text-slate-400 font-medium">Chưa trả: {{ formatCurrency(myFinancials.tienPhatChuaTra) }}</span>
+            </div>
+            <!-- Tiền cọc đang giữ -->
+            <div class="bg-gradient-to-br from-amber-50 to-white border border-amber-100 rounded-2xl p-4 space-y-0.5">
+              <span class="text-[10px] text-amber-400 uppercase font-bold tracking-wider block">Tiền cọc</span>
+              <p class="text-lg font-black text-amber-700">{{ formatCurrency(myFinancials.tongTienCoc) }}</p>
+              <span class="text-[10px] text-slate-400 font-medium">{{ myFinancials.soPhieuDangMuon }} phiếu đang mượn</span>
+            </div>
+            <!-- Tổng chi phí -->
+            <div class="bg-gradient-to-br from-emerald-50 to-white border border-emerald-100 rounded-2xl p-4 space-y-0.5">
+              <span class="text-[10px] text-emerald-400 uppercase font-bold tracking-wider block">Tổng đã chi</span>
+              <p class="text-lg font-black text-emerald-700">{{ formatCurrency(myFinancials.tongDaChi) }}</p>
+              <span class="text-[10px] text-slate-400 font-medium">Phí mượn + phạt đã trả</span>
+            </div>
           </div>
         </div>
 
@@ -192,10 +232,10 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useAuthStore } from '../stores/auth';
 import api from '../services/api';
-import { User, Mail, Phone, MapPin, Calendar, Award, BookOpen, AlertTriangle } from '@lucide/vue';
+import { User, Mail, Phone, MapPin, Calendar, Award, BookOpen, AlertTriangle, Banknote } from '@lucide/vue';
 import { useToastStore } from '../stores/toast';
 import ConfirmModal from '../components/ConfirmModal.vue';
 
@@ -207,6 +247,25 @@ const activeSub = ref(null);
 const receipts = ref([]);
 const penalties = ref([]);
 const cancelling = ref(false);
+
+// Thống kê tài chính cá nhân tính từ dữ liệu receipts và penalties đã load
+const myFinancials = computed(() => {
+  const paidReceipts = receipts.value.filter(r => r.trangThai === 'DA_TRA');
+  const tongPhiMuon = paidReceipts.reduce((sum, r) => sum + (r.tongTienThanhToan || 0), 0);
+  const soPhieuDaTra = paidReceipts.length;
+
+  const tongTienPhat = penalties.value.reduce((sum, p) => sum + (p.soTienPhat || 0), 0);
+  const tienPhatDaTra = penalties.value.filter(p => p.daThanhToan).reduce((sum, p) => sum + (p.soTienPhat || 0), 0);
+  const tienPhatChuaTra = tongTienPhat - tienPhatDaTra;
+
+  const activeReceipts = receipts.value.filter(r => ['DANG_MUON', 'QUA_HAN'].includes(r.trangThai));
+  const tongTienCoc = activeReceipts.reduce((sum, r) => sum + (r.tienCoc || 0), 0);
+  const soPhieuDangMuon = activeReceipts.length;
+
+  const tongDaChi = tongPhiMuon + tienPhatDaTra;
+
+  return { tongPhiMuon, soPhieuDaTra, tongTienPhat, tienPhatChuaTra, tongTienCoc, soPhieuDangMuon, tongDaChi };
+});
 
 const cancelSubscription = async () => {
   const ok = await confirmModal.value.ask({
@@ -249,7 +308,8 @@ const formatCurrency = (val) => {
 
 const getReceiptStatusText = (status) => {
   const map = {
-    'PENDING': 'Chờ duyệt',
+    'CHO_DUYET': 'Chờ duyệt',
+    'SAN_SANG': 'Sẵn sàng lấy sách',
     'DANG_MUON': 'Đang mượn',
     'DA_TRA': 'Đã trả sách',
     'QUA_HAN': 'Quá hạn trả',
@@ -260,7 +320,8 @@ const getReceiptStatusText = (status) => {
 
 const getReceiptStatusClass = (status) => {
   const map = {
-    'PENDING': 'bg-slate-100 text-slate-700',
+    'CHO_DUYET': 'bg-slate-100 text-slate-700',
+    'SAN_SANG': 'bg-amber-100 text-amber-700',
     'DANG_MUON': 'bg-primary-light text-primary-dark',
     'DA_TRA': 'bg-green-100 text-green-700',
     'QUA_HAN': 'bg-red-100 text-red-700',
@@ -272,16 +333,20 @@ const getReceiptStatusClass = (status) => {
 const payPenalty = async (ticket) => {
   const ok = await confirmModal.value.ask({
     title: 'Xác nhận thanh toán phạt',
-    message: `Bạn muốn gửi xác nhận mô phỏng thanh toán số tiền ${formatCurrency(ticket.soTienPhat)} cho phiếu phạt ${ticket.maPhieuPhat}?`,
+    message: `Bạn muốn thực hiện mô phỏng thanh toán số tiền ${formatCurrency(ticket.soTienPhat)} cho phiếu phạt ${ticket.maPhieuPhat}?`,
     confirmText: 'Mô phỏng thanh toán',
     cancelText: 'Hủy bỏ'
   });
   if (!ok) return;
 
   try {
-    toast.show(`Yêu cầu đang chờ phê duyệt. Vui lòng cung cấp mã ${ticket.maPhieuPhat} cho Thủ thư để hoàn tất.`, 'warning');
+    const res = await api.post(`/borrowing/penalties/${ticket._id}/pay`);
+    if (res.success) {
+      toast.show('Thanh toán tiền phạt thành công!', 'success');
+      loadData();
+    }
   } catch (error) {
-    toast.show(error.message, 'error');
+    toast.show(error.message || 'Lỗi khi thanh toán phạt', 'error');
   }
 };
 

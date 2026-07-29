@@ -617,14 +617,32 @@
               </div>
             </div>
 
+            <!-- Checkbox Auto Renew -->
+            <div class="flex items-center space-x-2.5 bg-slate-50 border border-slate-100 rounded-2xl p-4 transition-all">
+              <input 
+                id="autoRenewToggle" 
+                type="checkbox" 
+                v-model="autoRenew"
+                class="h-4.5 w-4.5 rounded-lg border-slate-300 text-primary focus:ring-primary focus:ring-offset-0 focus:outline-none transition-all cursor-pointer"
+              />
+              <label for="autoRenewToggle" class="text-xs font-bold text-slate-800 select-none cursor-pointer flex-grow leading-tight">
+                Tự động gia hạn gói hội viên khi hết hạn
+              </label>
+            </div>
+
             <!-- Auto-renew status Alert -->
-            <div class="p-4 rounded-2xl border text-xs font-semibold" :class="paymentMethod === 'THE_TIN_DUNG' ? 'bg-indigo-50 border-indigo-100 text-indigo-950' : 'bg-amber-50 border-amber-100 text-amber-950'">
+            <div class="p-4 rounded-2xl border text-xs font-semibold" :class="autoRenew ? 'bg-indigo-50 border-indigo-100 text-indigo-950' : 'bg-amber-50 border-amber-100 text-amber-950'">
               <div class="flex space-x-2">
                 <Info class="h-4 w-4 flex-shrink-0 mt-0.5" />
                 <div class="space-y-1">
-                  <span class="font-bold">{{ paymentMethod === 'THE_TIN_DUNG' ? 'Chính sách tự động gia hạn' : 'Chính sách từng kỳ' }}</span>
-                  <p class="leading-relaxed font-normal text-[11px] text-slate-600" v-if="paymentMethod === 'THE_TIN_DUNG'">
-                    Bằng việc thanh toán qua Thẻ tín dụng, bạn đồng ý cho hệ thống tự động gia hạn gói với số tiền {{ formatPrice(activePlan.giaTien * 1.1) }} mỗi {{ activePlan.soNgayHieuLuc }} ngày. Bạn có thể tắt tự động gia hạn bất kỳ lúc nào trong Hồ sơ cá nhân.
+                  <span class="font-bold">{{ autoRenew ? 'Chính sách tự động gia hạn' : 'Chính sách từng kỳ' }}</span>
+                  <p class="leading-relaxed font-normal text-[11px] text-slate-600" v-if="autoRenew">
+                    <span v-if="paymentMethod === 'THE_TIN_DUNG'">
+                      Hệ thống sẽ tự động trừ số tiền {{ formatPrice(activePlan.giaTien * 1.1) }} và gia hạn thêm {{ activePlan.soNgayHieuLuc }} ngày sau mỗi chu kỳ qua Thẻ tín dụng đã liên kết.
+                    </span>
+                    <span v-else>
+                      Hệ thống sẽ gửi thông báo nhắc nhở thanh toán khi gói sắp hết hạn để đảm bảo trải nghiệm không bị gián đoạn.
+                    </span>
                   </p>
                   <p class="leading-relaxed font-normal text-[11px] text-slate-600" v-else>
                     Gói dịch vụ này sẽ tự động hết hạn / hủy sau {{ activePlan.soNgayHieuLuc }} ngày nếu bạn không thực hiện quét thanh toán tiếp. Không tự động trừ tiền.
@@ -727,6 +745,7 @@ const plans = ref([]);
 const activeSub = ref(null);
 const activePlan = ref(null);
 const subscribing = ref(false);
+const autoRenew = ref(true);
 
 // Checkout & Credit Card state
 const paymentMethod = ref('THE_TIN_DUNG'); // 'THE_TIN_DUNG' or 'VIETQR'
@@ -990,6 +1009,7 @@ const submitCheckout = async () => {
     const res = await api.post('/memberships/subscribe', { 
       goiId: activePlan.value._id,
       phuongThucThanhToan: 'THE_TIN_DUNG',
+      tuDongGiaHan: autoRenew.value,
       thongTinThe: {
         soThe: cardNumber.value.replace(/\s+/g, ''),
         tenTrenThe: cardName.value,
@@ -1029,7 +1049,8 @@ const confirmPayment = async () => {
   try {
     const res = await api.post('/memberships/subscribe', { 
       goiId: activePlan.value._id,
-      phuongThucThanhToan: 'VIETQR'
+      phuongThucThanhToan: 'VIETQR',
+      tuDongGiaHan: autoRenew.value
     });
     if (res.success) {
       toast.show('Đăng ký gói hội viên thành công! Tài khoản của bạn đã được kích hoạt.', 'success');

@@ -24,6 +24,51 @@
       </div>
     </div>
 
+    <!-- Financial Stats Section -->
+    <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm space-y-5">
+      <h2 class="font-sans text-xl font-extrabold text-slate-800 flex items-center border-b pb-3">
+        <Banknote class="h-5 w-5 mr-2 text-green-600" /> Thống Kê Tài Chính
+      </h2>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- Tổng phí mượn sách -->
+        <div class="bg-gradient-to-br from-blue-50 to-white border border-blue-100 rounded-2xl p-5 space-y-1">
+          <span class="text-[10px] text-blue-400 uppercase font-bold tracking-wider">Phí mượn sách</span>
+          <p class="text-2xl font-black text-blue-700">{{ formatCurrency(financials.tongPhiMuon) }}</p>
+          <span class="text-[10px] text-slate-400 font-medium">Tổng phí thu từ {{ financials.soPhieuDaTra }} phiếu đã trả</span>
+        </div>
+        <!-- Tổng tiền phạt trễ hạn -->
+        <div class="bg-gradient-to-br from-red-50 to-white border border-red-100 rounded-2xl p-5 space-y-1">
+          <span class="text-[10px] text-red-400 uppercase font-bold tracking-wider">Tiền phạt trễ hạn</span>
+          <p class="text-2xl font-black text-red-700">{{ formatCurrency(financials.tongTienPhat) }}</p>
+          <span class="text-[10px] text-slate-400 font-medium">
+            Đã thu: {{ formatCurrency(financials.tienPhatDaThu) }} / Chưa thu: {{ formatCurrency(financials.tienPhatChuaThu) }}
+          </span>
+        </div>
+        <!-- Doanh thu gói hội viên -->
+        <div class="bg-gradient-to-br from-indigo-50 to-white border border-indigo-100 rounded-2xl p-5 space-y-1">
+          <span class="text-[10px] text-indigo-400 uppercase font-bold tracking-wider">Doanh thu hội viên</span>
+          <p class="text-2xl font-black text-indigo-700">{{ formatCurrency(financials.doanhThuHoiVien) }}</p>
+          <span class="text-[10px] text-slate-400 font-medium">Từ {{ financials.soGoiDaBan }} gói đã bán</span>
+        </div>
+        <!-- Tổng tiền cọc -->
+        <div class="bg-gradient-to-br from-amber-50 to-white border border-amber-100 rounded-2xl p-5 space-y-1">
+          <span class="text-[10px] text-amber-400 uppercase font-bold tracking-wider">Tiền đặt cọc</span>
+          <p class="text-2xl font-black text-amber-700">{{ formatCurrency(financials.tongTienCoc) }}</p>
+          <span class="text-[10px] text-slate-400 font-medium">Đang giữ từ {{ financials.soPhieuDangMuon }} phiếu đang mượn</span>
+        </div>
+      </div>
+
+      <!-- Tổng doanh thu -->
+      <div class="bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-2xl p-5 flex justify-between items-center">
+        <div class="space-y-0.5">
+          <span class="text-xs font-bold opacity-80 uppercase tracking-wider">Tổng doanh thu hệ thống</span>
+          <p class="text-3xl font-black">{{ formatCurrency(financials.tongDoanhThu) }}</p>
+        </div>
+        <TrendingUp class="h-10 w-10 opacity-40" />
+      </div>
+    </div>
+
     <!-- Main Grid: Recent Activities -->
     <div class="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm space-y-4">
       <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b pb-3">
@@ -42,7 +87,8 @@
           
           <select v-model="filterStatus" class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-semibold text-slate-700 focus:outline-none">
             <option value="">Tất cả trạng thái</option>
-            <option value="PENDING">Chờ duyệt</option>
+            <option value="CHO_DUYET">Chờ duyệt</option>
+            <option value="SAN_SANG">Sẵn sàng</option>
             <option value="DANG_MUON">Đang mượn</option>
             <option value="DA_TRA">Đã trả</option>
             <option value="QUA_HAN">Quá hạn</option>
@@ -106,7 +152,9 @@ import {
   Users, 
   GitCompare, 
   AlertTriangle, 
-  Sparkles 
+  Sparkles,
+  Banknote,
+  TrendingUp
 } from '@lucide/vue';
 
 const authStore = useAuthStore();
@@ -118,6 +166,19 @@ const stats = ref([
   { title: 'Phiếu đang mượn', value: 0, icon: GitCompare, iconBg: 'bg-amber-600' },
   { title: 'Phiếu quá hạn', value: 0, icon: AlertTriangle, iconBg: 'bg-red-600' }
 ]);
+
+const financials = ref({
+  tongPhiMuon: 0,
+  soPhieuDaTra: 0,
+  tongTienPhat: 0,
+  tienPhatDaThu: 0,
+  tienPhatChuaThu: 0,
+  doanhThuHoiVien: 0,
+  soGoiDaBan: 0,
+  tongTienCoc: 0,
+  soPhieuDangMuon: 0,
+  tongDoanhThu: 0
+});
 
 const allReceipts = ref([]);
 const searchQuery = ref('');
@@ -146,9 +207,15 @@ const formatDate = (dateStr) => {
   return new Date(dateStr).toLocaleDateString('vi-VN');
 };
 
+const formatCurrency = (value) => {
+  if (!value && value !== 0) return '0 ₫';
+  return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
+};
+
 const getReceiptStatusText = (status) => {
   const map = {
-    'PENDING': 'Chờ duyệt',
+    'CHO_DUYET': 'Chờ duyệt',
+    'SAN_SANG': 'Sẵn sàng',
     'DANG_MUON': 'Đang mượn',
     'DA_TRA': 'Đã trả',
     'QUA_HAN': 'Quá hạn',
@@ -159,7 +226,8 @@ const getReceiptStatusText = (status) => {
 
 const getReceiptStatusClass = (status) => {
   const map = {
-    'PENDING': 'bg-slate-100 text-slate-700',
+    'CHO_DUYET': 'bg-slate-100 text-slate-700',
+    'SAN_SANG': 'bg-amber-100 text-amber-700',
     'DANG_MUON': 'bg-primary-light text-primary-dark',
     'DA_TRA': 'bg-green-100 text-green-700',
     'QUA_HAN': 'bg-red-100 text-red-700',
@@ -170,10 +238,11 @@ const getReceiptStatusClass = (status) => {
 
 const loadDashboardData = async () => {
   try {
-    const [booksRes, readersRes, receiptsRes] = await Promise.all([
+    const [booksRes, readersRes, receiptsRes, financialRes] = await Promise.all([
       api.get('/books?limit=1'),
       api.get('/admin/readers?limit=1'),
-      api.get('/borrowing/receipts')
+      api.get('/borrowing/receipts'),
+      api.get('/borrowing/financial-stats')
     ]);
 
     if (booksRes.success) {
@@ -190,6 +259,9 @@ const loadDashboardData = async () => {
       
       stats.value[2].value = activeLoans;
       stats.value[3].value = overdueLoans;
+    }
+    if (financialRes.success) {
+      financials.value = financialRes.data;
     }
   } catch (error) {
     console.error('Dashboard load error:', error);

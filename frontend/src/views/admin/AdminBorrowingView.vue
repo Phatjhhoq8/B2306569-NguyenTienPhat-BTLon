@@ -70,8 +70,14 @@
               <td class="py-4 text-xs font-semibold max-w-[200px] truncate">
                 <span v-for="(item, idx) in receipt.chiTietMuon" :key="item._id" class="block truncate">
                   {{ idx + 1 }}. {{ item.sach?.dauSach?.tenSach }} ({{ item.sach?.maSach }})
-                  <span :class="item.daTraChua ? 'text-green-600' : 'text-amber-600'">
-                    [{{ item.daTraChua ? 'Đã trả' : 'Chưa trả' }}]
+                  <span :class="receipt.trangThai === 'HUY' ? 'text-slate-400' : 
+                                (item.daTraChua ? 
+                                  (item.ngayTraThucTe && new Date(item.ngayTraThucTe) > new Date(receipt.ngayHenTra) ? 'text-orange-600' : 'text-green-600') 
+                                  : 'text-amber-600')">
+                    [{{ receipt.trangThai === 'HUY' ? 'Đã hủy' : 
+                       (item.daTraChua ? 
+                         (item.ngayTraThucTe && new Date(item.ngayTraThucTe) > new Date(receipt.ngayHenTra) ? 'Trả trễ' : 'Đã trả') 
+                         : 'Chưa trả') }}]
                   </span>
                 </span>
               </td>
@@ -96,7 +102,21 @@
                   Ghi nhận trả
                 </button>
                 <button 
-                  v-if="receipt.trangThai === 'PENDING'"
+                  v-if="receipt.trangThai === 'CHO_DUYET'"
+                  @click="approveReceipt(receipt._id)"
+                  class="bg-green-600 hover:bg-green-700 text-white font-bold text-xs py-1.5 px-3 rounded-xl transition-all shadow"
+                >
+                  Duyệt phiếu
+                </button>
+                <button 
+                  v-if="receipt.trangThai === 'SAN_SANG'"
+                  @click="pickupReceipt(receipt._id)"
+                  class="bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs py-1.5 px-3 rounded-xl transition-all shadow"
+                >
+                  Giao sách
+                </button>
+                <button 
+                  v-if="['CHO_DUYET', 'SAN_SANG'].includes(receipt.trangThai)"
                   @click="cancelReceipt(receipt._id)"
                   class="text-xs font-bold text-red-600 hover:text-red-800 transition-colors"
                 >
@@ -229,7 +249,8 @@ const returnForm = ref({
 
 const statuses = [
   { label: 'Tất cả', value: '' },
-  { label: 'Chờ duyệt', value: 'PENDING' },
+  { label: 'Chờ duyệt', value: 'CHO_DUYET' },
+  { label: 'Sẵn sàng', value: 'SAN_SANG' },
   { label: 'Đang mượn', value: 'DANG_MUON' },
   { label: 'Đã trả sách', value: 'DA_TRA' },
   { label: 'Quá hạn', value: 'QUA_HAN' }
@@ -242,7 +263,8 @@ const formatDate = (dateStr) => {
 
 const getReceiptStatusText = (status) => {
   const map = {
-    'PENDING': 'Chờ duyệt',
+    'CHO_DUYET': 'Chờ duyệt',
+    'SAN_SANG': 'Sẵn sàng',
     'DANG_MUON': 'Đang mượn',
     'DA_TRA': 'Đã trả',
     'QUA_HAN': 'Quá hạn',
@@ -253,7 +275,8 @@ const getReceiptStatusText = (status) => {
 
 const getReceiptStatusClass = (status) => {
   const map = {
-    'PENDING': 'bg-slate-100 text-slate-700',
+    'CHO_DUYET': 'bg-slate-100 text-slate-700',
+    'SAN_SANG': 'bg-amber-100 text-amber-700',
     'DANG_MUON': 'bg-primary-light text-primary-dark',
     'DA_TRA': 'bg-green-100 text-green-700',
     'QUA_HAN': 'bg-red-100 text-red-700',
@@ -349,6 +372,44 @@ const cancelReceipt = async (id) => {
     }
   } catch (error) {
     toast.show(error.message || 'Lỗi khi hủy phiếu mượn', 'error');
+  }
+};
+
+const approveReceipt = async (id) => {
+  const ok = await confirmModal.value.ask({
+    title: 'Xác nhận duyệt phiếu',
+    message: 'Duyệt phiếu mượn này? Sách sẽ được chuẩn bị sẵn sàng cho độc giả đến lấy.',
+    confirmText: 'Duyệt phiếu',
+    cancelText: 'Hủy bỏ'
+  });
+  if (!ok) return;
+  try {
+    const res = await api.post(`/borrowing/receipts/${id}/approve`);
+    if (res.success) {
+      toast.show('Duyệt thành công! Phiếu đang ở trạng thái "Sẵn sàng" chờ độc giả đến lấy sách.', 'success');
+      fetchReceipts();
+    }
+  } catch (error) {
+    toast.show(error.message || 'Lỗi khi duyệt phiếu mượn', 'error');
+  }
+};
+
+const pickupReceipt = async (id) => {
+  const ok = await confirmModal.value.ask({
+    title: 'Xác nhận giao sách',
+    message: 'Độc giả đã đến lấy sách? Phiếu sẽ chuyển sang "Đang mượn" và bắt đầu tính thời hạn trả + phí mượn từ lúc này.',
+    confirmText: 'Giao sách',
+    cancelText: 'Hủy bỏ'
+  });
+  if (!ok) return;
+  try {
+    const res = await api.post(`/borrowing/receipts/${id}/pickup`);
+    if (res.success) {
+      toast.show('Đã giao sách thành công! Phiếu hiện đang ở trạng thái "Đang mượn", bắt đầu tính hạn trả & phí.', 'success');
+      fetchReceipts();
+    }
+  } catch (error) {
+    toast.show(error.message || 'Lỗi khi giao sách', 'error');
   }
 };
 

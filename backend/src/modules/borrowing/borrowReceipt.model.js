@@ -89,7 +89,7 @@ const borrowReceiptSchema = new mongoose.Schema({
   },
   trangThai: {
     type: String,
-    enum: ['CHO_DUYET', 'DANG_MUON', 'DA_TRA', 'QUA_HAN', 'HUY'],
+    enum: ['CHO_DUYET', 'SAN_SANG', 'DANG_MUON', 'DA_TRA', 'QUA_HAN', 'HUY'],
     default: 'DANG_MUON',
     index: true
   }
@@ -259,11 +259,13 @@ borrowReceiptSchema.pre('save', async function (next) {
     }
   };
 
-  // === PHẦN 1: Mượn sách mới ===
-  const shouldStartBorrow = (this.isNew && this.trangThai === 'DANG_MUON') || (!this.isNew && this.isModified('trangThai') && this.trangThai === 'DANG_MUON');
+  // === PHẦN 0: Validate & check gói hội viên (dùng chung cho CHO_DUYET/SAN_SANG/DANG_MUON mới) ===
+  const isNewBorrow = this.isNew && ['CHO_DUYET', 'DANG_MUON'].includes(this.trangThai);
+  const isApproving = !this.isNew && this.isModified('trangThai') && this.trangThai === 'SAN_SANG';
+  const isPickingUp = !this.isNew && this.isModified('trangThai') && this.trangThai === 'DANG_MUON';
 
-  if (shouldStartBorrow) {
-    // A. Kiểm tra độc giả còn hoạt động và có gói hội viên đang hiệu lực hay không
+  // === PHẦN 1A: Tạo phiếu mượn mới — validate + khóa sách ===
+  if (isNewBorrow) {
     const reader = await Reader.findById(this.docGia).session(session);
     if (!reader || reader.isDeleted || reader.trangThai !== 'ACTIVE') {
       throw new Error('Độc giả không còn hoạt động hoặc đã bị khóa/xóa, không thể mượn sách');
@@ -282,11 +284,6 @@ borrowReceiptSchema.pre('save', async function (next) {
 
     const membershipPlan = activeSub.goiDocGia;
 
-    const borrowDays = Math.ceil((new Date(this.ngayHenTra).getTime() - new Date(this.ngayMuon).getTime()) / (1000 * 60 * 60 * 24));
-    if (borrowDays > membershipPlan.soNgayMuonToiDa) {
-      throw new Error(`Ngày hẹn trả vượt quá số ngày mượn tối đa của gói thẻ (${membershipPlan.soNgayMuonToiDa} ngày)`);
-    }
-
     const readerReceipts = await mongoose.model('BorrowReceipt').find({ docGia: this.docGia }).select('_id').session(session);
     const unpaidTickets = await PenaltyTicket.countDocuments({
       phieuMuon: { $in: readerReceipts.map(receipt => receipt._id) },
@@ -296,22 +293,19 @@ borrowReceiptSchema.pre('save', async function (next) {
       throw new Error('Độc giả còn tiền phạt chưa thanh toán, không thể mượn sách mới');
     }
 
-    // Bắt lỗi: Trễ trên 15 ngày -> khóa quyền mượn sách mới
     const fifteenDaysAgo = new Date(new Date().getTime() - 15 * 24 * 60 * 60 * 1000);
     const hasLongOverdue = await mongoose.model('BorrowReceipt').exists({
       docGia: this.docGia,
       trangThai: 'QUA_HAN',
       ngayHenTra: { $lt: fifteenDaysAgo }
     }).session(session);
-
     if (hasLongOverdue) {
       throw new Error('Độc giả có sách trễ hạn quá 15 ngày chưa trả, tài khoản bị tạm khóa quyền mượn sách mới');
     }
 
-    // B. Kiểm tra hạn mức số lượng sách đang mượn
     const activeReceipts = await mongoose.model('BorrowReceipt').find({
       docGia: this.docGia,
-      trangThai: { $in: ['DANG_MUON', 'QUA_HAN'] }
+      trangThai: { $in: ['DANG_MUON', 'QUA_HAN', 'SAN_SANG'] }
     }).session(session);
 
     let currentBorrowedCount = 0;
@@ -323,36 +317,11 @@ borrowReceiptSchema.pre('save', async function (next) {
       throw new Error(`Mượn sách vượt quá giới hạn tối đa cho phép của gói thẻ (Đã mượn: ${currentBorrowedCount}, Mượn thêm: ${this.chiTietMuon.length}, Giới hạn: ${membershipPlan.soSachToiDa})`);
     }
 
-    // C. Tự động tính tiền cọc & phí mượn theo gói hội viên mới
-    let totalPhiMuon = 0;
-    const planName = (membershipPlan.tenGoi || '').toLowerCase().normalize('NFC');
-    
-    const basePhiMuonPerBook = membershipPlan.phiMuonSachGiay !== undefined ? membershipPlan.phiMuonSachGiay : 0;
-    const baseTienCoc = membershipPlan.tienDatCoc !== undefined ? membershipPlan.tienDatCoc : 0;
-
-    this.tienCoc = baseTienCoc;
-
-    // D. Khóa sách vật lý & Cập nhật tồn kho (Chống Race Condition)
+    // Khóa sách vật lý & Cập nhật tồn kho
     for (const item of this.chiTietMuon) {
-      // Kiểm tra đầu sách có đang bị DISCONTINUED hoặc bị xóa không
       const copyCheck = await BookCopy.findById(item.sach).populate('dauSach').session(session);
       if (copyCheck && copyCheck.dauSach && (copyCheck.dauSach.trangThai === 'DISCONTINUED' || copyCheck.dauSach.isDeleted)) {
         throw new Error(`Đầu sách "${copyCheck.dauSach.tenSach}" đã ngừng phục vụ, không thể mượn thêm`);
-      }
-
-      // Tính phí mượn sách giấy dịch vụ nhỏ: Giáo trình miễn phí, thể loại khác có phí dịch vụ
-      if (copyCheck && copyCheck.dauSach) {
-        const title = copyCheck.dauSach;
-        const isGiaoTrinh = (title.tenSach || '').toLowerCase().includes('giáo trình') || 
-                             (title.tenSach || '').toLowerCase().includes('bài tập') ||
-                             (title.tenSach || '').toLowerCase().includes('sách giáo khoa') ||
-                             (title.theLoai || '').toString().toLowerCase().includes('giáo dục') ||
-                             (title.theLoai || '').toString().toLowerCase().includes('ngoại ngữ') ||
-                             (title.theLoai || '').toString().toLowerCase().includes('khoa học');
-        
-        if (!isGiaoTrinh) {
-          totalPhiMuon += basePhiMuonPerBook;
-        }
       }
 
       const copy = await BookCopy.findOneAndUpdate(
@@ -366,31 +335,76 @@ borrowReceiptSchema.pre('save', async function (next) {
       }
 
       await BookTitle.findByIdAndUpdate(copy.dauSach, { $inc: { soLuongKhaDung: -1 } }).session(session);
-      if (this.trangThai === 'DANG_MUON') {
-        await BookTitle.findByIdAndUpdate(copy.dauSach, { $inc: { soLuotMuon: 1 } }).session(session);
+    }
+  }
+
+  // === PHẦN 1B: Duyệt phiếu (CHO_DUYET → SAN_SANG) — khóa sách nếu tạo bằng CHO_DUYET ===
+  if (isApproving) {
+    // Sách đã được khóa khi tạo phiếu, không cần khóa lại
+    // Chỉ ghi nhận nhân viên duyệt
+  }
+
+  // === PHẦN 1C: Giao sách (SAN_SANG → DANG_MUON) — BẮT ĐẦU TÍNH THỜI HẠN & PHÍ ===
+  if (isPickingUp) {
+    const oldBorrow = await mongoose.model('BorrowReceipt').findById(this._id).session(session);
+    if (oldBorrow && oldBorrow.trangThai === 'SAN_SANG') {
+      const activeSub = await Subscription.findOne({
+        docGia: this.docGia,
+        trangThai: 'DANG_HIEU_LUC',
+        ngayBatDau: { $lte: new Date() },
+        ngayKetThuc: { $gte: new Date() }
+      }).populate('goiDocGia').session(session);
+
+      if (!activeSub || !activeSub.goiDocGia) {
+        throw new Error('Độc giả không có gói hội viên còn hiệu lực');
       }
+      const membershipPlan = activeSub.goiDocGia;
+
+      // Cập nhật ngày mượn = thời điểm giao sách, tính lại hạn trả
+      const now = new Date();
+      const originalBorrowDays = Math.ceil(
+        (new Date(oldBorrow.ngayHenTra).getTime() - new Date(oldBorrow.ngayMuon).getTime()) / (1000 * 60 * 60 * 24)
+      );
+      const borrowDays = Math.min(originalBorrowDays, membershipPlan.soNgayMuonToiDa);
+      this.ngayMuon = now;
+      this.ngayHenTra = new Date(now.getTime() + borrowDays * 24 * 60 * 60 * 1000);
+
+      // Tính phí mượn & tiền cọc
+      const basePhiMuonPerBook = membershipPlan.phiMuonSachGiay !== undefined ? membershipPlan.phiMuonSachGiay : 0;
+      const baseTienCoc = membershipPlan.tienDatCoc !== undefined ? membershipPlan.tienDatCoc : 0;
+      this.tienCoc = baseTienCoc;
+
+      let totalPhiMuon = 0;
+      for (const item of this.chiTietMuon) {
+        const copyCheck = await BookCopy.findById(item.sach).populate('dauSach').session(session);
+        if (copyCheck && copyCheck.dauSach) {
+          const title = copyCheck.dauSach;
+          const isGiaoTrinh = (title.tenSach || '').toLowerCase().includes('giáo trình') ||
+                               (title.tenSach || '').toLowerCase().includes('bài tập') ||
+                               (title.tenSach || '').toLowerCase().includes('sách giáo khoa') ||
+                               (title.theLoai || '').toString().toLowerCase().includes('giáo dục') ||
+                               (title.theLoai || '').toString().toLowerCase().includes('ngoại ngữ') ||
+                               (title.theLoai || '').toString().toLowerCase().includes('khoa học');
+          if (!isGiaoTrinh) {
+            totalPhiMuon += basePhiMuonPerBook;
+          }
+          // Tăng lượt mượn thực tế
+          await BookTitle.findByIdAndUpdate(title._id, { $inc: { soLuotMuon: 1 } }).session(session);
+        }
+      }
+
+      this.phiMuon = totalPhiMuon;
+      this.tongTienThanhToan = totalPhiMuon;
     }
   }
 
   // === PHẦN 2: Cập nhật phiếu mượn đã tồn tại ===
   if (!this.isNew) {
-    // Tăng lượt mượn thực tế khi duyệt từ CHO_DUYET sang DANG_MUON
-    if (this.isModified('trangThai') && this.trangThai === 'DANG_MUON') {
-      const oldBorrow = await mongoose.model('BorrowReceipt').findById(this._id).session(session);
-      if (oldBorrow && oldBorrow.trangThai === 'CHO_DUYET') {
-        for (const item of this.chiTietMuon) {
-          const copy = await BookCopy.findById(item.sach).session(session);
-          if (copy) {
-            await BookTitle.findByIdAndUpdate(copy.dauSach, { $inc: { soLuotMuon: 1 } }).session(session);
-          }
-        }
-      }
-    }
-
     if (this.isModified('trangThai') && this.trangThai === 'HUY') {
       const oldBorrow = await mongoose.model('BorrowReceipt').findById(this._id).session(session);
       const hasBorrowedBooks = oldBorrow && oldBorrow.chiTietMuon.some(item => !item.daTraChua);
-      if (hasBorrowedBooks && oldBorrow.trangThai !== 'CHO_DUYET') {
+      // Cho phép hủy từ CHO_DUYET hoặc SAN_SANG (chưa giao sách)
+      if (hasBorrowedBooks && !['CHO_DUYET', 'SAN_SANG'].includes(oldBorrow.trangThai)) {
         throw new Error('Không được hủy phiếu mượn sau khi sách đã được giao; hãy xử lý trả sách bằng DA_TRA');
       }
     }

@@ -29,7 +29,7 @@ const subscribePlan = async (req, res, next) => {
       return resultResponse.err(res, 'Chỉ độc giả mới có thể đăng ký gói hội viên', 403);
     }
 
-    const { goiId, phuongThucThanhToan, thongTinThe } = req.body;
+    const { goiId, phuongThucThanhToan, thongTinThe, tuDongGiaHan } = req.body;
     if (!goiId) {
       return resultResponse.err(res, 'ID gói hội viên là bắt buộc', 400);
     }
@@ -50,7 +50,7 @@ const subscribePlan = async (req, res, next) => {
       tongTien: plan.giaTien,
       trangThai: 'DANG_HIEU_LUC',
       phuongThucThanhToan: phuongThucThanhToan || 'VIETQR',
-      tuDongGiaHan: phuongThucThanhToan === 'THE_TIN_DUNG',
+      tuDongGiaHan: tuDongGiaHan !== undefined ? tuDongGiaHan : (phuongThucThanhToan === 'THE_TIN_DUNG'),
       thongTinThe: phuongThucThanhToan === 'THE_TIN_DUNG' ? thongTinThe : undefined
     });
 

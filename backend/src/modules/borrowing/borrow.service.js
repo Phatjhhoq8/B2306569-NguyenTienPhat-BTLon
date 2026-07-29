@@ -76,6 +76,17 @@ const approveBorrowReceipt = async (receiptId, staffId) => withTransaction(async
   if (!receipt) throw new Error('Không tìm thấy phiếu mượn');
   if (receipt.trangThai !== 'CHO_DUYET') throw new Error('Chỉ có thể duyệt phiếu đang chờ duyệt');
 
+  receipt.trangThai = 'SAN_SANG';
+  receipt.nhanVien = staffId || receipt.nhanVien;
+  await receipt.save({ session });
+  return receipt;
+});
+
+const pickupBorrowReceipt = async (receiptId, staffId) => withTransaction(async (session) => {
+  const receipt = await BorrowReceipt.findById(receiptId).session(session);
+  if (!receipt) throw new Error('Không tìm thấy phiếu mượn');
+  if (receipt.trangThai !== 'SAN_SANG') throw new Error('Chỉ có thể giao sách cho phiếu đang ở trạng thái "Sẵn sàng"');
+
   receipt.trangThai = 'DANG_MUON';
   receipt.nhanVien = staffId || receipt.nhanVien;
   await receipt.save({ session });
@@ -143,6 +154,7 @@ module.exports = {
   returnBorrowReceipt,
   cancelBorrowReceipt,
   approveBorrowReceipt,
+  pickupBorrowReceipt,
   renewBorrowReceipt,
   markOverdueReceipts,
   discontinueBookTitle,
