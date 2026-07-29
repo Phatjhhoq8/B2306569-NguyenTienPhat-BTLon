@@ -29,7 +29,13 @@ class RecommendationAgent(BaseAgent):
         user_id = state.get("user_id", "web_user_01")
         preference_context = build_preference_context(user_id)
         borrowed_book_ids = [book.get("_id") for book in state.get("borrowed_books", []) if book.get("_id")]
-        result = find_books_for_query(query, preference_context=preference_context, borrowed_book_ids=borrowed_book_ids)
+        result = find_books_for_query(
+            query,
+            preference_context=preference_context,
+            borrowed_book_ids=borrowed_book_ids,
+            lookup_mode=state.get("book_lookup_mode", "unknown"),
+            possible_book_titles=state.get("possible_book_titles", []),
+        )
         books = result.get("suggested_books", [])
         external = result.get("external_suggestions", [])
         context = result.get("suggestion_context", {})
@@ -38,7 +44,7 @@ class RecommendationAgent(BaseAgent):
         if context_type == "direct_library_matches":
             answer = "Minh tim thay mot so sach trong thu vien phu hop voi yeu cau cua ban. Ban co the chon mot hoac nhieu cuon ben duoi."
         elif context_type == "web_verified_library_matches":
-            answer = "Minh da doi chieu ket qua tim kiem va tim thay mot so sach co trong thu vien phu hop voi mo ta cua ban."
+            answer = "Minh da tim ten tac pham tu mo ta cua ban, doi chieu lai CSDL va thay sach trong thu vien. Ban co the chon sach ben duoi."
         elif context_type == "related_alternatives":
             missing_title = context.get("missing_title")
             if missing_title:
@@ -48,7 +54,7 @@ class RecommendationAgent(BaseAgent):
         else:
             answer = "Minh chua tim thay sach phu hop trong thu vien. Neu ban nho them ten nhan vat, boi canh hoac the loai, minh se tim tiep cho ban."
             if external:
-                answer = "Minh tim thay mot so tac pham co ve lien quan tren web, nhung thu vien hien chua co cac sach nay trong CSDL."
+                answer = "Minh tim thay mot so tac pham co ve khop mo ta tren web, nhung thu vien hien chua co cac sach nay trong CSDL. Minh chi hien ten va tom tat ngan, khong cho chon muon."
 
         return {
             "draft_answer": answer,

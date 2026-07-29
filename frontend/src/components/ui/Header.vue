@@ -20,7 +20,7 @@
         <!-- Right Menu Controls -->
         <div class="flex items-center space-x-4">
           <button
-            @click="chatStore.toggleChat"
+            @click="handleChatClick"
             class="relative p-2 hover:bg-primary-dark rounded-full transition-colors group"
             title="Mở trợ lý AI"
           >
@@ -205,6 +205,14 @@ const chatStore = useChatStore();
 
 const isMobileMenuOpen = ref(false);
 const confirmModal = ref(null);
+
+const handleChatClick = () => {
+  if (!authStore.isAuthenticated) {
+    router.push({ name: 'login', query: { redirect: router.currentRoute.value.fullPath, reason: 'agent' } });
+    return;
+  }
+  chatStore.toggleChat();
+};
 
 const handleLogout = async () => {
   const ok = await confirmModal.value.ask({

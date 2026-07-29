@@ -67,7 +67,14 @@ class WebUIRequestHandler(http.server.SimpleHTTPRequestHandler):
             try:
                 request_json = json.loads(post_data.decode('utf-8'))
                 raw_query = request_json.get("raw_query", "").strip()
-                user_id = request_json.get("user_id", "web_user_01")
+                user_id = request_json.get("user_id", "").strip()
+                if not user_id:
+                    self.send_response(401)
+                    self.send_header('Content-Type', 'application/json; charset=utf-8')
+                    self._send_cors_headers()
+                    self.end_headers()
+                    self.wfile.write(json.dumps({"success": False, "error": "Bạn cần đăng nhập để sử dụng trợ lý AI."}, ensure_ascii=False).encode('utf-8'))
+                    return
                 previous_state = request_json.get("state", {})
                 
                 print(f"\n==================================================")
@@ -90,6 +97,8 @@ class WebUIRequestHandler(http.server.SimpleHTTPRequestHandler):
                     "messages": previous_messages,
                     "raw_query": raw_query,
                     "refined_query": previous_state.get("refined_query", ""),
+                    "book_lookup_mode": previous_state.get("book_lookup_mode", "unknown"),
+                    "possible_book_titles": previous_state.get("possible_book_titles", []),
                     "intent": previous_state.get("intent", "chitchat"),
                     "clarification_count": previous_state.get("clarification_count", 0),
                     "detected_domains": previous_state.get("detected_domains", []),
@@ -158,6 +167,8 @@ class WebUIRequestHandler(http.server.SimpleHTTPRequestHandler):
                         "messages": (final_state.get("messages", []) or [])[-4:],
                         "raw_query": final_state.get("raw_query"),
                         "refined_query": final_state.get("refined_query"),
+                        "book_lookup_mode": final_state.get("book_lookup_mode"),
+                        "possible_book_titles": final_state.get("possible_book_titles"),
                         "intent": final_state.get("intent"),
                         "clarification_count": final_state.get("clarification_count"),
                         "detected_domains": final_state.get("detected_domains"),

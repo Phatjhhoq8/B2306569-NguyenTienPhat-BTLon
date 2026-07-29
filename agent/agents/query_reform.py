@@ -15,6 +15,14 @@ class MissingInfoItem(BaseModel):
 class QueryReformOutput(BaseModel):
     refined_query: str = Field(description="Cau hoi da chuan hoa, giu nguyen y dinh nguoi dung.")
     detected_entities: List[str] = Field(default_factory=list, description="Tu khoa sach, tac gia, nhan vat, the loai, goi hoi vien.")
+    book_lookup_mode: str = Field(
+        default="unknown",
+        description="Neu la tim sach: 'known_title' khi nguoi dung da neu ten sach/tac pham ro; 'description_discovery' khi nguoi dung mo ta nhan vat, cot truyen, boi canh de hoi do la sach/truyen gi; nguoc lai 'unknown'.",
+    )
+    possible_book_titles: List[str] = Field(
+        default_factory=list,
+        description="Ten sach/tac pham co the suy ra tu mo ta, neu co. Chi dua ten tac pham, khong dua cau giai thich.",
+    )
     original_query: str
     confidence: float = Field(description="Do ro rang 0-1.")
     missing_info: List[MissingInfoItem] = Field(default_factory=list)
@@ -26,6 +34,9 @@ class QueryReformAgent(BaseAgent):
             "Ban la chuyen gia phan tich ngon ngu cho tro ly thu vien sach online. "
             "Hay sua loi chinh ta, mo rong viet tat (dk/dang ky, tk/tai khoan, goi/goi hoi vien), "
             "trich xuat tu khoa ve ten sach, tac gia, the loai, nhan vat, cot truyen, boi canh, mood doc va nhu cau goi hoi vien. "
+            "Voi truy van tim sach, phan biet ro: known_title neu nguoi dung da neu ten sach/tac pham; "
+            "description_discovery neu nguoi dung dang mo ta nhan vat, dac diem, tinh tiet, boi canh de hoi do la truyen/sach/tac pham gi. "
+            "Neu tu mo ta co the nhan dien tac pham, dien ten vao possible_book_titles nhung van giu book_lookup_mode la description_discovery. "
             "Khong tra loi cau hoi. Neu nguoi dung mo ta sach mo ho nhung van co the tim bang keyword, dung confidence >= 0.70. "
             "Chi hoi lai khi cau qua ngan den muc khong biet muon tim sach, dang ky hay hoi goi."
         )
@@ -61,6 +72,8 @@ class QueryReformAgent(BaseAgent):
             return {
                 "refined_query": raw_query,
                 "detected_entities": [],
+                "book_lookup_mode": "unknown",
+                "possible_book_titles": [],
                 "original_query": raw_query,
                 "confidence": 0.8 if len(raw_query.strip()) > 3 else 0.4,
                 "missing_info": [],

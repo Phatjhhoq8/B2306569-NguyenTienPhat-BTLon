@@ -13,6 +13,7 @@ const { connectDatabase } = require('../config/database');
 const { nextCode } = require('../services/codeService');
 const { createBookTitle } = require('../services/bookService');
 const { Counter, Publisher, Author, Category, BookTitle, BookCopy, Reader, BorrowReceipt, MembershipPlan, Subscription, PenaltyTicket, Staff } = require('../models');
+const { getEffectiveMembershipPlan } = require('../modules/memberships/membershipPrivileges');
 
 test.describe('Backend Core & Concurrency Safety Tests', () => {
   
@@ -718,7 +719,7 @@ test.describe('Backend Core & Concurrency Safety Tests', () => {
     assert.strictEqual(titleAfterUpdate.soLuongKhaDung, 4, 'Tồn kho khả dụng phải giảm đi 1 khi sách bị xóa mềm');
   });
 
-  test('15. Kiểm tra tự động hủy gói cũ khi độc giả mua gói thành viên mới', async () => {
+  test('15. Kiểm tra giữ nhiều gói hiệu lực và lấy quyền cao nhất khi độc giả mua thêm gói', async () => {
     const reader = await Reader.create({
       hoLot: 'Lê',
       ten: 'Trùng Gói',
@@ -754,10 +755,15 @@ test.describe('Backend Core & Concurrency Safety Tests', () => {
       trangThai: 'DANG_HIEU_LUC'
     });
 
-    // 3. Xác thực: Gói VIP cũ tự động chuyển thành HUY
+    // 3. Xác thực: cả hai gói vẫn hiệu lực và quyền sử dụng lấy mức tốt nhất từ các gói.
     const updatedFirstSub = await Subscription.findById(firstSub._id);
-    assert.strictEqual(updatedFirstSub.trangThai, 'HUY', 'Gói subscription cũ phải tự động chuyển thành HUY khi đăng ký gói mới');
+    assert.strictEqual(updatedFirstSub.trangThai, 'DANG_HIEU_LUC');
     assert.strictEqual(secondSub.trangThai, 'DANG_HIEU_LUC');
+
+    const effectivePlan = await getEffectiveMembershipPlan(reader._id);
+    assert.strictEqual(effectivePlan.soSachToiDa, 5, 'Giới hạn số sách phải lấy mức cao nhất giữa các gói');
+    assert.strictEqual(effectivePlan.soNgayMuonToiDa, 14, 'Số ngày mượn phải lấy mức cao nhất giữa các gói');
+    assert.strictEqual(effectivePlan.mienTienCoc, true, 'Nếu một gói miễn tiền cọc thì quyền hiệu lực phải được miễn cọc');
   });
 
   test('16. Kiểm tra chặn xóa độc giả đang nợ sách hoặc nợ tiền phạt chưa thanh toán', async () => {
@@ -1342,4 +1348,3 @@ test.describe('Backend Core & Concurrency Safety Tests', () => {
   });
 
 });
-

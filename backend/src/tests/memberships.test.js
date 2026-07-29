@@ -12,6 +12,7 @@ const { connectDatabase } = require('../config/database');
 const { Reader, Staff, MembershipPlan, Subscription } = require('../models');
 const app = require('../app');
 const jwtHelper = require('../utils/jwtHelper');
+const { mergePlans } = require('../modules/memberships/membershipPrivileges');
 
 let server;
 let baseUrl;
@@ -183,6 +184,112 @@ test.describe('Memberships API Tests', () => {
       assert.strictEqual(res.status, 200);
       assert.strictEqual(res.body.success, true);
       assert.strictEqual(res.body.data.subscription.tuDongGiaHan, false);
+    });
+
+    test('Đăng ký gói mới nên hủy gói cũ và ghi nhận gói mới', async () => {
+      const activeBefore = await Subscription.findOne({
+        docGia: testReaderId,
+        trangThai: 'DANG_HIEU_LUC'
+      });
+      assert.ok(activeBefore, 'Cần có gói đang hiệu lực trước khi đăng ký gói mới');
+
+      const upgradePlan = await MembershipPlan.create({
+        tenGoi: 'Đọc Plus TDD',
+        giaTien: 50000,
+        soNgayHieuLuc: 45,
+        soSachToiDa: 4,
+        soNgayMuonToiDa: 18,
+        mienTienCoc: false
+      });
+
+      const res = await makeRequest('/api/memberships/subscribe', {
+        method: 'POST',
+        headers: { Cookie: readerCookie },
+        body: { goiId: upgradePlan._id }
+      });
+
+      assert.strictEqual(res.status, 201);
+      assert.strictEqual(res.body.success, true);
+      assert.strictEqual(res.body.data.trangThai, 'DANG_HIEU_LUC');
+      assert.strictEqual(res.body.data.tongTien, upgradePlan.giaTien);
+
+      const stillActiveOldSub = await Subscription.findById(activeBefore._id);
+      assert.strictEqual(stillActiveOldSub.trangThai, 'HUY');
+
+      const activeCount = await Subscription.countDocuments({
+        docGia: testReaderId,
+        trangThai: 'DANG_HIEU_LUC'
+      });
+      assert.strictEqual(activeCount, 1);
+    });
+
+    test('Quyền hội viên hiệu lực nên lấy quyền tốt nhất từ nhiều gói', () => {
+      const effectivePlan = mergePlans([
+        {
+          tenGoi: 'Basic',
+          soSachToiDa: 3,
+          soNgayMuonToiDa: 14,
+          mienTienCoc: false,
+          choPhepGiaHanOnline: false,
+          phiMuonSachGiay: 3000,
+          phiPhatTreHan: 5000,
+          tienDatCoc: 50000
+        },
+        {
+          tenGoi: 'Premium',
+          soSachToiDa: 8,
+          soNgayMuonToiDa: 30,
+          mienTienCoc: true,
+          choPhepGiaHanOnline: true,
+          phiMuonSachGiay: 1000,
+          phiPhatTreHan: 2000,
+          tienDatCoc: 100000
+        }
+      ]);
+
+      assert.strictEqual(effectivePlan.soSachToiDa, 8);
+      assert.strictEqual(effectivePlan.soNgayMuonToiDa, 30);
+      assert.strictEqual(effectivePlan.mienTienCoc, true);
+      assert.strictEqual(effectivePlan.choPhepGiaHanOnline, true);
+      assert.strictEqual(effectivePlan.phiMuonSachGiay, 1000);
+      assert.strictEqual(effectivePlan.phiPhatTreHan, 2000);
+      assert.strictEqual(effectivePlan.tienDatCoc, 0);
+    });
+
+    test('Mua lại đúng gói đang hiệu lực nên gia hạn thêm một kỳ', async () => {
+      const activeBefore = await Subscription.findOne({
+        docGia: testReaderId,
+        trangThai: 'DANG_HIEU_LUC'
+      }).populate('goiDocGia');
+      assert.ok(activeBefore?.goiDocGia, 'Cần có gói đang hiệu lực để kiểm thử gia hạn');
+
+      const oldEnd = new Date(activeBefore.ngayKetThuc);
+      const oldTotal = activeBefore.tongTien;
+      const activeCountBefore = await Subscription.countDocuments({
+        docGia: testReaderId,
+        trangThai: 'DANG_HIEU_LUC'
+      });
+
+      const res = await makeRequest('/api/memberships/subscribe', {
+        method: 'POST',
+        headers: { Cookie: readerCookie },
+        body: { goiId: activeBefore.goiDocGia._id }
+      });
+
+      assert.strictEqual(res.status, 200);
+      assert.strictEqual(res.body.success, true);
+      assert.strictEqual(res.body.data._id, activeBefore._id);
+      assert.strictEqual(res.body.data.tongTien, oldTotal + activeBefore.goiDocGia.giaTien);
+
+      const renewedSub = await Subscription.findById(activeBefore._id);
+      const expectedEnd = oldEnd.getTime() + activeBefore.goiDocGia.soNgayHieuLuc * 24 * 60 * 60 * 1000;
+      assert.strictEqual(new Date(renewedSub.ngayKetThuc).getTime(), expectedEnd);
+
+      const activeCountAfter = await Subscription.countDocuments({
+        docGia: testReaderId,
+        trangThai: 'DANG_HIEU_LUC'
+      });
+      assert.strictEqual(activeCountAfter, activeCountBefore);
     });
 
     test('Nhân viên nên lấy được toàn bộ danh sách đăng ký gói', async () => {

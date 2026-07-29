@@ -10,6 +10,7 @@ const resultResponse = require('../../utils/resultResponse');
 const Reader = require('./reader.model');
 const Staff = require('./staff.model');
 const passwordService = require('../../services/passwordService');
+const { getEffectiveMembershipPlan } = require('../memberships/membershipPrivileges');
 
 /**
  * Đăng ký độc giả mới
@@ -39,17 +40,10 @@ const loginReader = async (req, res, next) => {
     const { reader, token } = await userService.loginReader(email, matKhau);
     cookieHelper.setCookieToken(res, token);
 
-    // Đính kèm subscriptionPlan của reader
-    const Subscription = mongoose.model('Subscription');
-    const activeSub = await Subscription.findOne({
-      docGia: reader._id,
-      trangThai: 'DANG_HIEU_LUC',
-      ngayBatDau: { $lte: new Date() },
-      ngayKetThuc: { $gte: new Date() }
-    }).populate('goiDocGia');
+    const effectivePlan = await getEffectiveMembershipPlan(reader._id);
 
-    if (activeSub && activeSub.goiDocGia) {
-      reader.subscriptionPlan = activeSub.goiDocGia;
+    if (effectivePlan) {
+      reader.subscriptionPlan = effectivePlan;
     } else {
       const MembershipPlan = mongoose.model('MembershipPlan');
       const defaultPlan = await MembershipPlan.findOne({ giaTien: 0 }) || {
@@ -112,16 +106,10 @@ const getMe = async (req, res, next) => {
     // Đính kèm subscriptionPlan đang hiệu lực của độc giả
     const userRole = req.user.role || (req.user.maSoNV ? 'STAFF' : 'READER');
     if (userRole === 'READER') {
-      const Subscription = mongoose.model('Subscription');
-      const activeSub = await Subscription.findOne({
-        docGia: req.user._id,
-        trangThai: 'DANG_HIEU_LUC',
-        ngayBatDau: { $lte: new Date() },
-        ngayKetThuc: { $gte: new Date() }
-      }).populate('goiDocGia');
+      const effectivePlan = await getEffectiveMembershipPlan(req.user._id);
 
-      if (activeSub && activeSub.goiDocGia) {
-        userObj.subscriptionPlan = activeSub.goiDocGia;
+      if (effectivePlan) {
+        userObj.subscriptionPlan = effectivePlan;
       } else {
         const MembershipPlan = mongoose.model('MembershipPlan');
         const defaultPlan = await MembershipPlan.findOne({ giaTien: 0 }) || {

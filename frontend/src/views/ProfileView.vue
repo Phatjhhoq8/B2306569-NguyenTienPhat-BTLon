@@ -79,30 +79,39 @@
             <Award class="h-5 w-5 mr-2 text-primary" /> Thẻ hội viên
           </h3>
           
-          <div v-if="activeSub" class="space-y-3">
-            <div class="bg-gradient-to-r from-primary to-indigo-900 text-white p-4 rounded-2xl space-y-2 relative overflow-hidden">
+          <div v-if="activeSubs.length > 0" class="space-y-3">
+            <div
+              v-for="sub in activeSubs"
+              :key="sub._id"
+              class="bg-gradient-to-r from-primary to-indigo-900 text-white p-4 rounded-2xl space-y-2 relative overflow-hidden"
+            >
               <div class="absolute -right-6 -bottom-6 w-16 h-16 bg-white/10 rounded-full"></div>
+              <span
+                v-if="sub._id === bestActiveSub?._id"
+                class="absolute top-3 right-3 bg-white/15 text-secondary text-[9px] font-black px-2 py-0.5 rounded-full uppercase"
+              >Quyền cao nhất</span>
               <span class="text-[10px] uppercase font-bold tracking-widest block opacity-70">Gói hoạt động</span>
-              <h4 class="font-bold text-lg text-secondary">{{ activeSub.goiDocGia?.tenGoi || 'Standard' }}</h4>
-              <span class="text-[10px] block opacity-90">Hạn dùng: {{ formatDate(activeSub.ngayKetThuc) }}</span>
+              <h4 class="font-bold text-lg text-secondary">{{ sub.goiDocGia?.tenGoi || 'Standard' }}</h4>
+              <span class="text-[10px] block opacity-90">Hạn dùng: {{ (sub.goiDocGia?.tenGoi || '').toLowerCase().normalize('NFC').includes('tiêu chuẩn') ? 'Vĩnh viễn' : formatDate(sub.ngayKetThuc) }}</span>
             </div>
             <ul class="text-xs space-y-1 text-slate-500 font-medium pt-2">
+              <li>• Quyền áp dụng: {{ activeSub.goiDocGia?.tenGoi }}</li>
               <li>• Mượn tối đa: {{ activeSub.goiDocGia?.soSachToiDa }} cuốn</li>
               <li>• Thời gian mượn: {{ activeSub.goiDocGia?.soNgayMuonToiDa }} ngày</li>
+              <li>• Tiền cọc: {{ activeSub.goiDocGia?.mienTienCoc ? 'Miễn cọc' : formatCurrency(activeSub.goiDocGia?.tienDatCoc || 0) }}</li>
               <li class="pt-2 text-slate-700 flex flex-col gap-1.5 border-t border-slate-100 mt-2">
                 <span class="block">
-                  <strong>Thanh toán:</strong> 
-                  {{ activeSub.phuongThucThanhToan === 'THE_TIN_DUNG' ? 'Thẻ tín dụng/Ghi nợ' : 'Chuyển khoản VietQR' }}
+                  <strong>Đang có:</strong> {{ activeSubs.length }} gói hội viên còn hiệu lực
                 </span>
                 
-                <span v-if="activeSub.phuongThucThanhToan === 'THE_TIN_DUNG'" class="flex items-center gap-1.5">
-                  <span class="h-2 w-2 rounded-full" :class="activeSub.tuDongGiaHan ? 'bg-green-500 animate-pulse' : 'bg-slate-400'"></span>
-                  <span>Tự động gia hạn: <strong>{{ activeSub.tuDongGiaHan ? 'Đang bật' : 'Đã tắt' }}</strong></span>
+                <span v-if="cardAutoRenewSub" class="flex items-center gap-1.5">
+                  <span class="h-2 w-2 rounded-full" :class="cardAutoRenewSub.tuDongGiaHan ? 'bg-green-500 animate-pulse' : 'bg-slate-400'"></span>
+                  <span>Tự động gia hạn thẻ: <strong>{{ cardAutoRenewSub.tuDongGiaHan ? 'Đang bật' : 'Đã tắt' }}</strong></span>
                 </span>
                 <span v-else class="text-slate-500 italic text-[11px] block">Thanh toán từng kỳ (Không tự động gia hạn)</span>
 
                 <button 
-                  v-if="activeSub.phuongThucThanhToan === 'THE_TIN_DUNG' && activeSub.tuDongGiaHan && activeSub.trangThai === 'DANG_HIEU_LUC'"
+                  v-if="cardAutoRenewSub && cardAutoRenewSub.tuDongGiaHan && cardAutoRenewSub.trangThai === 'DANG_HIEU_LUC'"
                   @click="cancelSubscription"
                   :disabled="renewLoading"
                   class="mt-1 w-full bg-red-50 hover:bg-red-100 text-red-600 font-semibold py-1.5 px-3 rounded-xl text-[10px] transition-colors border border-red-200"
@@ -110,7 +119,7 @@
                   {{ renewLoading ? 'Đang xử lý...' : 'Hủy tự động gia hạn' }}
                 </button>
                 <button
-                  v-else-if="activeSub.phuongThucThanhToan === 'THE_TIN_DUNG' && !activeSub.tuDongGiaHan && activeSub.trangThai === 'DANG_HIEU_LUC'"
+                  v-else-if="cardAutoRenewSub && !cardAutoRenewSub.tuDongGiaHan && cardAutoRenewSub.trangThai === 'DANG_HIEU_LUC'"
                   @click="enableAutoRenew"
                   :disabled="renewLoading"
                   class="mt-1 w-full bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-semibold py-1.5 px-3 rounded-xl text-[10px] transition-colors border border-emerald-200"
@@ -147,7 +156,6 @@
             />
             <select v-model="borrowStatusFilter" class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold text-slate-700 focus:outline-none">
               <option value="">Tất cả trạng thái</option>
-              <option value="CHO_DUYET">Chờ duyệt</option>
               <option value="SAN_SANG">Sẵn sàng lấy sách</option>
               <option value="DANG_MUON">Đang mượn</option>
               <option value="DA_TRA">Đã trả sách</option>
@@ -193,7 +201,7 @@
                     {{ getReceiptStatusText(receipt.trangThai) }}
                   </span>
                   <button 
-                    v-if="['CHO_DUYET', 'SAN_SANG'].includes(receipt.trangThai)"
+                    v-if="receipt.trangThai === 'SAN_SANG'"
                     @click="cancelBorrow(receipt)"
                     class="bg-red-50 hover:bg-red-100 text-red-600 font-bold text-[10px] py-1 px-2.5 rounded-lg border border-red-200 transition-colors shadow-sm"
                   >
@@ -655,7 +663,7 @@ const submitRenew = async () => {
   }
 };
 
-const activeSub = ref(null);
+const activeSubs = ref([]);
 const receipts = ref([]);
 const penalties = ref([]);
 const myFinancials = ref({
@@ -676,6 +684,46 @@ const borrowSearchQuery = ref('');
 const borrowStatusFilter = ref('');
 const borrowReturnFilter = ref('');
 const borrowTimeFilter = ref('');
+
+const getPlanScore = (plan) => {
+  if (!plan) return 0;
+  return (plan.soSachToiDa || 0) * 1000 +
+    (plan.soNgayMuonToiDa || 0) * 100 +
+    (plan.mienTienCoc ? 50 : 0) +
+    (plan.choPhepGiaHanOnline ? 30 : 0) +
+    (plan.giaTien || 0) / 100000;
+};
+
+const bestActiveSub = computed(() => {
+  return [...activeSubs.value]
+    .filter(sub => sub.trangThai === 'DANG_HIEU_LUC' && sub.goiDocGia)
+    .sort((a, b) => getPlanScore(b.goiDocGia) - getPlanScore(a.goiDocGia))[0] || null;
+});
+
+const activeSub = computed(() => {
+  if (!activeSubs.value.length) return null;
+  const plans = activeSubs.value.map(sub => sub.goiDocGia).filter(Boolean);
+  if (!plans.length) return null;
+
+  const mergedPlan = plans.reduce((best, plan) => ({
+    ...best,
+    tenGoi: best.tenGoi ? `${best.tenGoi} + ${plan.tenGoi}` : plan.tenGoi,
+    soSachToiDa: Math.max(best.soSachToiDa || 0, plan.soSachToiDa || 0),
+    soNgayMuonToiDa: Math.max(best.soNgayMuonToiDa || 0, plan.soNgayMuonToiDa || 0),
+    mienTienCoc: Boolean(best.mienTienCoc || plan.mienTienCoc),
+    choPhepGiaHanOnline: Boolean(best.choPhepGiaHanOnline || plan.choPhepGiaHanOnline),
+    phiMuonSachGiay: Math.min(best.phiMuonSachGiay ?? plan.phiMuonSachGiay ?? 0, plan.phiMuonSachGiay ?? 0),
+    phiPhatTreHan: Math.min(best.phiPhatTreHan ?? plan.phiPhatTreHan ?? 5000, plan.phiPhatTreHan ?? 5000),
+    tienDatCoc: Math.min(best.tienDatCoc ?? plan.tienDatCoc ?? 0, plan.tienDatCoc ?? 0)
+  }), {});
+
+  if (mergedPlan.mienTienCoc) mergedPlan.tienDatCoc = 0;
+  return { goiDocGia: mergedPlan };
+});
+
+const cardAutoRenewSub = computed(() => {
+  return activeSubs.value.find(sub => sub.phuongThucThanhToan === 'THE_TIN_DUNG' && sub.trangThai === 'DANG_HIEU_LUC') || null;
+});
 
 const tabs = [
   { label: 'Lịch sử mượn', value: 'loans' },
@@ -889,8 +937,16 @@ const loadData = async () => {
       api.get('/borrowing/my-financial-stats')
     ]);
     
-    if (subRes.success && subRes.data.length > 0) {
-      activeSub.value = subRes.data.find(s => s.trangThai === 'DANG_HIEU_LUC') || subRes.data[0];
+    if (subRes.success) {
+      const rawSubs = (subRes.data || []).filter(s => s.trangThai === 'DANG_HIEU_LUC' && s.goiDocGia);
+      const hasOtherPlan = rawSubs.some(s => (s.goiDocGia?.tenGoi || '').toLowerCase().normalize('NFC') !== 'tiêu chuẩn');
+      if (hasOtherPlan) {
+        activeSubs.value = rawSubs.filter(s => (s.goiDocGia?.tenGoi || '').toLowerCase().normalize('NFC') !== 'tiêu chuẩn');
+      } else {
+        activeSubs.value = rawSubs;
+      }
+    } else {
+      activeSubs.value = [];
     }
     if (receiptRes.success) {
       receipts.value = receiptRes.data;

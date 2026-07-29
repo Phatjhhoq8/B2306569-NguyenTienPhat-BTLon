@@ -4,6 +4,7 @@
  */
 
 const mongoose = require('mongoose');
+const { getEffectiveMembershipPlan } = require('../memberships/membershipPrivileges');
 
 const borrowDetailSchema = new mongoose.Schema({
   sach: {
@@ -161,7 +162,6 @@ borrowReceiptSchema.statics.markOverdueReceipts = function (referenceDate = new 
 borrowReceiptSchema.pre('save', async function (next) {
   const BookCopy = mongoose.model('BookCopy');
   const BookTitle = mongoose.model('BookTitle');
-  const Subscription = mongoose.model('Subscription');
   const PenaltyTicket = mongoose.model('PenaltyTicket');
   const Reader = mongoose.model('Reader');
   const session = this.$session();
@@ -235,16 +235,8 @@ borrowReceiptSchema.pre('save', async function (next) {
               if (!staffId) {
                 throw new Error('Hệ thống yêu cầu phải có ít nhất một nhân viên trong CSDL để lập phiếu phạt');
               }
-              // Tìm gói hội viên của độc giả để xác định mức phạt trễ hạn
-              const activeSub = await Subscription.findOne({
-                docGia: this.docGia,
-                trangThai: 'DANG_HIEU_LUC'
-              }).populate('goiDocGia').session(session);
-
-              let dailyFine = 5000; // Mặc định
-              if (activeSub && activeSub.goiDocGia) {
-                dailyFine = activeSub.goiDocGia.phiPhatTreHan !== undefined ? activeSub.goiDocGia.phiPhatTreHan : 5000;
-              }
+              const membershipPlan = await getEffectiveMembershipPlan(this.docGia, { session });
+              const dailyFine = membershipPlan?.phiPhatTreHan !== undefined ? membershipPlan.phiPhatTreHan : 5000;
 
               await PenaltyTicket.create([{
                 phieuMuon: this._id,
@@ -260,7 +252,7 @@ borrowReceiptSchema.pre('save', async function (next) {
   };
 
   // === PHẦN 0: Validate & check gói hội viên (dùng chung cho CHO_DUYET/SAN_SANG/DANG_MUON mới) ===
-  const isNewBorrow = this.isNew && ['CHO_DUYET', 'DANG_MUON'].includes(this.trangThai);
+  const isNewBorrow = this.isNew && ['CHO_DUYET', 'SAN_SANG', 'DANG_MUON'].includes(this.trangThai);
   const isApproving = !this.isNew && this.isModified('trangThai') && this.trangThai === 'SAN_SANG';
   const isPickingUp = !this.isNew && this.isModified('trangThai') && this.trangThai === 'DANG_MUON';
 
@@ -271,18 +263,11 @@ borrowReceiptSchema.pre('save', async function (next) {
       throw new Error('Độc giả không còn hoạt động hoặc đã bị khóa/xóa, không thể mượn sách');
     }
 
-    const activeSub = await Subscription.findOne({
-      docGia: this.docGia,
-      trangThai: 'DANG_HIEU_LUC',
-      ngayBatDau: { $lte: new Date() },
-      ngayKetThuc: { $gte: new Date() }
-    }).populate('goiDocGia').session(session);
+    const membershipPlan = await getEffectiveMembershipPlan(this.docGia, { session });
 
-    if (!activeSub || !activeSub.goiDocGia) {
+    if (!membershipPlan) {
       throw new Error('Độc giả không có gói hội viên còn hiệu lực để mượn sách');
     }
-
-    const membershipPlan = activeSub.goiDocGia;
 
     const readerReceipts = await mongoose.model('BorrowReceipt').find({ docGia: this.docGia }).select('_id').session(session);
     const unpaidTickets = await PenaltyTicket.countDocuments({
@@ -348,18 +333,11 @@ borrowReceiptSchema.pre('save', async function (next) {
   if (isApproving || isPickingUp) {
     const oldBorrow = await mongoose.model('BorrowReceipt').findById(this._id).session(session);
     if (oldBorrow && oldBorrow.trangThai === 'CHO_DUYET') {
-      const activeSub = await Subscription.findOne({
-        docGia: this.docGia,
-        trangThai: 'DANG_HIEU_LUC',
-        ngayBatDau: { $lte: new Date() },
-        ngayKetThuc: { $gte: new Date() }
-      }).populate('goiDocGia').session(session);
+      const membershipPlan = await getEffectiveMembershipPlan(this.docGia, { session });
 
-      if (!activeSub || !activeSub.goiDocGia) {
+      if (!membershipPlan) {
         throw new Error('Độc giả không có gói hội viên còn hiệu lực để mượn sách');
       }
-
-      const membershipPlan = activeSub.goiDocGia;
 
       // Tìm tất cả phiếu mượn đang hoạt động thực tế khác (không tính chính phiếu đang duyệt)
       const activeReceipts = await mongoose.model('BorrowReceipt').find({
@@ -382,17 +360,11 @@ borrowReceiptSchema.pre('save', async function (next) {
   // === PHẦN 1C: Giao sách (SAN_SANG → DANG_MUON hoặc trực tiếp tạo mới DANG_MUON) — BẮT ĐẦU TÍNH THỜI HẠN & PHÍ ===
   const isDirectBorrow = this.isNew && this.trangThai === 'DANG_MUON';
   if (isPickingUp || isDirectBorrow) {
-    const activeSub = await Subscription.findOne({
-      docGia: this.docGia,
-      trangThai: 'DANG_HIEU_LUC',
-      ngayBatDau: { $lte: new Date() },
-      ngayKetThuc: { $gte: new Date() }
-    }).populate('goiDocGia').session(session);
+    const membershipPlan = await getEffectiveMembershipPlan(this.docGia, { session });
 
-    if (!activeSub || !activeSub.goiDocGia) {
+    if (!membershipPlan) {
       throw new Error('Độc giả không có gói hội viên còn hiệu lực');
     }
-    const membershipPlan = activeSub.goiDocGia;
 
     // A. Chỉ cập nhật ngày mượn / ngày hẹn trả khi chuyển trạng thái (bàn giao sách thực tế)
     if (isPickingUp) {

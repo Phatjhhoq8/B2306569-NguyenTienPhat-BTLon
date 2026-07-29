@@ -281,6 +281,12 @@
                 >
                   Ngừng mượn
                 </span>
+                <span
+                  v-else-if="book.soLuongKhaDung > 0"
+                  class="absolute top-2 right-2 bg-primary-light text-primary-dark text-[10px] font-extrabold px-2 py-0.5 rounded-full"
+                >
+                  Còn {{ book.soLuongKhaDung }}
+                </span>
               </div>
               <div class="p-4 space-y-2 flex-grow flex flex-col justify-between">
                 <div class="space-y-1">
@@ -298,6 +304,23 @@
                   <span class="font-extrabold text-primary text-xs">
                     Miễn phí
                   </span>
+                </div>
+                <div class="grid grid-cols-[42px_1fr] gap-2 pt-2" @click.stop>
+                  <button
+                    @click="addBookToCart(book)"
+                    :disabled="!canBorrowBook(book)"
+                    class="h-9 rounded-xl border border-primary/20 bg-primary-light text-primary flex items-center justify-center hover:bg-primary hover:text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    title="Thêm vào giỏ mượn"
+                  >
+                    <ShoppingBag class="h-4 w-4" />
+                  </button>
+                  <button
+                    @click="quickBorrow(book)"
+                    :disabled="!canBorrowBook(book) || quickBorrowingId === book._id"
+                    class="h-9 rounded-xl bg-primary hover:bg-primary-dark text-white text-[11px] font-extrabold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {{ quickBorrowingId === book._id ? 'Đang xử lý...' : 'Mượn ngay' }}
+                  </button>
                 </div>
               </div>
             </div>
@@ -358,16 +381,84 @@
       </div>
     </div>
   </div>
+  <Teleport to="body">
+    <div
+      v-if="quickBorrowBook"
+      class="fixed inset-0 bg-slate-900/60 z-[99999] flex items-center justify-center p-4 backdrop-blur-sm"
+      @click.self="closeQuickBorrowModal"
+    >
+      <div class="bg-white rounded-3xl max-w-sm w-full p-6 space-y-5 shadow-2xl border border-slate-150">
+        <div class="space-y-1">
+          <h3 class="font-sans font-extrabold text-slate-900 text-sm uppercase tracking-wide">Xác nhận mượn sách</h3>
+          <p class="text-xs font-bold text-slate-600 leading-relaxed">
+            Bạn muốn đăng ký mượn sách này với số lượng bao nhiêu?
+          </p>
+          <p class="text-xs font-extrabold text-slate-900 leading-relaxed bg-slate-50 border border-slate-100 rounded-2xl px-3 py-2 max-h-20 overflow-y-auto">
+            {{ quickBorrowBook.tenSach }}
+          </p>
+        </div>
+
+        <div class="space-y-2">
+          <label class="text-[10px] font-bold text-slate-500 uppercase">Số lượng muốn mượn</label>
+          <div class="flex items-center justify-between gap-3">
+            <div class="inline-flex items-center rounded-xl border border-slate-200 overflow-hidden bg-slate-50">
+              <button
+                @click="changeQuickBorrowQuantity(-1)"
+                :disabled="quickBorrowQuantity <= 1"
+                class="h-9 w-9 text-sm font-black text-slate-700 hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed"
+              >-</button>
+              <input
+                v-model.number="quickBorrowQuantity"
+                type="number"
+                min="1"
+                :max="quickBorrowBook.soLuongKhaDung || 1"
+                @input="clampQuickBorrowQuantity"
+                class="h-9 w-16 bg-white border-x border-slate-200 text-center text-xs font-extrabold text-slate-800 focus:outline-none"
+              />
+              <button
+                @click="changeQuickBorrowQuantity(1)"
+                :disabled="quickBorrowQuantity >= (quickBorrowBook.soLuongKhaDung || 1)"
+                class="h-9 w-9 text-sm font-black text-slate-700 hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed"
+              >+</button>
+            </div>
+            <span class="text-[10px] font-semibold text-slate-400">Còn {{ quickBorrowBook.soLuongKhaDung || 1 }} bản</span>
+          </div>
+        </div>
+
+        <div class="flex space-x-3 pt-1">
+          <button
+            @click="closeQuickBorrowModal"
+            class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-extrabold py-2.5 rounded-xl text-xs transition-colors"
+          >
+            Hủy bỏ
+          </button>
+          <button
+            @click="submitQuickBorrow"
+            :disabled="quickBorrowingId === quickBorrowBook._id"
+            class="flex-1 bg-primary hover:bg-primary-dark text-white font-extrabold py-2.5 rounded-xl text-xs transition-all shadow-md disabled:opacity-50"
+          >
+            {{ quickBorrowingId === quickBorrowBook._id ? 'Đang xử lý...' : 'Mượn ngay' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </Teleport>
 </template>
 
 <script setup>
 import { ref, onMounted, watch, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import api from '../services/api';
-import { Search, BookOpen, Filter, Check, User, ChevronDown, ChevronUp } from '@lucide/vue';
+import { Search, BookOpen, Filter, Check, User, ChevronDown, ChevronUp, ShoppingBag } from '@lucide/vue';
+import { useAuthStore } from '../stores/auth';
+import { useCartStore } from '../stores/cart';
+import { useToastStore } from '../stores/toast';
 
 const route = useRoute();
 const router = useRouter();
+const authStore = useAuthStore();
+const cartStore = useCartStore();
+const toast = useToastStore();
 
 const categories = ref([]);
 const authors = ref([]);
@@ -375,6 +466,9 @@ const publishers = ref([]);
 const books = ref([]);
 const totalCount = ref(0);
 const loading = ref(false);
+const quickBorrowingId = ref(null);
+const quickBorrowBook = ref(null);
+const quickBorrowQuantity = ref(1);
 
 const isCategoryOpen = ref(true);
 const isAuthorOpen = ref(false);
@@ -590,6 +684,82 @@ const fetchBooks = async () => {
 
 const viewBook = (bookId) => {
   router.push({ name: 'book-detail', params: { id: bookId } });
+};
+
+const canBorrowBook = (book) => book.trangThai === 'ACTIVE' && Number(book.soLuongKhaDung) > 0;
+
+const ensureReaderCanBorrow = () => {
+  if (!authStore.isAuthenticated) {
+    router.push({ name: 'login', query: { redirect: route.fullPath } });
+    return false;
+  }
+  if (authStore.isStaff) {
+    toast.show('Tài khoản nhân viên không có quyền đăng ký mượn sách.', 'warning');
+    return false;
+  }
+  return true;
+};
+
+const addBookToCart = (book) => {
+  if (!ensureReaderCanBorrow() || !canBorrowBook(book)) return;
+  cartStore.addBook(book, 1);
+  toast.show('Đã thêm sách vào giỏ mượn.', 'success');
+};
+
+const getDefaultReturnDate = () => {
+  const maxDays = authStore.user?.subscriptionPlan?.soNgayMuonToiDa || 14;
+  const date = new Date();
+  date.setDate(date.getDate() + Math.min(14, maxDays));
+  return date.toISOString().split('T')[0];
+};
+
+const quickBorrow = async (book) => {
+  if (!ensureReaderCanBorrow() || !canBorrowBook(book) || quickBorrowingId.value) return;
+  quickBorrowBook.value = book;
+  quickBorrowQuantity.value = 1;
+};
+
+const closeQuickBorrowModal = () => {
+  if (quickBorrowingId.value) return;
+  quickBorrowBook.value = null;
+  quickBorrowQuantity.value = 1;
+};
+
+const clampQuickBorrowQuantity = () => {
+  if (!quickBorrowBook.value) return;
+  const max = Math.max(1, Number(quickBorrowBook.value.soLuongKhaDung) || 1);
+  quickBorrowQuantity.value = Math.min(Math.max(1, Number(quickBorrowQuantity.value) || 1), max);
+};
+
+const changeQuickBorrowQuantity = (delta) => {
+  quickBorrowQuantity.value += delta;
+  clampQuickBorrowQuantity();
+};
+
+const submitQuickBorrow = async () => {
+  if (!quickBorrowBook.value || quickBorrowingId.value) return;
+  clampQuickBorrowQuantity();
+  const book = quickBorrowBook.value;
+  quickBorrowingId.value = book._id;
+  try {
+    const payload = {
+      chiTietMuon: [{ sach: book._id, soLuong: quickBorrowQuantity.value }],
+      ngayHenTra: getDefaultReturnDate(),
+      phiMuon: 0,
+      soTienGiam: 0,
+      tongTienThanhToan: 0,
+    };
+    const res = await api.post('/borrowing/receipts', payload);
+    if (res.success) {
+      toast.show('Đăng ký mượn sách thành công! Vui lòng đến thư viện nhận sách.', 'success');
+      quickBorrowBook.value = null;
+      router.push('/profile');
+    }
+  } catch (error) {
+    toast.show(error.message || 'Gặp lỗi trong quá trình đăng ký mượn sách.', 'error');
+  } finally {
+    quickBorrowingId.value = null;
+  }
 };
 
 const catalogSettings = ref({

@@ -124,7 +124,6 @@
           
           <select v-model="filterStatus" class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-semibold text-slate-700 focus:outline-none">
             <option value="">Tất cả trạng thái</option>
-            <option value="CHO_DUYET">Chờ duyệt</option>
             <option value="SAN_SANG">Sẵn sàng</option>
             <option value="DANG_MUON">Đang mượn</option>
             <option value="DA_TRA">Đã trả</option>

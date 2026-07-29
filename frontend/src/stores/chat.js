@@ -60,11 +60,16 @@ export const useChatStore = defineStore('chat', {
       const text = content.trim();
       if (!text || this.loading) return;
 
+      const authStore = useAuthStore();
+      if (!authStore.isAuthenticated) {
+        this.messages.push({ role: 'assistant', content: 'Bạn cần đăng nhập để sử dụng trợ lý AI.' });
+        return;
+      }
+
       this.messages.push({ role: 'user', content: text });
       this.loading = true;
 
       try {
-        const authStore = useAuthStore();
         const borrowedBooks = await this.fetchBorrowedBooks();
         const recentMessages = this.messages
           .slice(0, -1)
@@ -80,7 +85,7 @@ export const useChatStore = defineStore('chat', {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             raw_query: text,
-            user_id: authStore.user?._id || authStore.user?.maDocGia || 'web_user_01',
+            user_id: authStore.user?._id || authStore.user?.maDocGia || authStore.user?.maSoNV,
             state: compactState,
             borrowed_books: borrowedBooks,
           }),

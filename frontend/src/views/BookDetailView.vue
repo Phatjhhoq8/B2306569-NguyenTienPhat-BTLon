@@ -379,6 +379,33 @@
               />
               <span class="text-[9px] text-slate-400 block font-medium leading-relaxed">Hạn trả tối đa: {{ maxBorrowDays }} ngày (theo gói thẻ của bạn).</span>
             </div>
+
+            <div class="space-y-1.5">
+              <label class="text-xs font-bold text-slate-500">Số lượng muốn mượn</label>
+              <div class="flex items-center gap-3">
+                <div class="inline-flex items-center rounded-xl border border-slate-200 overflow-hidden bg-slate-50">
+                  <button
+                    @click="changeBorrowQuantity(-1)"
+                    :disabled="borrowQuantity <= 1"
+                    class="h-9 w-9 text-sm font-black text-slate-700 hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed"
+                  >-</button>
+                  <input
+                    v-model.number="borrowQuantity"
+                    type="number"
+                    min="1"
+                    :max="book.soLuongKhaDung"
+                    @input="clampBorrowQuantity"
+                    class="h-9 w-14 bg-white border-x border-slate-200 text-center text-xs font-extrabold text-slate-800 focus:outline-none"
+                  />
+                  <button
+                    @click="changeBorrowQuantity(1)"
+                    :disabled="borrowQuantity >= book.soLuongKhaDung"
+                    class="h-9 w-9 text-sm font-black text-slate-700 hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed"
+                  >+</button>
+                </div>
+                <span class="text-[10px] font-semibold text-slate-400">Còn {{ book.soLuongKhaDung }} bản khả dụng</span>
+              </div>
+            </div>
             
             <!-- Quick Borrow Alert -->
             <div v-if="quickBorrowError" class="text-red-600 text-[10px] font-bold bg-red-50 border border-red-100 px-3 py-2 rounded-xl">
@@ -648,6 +675,7 @@ const deleteReview = async () => {
 
 // State cho mượn lẻ nhanh (Quick Borrow)
 const ngayHenTra = ref('');
+const borrowQuantity = ref(1);
 const submittingQuickBorrow = ref(false);
 const quickBorrowError = ref('');
 const quickBorrowSuccess = ref('');
@@ -700,6 +728,16 @@ const getBookOverdueFee = (plan) => {
   if (!plan) return 5000;
   return plan.phiPhatTreHan !== undefined ? plan.phiPhatTreHan : 5000;
 };
+
+const quickBorrowDaysCount = computed(() => {
+  if (!ngayHenTra.value) return 1;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const returnDate = new Date(ngayHenTra.value);
+  returnDate.setHours(0, 0, 0, 0);
+  const diffDays = Math.ceil((returnDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+  return diffDays > 0 ? diffDays : 1;
+});
 
 const formatDate = (dateStr) => {
   if (!dateStr) return '';
@@ -775,7 +813,18 @@ const addToCart = () => {
     toast.show('Tài khoản nhân viên không có quyền đăng ký mượn sách.', 'warning');
     return;
   }
-  cartStore.addBook(book.value);
+  cartStore.addBook(book.value, borrowQuantity.value);
+};
+
+const clampBorrowQuantity = () => {
+  if (!book.value) return;
+  const max = Math.max(1, Number(book.value.soLuongKhaDung) || 1);
+  borrowQuantity.value = Math.min(Math.max(1, Number(borrowQuantity.value) || 1), max);
+};
+
+const changeBorrowQuantity = (delta) => {
+  borrowQuantity.value += delta;
+  clampBorrowQuantity();
 };
 
 const goToLogin = () => {
@@ -822,6 +871,14 @@ const handleQuickBorrow = async () => {
     return;
   }
 
+  const ok = await confirmModal.value.ask({
+    title: 'Xác nhận mượn sách',
+    message: `Bạn có chắc chắn muốn đăng ký mượn ${borrowQuantity.value} bản sách này không?\n\n${book.value.tenSach}`,
+    confirmText: 'Mượn ngay',
+    cancelText: 'Hủy bỏ'
+  });
+  if (!ok) return;
+
   quickBorrowError.value = '';
   quickBorrowSuccess.value = '';
   submittingQuickBorrow.value = true;
@@ -829,17 +886,16 @@ const handleQuickBorrow = async () => {
   try {
     const chiTietMuon = [{
       sach: book.value._id,
-      soLuong: 1
+      soLuong: borrowQuantity.value
     }];
 
-    const phi = 0;
+    const phi = getBookBorrowFee(authStore.user?.subscriptionPlan) * borrowQuantity.value * quickBorrowDaysCount.value;
     const payload = {
       chiTietMuon,
       ngayHenTra: ngayHenTra.value,
       phiMuon: phi,
       soTienGiam: 0,
       tongTienThanhToan: phi,
-      choDuyet: true
     };
 
     const res = await api.post('/borrowing/receipts', payload);

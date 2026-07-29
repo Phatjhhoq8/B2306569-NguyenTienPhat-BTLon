@@ -7,6 +7,7 @@ const MembershipPlan = require('./membershipPlan.model');
 const Subscription = require('./subscription.model');
 const resultResponse = require('../../utils/resultResponse');
 const mongoose = require('mongoose');
+const { getActiveSubscriptions } = require('./membershipPrivileges');
 
 /**
  * Lấy danh sách gói hội viên
@@ -40,7 +41,42 @@ const subscribePlan = async (req, res, next) => {
       return resultResponse.err(res, 'Gói hội viên không tồn tại', 404);
     }
 
+    await Subscription.collection.dropIndex('docGia_1_trangThai_1').catch((error) => {
+      if (error.codeName !== 'IndexNotFound' && error.code !== 27) throw error;
+    });
+
     const ngayBatDau = new Date();
+    const existingSubscription = await Subscription.findOne({
+      docGia: req.user._id,
+      goiDocGia: plan._id,
+      trangThai: 'DANG_HIEU_LUC',
+      ngayBatDau: { $lte: ngayBatDau },
+      ngayKetThuc: { $gte: ngayBatDau }
+    });
+
+    if (existingSubscription) {
+      existingSubscription.ngayKetThuc = new Date(existingSubscription.ngayKetThuc.getTime() + plan.soNgayHieuLuc * 24 * 60 * 60 * 1000);
+      existingSubscription.tongTien = (existingSubscription.tongTien || 0) + plan.giaTien;
+      existingSubscription.phuongThucThanhToan = phuongThucThanhToan || 'VIETQR';
+      existingSubscription.tuDongGiaHan = tuDongGiaHan !== undefined ? tuDongGiaHan : (phuongThucThanhToan === 'THE_TIN_DUNG');
+      existingSubscription.thongTinThe = phuongThucThanhToan === 'THE_TIN_DUNG' ? thongTinThe : undefined;
+      await existingSubscription.save();
+
+      return resultResponse.ok(res, existingSubscription, 200);
+    }
+
+    // Hủy các gói cũ đang hoạt động khác gói mới đăng ký
+    await Subscription.updateMany(
+      {
+        docGia: req.user._id,
+        goiDocGia: { $ne: plan._id },
+        trangThai: 'DANG_HIEU_LUC'
+      },
+      {
+        $set: { trangThai: 'HUY' }
+      }
+    );
+
     const ngayKetThuc = new Date(ngayBatDau.getTime() + plan.soNgayHieuLuc * 24 * 60 * 60 * 1000);
 
     const subscription = new Subscription({
@@ -221,18 +257,20 @@ const linkFamilyInvite = async (req, res, next) => {
     }
 
     // 2. Tìm gói hội viên đang hiệu lực của CHỦ NHÓM (người gửi request)
-    const ownerSub = await Subscription.findOne({
-      docGia: req.user._id,
-      trangThai: 'DANG_HIEU_LUC'
-    }).populate('goiDocGia');
+    const ownerSubs = await getActiveSubscriptions(req.user._id);
+    const ownerSub = ownerSubs.find((sub) => {
+      const plan = sub.goiDocGia;
+      const planName = plan?.tenGoi || '';
+      return plan && (
+        plan.chiaSeNhomGiaDinh ||
+        planName.toLowerCase().includes('gold') ||
+        planName.toLowerCase().includes('vàng') ||
+        planName.toLowerCase().includes('family')
+      ) && sub.nguoiDuocMoi.length < 2;
+    });
 
     if (!ownerSub) {
       return resultResponse.err(res, 'Bạn chưa kích hoạt gói hội viên nào có hỗ trợ chia sẻ nhóm gia đình', 400);
-    }
-
-    const planName = ownerSub.goiDocGia?.tenGoi || '';
-    if (!planName.toLowerCase().includes('gold') && !planName.toLowerCase().includes('vàng') && !planName.toLowerCase().includes('family')) {
-      return resultResponse.err(res, 'Gói hội viên hiện tại của bạn không hỗ trợ tính năng chia sẻ nhóm gia đình', 400);
     }
 
     if (ownerSub.nguoiDuocMoi.includes(targetCode)) {
@@ -244,13 +282,7 @@ const linkFamilyInvite = async (req, res, next) => {
       return resultResponse.err(res, 'Nhóm gia đình của bạn đã đạt số lượng tối đa (3 người gồm 1 chủ nhóm + 2 thành viên phụ)', 400);
     }
 
-    // 4. Hủy các gói đang kích hoạt của người được mời nếu có
-    await Subscription.updateMany(
-      { docGia: targetCode, trangThai: 'DANG_HIEU_LUC' },
-      { $set: { trangThai: 'HUY' } }
-    );
-
-    // 5. Thêm người dùng vào danh sách thành viên phụ của chủ nhóm
+    // 4. Thêm người dùng vào danh sách thành viên phụ của chủ nhóm, không hủy gói riêng của người được mời.
     ownerSub.nguoiDuocMoi.push(targetCode);
     await ownerSub.save();
 

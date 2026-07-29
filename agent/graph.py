@@ -18,6 +18,8 @@ def orchestrator_node(state: AgentState) -> Dict[str, Any]:
     routed = OrchestratorAgent().run({**state, "refined_query": refined_query})
     return {
         "refined_query": refined_query,
+        "book_lookup_mode": reform.get("book_lookup_mode", "unknown"),
+        "possible_book_titles": reform.get("possible_book_titles", []),
         "intent": routed.get("intent", "chitchat"),
         "detected_domains": routed.get("detected_domains", []),
     }

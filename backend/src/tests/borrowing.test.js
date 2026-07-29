@@ -174,12 +174,23 @@ test.describe('Borrowing & Penalties API Tests', () => {
       assert.strictEqual(res.status, 201);
       assert.strictEqual(res.body.success, true);
       assert.ok(res.body.data.maPhieu);
-      assert.strictEqual(res.body.data.trangThai, 'DANG_MUON');
+      assert.strictEqual(res.body.data.trangThai, 'SAN_SANG');
       createdReceiptId = res.body.data._id;
 
       // Kiểm tra sách đã đổi trạng thái sang DA_MUON trong DB
       const copy = await BookCopy.findById(testBookCopyId);
       assert.strictEqual(copy.tinhTrang, 'DA_MUON', 'Cuốn sách phải chuyển sang DA_MUON');
+    });
+
+    test('Thủ thư nên giao sách và chuyển phiếu sang đang mượn', async () => {
+      const res = await makeRequest(`/api/borrowing/receipts/${createdReceiptId}/pickup`, {
+        method: 'POST',
+        headers: { Cookie: staffCookie }
+      });
+
+      assert.strictEqual(res.status, 200);
+      assert.strictEqual(res.body.success, true);
+      assert.strictEqual(res.body.data.trangThai, 'DANG_MUON');
     });
 
     test('Độc giả nên lấy danh sách phiếu mượn cá nhân thành công', async () => {

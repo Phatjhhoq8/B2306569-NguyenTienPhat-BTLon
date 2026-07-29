@@ -18,7 +18,7 @@ const createReceipt = async (req, res, next) => {
       return resultResponse.err(res, 'Chỉ độc giả mới được phép đăng ký mượn sách', 403);
     }
 
-    const { chiTietMuon, ngayHenTra, phiMuon, soTienGiam, tongTienThanhToan, choDuyet } = req.body;
+    const { chiTietMuon, ngayHenTra, phiMuon, soTienGiam, tongTienThanhToan } = req.body;
     if (!chiTietMuon || chiTietMuon.length === 0 || !ngayHenTra) {
       return resultResponse.err(res, 'Thông tin mượn sách và ngày hẹn trả là bắt buộc', 400);
     }
@@ -27,30 +27,50 @@ const createReceipt = async (req, res, next) => {
     const BookTitle = mongoose.model('BookTitle');
 
     const formattedChiTietMuon = [];
+    const reservedCopyIds = new Set();
     for (const item of chiTietMuon) {
+      const soLuong = Math.max(1, parseInt(item.soLuong, 10) || 1);
       let copy = await BookCopy.findOne({ _id: item.sach, isDeleted: false });
       
       if (!copy) {
-        // Tìm bản sao khả dụng đầu tiên của BookTitle
-        copy = await BookCopy.findOne({ 
+        // Tìm đủ số bản sao khả dụng của BookTitle theo số lượng độc giả chọn.
+        const copies = await BookCopy.find({ 
           dauSach: item.sach, 
           tinhTrang: 'CHO_MUON', 
-          isDeleted: false 
-        });
+          isDeleted: false,
+          _id: { $nin: Array.from(reservedCopyIds) }
+        }).limit(soLuong);
         
-        if (!copy) {
+        if (copies.length < soLuong) {
           const title = await BookTitle.findById(item.sach);
           const bookName = title ? `"${title.tenSach}"` : `ID ${item.sach}`;
-          return resultResponse.err(res, `Đầu sách ${bookName} hiện đã hết bản sao khả dụng để mượn`, 400);
+          return resultResponse.err(res, `Đầu sách ${bookName} chỉ còn ${copies.length} bản khả dụng để mượn`, 400);
         }
+
+        for (const availableCopy of copies) {
+          reservedCopyIds.add(String(availableCopy._id));
+          formattedChiTietMuon.push({
+            sach: availableCopy._id,
+            tinhTrangLucMuon: item.tinhTrangLucMuon || availableCopy.ghiChu || 'Tốt',
+            daTraChua: false
+          });
+        }
+        continue;
       } else {
+        if (soLuong > 1) {
+          return resultResponse.err(res, 'Mã cuốn sách vật lý chỉ được đăng ký số lượng 1. Vui lòng gửi mã đầu sách nếu muốn mượn nhiều bản.', 400);
+        }
         if (copy.tinhTrang !== 'CHO_MUON') {
           const title = await BookTitle.findById(copy.dauSach);
           const bookName = title ? `"${title.tenSach}"` : `Mã sách ${copy._id}`;
           return resultResponse.err(res, `Cuốn sách ${bookName} hiện đang bận hoặc bảo trì`, 400);
         }
+        if (reservedCopyIds.has(String(copy._id))) {
+          return resultResponse.err(res, `Cuốn sách ${copy._id} đã được chọn trùng trong phiếu mượn`, 400);
+        }
       }
 
+      reservedCopyIds.add(String(copy._id));
       formattedChiTietMuon.push({
         sach: copy._id,
         tinhTrangLucMuon: item.tinhTrangLucMuon || copy.ghiChu || 'Tốt',
@@ -66,7 +86,7 @@ const createReceipt = async (req, res, next) => {
       phiMuon: phiMuon || 0,
       soTienGiam: soTienGiam || 0,
       tongTienThanhToan: tongTienThanhToan || 0,
-      trangThai: choDuyet ? 'CHO_DUYET' : 'DANG_MUON'
+      trangThai: 'SAN_SANG'
     });
 
     return resultResponse.ok(res, receipt, 201);

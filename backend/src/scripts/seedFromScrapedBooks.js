@@ -73,7 +73,7 @@ const seedMembershipPlans = async () => {
   {
     "tenGoi": "Tiêu chuẩn",
     "giaTien": 0,
-    "soNgayHieuLuc": 365,
+    "soNgayHieuLuc": 99999,
     "soSachToiDa": 3,
     "soNgayMuonToiDa": 7,
     "mienTienCoc": false,

@@ -27,5 +27,23 @@
       "con doramon gì đó"
     ],
     "updated_at": "2026-07-29T08:41:48.232175+00:00"
+  },
+  "DG00001": {
+    "favorite_categories": [],
+    "favorite_authors": [],
+    "favorite_keywords": [
+      "tôi",
+      "muôn",
+      "smua",
+      "gói",
+      "hội",
+      "viên"
+    ],
+    "borrowed_book_ids": [],
+    "recent_queries": [
+      "hi",
+      "tôi muôn smua gói hội viên"
+    ],
+    "updated_at": "2026-07-29T11:40:23.006114+00:00"
   }
 }

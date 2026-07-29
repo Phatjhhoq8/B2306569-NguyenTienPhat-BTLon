@@ -1,18 +1,217 @@
-<mxfile host="app.diagrams.net">
-  <diagram name="3-Layer Library MAS">
-    <mxGraphModel dx="1100" dy="700" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+<mxfile host="app.diagrams.net" agent="opencode">
+  <diagram name="Kien Truc 3 Tang - Library Multi-Agent" id="arch3layers-library">
+    <mxGraphModel dx="1571" dy="863" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1500" pageHeight="900" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="u" value="User / Frontend Chat Widget" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1" vertex="1" parent="1"><mxGeometry x="430" y="30" width="280" height="50" as="geometry" /></mxCell>
-        <mxCell id="l3" value="Tang 3 - Orchestrator / Dieu phoi&#xa;QueryReform + OrchestratorAgent + SynthesisAgent" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1" vertex="1" parent="1"><mxGeometry x="310" y="120" width="520" height="90" as="geometry" /></mxCell>
-        <mxCell id="l2" value="Tang 2 - Agents nghiep vu&#xa;ChitchatAgent | RecommendationAgent | RegistrationSelectionAgent" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontStyle=1" vertex="1" parent="1"><mxGeometry x="310" y="250" width="520" height="90" as="geometry" /></mxCell>
-        <mxCell id="l1" value="Tang 1 - Skills + Tools&#xa;book_matching, preference_store, membership_comparison&#xa;search_books, web_search_books, verify_books_in_library, get_membership_plans" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1" vertex="1" parent="1"><mxGeometry x="250" y="380" width="640" height="110" as="geometry" /></mxCell>
-        <mxCell id="be" value="Backend APIs / CSDL thu vien / Web Search" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1" vertex="1" parent="1"><mxGeometry x="390" y="540" width="360" height="60" as="geometry" /></mxCell>
-        <mxCell id="e1" edge="1" parent="1" source="u" target="l3" style="endArrow=block;html=1;rounded=0"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e2" edge="1" parent="1" source="l3" target="l2" style="endArrow=block;html=1;rounded=0"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e3" edge="1" parent="1" source="l2" target="l1" style="endArrow=block;html=1;rounded=0"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e4" edge="1" parent="1" source="l1" target="be" style="endArrow=block;html=1;rounded=0"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="title" parent="1" style="text;html=1;fontSize=17;fontStyle=1;fontColor=#1F4E79;align=center;verticalAlign=middle;whiteSpace=wrap;" value="Kiến Trúc 3 Tầng — Multi-Agent System cho Trợ Lý Thư Viện" vertex="1">
+          <mxGeometry height="40" width="900" x="250" y="10" as="geometry" />
+        </mxCell>
+        <mxCell id="user" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;fontSize=12;fontStyle=1;fontColor=#333333;arcSize=20;strokeWidth=1.5;" value="👤 Người dùng" vertex="1">
+          <mxGeometry height="42" width="220" x="540" y="65" as="geometry" />
+        </mxCell>
+        <mxCell id="frontend" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#666666;fontSize=11;fontStyle=1;fontColor=#333333;arcSize=20;strokeWidth=1.5;" value="Frontend Chat Widget&lt;br&gt;&lt;font style=&quot;font-weight:normal;font-size:10px;&quot;&gt;Gửi câu hỏi + context hội viên&lt;/font&gt;" vertex="1">
+          <mxGeometry height="55" width="260" x="520" y="135" as="geometry" />
+        </mxCell>
+        <mxCell id="l3bg" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#DAEEF8;strokeColor=#A8D4EB;strokeWidth=1;arcSize=4;opacity=50;" value="" vertex="1">
+          <mxGeometry height="105" width="1070" x="145" y="230" as="geometry" />
+        </mxCell>
+        <mxCell id="l3label" parent="1" style="text;html=1;fontSize=10;fontColor=#3A7CA5;align=center;verticalAlign=middle;whiteSpace=wrap;" value="&lt;b&gt;Tầng 3:&lt;/b&gt;&lt;br&gt;Orchestrator&lt;br&gt;&amp; Synthesis" vertex="1">
+          <mxGeometry height="105" width="95" x="42" y="230" as="geometry" />
+        </mxCell>
+        <mxCell id="query_reform" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#AED6F1;strokeColor=#3A7CA5;fontSize=10;fontStyle=1;fontColor=#1a1a1a;arcSize=10;strokeWidth=1.5;" value="Query Reform&lt;br&gt;&lt;font style=&quot;font-weight:normal;font-size:9px;&quot;&gt;Chuẩn hóa truy vấn&lt;/font&gt;" vertex="1">
+          <mxGeometry height="62" width="190" x="210" y="252" as="geometry" />
+        </mxCell>
+        <mxCell id="orchestrator" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#AED6F1;strokeColor=#3A7CA5;fontSize=12;fontStyle=1;fontColor=#1a1a1a;arcSize=8;strokeWidth=2;" value="OrchestratorAgent&lt;br&gt;&lt;font style=&quot;font-weight:normal;font-size:10px;&quot;&gt;Intent routing | chọn agent nghiệp vụ&lt;/font&gt;" vertex="1">
+          <mxGeometry height="66" width="340" x="480" y="250" as="geometry" />
+        </mxCell>
+        <mxCell id="synthesis" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#AED6F1;strokeColor=#3A7CA5;fontSize=10;fontStyle=1;fontColor=#1a1a1a;arcSize=10;strokeWidth=1.5;" value="SynthesisAgent&lt;br&gt;&lt;font style=&quot;font-weight:normal;font-size:9px;&quot;&gt;Tổng hợp text + UI payload&lt;/font&gt;" vertex="1">
+          <mxGeometry height="62" width="200" x="900" y="252" as="geometry" />
+        </mxCell>
+        <mxCell id="l2bg" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E5F4E7;strokeColor=#B5D8BA;strokeWidth=1;arcSize=4;opacity=50;" value="" vertex="1">
+          <mxGeometry height="115" width="1070" x="145" y="370" as="geometry" />
+        </mxCell>
+        <mxCell id="l2label" parent="1" style="text;html=1;fontSize=10;fontColor=#4C9A5B;align=center;verticalAlign=middle;whiteSpace=wrap;" value="&lt;b&gt;Tầng 2:&lt;/b&gt;&lt;br&gt;Domain&lt;br&gt;Agents" vertex="1">
+          <mxGeometry height="115" width="95" x="42" y="370" as="geometry" />
+        </mxCell>
+        <mxCell id="chitchat" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#CDE7D0;strokeColor=#4C9A5B;fontSize=10;fontStyle=1;fontColor=#333333;arcSize=10;strokeWidth=1.5;" value="ChitchatAgent&lt;br&gt;&lt;font style=&quot;font-weight:normal;font-size:9px;&quot;&gt;Trả lời hội thoại thư viện&lt;/font&gt;" vertex="1">
+          <mxGeometry height="66" width="220" x="200" y="394" as="geometry" />
+        </mxCell>
+        <mxCell id="recommendation" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#CDE7D0;strokeColor=#4C9A5B;fontSize=10;fontStyle=1;fontColor=#333333;arcSize=10;strokeWidth=1.5;" value="RecommendationAgent&lt;br&gt;&lt;font style=&quot;font-weight:normal;font-size:9px;&quot;&gt;Tư vấn sách, kiểm tra sách trong CSDL&lt;/font&gt;" vertex="1">
+          <mxGeometry height="66" width="260" x="510" y="394" as="geometry" />
+        </mxCell>
+        <mxCell id="registration" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#CDE7D0;strokeColor=#4C9A5B;fontSize=10;fontStyle=1;fontColor=#333333;arcSize=10;strokeWidth=1.5;" value="RegistrationSelectionAgent&lt;br&gt;&lt;font style=&quot;font-weight:normal;font-size:9px;&quot;&gt;Hướng dẫn tài khoản + gói hội viên&lt;/font&gt;" vertex="1">
+          <mxGeometry height="66" width="260" x="850" y="394" as="geometry" />
+        </mxCell>
+        <mxCell id="l1bg" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF9E6;strokeColor=#E6D9A3;strokeWidth=1;arcSize=4;opacity=50;" value="" vertex="1">
+          <mxGeometry height="210" width="1070" x="145" y="525" as="geometry" />
+        </mxCell>
+        <mxCell id="l1label" parent="1" style="text;html=1;fontSize=10;fontColor=#B8860B;align=center;verticalAlign=middle;whiteSpace=wrap;" value="&lt;b&gt;Tầng 1:&lt;/b&gt;&lt;br&gt;Skills &amp;&lt;br&gt;Tools" vertex="1">
+          <mxGeometry height="210" width="95" x="42" y="525" as="geometry" />
+        </mxCell>
+        <mxCell id="book_matching" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontSize=10;fontStyle=1;fontColor=#333333;arcSize=12;strokeWidth=1.5;" value="Book Matching Skill" vertex="1">
+          <mxGeometry height="48" width="190" x="190" y="550" as="geometry" />
+        </mxCell>
+        <mxCell id="preference" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontSize=10;fontStyle=1;fontColor=#333333;arcSize=12;strokeWidth=1.5;" value="Preference Store&lt;br&gt;&lt;font style=&quot;font-weight:normal;font-size:9px;&quot;&gt;JSON memory&lt;/font&gt;" vertex="1">
+          <mxGeometry height="48" width="190" x="420" y="550" as="geometry" />
+        </mxCell>
+        <mxCell id="membership" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontSize=10;fontStyle=1;fontColor=#333333;arcSize=12;strokeWidth=1.5;" value="Membership Comparison Skill" vertex="1">
+          <mxGeometry height="48" width="220" x="650" y="550" as="geometry" />
+        </mxCell>
+        <mxCell id="account" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontSize=10;fontStyle=1;fontColor=#333333;arcSize=12;strokeWidth=1.5;" value="Account Guidance Skill" vertex="1">
+          <mxGeometry height="48" width="190" x="910" y="550" as="geometry" />
+        </mxCell>
+        <mxCell id="tool_books" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFDF0;strokeColor=#D6B656;fontSize=9;fontStyle=1;fontColor=#333333;arcSize=8;strokeWidth=1.2;" value="search_books" vertex="1">
+          <mxGeometry height="42" width="125" x="170" y="650" as="geometry" />
+        </mxCell>
+        <mxCell id="tool_verify" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFDF0;strokeColor=#D6B656;fontSize=9;fontStyle=1;fontColor=#333333;arcSize=8;strokeWidth=1.2;" value="verify_books_in_library" vertex="1">
+          <mxGeometry height="42" width="150" x="330" y="650" as="geometry" />
+        </mxCell>
+        <mxCell id="tool_web" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFDF0;strokeColor=#D6B656;fontSize=9;fontStyle=1;fontColor=#333333;arcSize=8;strokeWidth=1.2;" value="web_search_books" vertex="1">
+          <mxGeometry height="42" width="135" x="520" y="650" as="geometry" />
+        </mxCell>
+        <mxCell id="tool_plans" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFDF0;strokeColor=#D6B656;fontSize=9;fontStyle=1;fontColor=#333333;arcSize=8;strokeWidth=1.2;" value="get_membership_plans" vertex="1">
+          <mxGeometry height="42" width="150" x="710" y="650" as="geometry" />
+        </mxCell>
+        <mxCell id="tool_catalog" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFFDF0;strokeColor=#D6B656;fontSize=9;fontStyle=1;fontColor=#333333;arcSize=8;strokeWidth=1.2;" value="get_categories&lt;br&gt;get_authors&lt;br&gt;get_publishers" vertex="1">
+          <mxGeometry height="58" width="150" x="900" y="642" as="geometry" />
+        </mxCell>
+        <mxCell id="backend" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EDE5F3;strokeColor=#7B5EA7;fontSize=11;fontStyle=1;fontColor=#333333;arcSize=15;strokeWidth=1.5;" value="Backend APIs / MongoDB&lt;br&gt;&lt;font style=&quot;font-weight:normal;font-size:10px;&quot;&gt;/api/books | /api/memberships/plans | /api/borrowing/my-receipts&lt;/font&gt;" vertex="1">
+          <mxGeometry height="58" width="560" x="340" y="775" as="geometry" />
+        </mxCell>
+        <mxCell id="web" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE0B2;strokeColor=#FF6B35;fontSize=10;fontStyle=1;fontColor=#333333;arcSize=12;strokeWidth=1.5;" value="Web Search Fallback&lt;br&gt;&lt;font style=&quot;font-weight:normal;font-size:9px;&quot;&gt;Chỉ dùng để nhận diện tựa sách, sau đó xác minh lại CSDL&lt;/font&gt;" vertex="1">
+          <mxGeometry height="58" width="270" x="940" y="775" as="geometry" />
+        </mxCell>
+        <mxCell id="e_user_fe" edge="1" parent="1" source="user" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#333333;strokeWidth=1.5;endArrow=blockThin;endFill=1;" target="frontend" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_fe_qr" edge="1" parent="1" source="frontend" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#3A7CA5;strokeWidth=1.8;endArrow=blockThin;endFill=1;fontSize=9;fontColor=#3A7CA5;" target="query_reform" value="request">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="650" y="210" />
+              <mxPoint x="260" y="210" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_qr_orc" edge="1" parent="1" source="query_reform" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#3A7CA5;strokeWidth=1.8;endArrow=blockThin;endFill=1;fontSize=9;fontColor=#3A7CA5;" target="orchestrator" value="optimized_query">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_orc_chat" edge="1" parent="1" source="orchestrator" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#4C9A5B;strokeWidth=1.6;endArrow=blockThin;endFill=1;fontSize=9;fontColor=#4C9A5B;" target="chitchat" value="chitchat">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="650" y="350" />
+              <mxPoint x="310" y="350" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_orc_rec" edge="1" parent="1" source="orchestrator" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#4C9A5B;strokeWidth=1.6;endArrow=blockThin;endFill=1;fontSize=9;fontColor=#4C9A5B;" target="recommendation" value="book">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_orc_reg" edge="1" parent="1" source="orchestrator" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#4C9A5B;strokeWidth=1.6;endArrow=blockThin;endFill=1;fontSize=9;fontColor=#4C9A5B;" target="registration" value="membership">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="650" y="350" />
+              <mxPoint x="980" y="350" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_chat_syn" edge="1" parent="1" source="chitchat" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#4C9A5B;strokeWidth=1.5;endArrow=blockThin;endFill=1;dashed=1;dashPattern=8 4;fontSize=8;fontColor=#4C9A5B;" target="synthesis" value="direct_response">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="40" y="427" />
+              <mxPoint x="40" y="225" />
+              <mxPoint x="1000" y="225" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_rec_book" edge="1" parent="1" source="recommendation" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#D6B656;strokeWidth=1.5;endArrow=blockThin;endFill=1;" target="book_matching" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="570" y="490" />
+              <mxPoint x="320" y="490" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_rec_pref" edge="1" parent="1" source="recommendation" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#D6B656;strokeWidth=1.5;endArrow=blockThin;endFill=1;dashed=1;dashPattern=8 4;fontSize=8;fontColor=#B8860B;" target="preference" value="read/write">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_reg_member" edge="1" parent="1" source="registration" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#D6B656;strokeWidth=1.5;endArrow=blockThin;endFill=1;" target="membership" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_reg_account" edge="1" parent="1" source="registration" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#D6B656;strokeWidth=1.5;endArrow=blockThin;endFill=1;" target="account" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_book_tools" edge="1" parent="1" source="book_matching" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#D6B656;strokeWidth=1.2;endArrow=blockThin;endFill=1;" target="tool_books" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_book_verify" edge="1" parent="1" source="book_matching" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#D6B656;strokeWidth=1.2;endArrow=blockThin;endFill=1;" target="tool_verify" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_member_plan" edge="1" parent="1" source="membership" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#D6B656;strokeWidth=1.2;endArrow=blockThin;endFill=1;" target="tool_plans" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_account_catalog" edge="1" parent="1" source="account" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#D6B656;strokeWidth=1.2;endArrow=blockThin;endFill=1;" target="tool_catalog" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_tools_backend" edge="1" parent="1" source="tool_books" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#7B5EA7;strokeWidth=1.4;endArrow=blockThin;endFill=1;" target="backend" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="232.56" y="740" />
+              <mxPoint x="620" y="740" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_verify_backend" edge="1" parent="1" source="tool_verify" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#7B5EA7;strokeWidth=1.4;endArrow=blockThin;endFill=1;" target="backend" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_plan_backend" edge="1" parent="1" source="tool_plans" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#7B5EA7;strokeWidth=1.4;endArrow=blockThin;endFill=1;" target="backend" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_catalog_backend" edge="1" parent="1" source="tool_catalog" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#7B5EA7;strokeWidth=1.4;endArrow=blockThin;endFill=1;" target="backend" value="">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e_web_node" edge="1" parent="1" source="tool_web" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#FF6B35;strokeWidth=1.4;endArrow=blockThin;endFill=1;" target="web" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="587.56" y="740" />
+              <mxPoint x="1075" y="740" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_web_verify" edge="1" parent="1" source="web" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#FF6B35;strokeWidth=1.4;endArrow=blockThin;endFill=1;dashed=1;dashPattern=8 4;fontSize=8;fontColor=#FF6B35;" target="tool_verify" value="verify lại">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1130" y="720" />
+              <mxPoint x="430" y="720" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_backend_syn" edge="1" parent="1" source="backend" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#3A7CA5;strokeWidth=1.6;endArrow=blockThin;endFill=1;dashed=1;dashPattern=8 4;fontSize=8;fontColor=#3A7CA5;" target="synthesis" value="data_result">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="620" y="850" />
+              <mxPoint x="1230" y="850" />
+              <mxPoint x="1230" y="283" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_syn_fe" edge="1" parent="1" source="synthesis" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#3A7CA5;strokeWidth=1.6;endArrow=blockThin;endFill=1;fontSize=9;fontColor=#3A7CA5;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="user" value="final_response">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1030" y="86" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="g539NHkg8TRKW4Zel-Ry-2" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#D6B656;strokeWidth=1.2;endArrow=blockThin;endFill=1;" target="tool_web" value="">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="290" y="620" />
+              <mxPoint x="587.56" y="620" />
+            </Array>
+            <mxPoint x="290" y="600" as="sourcePoint" />
+            <mxPoint x="480" y="672" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
       </root>
     </mxGraphModel>
   </diagram>

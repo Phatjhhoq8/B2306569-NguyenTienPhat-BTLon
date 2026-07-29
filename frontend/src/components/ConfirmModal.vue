@@ -16,7 +16,7 @@
           </h3>
         </div>
         
-        <p class="text-slate-600 text-xs font-bold leading-relaxed">
+        <p class="text-slate-600 text-xs font-bold leading-relaxed whitespace-pre-line break-words max-h-40 overflow-y-auto pr-1">
           {{ message }}
         </p>
         

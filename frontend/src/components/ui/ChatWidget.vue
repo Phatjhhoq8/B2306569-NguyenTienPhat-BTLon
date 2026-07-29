@@ -29,7 +29,13 @@
       </header>
 
       <div ref="messageList" class="h-[62vh] max-h-[620px] overflow-y-auto bg-slate-50 p-4 space-y-4">
-        <div v-if="chatStore.messages.length === 0" class="bg-white rounded-2xl border border-slate-200 p-4 text-sm text-slate-600 shadow-sm space-y-2">
+        <div v-if="!authStore.isAuthenticated" class="bg-white rounded-2xl border border-slate-200 p-4 text-sm text-slate-600 shadow-sm space-y-3">
+          <p class="font-bold text-slate-900">Vui lòng đăng nhập để dùng trợ lý AI</p>
+          <p class="text-xs leading-relaxed">Trợ lý cần tài khoản của bạn để lấy lịch sử mượn sách, lưu sở thích đọc và hỗ trợ chọn sách/gói hội viên chính xác.</p>
+          <button @click="goToLogin" class="w-full rounded-xl bg-primary text-white py-2 text-xs font-extrabold">Đăng nhập ngay</button>
+        </div>
+
+        <div v-else-if="chatStore.messages.length === 0" class="bg-white rounded-2xl border border-slate-200 p-4 text-sm text-slate-600 shadow-sm space-y-2">
           <p class="font-bold text-slate-900">Bạn cần tìm sách gì?</p>
           <p class="text-xs leading-relaxed">Bạn có thể mô tả cốt truyện, nhân vật, thể loại, hoặc hỏi so sánh gói hội viên.</p>
         </div>
@@ -138,8 +144,9 @@
           placeholder="Mô tả sách, nhân vật, cốt truyện hoặc hỏi gói hội viên..."
           class="max-h-24 min-h-[42px] flex-grow resize-none rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-semibold focus:outline-none focus:border-primary"
           @keydown.enter.exact.prevent="submit"
+          :disabled="!authStore.isAuthenticated"
         ></textarea>
-        <button type="submit" :disabled="chatStore.loading || !input.trim()" class="h-10 w-10 rounded-2xl bg-primary text-white flex items-center justify-center disabled:opacity-50">
+        <button type="submit" :disabled="chatStore.loading || !input.trim() || !authStore.isAuthenticated" class="h-10 w-10 rounded-2xl bg-primary text-white flex items-center justify-center disabled:opacity-50">
           <Send class="h-4 w-4" />
         </button>
       </form>
@@ -153,9 +160,11 @@ import { useRouter } from 'vue-router';
 import { Bot, X, Send, ChevronLeft, ChevronRight } from '@lucide/vue';
 import { useChatStore } from '../../stores/chat';
 import { useCartStore } from '../../stores/cart';
+import { useAuthStore } from '../../stores/auth';
 
 const chatStore = useChatStore();
 const cartStore = useCartStore();
+const authStore = useAuthStore();
 const router = useRouter();
 const input = ref('');
 const messageList = ref(null);
@@ -185,10 +194,19 @@ const scrollToBottom = async () => {
 };
 
 const submit = async () => {
+  if (!authStore.isAuthenticated) {
+    goToLogin();
+    return;
+  }
   const text = input.value;
   input.value = '';
   await chatStore.sendMessage(text);
   scrollToBottom();
+};
+
+const goToLogin = () => {
+  chatStore.closeChat();
+  router.push({ name: 'login', query: { redirect: router.currentRoute.value.fullPath, reason: 'agent' } });
 };
 
 const resetConversation = () => {
@@ -222,7 +240,7 @@ const viewBook = (bookId) => {
 const confirmPlan = (planId) => {
   if (!planId) return;
   chatStore.closeChat();
-  router.push({ name: 'memberships', query: { plan: planId, confirm: '1' } });
+  router.push({ name: 'memberships', query: { plan: planId, confirm: '1', checkout: Date.now().toString() } });
 };
 
 watch(() => chatStore.messages.length, scrollToBottom);

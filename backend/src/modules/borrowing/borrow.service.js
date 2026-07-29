@@ -6,6 +6,7 @@
 const mongoose = require('mongoose');
 const BorrowReceipt = require('./borrowReceipt.model');
 const BookTitle = require('../books/bookTitle.model');
+const { getEffectiveMembershipPlan } = require('../memberships/membershipPrivileges');
 
 const isTransactionUnsupportedError = (error) => {
   const message = String(error && error.message || '');
@@ -105,28 +106,21 @@ const renewBorrowReceipt = async (receiptId, newDueDate) => withTransaction(asyn
     throw new Error('Ngày gia hạn mới phải hợp lệ và lớn hơn ngày hẹn trả hiện tại');
   }
 
-  const Subscription = mongoose.model('Subscription');
-  const activeSub = await Subscription.findOne({
-    docGia: receipt.docGia,
-    trangThai: 'DANG_HIEU_LUC',
-    ngayBatDau: { $lte: new Date() },
-    ngayKetThuc: { $gte: new Date() }
-  }).populate('goiDocGia').session(session);
-
-  if (!activeSub || !activeSub.goiDocGia) throw new Error('Độc giả không có gói hội viên còn hiệu lực để gia hạn');
+  const membershipPlan = await getEffectiveMembershipPlan(receipt.docGia, { session });
+  if (!membershipPlan) throw new Error('Độc giả không có gói hội viên còn hiệu lực để gia hạn');
   
-  if (!activeSub.goiDocGia.choPhepGiaHanOnline) {
+  if (!membershipPlan.choPhepGiaHanOnline) {
     throw new Error('Gói hội viên của bạn không hỗ trợ gia hạn trực tuyến');
   }
 
   const borrowDays = Math.ceil((dueDate.getTime() - new Date(receipt.ngayMuon).getTime()) / (1000 * 60 * 60 * 24));
-  if (borrowDays > activeSub.goiDocGia.soNgayMuonToiDa) {
-    throw new Error(`Ngày gia hạn vượt quá số ngày mượn tối đa của gói thẻ (${activeSub.goiDocGia.soNgayMuonToiDa} ngày)`);
+  if (borrowDays > membershipPlan.soNgayMuonToiDa) {
+    throw new Error(`Ngày gia hạn vượt quá số ngày mượn tối đa của gói thẻ (${membershipPlan.soNgayMuonToiDa} ngày)`);
   }
 
   // Tính phí gia hạn phát sinh thêm
   const extraDays = Math.round((dueDate.getTime() - new Date(receipt.ngayHenTra).getTime()) / (1000 * 60 * 60 * 24));
-  const basePhiMuonPerBook = activeSub.goiDocGia.phiMuonSachGiay !== undefined ? activeSub.goiDocGia.phiMuonSachGiay : 0;
+  const basePhiMuonPerBook = membershipPlan.phiMuonSachGiay !== undefined ? membershipPlan.phiMuonSachGiay : 0;
   
   const BookCopy = mongoose.model('BookCopy');
   let chargeableBooksCount = 0;

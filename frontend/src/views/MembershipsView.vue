@@ -104,11 +104,11 @@
           <!-- TH2: Gói trả phí đang sử dụng -->
           <button 
             v-else-if="isPlanActive(plan)"
-            disabled
-            class="w-full font-bold py-3 rounded-xl text-xs transition-all bg-green-500 text-white cursor-not-allowed flex items-center justify-center space-x-1 shadow-sm"
+            @click="subscribe(plan)"
+            class="w-full font-bold py-3 rounded-xl text-xs transition-all bg-emerald-600 hover:bg-emerald-700 text-white flex items-center justify-center space-x-1 shadow-sm active:scale-95"
           >
-            <Check class="h-4 w-4 mr-1" />
-            <span>Gói của bạn đang hoạt động</span>
+            <Check class="h-4.5 w-4.5 mr-1" />
+            <span>Gia hạn gói {{ plan.tenGoi }}</span>
           </button>
 
           <!-- TH3: Gói trả phí chưa sử dụng -->
@@ -653,8 +653,9 @@
 
             <!-- Checkout Button -->
             <button 
+              v-if="paymentMethod === 'THE_TIN_DUNG'"
               @click="submitCheckout"
-              :disabled="subscribing || (paymentMethod === 'THE_TIN_DUNG' && !isCardFormValid)"
+              :disabled="subscribing || !isCardFormValid"
               class="w-full bg-primary hover:bg-primary-dark text-white font-extrabold py-3.5 rounded-2xl text-xs md:text-sm transition-all shadow-md active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
             >
               <span v-if="subscribing">Đang xử lý kích hoạt...</span>
@@ -835,12 +836,15 @@ const getPlanDescription = (plan) => {
 const getPlanPerks = (plan) => {
   if (!plan) return [];
   const name = (plan.tenGoi || '').toLowerCase().normalize('NFC');
+  const phiMuonText = plan.phiMuonSachGiay === 0 ? 'Miễn phí' : `${new Intl.NumberFormat('vi-VN').format(plan.phiMuonSachGiay)} ₫/ngày/sách (Giáo trình miễn phí)`;
+  const cocText = plan.tienDatCoc === 0 ? 'Miễn đặt cọc' : `${new Intl.NumberFormat('vi-VN').format(plan.tienDatCoc)} ₫`;
+
   if (name.includes('enterprise')) {
     return [
       `Mượn cùng lúc: ${plan.soSachToiDa} cuốn`,
       `Thời hạn giữ sách: ${plan.soNgayMuonToiDa} ngày`,
-      'Phí mượn sách giấy: Miễn phí',
-      'Đặt cọc: Miễn đặt cọc',
+      `Phí mượn sách giấy: ${phiMuonText}`,
+      `Đặt cọc: ${cocText}`,
       'Gia hạn online: Không giới hạn',
       'Chia sẻ thành viên: 30 tài khoản',
       'Đọc Ebook & Audiobook: Không giới hạn',
@@ -851,8 +855,8 @@ const getPlanPerks = (plan) => {
     return [
       `Mượn cùng lúc: ${plan.soSachToiDa} cuốn`,
       `Thời hạn giữ sách: ${plan.soNgayMuonToiDa} ngày`,
-      'Phí mượn sách giấy: Miễn phí',
-      'Đặt cọc: Miễn đặt cọc',
+      `Phí mượn sách giấy: ${phiMuonText}`,
+      `Đặt cọc: ${cocText}`,
       'Gia hạn online: 2 lần',
       'Chia sẻ thành viên: 4 tài khoản',
       'Đọc Ebook & Audiobook: Không giới hạn',
@@ -863,8 +867,8 @@ const getPlanPerks = (plan) => {
     return [
       `Mượn cùng lúc: ${plan.soSachToiDa} cuốn`,
       `Thời hạn giữ sách: ${plan.soNgayMuonToiDa} ngày`,
-      'Phí mượn sách giấy: Miễn phí',
-      'Đặt cọc: Miễn đặt cọc',
+      `Phí mượn sách giấy: ${phiMuonText}`,
+      `Đặt cọc: ${cocText}`,
       'Gia hạn online: 2 lần',
       'Đọc Ebook & Audiobook: Không giới hạn',
       'Giao nhận tận nhà: 2 lần/tháng',
@@ -875,8 +879,8 @@ const getPlanPerks = (plan) => {
     return [
       `Mượn cùng lúc: ${plan.soSachToiDa} cuốn`,
       `Thời hạn giữ sách: ${plan.soNgayMuonToiDa} ngày`,
-      'Phí mượn: 3.000 ₫/quyển (Giáo trình miễn phí)',
-      'Đặt cọc: 50.000 ₫',
+      `Phí mượn: ${phiMuonText}`,
+      `Đặt cọc: ${cocText}`,
       'Gia hạn online: 1 lần',
       'Đọc Ebook: 300 đầu sách',
       'Đọc Audiobook: 50 cuốn',
@@ -887,8 +891,8 @@ const getPlanPerks = (plan) => {
   return [
     `Mượn cùng lúc: ${plan.soSachToiDa} cuốn`,
     `Thời hạn giữ sách: ${plan.soNgayMuonToiDa} ngày`,
-    'Phí mượn: 5.000 ₫/quyển (Giáo trình miễn phí)',
-    'Đặt cọc: 100.000 ₫',
+    `Phí mượn: ${phiMuonText}`,
+    `Đặt cọc: ${cocText}`,
     'Gia hạn online: Không hỗ trợ',
     'Đọc Ebook: 20 đầu sách miễn phí',
     'Đọc Audiobook: Không hỗ trợ',
@@ -938,18 +942,14 @@ const getPlanGiaoSach = (plan) => {
 };
 
 const getPlanPhiMuon = (plan) => {
-  const name = (plan.tenGoi || '').toLowerCase().normalize('NFC');
-  if (name.includes('tiêu chuẩn')) return '5.000 ₫/cuốn';
-  if (name.includes('pro')) return '3.000 ₫/cuốn';
-  return 'Miễn phí';
+  if (!plan) return 'Miễn phí';
+  if (plan.phiMuonSachGiay === 0) return 'Miễn phí';
+  return `${new Intl.NumberFormat('vi-VN').format(plan.phiMuonSachGiay)} ₫/ngày/sách`;
 };
 
 const getPlanPhatTre = (plan) => {
-  const name = (plan.tenGoi || '').toLowerCase().normalize('NFC');
-  if (name.includes('enterprise')) return '1.000 ₫/ngày';
-  if (name.includes('family') || name.includes('vip') || name.includes('max')) return '2.000 ₫/ngày';
-  if (name.includes('pro')) return '3.000 ₫/ngày';
-  return '5.000 ₫/ngày';
+  if (!plan) return '5.000 ₫/ngày';
+  return `${new Intl.NumberFormat('vi-VN').format(plan.phiPhatTreHan)} ₫/ngày/sách`;
 };
 
 const isPlanActive = (plan) => {
@@ -979,6 +979,32 @@ const subscribe = async (plan) => {
     toast.show('Nhân viên không thể đăng ký gói độc giả!', 'warning');
     return;
   }
+
+  // Lấy thông tin gói Premium đang hoạt động của độc giả
+  const curSub = activeSubs.value.find(s => s.trangThai === 'DANG_HIEU_LUC' && s.goiDocGia && (s.goiDocGia.tenGoi || '').toLowerCase().normalize('NFC').includes('tiêu chuẩn') === false);
+  
+  if (curSub && curSub.goiDocGia) {
+    if (curSub.goiDocGia._id === plan._id) {
+      // 1. Gia hạn gói đang dùng
+      const ok = await confirmModal.value.ask({
+        title: 'Xác nhận gia hạn gói',
+        message: `Bạn đang sử dụng gói "${plan.tenGoi}". Bạn muốn gia hạn thêm ${plan.soNgayHieuLuc} ngày sử dụng với số tiền ${formatPrice(plan.giaTien)}?`,
+        confirmText: 'Gia hạn ngay',
+        cancelText: 'Hủy bỏ'
+      });
+      if (!ok) return;
+    } else if (plan.giaTien > 0) {
+      // 2. Đổi gói mới (Hủy gói cũ)
+      const ok = await confirmModal.value.ask({
+        title: 'Xác nhận đổi gói dịch vụ',
+        message: `Bạn đang sử dụng gói hội viên "${curSub.goiDocGia.tenGoi}". Khi đăng ký gói mới "${plan.tenGoi}", gói hội viên cũ sẽ bị HỦY HOÀN TOÀN và thay thế bằng gói mới. Bạn có chắc chắn muốn tiếp tục?`,
+        confirmText: 'Đồng ý chuyển gói',
+        cancelText: 'Hủy bỏ'
+      });
+      if (!ok) return;
+    }
+  }
+
   activePlan.value = plan;
   paymentMethod.value = 'THE_TIN_DUNG';
   billingName.value = authStore.user ? `${authStore.user.hoLot} ${authStore.user.ten}` : '';

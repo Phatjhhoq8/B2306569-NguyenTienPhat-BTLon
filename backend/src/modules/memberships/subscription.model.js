@@ -68,14 +68,6 @@ const subscriptionSchema = new mongoose.Schema({
   }
 }, { timestamps: true });
 
-subscriptionSchema.index(
-  { docGia: 1, trangThai: 1 },
-  {
-    unique: true,
-    partialFilterExpression: { trangThai: 'DANG_HIEU_LUC' }
-  }
-);
-
 subscriptionSchema.path('ngayKetThuc').validate(function (value) {
   return value > this.ngayBatDau;
 }, 'Ngày kết thúc gói phải lớn hơn ngày bắt đầu');
@@ -101,23 +93,6 @@ subscriptionSchema.pre('validate', async function (next) {
     const code = await nextCode('subscription');
     this._id = code;
     this.maDangKy = code;
-  }
-  next();
-});
-
-// Trigger tự động hủy gói subscription cũ khi đăng ký gói mới
-subscriptionSchema.pre('save', async function (next) {
-  if (this.isNew && this.trangThai === 'DANG_HIEU_LUC') {
-    const Subscription = mongoose.model('Subscription');
-    const session = this.$session();
-    await Subscription.updateMany(
-      {
-        docGia: this.docGia,
-        trangThai: 'DANG_HIEU_LUC',
-        _id: { $ne: this._id }
-      },
-      { $set: { trangThai: 'HUY' } }
-    ).session(session);
   }
   next();
 });

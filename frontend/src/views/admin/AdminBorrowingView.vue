@@ -109,13 +109,6 @@
                   Gia hạn
                 </button>
                 <button 
-                  v-if="receipt.trangThai === 'CHO_DUYET'"
-                  @click="approveReceipt(receipt._id)"
-                  class="bg-green-600 hover:bg-green-700 text-white font-bold text-xs py-1.5 px-3 rounded-xl transition-all shadow"
-                >
-                  Duyệt phiếu
-                </button>
-                <button 
                   v-if="receipt.trangThai === 'SAN_SANG'"
                   @click="pickupReceipt(receipt._id)"
                   class="bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs py-1.5 px-3 rounded-xl transition-all shadow"
@@ -123,7 +116,7 @@
                   Giao sách
                 </button>
                 <button 
-                  v-if="['CHO_DUYET', 'SAN_SANG'].includes(receipt.trangThai)"
+                  v-if="receipt.trangThai === 'SAN_SANG'"
                   @click="cancelReceipt(receipt._id)"
                   class="text-xs font-bold text-red-600 hover:text-red-800 transition-colors"
                 >
@@ -312,6 +305,11 @@ import api from '../../services/api';
 import { X as XIcon, Search } from '@lucide/vue';
 import ConfirmModal from '../../components/ConfirmModal.vue';
 import { useToastStore } from '../../stores/toast';
+import {
+  BORROW_RECEIPT_STATUS_FILTERS,
+  getBorrowReceiptStatusClass,
+  getBorrowReceiptStatusLabel,
+} from '../../constants/borrowReceiptStatuses';
 
 const confirmModal = ref(null);
 
@@ -449,14 +447,7 @@ const returnForm = ref({
   ngayTraThucTe: ''
 });
 
-const statuses = [
-  { label: 'Tất cả', value: '' },
-  { label: 'Chờ duyệt', value: 'CHO_DUYET' },
-  { label: 'Sẵn sàng', value: 'SAN_SANG' },
-  { label: 'Đang mượn', value: 'DANG_MUON' },
-  { label: 'Đã trả sách', value: 'DA_TRA' },
-  { label: 'Quá hạn', value: 'QUA_HAN' }
-];
+const statuses = BORROW_RECEIPT_STATUS_FILTERS;
 
 const formatDate = (dateStr) => {
   if (!dateStr) return '';
@@ -464,27 +455,11 @@ const formatDate = (dateStr) => {
 };
 
 const getReceiptStatusText = (status) => {
-  const map = {
-    'CHO_DUYET': 'Chờ duyệt',
-    'SAN_SANG': 'Sẵn sàng',
-    'DANG_MUON': 'Đang mượn',
-    'DA_TRA': 'Đã trả',
-    'QUA_HAN': 'Quá hạn',
-    'HUY': 'Đã hủy'
-  };
-  return map[status] || status;
+  return getBorrowReceiptStatusLabel(status);
 };
 
 const getReceiptStatusClass = (status) => {
-  const map = {
-    'CHO_DUYET': 'bg-slate-100 text-slate-700',
-    'SAN_SANG': 'bg-amber-100 text-amber-700',
-    'DANG_MUON': 'bg-primary-light text-primary-dark',
-    'DA_TRA': 'bg-green-100 text-green-700',
-    'QUA_HAN': 'bg-red-100 text-red-700',
-    'HUY': 'bg-red-50 text-red-400'
-  };
-  return map[status] || 'bg-slate-100';
+  return getBorrowReceiptStatusClass(status);
 };
 
 const filterStatus = (status) => {
@@ -574,25 +549,6 @@ const cancelReceipt = async (id) => {
     }
   } catch (error) {
     toast.show(error.message || 'Lỗi khi hủy phiếu mượn', 'error');
-  }
-};
-
-const approveReceipt = async (id) => {
-  const ok = await confirmModal.value.ask({
-    title: 'Xác nhận duyệt phiếu',
-    message: 'Duyệt phiếu mượn này? Sách sẽ được chuẩn bị sẵn sàng cho độc giả đến lấy.',
-    confirmText: 'Duyệt phiếu',
-    cancelText: 'Hủy bỏ'
-  });
-  if (!ok) return;
-  try {
-    const res = await api.post(`/borrowing/receipts/${id}/approve`);
-    if (res.success) {
-      toast.show('Duyệt thành công! Phiếu đang ở trạng thái "Sẵn sàng" chờ độc giả đến lấy sách.', 'success');
-      fetchReceipts();
-    }
-  } catch (error) {
-    toast.show(error.message || 'Lỗi khi duyệt phiếu mượn', 'error');
   }
 };
 

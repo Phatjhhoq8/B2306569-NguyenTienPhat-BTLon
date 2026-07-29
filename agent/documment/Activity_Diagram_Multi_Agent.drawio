@@ -1,42 +1,128 @@
-<mxfile host="app.diagrams.net">
-  <diagram name="Library Agent Activity">
-    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+<mxfile host="app.diagrams.net" agent="opencode">
+  <diagram name="So Do Hoat Dong - Library Multi-Agent" id="act-library-agent">
+    <mxGraphModel dx="3164" dy="914" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1500" pageHeight="2200" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="start" value="User opens AI chat" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1" vertex="1" parent="1"><mxGeometry x="455" y="30" width="220" height="50" as="geometry" /></mxCell>
-        <mxCell id="msg" value="Send question / book description / membership request" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#6c8ebf" vertex="1" parent="1"><mxGeometry x="410" y="110" width="310" height="60" as="geometry" /></mxCell>
-        <mxCell id="ctx" value="Frontend sends recent 4 messages + borrowed books" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6" vertex="1" parent="1"><mxGeometry x="410" y="200" width="310" height="60" as="geometry" /></mxCell>
-        <mxCell id="orc" value="Layer 3: Orchestrator&#xa;Query reform + intent routing" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1" vertex="1" parent="1"><mxGeometry x="410" y="290" width="310" height="70" as="geometry" /></mxCell>
-        <mxCell id="decision" value="Intent?" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1" vertex="1" parent="1"><mxGeometry x="505" y="390" width="120" height="90" as="geometry" /></mxCell>
-        <mxCell id="chat" value="ChitchatAgent&#xa;Friendly library reply" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366" vertex="1" parent="1"><mxGeometry x="80" y="530" width="230" height="70" as="geometry" /></mxCell>
-        <mxCell id="rec" value="RecommendationAgent&#xa;Use preference memory + book matching" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366" vertex="1" parent="1"><mxGeometry x="450" y="530" width="260" height="80" as="geometry" /></mxCell>
-        <mxCell id="reg" value="RegistrationSelectionAgent&#xa;Account guidance + membership comparison" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366" vertex="1" parent="1"><mxGeometry x="820" y="530" width="270" height="80" as="geometry" /></mxCell>
-        <mxCell id="bookskill" value="Layer 1: Skills + Tools&#xa;search_books - web_search_books - verify_books_in_library&#xa;preference_store JSON" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450" vertex="1" parent="1"><mxGeometry x="405" y="650" width="350" height="90" as="geometry" /></mxCell>
-        <mxCell id="planskill" value="Layer 1: Skills + Tools&#xa;get_membership_plans&#xa;membership_comparison" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450" vertex="1" parent="1"><mxGeometry x="820" y="650" width="270" height="80" as="geometry" /></mxCell>
-        <mxCell id="backend" value="Backend APIs / MongoDB&#xa;/api/books, /api/memberships/plans, /api/borrowing/my-receipts" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf" vertex="1" parent="1"><mxGeometry x="360" y="770" width="420" height="70" as="geometry" /></mxCell>
-        <mxCell id="web" value="Web Search Fallback&#xa;Only to identify possible titles" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00" vertex="1" parent="1"><mxGeometry x="80" y="680" width="230" height="70" as="geometry" /></mxCell>
-        <mxCell id="syn" value="Layer 3: SynthesisAgent&#xa;Text + UI payload" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontStyle=1" vertex="1" parent="1"><mxGeometry x="410" y="890" width="310" height="70" as="geometry" /></mxCell>
-        <mxCell id="ui" value="ChatWidget renders&#xa;book carousel / external suggestions / membership cards" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1" vertex="1" parent="1"><mxGeometry x="380" y="1000" width="370" height="80" as="geometry" /></mxCell>
-        <mxCell id="safe" value="Safety rule&#xa;Agent never subscribes or pays automatically. User must confirm." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontStyle=1" vertex="1" parent="1"><mxGeometry x="790" y="890" width="300" height="80" as="geometry" /></mxCell>
-
-        <mxCell id="e1" edge="1" parent="1" source="start" target="msg" style="endArrow=block;html=1;rounded=0"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e2" edge="1" parent="1" source="msg" target="ctx" style="endArrow=block;html=1;rounded=0"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e3" edge="1" parent="1" source="ctx" target="orc" style="endArrow=block;html=1;rounded=0"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e4" edge="1" parent="1" source="orc" target="decision" style="endArrow=block;html=1;rounded=0"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e5" edge="1" parent="1" source="decision" target="chat" value="chitchat" style="endArrow=block;html=1;rounded=1"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e6" edge="1" parent="1" source="decision" target="rec" value="book" style="endArrow=block;html=1;rounded=1"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e7" edge="1" parent="1" source="decision" target="reg" value="account / membership" style="endArrow=block;html=1;rounded=1"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e8" edge="1" parent="1" source="rec" target="bookskill" style="endArrow=block;html=1;rounded=0"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e9" edge="1" parent="1" source="bookskill" target="backend" style="endArrow=block;html=1;rounded=0"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e10" edge="1" parent="1" source="bookskill" target="web" value="if no DB match" style="endArrow=block;html=1;rounded=1"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e11" edge="1" parent="1" source="web" target="bookskill" value="verify title in library" style="endArrow=block;html=1;rounded=1"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e12" edge="1" parent="1" source="reg" target="planskill" style="endArrow=block;html=1;rounded=0"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e13" edge="1" parent="1" source="planskill" target="backend" style="endArrow=block;html=1;rounded=0"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e14" edge="1" parent="1" source="chat" target="syn" style="endArrow=block;html=1;rounded=1"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e15" edge="1" parent="1" source="backend" target="syn" style="endArrow=block;html=1;rounded=0"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e16" edge="1" parent="1" source="syn" target="ui" style="endArrow=block;html=1;rounded=0"><mxGeometry relative="1" as="geometry" /></mxCell>
-        <mxCell id="e17" edge="1" parent="1" source="reg" target="safe" style="endArrow=block;html=1;rounded=1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="title" parent="1" style="text;html=1;fontSize=16;fontStyle=1;fontColor=#1F4E79;align=center;verticalAlign=middle;whiteSpace=wrap;" value="Sơ Đồ Hoạt Động — Trợ Lý Thư Viện Multi-Agent 3 Tầng" vertex="1">
+          <mxGeometry height="45" width="900" x="170" y="10" as="geometry" />
+        </mxCell>
+        <mxCell id="ph1" parent="1" style="text;html=1;fontSize=9;fontColor=#7B5EA7;align=center;verticalAlign=middle;whiteSpace=wrap;" value="&lt;b&gt;Phase 1&lt;/b&gt;&lt;br&gt;Tiếp nhận &amp;&lt;br&gt;chuẩn bị context" vertex="1">
+          <mxGeometry height="55" width="105" x="820" y="125" as="geometry" />
+        </mxCell>
+        <mxCell id="ph2" parent="1" style="text;html=1;fontSize=9;fontColor=#3A7CA5;align=center;verticalAlign=middle;whiteSpace=wrap;" value="&lt;b&gt;Phase 2&lt;/b&gt;&lt;br&gt;Chuẩn hóa &amp;&lt;br&gt;định tuyến" vertex="1">
+          <mxGeometry height="55" width="105" x="820" y="360" as="geometry" />
+        </mxCell>
+        <mxCell id="ph3" parent="1" style="text;html=1;fontSize=9;fontColor=#4C9A5B;align=center;verticalAlign=middle;whiteSpace=wrap;" value="&lt;b&gt;Phase 3&lt;/b&gt;&lt;br&gt;Xử lý theo&lt;br&gt;domain agent" vertex="1">
+          <mxGeometry height="55" width="105" x="820" y="585" as="geometry" />
+        </mxCell>
+        <mxCell id="ph4" parent="1" style="text;html=1;fontSize=9;fontColor=#B8860B;align=center;verticalAlign=middle;whiteSpace=wrap;" value="&lt;b&gt;Phase 4&lt;/b&gt;&lt;br&gt;Gọi Skills &amp;&lt;br&gt;Tools" vertex="1">
+          <mxGeometry height="55" width="105" x="820" y="885" as="geometry" />
+        </mxCell>
+        <mxCell id="ph5" parent="1" style="text;html=1;fontSize=9;fontColor=#FF6B35;align=center;verticalAlign=middle;whiteSpace=wrap;" value="&lt;b&gt;Phase 5&lt;/b&gt;&lt;br&gt;Fallback &amp;&lt;br&gt;xác minh" vertex="1">
+          <mxGeometry height="55" width="105" x="820" y="1115" as="geometry" />
+        </mxCell>
+        <mxCell id="ph6" parent="1" style="text;html=1;fontSize=9;fontColor=#3A7CA5;align=center;verticalAlign=middle;whiteSpace=wrap;" value="&lt;b&gt;Phase 6&lt;/b&gt;&lt;br&gt;Tổng hợp &amp;&lt;br&gt;trả kết quả" vertex="1">
+          <mxGeometry height="55" width="105" x="820" y="1475" as="geometry" />
+        </mxCell>
+        <mxCell id="ph7" parent="1" style="text;html=1;fontSize=9;fontColor=#B5544D;align=center;verticalAlign=middle;whiteSpace=wrap;" value="&lt;b&gt;Rule&lt;/b&gt;&lt;br&gt;An toàn &amp;&lt;br&gt;ràng buộc" vertex="1">
+          <mxGeometry height="55" width="105" x="820" y="1780" as="geometry" />
+        </mxCell>
+        <mxCell id="start" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#000000;strokeColor=#333333;aspect=fixed;" value="" vertex="1">
+          <mxGeometry height="30" width="30" x="605" y="70" as="geometry" />
+        </mxCell>
+        <mxCell id="a_user" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=15;strokeWidth=1.5;fontSize=12;fontStyle=1;fillColor=#F5F5F5;strokeColor=#666666;fontColor=#333333;" value="👤 Người dùng mở AI chat" vertex="1">
+          <mxGeometry height="45" width="300" x="470" y="125" as="geometry" />
+        </mxCell>
+        <mxCell id="a_message" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=15;strokeWidth=1.5;fontSize=11;fontStyle=1;fillColor=#F5F5F5;strokeColor=#666666;fontColor=#333333;" value="Gửi câu hỏi / mô tả sách / yêu cầu hội viên" vertex="1">
+          <mxGeometry height="50" width="300" x="470" y="210" as="geometry" />
+        </mxCell>
+        <mxCell id="a_context" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=15;strokeWidth=1.5;fontSize=11;fontStyle=1;fillColor=#D7C4E0;strokeColor=#7B5EA7;fontColor=#333333;" value="Frontend gửi context&lt;br&gt;&lt;font style=&quot;font-weight:normal;font-size:10px;&quot;&gt;4 tin nhắn gần nhất + sách đã mượn + trạng thái user&lt;/font&gt;" vertex="1">
+          <mxGeometry height="60" width="300" x="470" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="a_reform" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=15;strokeWidth=1.5;fontSize=11;fontStyle=1;fillColor=#AED6F1;strokeColor=#3A7CA5;fontColor=#1a1a1a;" value="Query Reform&lt;br&gt;&lt;font style=&quot;font-weight:normal;font-size:10px;&quot;&gt;Chuẩn hóa truy vấn, giữ ngữ cảnh hội thoại&lt;/font&gt;" vertex="1">
+          <mxGeometry height="60" width="300" x="470" y="405" as="geometry" />
+        </mxCell>
+        <mxCell id="a_orc" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=15;strokeWidth=1.5;fontSize=11;fontStyle=1;fillColor=#AED6F1;strokeColor=#3A7CA5;fontColor=#1a1a1a;" value="OrchestratorAgent&lt;br&gt;&lt;font style=&quot;font-weight:normal;font-size:10px;&quot;&gt;Intent Classification — chọn luồng xử lý phù hợp&lt;/font&gt;" vertex="1">
+          <mxGeometry height="65" width="300" x="470" y="505" as="geometry" />
+        </mxCell>
+        <mxCell id="d_intent" parent="1" style="rhombus;whiteSpace=wrap;html=1;strokeWidth=1.5;fontSize=10;fontStyle=1;fillColor=#AED6F1;strokeColor=#3A7CA5;fontColor=#1a1a1a;" value="Intent?" vertex="1">
+          <mxGeometry height="70" width="80" x="580" y="610" as="geometry" />
+        </mxCell>
+        <mxCell id="a_chat" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=15;strokeWidth=1.5;fontSize=11;fontStyle=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontColor=#333333;" value="ChitchatAgent&lt;br&gt;&lt;font style=&quot;font-weight:normal;font-size:10px;&quot;&gt;Trả lời thân thiện, không cần gọi CSDL sâu&lt;/font&gt;" vertex="1">
+          <mxGeometry height="65" width="260" x="105" y="620" as="geometry" />
+        </mxCell>
+        <mxCell id="a_rec" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=15;strokeWidth=1.5;fontSize=11;fontStyle=1;fillColor=#CDE7D0;strokeColor=#4C9A5B;fontColor=#333333;" value="RecommendationAgent&lt;br&gt;&lt;font style=&quot;font-weight:normal;font-size:10px;&quot;&gt;Tư vấn sách theo nhu cầu + lịch sử mượn&lt;/font&gt;" vertex="1">
+          <mxGeometry height="65" width="300" x="470" y="730" as="geometry" />
+        </mxCell>
+        <mxCell id="a_reg" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=15;strokeWidth=1.5;fontSize=11;fontStyle=1;fillColor=#CDE7D0;strokeColor=#4C9A5B;fontColor=#333333;" value="RegistrationSelectionAgent&lt;br&gt;&lt;font style=&quot;font-weight:normal;font-size:10px;&quot;&gt;Hướng dẫn tài khoản, so sánh gói hội viên&lt;/font&gt;" vertex="1">
+          <mxGeometry height="65" width="300" x="895" y="620" as="geometry" />
+        </mxCell>
+        <mxCell id="a_book_skills" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;strokeWidth=1.2;fontSize=10;fillColor=#FFF2CC;strokeColor=#D6B656;fontColor=#333333;" value="&lt;b&gt;Skills &amp;amp; Tools (Book Flow)&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;• Book Matching Skill&lt;br&gt;• Preference Store JSON&lt;br&gt;→ search_books, verify_books_in_library&lt;br&gt;→ web_search_books nếu không khớp CSDL&lt;/font&gt;" vertex="1">
+          <mxGeometry height="95" width="300" x="470" y="840" as="geometry" />
+        </mxCell>
+        <mxCell id="a_plan_skills" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=12;strokeWidth=1.2;fontSize=10;fillColor=#FFF2CC;strokeColor=#D6B656;fontColor=#333333;" value="&lt;b&gt;Skills &amp;amp; Tools (Membership Flow)&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:9px;&quot;&gt;• Membership Comparison Skill&lt;br&gt;• Account Guidance Skill&lt;br&gt;→ get_membership_plans&lt;br&gt;→ hướng dẫn, không tự đăng ký / thanh toán&lt;/font&gt;" vertex="1">
+          <mxGeometry height="95" width="300" x="895" y="820" as="geometry" />
+        </mxCell>
+        <mxCell id="a_backend" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=15;strokeWidth=1.5;fontSize=11;fontStyle=1;fillColor=#D7C4E0;strokeColor=#7B5EA7;fontColor=#333333;" value="Backend APIs / MongoDB&lt;br&gt;&lt;font style=&quot;font-weight:normal;font-size:10px;&quot;&gt;/api/books, /api/memberships/plans, /api/borrowing/my-receipts&lt;/font&gt;" vertex="1">
+          <mxGeometry height="65" width="420" x="410" y="1015" as="geometry" />
+        </mxCell>
+        <mxCell id="d_db_match" parent="1" style="rhombus;whiteSpace=wrap;html=1;strokeWidth=1.5;fontSize=10;fontStyle=1;fillColor=#FFF2CC;strokeColor=#D6B656;fontColor=#333333;" value="Có sách&lt;br&gt;trong CSDL?" vertex="1">
+          <mxGeometry height="80" width="95" x="572" y="1130" as="geometry" />
+        </mxCell>
+        <mxCell id="a_web" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=15;strokeWidth=1.5;fontSize=11;fontStyle=1;fillColor=#FFE0B2;strokeColor=#FF6B35;fontColor=#333333;" value="Web Search Fallback&lt;br&gt;&lt;font style=&quot;font-weight:normal;font-size:10px;&quot;&gt;Chỉ nhận diện tựa sách hoặc tác giả có thể phù hợp&lt;/font&gt;" vertex="1">
+          <mxGeometry height="65" width="300" x="115" y="1137" as="geometry" />
+        </mxCell>
+        <mxCell id="a_verify" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=15;strokeWidth=1.5;fontSize=11;fontStyle=1;fillColor=#FFE0B2;strokeColor=#FF6B35;fontColor=#333333;" value="verify_books_in_library&lt;br&gt;&lt;font style=&quot;font-weight:normal;font-size:10px;&quot;&gt;Xác minh lại với CSDL thư viện trước khi hiển thị sách chọn được&lt;/font&gt;" vertex="1">
+          <mxGeometry height="70" width="300" x="470" y="1260" as="geometry" />
+        </mxCell>
+        <mxCell id="a_no_match" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=15;strokeWidth=1.5;fontSize=11;fontStyle=1;fillColor=#FFE0B2;strokeColor=#FF6B35;fontColor=#333333;" value="Thông báo không có tác phẩm trong thư viện&lt;br&gt;&lt;font style=&quot;font-weight:normal;font-size:10px;&quot;&gt;Có thể gợi ý sách liên quan đang có trong CSDL&lt;/font&gt;" vertex="1">
+          <mxGeometry height="70" width="330" x="870" y="1260" as="geometry" />
+        </mxCell>
+        <mxCell id="a_synth" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=15;strokeWidth=1.5;fontSize=11;fontStyle=1;fillColor=#AED6F1;strokeColor=#3A7CA5;fontColor=#1a1a1a;" value="SynthesisAgent&lt;br&gt;&lt;font style=&quot;font-weight:normal;font-size:10px;&quot;&gt;Tổng hợp câu trả lời + book carousel / external suggestions / membership cards&lt;/font&gt;" vertex="1">
+          <mxGeometry height="75" width="360" x="440" y="1435" as="geometry" />
+        </mxCell>
+        <mxCell id="a_ui" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=15;strokeWidth=1.5;fontSize=11;fontStyle=1;fillColor=#F5F5F5;strokeColor=#666666;fontColor=#333333;" value="ChatWidget render kết quả&lt;br&gt;&lt;font style=&quot;font-weight:normal;font-size:10px;&quot;&gt;Text + UI payload, chỉ cho chọn sách có _id trong CSDL&lt;/font&gt;" vertex="1">
+          <mxGeometry height="70" width="360" x="440" y="1585" as="geometry" />
+        </mxCell>
+        <mxCell id="a_safe" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=15;strokeWidth=1.5;fontSize=11;fontStyle=1;fillColor=#F4C7C3;strokeColor=#B5544D;fontColor=#333333;" value="Safety Rule&lt;br&gt;&lt;font style=&quot;font-weight:normal;font-size:10px;&quot;&gt;Agent không tự đăng ký hội viên, không tự thanh toán. Người dùng phải xác nhận thao tác.&lt;/font&gt;" vertex="1">
+          <mxGeometry height="75" width="360" x="440" y="1760" as="geometry" />
+        </mxCell>
+        <mxCell id="a_return" parent="1" style="rounded=1;whiteSpace=wrap;html=1;arcSize=15;strokeWidth=1.5;fontSize=12;fontStyle=1;fillColor=#F5F5F5;strokeColor=#666666;fontColor=#333333;" value="👤 Người dùng nhận câu trả lời" vertex="1">
+          <mxGeometry height="48" width="300" x="470" y="1900" as="geometry" />
+        </mxCell>
+        <mxCell id="end_ring" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#333333;strokeWidth=2.5;aspect=fixed;" value="" vertex="1">
+          <mxGeometry height="40" width="40" x="600" y="2010" as="geometry" />
+        </mxCell>
+        <mxCell id="end" parent="1" style="ellipse;whiteSpace=wrap;html=1;fillColor=#000000;strokeColor=#000000;aspect=fixed;" value="" vertex="1">
+          <mxGeometry height="26" width="26" x="607" y="2017" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" edge="1" parent="1" source="start" target="a_user" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#333333;strokeWidth=1.5;endArrow=blockThin;endFill=1;" value=""><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="a_user" target="a_message" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#333333;strokeWidth=1.5;endArrow=blockThin;endFill=1;" value=""><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="a_message" target="a_context" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#7B5EA7;strokeWidth=1.5;endArrow=blockThin;endFill=1;" value=""><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="a_context" target="a_reform" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#3A7CA5;strokeWidth=1.5;endArrow=blockThin;endFill=1;" value="context"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="a_reform" target="a_orc" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#3A7CA5;strokeWidth=1.5;endArrow=blockThin;endFill=1;" value="optimized_query"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e6" edge="1" parent="1" source="a_orc" target="d_intent" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#3A7CA5;strokeWidth=1.5;endArrow=blockThin;endFill=1;" value=""><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="d_intent" target="a_chat" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#D6B656;strokeWidth=1.8;endArrow=blockThin;endFill=1;fontSize=9;fontColor=#B8860B;fontStyle=1;" value="Hội thoại"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="430" y="645" /></Array></mxGeometry></mxCell>
+        <mxCell id="e8" edge="1" parent="1" source="d_intent" target="a_rec" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#4C9A5B;strokeWidth=1.8;endArrow=blockThin;endFill=1;fontSize=9;fontColor=#4C9A5B;fontStyle=1;" value="Tìm / tư vấn sách"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e9" edge="1" parent="1" source="d_intent" target="a_reg" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#4C9A5B;strokeWidth=1.8;endArrow=blockThin;endFill=1;fontSize=9;fontColor=#4C9A5B;fontStyle=1;" value="Tài khoản / hội viên"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="820" y="645" /></Array></mxGeometry></mxCell>
+        <mxCell id="e10" edge="1" parent="1" source="a_rec" target="a_book_skills" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#D6B656;strokeWidth=1.3;endArrow=blockThin;endFill=1;" value=""><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e11" edge="1" parent="1" source="a_reg" target="a_plan_skills" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#D6B656;strokeWidth=1.3;endArrow=blockThin;endFill=1;" value=""><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e12" edge="1" parent="1" source="a_book_skills" target="a_backend" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#7B5EA7;strokeWidth=1.5;endArrow=blockThin;endFill=1;" value="query books"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e13" edge="1" parent="1" source="a_plan_skills" target="a_backend" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#7B5EA7;strokeWidth=1.5;endArrow=blockThin;endFill=1;" value="plans / user data"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1045" y="1048" /></Array></mxGeometry></mxCell>
+        <mxCell id="e14" edge="1" parent="1" source="a_backend" target="d_db_match" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#D6B656;strokeWidth=1.5;endArrow=blockThin;endFill=1;" value="book_result"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e15" edge="1" parent="1" source="d_db_match" target="a_web" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#FF6B35;strokeWidth=1.8;endArrow=blockThin;endFill=1;fontSize=9;fontColor=#FF6B35;fontStyle=1;" value="Không có"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="430" y="1170" /></Array></mxGeometry></mxCell>
+        <mxCell id="e16" edge="1" parent="1" source="a_web" target="a_verify" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#FF6B35;strokeWidth=1.5;endArrow=blockThin;endFill=1;dashed=1;dashPattern=8 4;fontSize=9;fontColor=#FF6B35;" value="candidate_titles"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="265" y="1295" /></Array></mxGeometry></mxCell>
+        <mxCell id="e17" edge="1" parent="1" source="d_db_match" target="a_verify" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#4C9A5B;strokeWidth=1.8;endArrow=blockThin;endFill=1;fontSize=9;fontColor=#4C9A5B;fontStyle=1;" value="Có"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e18" edge="1" parent="1" source="a_verify" target="a_no_match" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#FF6B35;strokeWidth=1.5;endArrow=blockThin;endFill=1;dashed=1;dashPattern=8 4;fontSize=9;fontColor=#FF6B35;" value="vẫn không có"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e19" edge="1" parent="1" source="a_verify" target="a_synth" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#3A7CA5;strokeWidth=1.5;endArrow=blockThin;endFill=1;fontSize=9;fontColor=#3A7CA5;" value="verified_books"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e20" edge="1" parent="1" source="a_no_match" target="a_synth" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#3A7CA5;strokeWidth=1.5;endArrow=blockThin;endFill=1;fontSize=9;fontColor=#3A7CA5;" value="message"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1035" y="1472" /></Array></mxGeometry></mxCell>
+        <mxCell id="e21" edge="1" parent="1" source="a_plan_skills" target="a_synth" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#3A7CA5;strokeWidth=1.5;endArrow=blockThin;endFill=1;fontSize=9;fontColor=#3A7CA5;" value="membership_cards"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="1230" y="870" /><mxPoint x="1230" y="1472" /></Array></mxGeometry></mxCell>
+        <mxCell id="e22" edge="1" parent="1" source="a_chat" target="a_synth" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#D6B656;strokeWidth=1.5;endArrow=blockThin;endFill=1;dashed=1;dashPattern=8 4;fontSize=9;fontColor=#B8860B;" value="direct_response"><mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="70" y="652" /><mxPoint x="70" y="1472" /></Array></mxGeometry></mxCell>
+        <mxCell id="e23" edge="1" parent="1" source="a_synth" target="a_ui" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#3A7CA5;strokeWidth=1.5;endArrow=blockThin;endFill=1;" value="final_response"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e24" edge="1" parent="1" source="a_ui" target="a_safe" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#B5544D;strokeWidth=1.5;endArrow=blockThin;endFill=1;" value="apply rules"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e25" edge="1" parent="1" source="a_safe" target="a_return" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#333333;strokeWidth=1.5;endArrow=blockThin;endFill=1;" value="response"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e26" edge="1" parent="1" source="a_return" target="end_ring" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#333333;strokeWidth=1.5;endArrow=blockThin;endFill=1;" value=""><mxGeometry relative="1" as="geometry" /></mxCell>
       </root>
     </mxGraphModel>
   </diagram>

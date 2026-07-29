@@ -22,7 +22,7 @@
               @change="toggleSelectAll" 
               class="rounded border-slate-300 text-primary focus:ring-primary h-4 w-4 transition-all"
             />
-            <span class="text-xs font-bold text-slate-700">Chọn tất cả ({{ cartStore.totalItems }} sách)</span>
+            <span class="text-xs font-bold text-slate-700">Chọn tất cả ({{ cartStore.items.length }} đầu sách / {{ cartStore.totalItems }} bản)</span>
           </label>
           <button 
             v-if="selectedBookIds.length > 0" 
@@ -62,6 +62,30 @@
               <span class="text-slate-300">|</span>
               <span>Phạt trễ: <span class="text-red-655 font-extrabold">{{ formatCurrency(getBookOverdueFee(authStore.user?.subscriptionPlan)) }}/ngày</span></span>
             </p>
+            <div class="flex items-center gap-2 pt-1">
+              <span class="text-[10px] font-bold text-slate-500 uppercase">Số lượng</span>
+              <div class="inline-flex items-center rounded-xl border border-slate-200 overflow-hidden bg-slate-50">
+                <button
+                  @click="changeQuantity(book, -1)"
+                  :disabled="(book.soLuongMuon || 1) <= 1"
+                  class="h-7 w-7 text-xs font-black text-slate-700 hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed"
+                >-</button>
+                <input
+                  :value="book.soLuongMuon || 1"
+                  type="number"
+                  min="1"
+                  :max="book.soLuongKhaDung || 1"
+                  @input="setQuantity(book, $event.target.value)"
+                  class="h-7 w-12 bg-white border-x border-slate-200 text-center text-xs font-extrabold text-slate-800 focus:outline-none"
+                />
+                <button
+                  @click="changeQuantity(book, 1)"
+                  :disabled="(book.soLuongMuon || 1) >= (book.soLuongKhaDung || 1)"
+                  class="h-7 w-7 text-xs font-black text-slate-700 hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed"
+                >+</button>
+              </div>
+              <span class="text-[10px] font-semibold text-slate-400">Còn {{ book.soLuongKhaDung || 1 }} bản</span>
+            </div>
           </div>
 
           <!-- Actions -->
@@ -125,7 +149,7 @@
         <!-- Price breakdowns -->
         <div class="space-y-3 text-sm font-semibold">
           <div class="flex justify-between text-slate-600">
-            <span>Phí mượn tạm tính</span>
+            <span>Phí mượn tạm tính ({{ selectedCopiesCount }} bản)</span>
             <span>{{ formatCurrency(phiMuon) }}</span>
           </div>
           <div class="flex justify-between text-slate-600">
@@ -216,6 +240,8 @@ const getBookOverdueFee = (plan) => {
   return plan.phiPhatTreHan !== undefined ? plan.phiPhatTreHan : 5000;
 };
 
+const getBorrowQuantity = (item) => Math.max(1, Number(item.soLuongMuon) || 1);
+
 // Tính số ngày mượn thực tế
 const borrowDaysCount = computed(() => {
   if (!ngayHenTra.value) return 1;
@@ -230,8 +256,14 @@ const borrowDaysCount = computed(() => {
 
 const phiMuon = computed(() => {
   const selectedItems = cartStore.items.filter(item => selectedBookIds.value.includes(item._id));
-  const baseFee = selectedItems.reduce((sum, item) => sum + getBookBorrowFee(item, authStore.user?.subscriptionPlan), 0);
+  const baseFee = selectedItems.reduce((sum, item) => sum + getBookBorrowFee(item, authStore.user?.subscriptionPlan) * getBorrowQuantity(item), 0);
   return baseFee * borrowDaysCount.value;
+});
+
+const selectedCopiesCount = computed(() => {
+  return cartStore.items
+    .filter(item => selectedBookIds.value.includes(item._id))
+    .reduce((sum, item) => sum + getBorrowQuantity(item), 0);
 });
 
 const tienCoc = computed(() => {
@@ -278,6 +310,14 @@ const toggleSelectAll = () => {
   } else {
     selectedBookIds.value = cartStore.items.map(item => item._id);
   }
+};
+
+const setQuantity = (book, value) => {
+  cartStore.updateQuantity(book._id, value);
+};
+
+const changeQuantity = (book, delta) => {
+  cartStore.updateQuantity(book._id, getBorrowQuantity(book) + delta);
 };
 
 const confirmRemoveSelected = async () => {
@@ -344,7 +384,7 @@ const submitBorrowRequest = async () => {
 
   const ok = await confirmModal.value.ask({
     title: 'Xác nhận đăng ký mượn',
-    message: `Bạn có chắc chắn muốn đăng ký mượn ${selectedBookIds.value.length} cuốn sách đã chọn này không?`,
+    message: `Bạn có chắc chắn muốn đăng ký mượn ${selectedCopiesCount.value} bản sách đã chọn này không?`,
     confirmText: 'Đăng ký',
     cancelText: 'Quay lại'
   });
@@ -355,7 +395,7 @@ const submitBorrowRequest = async () => {
     const selectedItems = cartStore.items.filter(item => selectedBookIds.value.includes(item._id));
     const chiTietMuon = selectedItems.map(item => ({
       sach: item._id, // Gửi book title ID
-      soLuong: 1
+      soLuong: item.soLuongMuon || 1
     }));
 
     const payload = {
@@ -364,7 +404,6 @@ const submitBorrowRequest = async () => {
       phiMuon: phiMuon.value,
       soTienGiam: soTienGiam.value,
       tongTienThanhToan: tongTienThanhToan.value,
-      choDuyet: true
     };
 
     const res = await api.post('/borrowing/receipts', payload);

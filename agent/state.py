@@ -21,6 +21,8 @@ class AgentState(TypedDict, total=False):
 
     raw_query: str
     refined_query: str
+    book_lookup_mode: str
+    possible_book_titles: Annotated[List[str], merge_list]
     reply_to_message: Optional[Dict[str, Any]]
 
     intent: str
