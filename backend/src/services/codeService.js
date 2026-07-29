@@ -53,4 +53,24 @@ const nextCode = async (entityName) => {
   return `${prefix}${paddedNumber}`;
 };
 
-module.exports = { nextCode };
+/**
+ * Xem trước mã tự tăng tiếp theo cho một thực thể mà không làm tăng seq trong DB
+ * @param {string} entityName - Tên của thực thể
+ * @returns {Promise<string>} Mã tự tăng dự kiến
+ */
+const peekNextCode = async (entityName) => {
+  const config = configs[entityName];
+  if (!config) {
+    throw new Error(`Không tìm thấy cấu hình mã tự động cho thực thể "${entityName}"`);
+  }
+
+  const counter = await Counter.findOne({ _id: entityName });
+  const nextSeq = counter ? counter.seq + 1 : 1;
+
+  const prefix = typeof config.prefix === 'function' ? config.prefix() : config.prefix;
+  const paddedNumber = String(nextSeq).padStart(config.length, '0');
+  
+  return `${prefix}${paddedNumber}`;
+};
+
+module.exports = { nextCode, peekNextCode };

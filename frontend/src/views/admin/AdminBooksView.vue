@@ -92,9 +92,21 @@
           </select>
         </div>
 
+        <!-- Filter Deleted -->
+        <div class="w-full sm:w-44">
+          <select 
+            v-model="filterDeleted" 
+            @change="[currentPage = 1, fetchBooks()]"
+            class="w-full bg-slate-50 px-3 py-2 rounded-xl border border-slate-200 text-xs font-bold text-slate-650 focus:outline-none"
+          >
+            <option value="false">Sách đang hoạt động</option>
+            <option value="true">Sách đã xóa mềm</option>
+          </select>
+        </div>
+
         <!-- Reset Button -->
         <button 
-          v-if="filterCategory || filterPublisher || filterStatus || searchQuery"
+          v-if="filterCategory || filterPublisher || filterStatus || searchQuery || filterDeleted !== 'false'"
           @click="resetFilters"
           class="text-xs font-bold text-primary hover:underline flex items-center space-x-1"
         >
@@ -133,6 +145,13 @@
               <td class="py-4 text-xs font-bold text-slate-500">{{ book.viTriKe || 'Kệ trống' }}</td>
               <td class="py-4">
                 <span 
+                  v-if="book.isDeleted"
+                  class="text-[10px] font-bold px-2 py-0.5 rounded-full uppercase bg-slate-100 text-slate-500 border border-slate-200"
+                >
+                  Đã xóa mềm
+                </span>
+                <span 
+                  v-else
                   class="text-[10px] font-bold px-2 py-0.5 rounded-full uppercase"
                   :class="book.trangThai === 'ACTIVE' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'"
                 >
@@ -140,42 +159,53 @@
                 </span>
               </td>
               <td class="py-4 text-right space-x-2">
-                <router-link 
-                  :to="`/admin/copies/${book._id}`"
-                  class="text-xs font-bold text-primary hover:underline"
-                  title="Quản lý bản sao"
-                >
-                  Bản sao
-                </router-link>
-                <button 
-                  @click="openEditModal(book)"
-                  class="text-xs font-bold text-slate-500 hover:text-primary transition-colors"
-                >
-                  Sửa
-                </button>
-                <button 
-                  v-if="book.trangThai === 'ACTIVE'"
-                  @click="handleToggleStatus(book, 'DISCONTINUED')"
-                  class="text-xs font-bold text-amber-600 hover:text-amber-800 transition-colors"
-                  title="Ngừng phục vụ đầu sách này"
-                >
-                  Ngừng phục vụ
-                </button>
-                <button 
-                  v-else
-                  @click="handleToggleStatus(book, 'ACTIVE')"
-                  class="text-xs font-bold text-emerald-600 hover:text-emerald-800 transition-colors"
-                  title="Mở lại phục vụ đầu sách này"
-                >
-                  Mở lại
-                </button>
-                <button 
-                  @click="handleDelete(book._id)"
-                  class="text-xs font-bold text-red-600 hover:text-red-800 transition-colors"
-                  title="Xóa đầu sách (Xóa cứng/Xóa mềm theo lịch sử mượn)"
-                >
-                  Xóa
-                </button>
+                <template v-if="book.isDeleted">
+                  <button 
+                    @click="handleRestore(book)"
+                    class="text-xs font-bold text-emerald-600 hover:text-emerald-800 transition-colors"
+                    title="Khôi phục đầu sách đã xóa mềm"
+                  >
+                    Khôi phục
+                  </button>
+                </template>
+                <template v-else>
+                  <router-link 
+                    :to="`/admin/copies/${book._id}`"
+                    class="text-xs font-bold text-primary hover:underline"
+                    title="Quản lý bản sao"
+                  >
+                    Bản sao
+                  </router-link>
+                  <button 
+                    @click="openEditModal(book)"
+                    class="text-xs font-bold text-slate-500 hover:text-primary transition-colors"
+                  >
+                    Sửa
+                  </button>
+                  <button 
+                    v-if="book.trangThai === 'ACTIVE'"
+                    @click="handleToggleStatus(book, 'DISCONTINUED')"
+                    class="text-xs font-bold text-amber-600 hover:text-amber-800 transition-colors"
+                    title="Ngừng phục vụ đầu sách này"
+                  >
+                    Ngừng phục vụ
+                  </button>
+                  <button 
+                    v-else
+                    @click="handleToggleStatus(book, 'ACTIVE')"
+                    class="text-xs font-bold text-emerald-600 hover:text-emerald-800 transition-colors"
+                    title="Mở lại phục vụ đầu sách này"
+                  >
+                    Mở lại
+                  </button>
+                  <button 
+                    @click="handleDelete(book)"
+                    class="text-xs font-bold text-red-600 hover:text-red-800 transition-colors"
+                    title="Xóa đầu sách (Xóa cứng/Xóa mềm theo lựa chọn)"
+                  >
+                    Xóa
+                  </button>
+                </template>
               </td>
             </tr>
           </tbody>
@@ -426,13 +456,50 @@
     
     <!-- Custom Confirm Dialog -->
     <ConfirmModal ref="confirmModal" />
+
+    <!-- Modal Lựa chọn Xóa Sách (Chỉ dành cho sách chưa từng mượn) -->
+    <Teleport to="body">
+      <div v-if="showDeleteOptionsModal" class="fixed inset-0 bg-slate-900/60 z-[99999] flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-6 space-y-4 shadow-2xl border border-slate-150">
+          <div class="flex items-center space-x-3 text-red-500">
+            <div class="bg-red-50 p-2.5 rounded-xl">
+              <AlertTriangle class="h-6 w-6" />
+            </div>
+            <h3 class="font-sans font-extrabold text-slate-900 text-sm uppercase tracking-wide">Xác nhận xóa đầu sách</h3>
+          </div>
+          <p class="text-slate-600 text-xs font-bold leading-relaxed">
+            Đầu sách <span class="text-primary font-bold">"${selectedBookToDelete?.tenSach}"</span> chưa từng được mượn. Hãy chọn phương thức xóa bạn mong muốn:
+          </p>
+          <div class="flex flex-col space-y-2 pt-2">
+            <button 
+              @click="executeDelete('hard')" 
+              class="w-full bg-red-600 hover:bg-red-750 text-white font-extrabold py-2.5 rounded-xl text-xs transition-colors shadow-md"
+            >
+              Xóa cứng (Xóa hoàn toàn khỏi CSDL)
+            </button>
+            <button 
+              @click="executeDelete('soft')" 
+              class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-extrabold py-2.5 rounded-xl text-xs transition-colors"
+            >
+              Xóa mềm (Đánh dấu xóa, có thể khôi phục)
+            </button>
+            <button 
+              @click="showDeleteOptionsModal = false" 
+              class="w-full bg-slate-50 hover:bg-slate-100 text-slate-500 font-bold py-2 rounded-xl text-xs border border-slate-200 transition-colors"
+            >
+              Hủy bỏ
+            </button>
+          </div>
+        </div>
+      </div>
+    </Teleport>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, computed } from 'vue';
 import api from '../../services/api';
-import { Plus, Search, X as XIcon } from '@lucide/vue';
+import { Plus, Search, X as XIcon, AlertTriangle } from '@lucide/vue';
 import ConfirmModal from '../../components/ConfirmModal.vue';
 import { useToastStore } from '../../stores/toast';
 
@@ -451,12 +518,14 @@ const limit = 10;
 const filterCategory = ref('');
 const filterPublisher = ref('');
 const filterStatus = ref('');
+const filterDeleted = ref('false');
 
 const resetFilters = () => {
   searchQuery.value = '';
   filterCategory.value = '';
   filterPublisher.value = '';
   filterStatus.value = '';
+  filterDeleted.value = 'false';
   currentPage.value = 1;
   fetchBooks();
 };
@@ -626,6 +695,7 @@ const fetchBooks = async () => {
     if (filterCategory.value) url += `&category=${encodeURIComponent(filterCategory.value)}`;
     if (filterPublisher.value) url += `&publisher=${encodeURIComponent(filterPublisher.value)}`;
     if (filterStatus.value) url += `&status=${encodeURIComponent(filterStatus.value)}`;
+    if (filterDeleted.value) url += `&deleted=${encodeURIComponent(filterDeleted.value)}`;
     
     const res = await api.get(url);
     if (res.success) {
@@ -711,21 +781,55 @@ const saveBook = async () => {
   }
 };
 
-const handleDelete = async (bookId) => {
-  const ok = await confirmModal.value.ask({ 
-    message: 'Bạn có chắc chắn muốn xóa đầu sách này? Hệ thống sẽ xóa cứng hoàn toàn khỏi cơ sở dữ liệu nếu chưa từng được mượn, hoặc tự động chuyển sang Ngừng phục vụ (Drain Strategy) để bảo vệ lịch sử nếu đã từng được mượn.',
-    isDestructive: true 
+const showDeleteOptionsModal = ref(false);
+const selectedBookToDelete = ref(null);
+
+const handleDelete = async (book) => {
+  if (book.hasBeenBorrowed) {
+    const ok = await confirmModal.value.ask({ 
+      message: `Đầu sách "${book.tenSach}" đã từng được mượn nên bắt buộc phải XÓA MỀM (không thể xóa cứng để bảo vệ lịch sử mượn sách). Bạn có chắc chắn muốn tiếp tục xóa mềm đầu sách này không?`,
+      isDestructive: true 
+    });
+    if (!ok) return;
+    try {
+      const res = await api.delete(`/books/${book._id}?mode=soft`);
+      if (res.success) {
+        toast.show('Đã xóa mềm đầu sách thành công.');
+        fetchBooks();
+        loadSuggestions();
+      }
+    } catch (error) {
+      toast.show(error.message || 'Lỗi khi xóa đầu sách', 'error');
+    }
+  } else {
+    selectedBookToDelete.value = book;
+    showDeleteOptionsModal.value = true;
+  }
+};
+
+const executeDelete = async (mode) => {
+  showDeleteOptionsModal.value = false;
+  const book = selectedBookToDelete.value;
+  if (!book) return;
+  
+  const modeText = mode === 'hard' ? 'xóa cứng (XÓA VĨNH VIỄN khỏi cơ sở dữ liệu)' : 'xóa mềm (ẩn khỏi hệ thống và có thể khôi phục sau)';
+  const ok = await confirmModal.value.ask({
+    message: `Bạn đã chọn ${modeText} đầu sách "${book.tenSach}". Bạn có thực sự chắc chắn muốn tiếp tục không?`,
+    isDestructive: true
   });
   if (!ok) return;
+
   try {
-    const res = await api.delete(`/books/${bookId}`);
+    const res = await api.delete(`/books/${book._id}?mode=${mode}`);
     if (res.success) {
-      toast.show(res.data.message);
+      toast.show(res.data.message || 'Xóa đầu sách thành công.');
       fetchBooks();
       loadSuggestions();
     }
   } catch (error) {
     toast.show(error.message || 'Lỗi khi thực hiện xóa đầu sách', 'error');
+  } finally {
+    selectedBookToDelete.value = null;
   }
 };
 
@@ -746,6 +850,23 @@ const handleToggleStatus = async (book, newStatus) => {
     }
   } catch (error) {
     toast.show(error.message || `Lỗi khi ${actionText} đầu sách`, 'error');
+  }
+};
+
+const handleRestore = async (book) => {
+  const ok = await confirmModal.value.ask({
+    message: `Bạn có chắc chắn muốn khôi phục hoạt động cho đầu sách "${book.tenSach}" không?`
+  });
+  if (!ok) return;
+
+  try {
+    const res = await api.put(`/books/${book._id}`, { isDeleted: false });
+    if (res.success) {
+      toast.show(`Đã khôi phục đầu sách "${book.tenSach}" thành công!`);
+      fetchBooks();
+    }
+  } catch (error) {
+    toast.show(error.message || 'Lỗi khi khôi phục đầu sách', 'error');
   }
 };
 

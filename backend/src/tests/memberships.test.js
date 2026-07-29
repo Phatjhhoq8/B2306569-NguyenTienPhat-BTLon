@@ -12,7 +12,7 @@ const { connectDatabase } = require('../config/database');
 const { Reader, Staff, MembershipPlan, Subscription } = require('../models');
 const app = require('../app');
 const jwtHelper = require('../utils/jwtHelper');
-const { mergePlans } = require('../modules/memberships/membershipPrivileges');
+const { getBestPlan, getEffectiveMembershipPlan } = require('../modules/memberships/membershipPrivileges');
 
 let server;
 let baseUrl;
@@ -186,7 +186,7 @@ test.describe('Memberships API Tests', () => {
       assert.strictEqual(res.body.data.subscription.tuDongGiaHan, false);
     });
 
-    test('Đăng ký gói mới nên hủy gói cũ và ghi nhận gói mới', async () => {
+    test('Đăng ký gói mới nên giữ gói cũ và ghi nhận thêm gói mới', async () => {
       const activeBefore = await Subscription.findOne({
         docGia: testReaderId,
         trangThai: 'DANG_HIEU_LUC'
@@ -214,19 +214,20 @@ test.describe('Memberships API Tests', () => {
       assert.strictEqual(res.body.data.tongTien, upgradePlan.giaTien);
 
       const stillActiveOldSub = await Subscription.findById(activeBefore._id);
-      assert.strictEqual(stillActiveOldSub.trangThai, 'HUY');
+      assert.strictEqual(stillActiveOldSub.trangThai, 'DANG_HIEU_LUC');
 
       const activeCount = await Subscription.countDocuments({
         docGia: testReaderId,
         trangThai: 'DANG_HIEU_LUC'
       });
-      assert.strictEqual(activeCount, 1);
+      assert.ok(activeCount >= 2);
     });
 
-    test('Quyền hội viên hiệu lực nên lấy quyền tốt nhất từ nhiều gói', () => {
-      const effectivePlan = mergePlans([
+    test('Quyền hội viên hiệu lực nên chọn gói xịn nhất từ nhiều gói', () => {
+      const effectivePlan = getBestPlan([
         {
           tenGoi: 'Basic',
+          giaTien: 50000,
           soSachToiDa: 3,
           soNgayMuonToiDa: 14,
           mienTienCoc: false,
@@ -237,6 +238,7 @@ test.describe('Memberships API Tests', () => {
         },
         {
           tenGoi: 'Premium',
+          giaTien: 99000,
           soSachToiDa: 8,
           soNgayMuonToiDa: 30,
           mienTienCoc: true,
@@ -308,6 +310,64 @@ test.describe('Memberships API Tests', () => {
       });
 
       assert.strictEqual(res.status, 403);
+    });
+
+    test('Thành viên được mời vào Family nên thấy gói chia sẻ và được áp quyền khi mượn', async () => {
+      const familyPlan = await MembershipPlan.create({
+        tenGoi: 'Family TDD',
+        giaTien: 150000,
+        soNgayHieuLuc: 30,
+        soSachToiDa: 9,
+        soNgayMuonToiDa: 30,
+        mienTienCoc: true,
+        choPhepGiaHanOnline: true,
+        chiaSeNhomGiaDinh: true,
+        loaiGoi: 'TEAM',
+        phiMuonSachGiay: 1000,
+        phiPhatTreHan: 2000,
+        tienDatCoc: 0
+      });
+
+      await makeRequest('/api/memberships/subscribe', {
+        method: 'POST',
+        headers: { Cookie: readerCookie },
+        body: { goiId: familyPlan._id }
+      });
+
+      const invitedReader = await Reader.create({
+        hoLot: 'Lê',
+        ten: 'Family Member',
+        email: 'family.member@library.local',
+        matKhau: 'reader123',
+        ngaySinh: new Date('2000-01-01'),
+        diachi: 'Cần Thơ',
+        dienThoai: '0900000001'
+      });
+      const invitedToken = jwtHelper.signToken({ id: invitedReader._id, role: 'READER' });
+      const invitedCookie = `token=${invitedToken}`;
+
+      const joinRes = await makeRequest('/api/memberships/join-family', {
+        method: 'POST',
+        headers: { Cookie: readerCookie },
+        body: { maDocGiaMoi: invitedReader._id }
+      });
+
+      assert.strictEqual(joinRes.status, 200);
+      assert.strictEqual(joinRes.body.success, true);
+      assert.ok(joinRes.body.data.subscription.nguoiDuocMoi.includes(invitedReader._id));
+
+      const invitedSubsRes = await makeRequest('/api/memberships/my-subscriptions', {
+        headers: { Cookie: invitedCookie }
+      });
+
+      assert.strictEqual(invitedSubsRes.status, 200);
+      assert.strictEqual(invitedSubsRes.body.success, true);
+      assert.ok(invitedSubsRes.body.data.some(sub => sub.goiDocGia?._id === familyPlan._id));
+
+      const effectivePlan = await getEffectiveMembershipPlan(invitedReader._id);
+      assert.strictEqual(effectivePlan._id, familyPlan._id);
+      assert.strictEqual(effectivePlan.soSachToiDa, 9);
+      assert.strictEqual(effectivePlan.tienDatCoc, 0);
     });
 
     test('Gói tự động gia hạn hết hạn nên tự động sinh gói mới khi gọi lấy gói cá nhân', async () => {

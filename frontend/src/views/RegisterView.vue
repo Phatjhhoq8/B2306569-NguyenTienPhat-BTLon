@@ -27,8 +27,14 @@
               type="text" 
               required 
               placeholder="Nguyễn Văn" 
-              class="w-full bg-slate-950 px-3 py-2.5 rounded-xl border border-slate-800 focus:outline-none focus:border-primary text-sm font-semibold text-slate-200 placeholder-slate-600 transition-all"
+              @blur="validateField('hoLot')"
+              @input="errors.hoLot = ''"
+              class="w-full bg-slate-950 px-3 py-2.5 rounded-xl border focus:outline-none text-sm font-semibold text-slate-200 placeholder-slate-600 transition-all"
+              :class="errors.hoLot ? 'border-red-500/80 focus:border-red-500' : 'border-slate-800 focus:border-primary'"
             />
+            <span v-if="errors.hoLot" class="text-[10px] text-red-500 font-semibold mt-1 block">
+              {{ errors.hoLot }}
+            </span>
           </div>
           <!-- Tên -->
           <div class="space-y-1.5">
@@ -38,8 +44,14 @@
               type="text" 
               required 
               placeholder="Hùng" 
-              class="w-full bg-slate-950 px-3 py-2.5 rounded-xl border border-slate-800 focus:outline-none focus:border-primary text-sm font-semibold text-slate-200 placeholder-slate-600 transition-all"
+              @blur="validateField('ten')"
+              @input="errors.ten = ''"
+              class="w-full bg-slate-950 px-3 py-2.5 rounded-xl border focus:outline-none text-sm font-semibold text-slate-200 placeholder-slate-600 transition-all"
+              :class="errors.ten ? 'border-red-500/80 focus:border-red-500' : 'border-slate-800 focus:border-primary'"
             />
+            <span v-if="errors.ten" class="text-[10px] text-red-500 font-semibold mt-1 block">
+              {{ errors.ten }}
+            </span>
           </div>
         </div>
 
@@ -52,8 +64,14 @@
               type="email" 
               required 
               placeholder="hung@gmail.com" 
-              class="w-full bg-slate-950 px-3 py-2.5 rounded-xl border border-slate-800 focus:outline-none focus:border-primary text-sm font-semibold text-slate-200 placeholder-slate-600 transition-all"
+              @blur="validateField('email')"
+              @input="errors.email = ''"
+              class="w-full bg-slate-950 px-3 py-2.5 rounded-xl border focus:outline-none text-sm font-semibold text-slate-200 placeholder-slate-600 transition-all"
+              :class="errors.email ? 'border-red-500/80 focus:border-red-500' : 'border-slate-800 focus:border-primary'"
             />
+            <span v-if="errors.email" class="text-[10px] text-red-500 font-semibold mt-1 block">
+              {{ errors.email }}
+            </span>
           </div>
           <!-- Số điện thoại -->
           <div class="space-y-1.5">
@@ -63,8 +81,14 @@
               type="text" 
               required 
               placeholder="0912345678" 
-              class="w-full bg-slate-950 px-3 py-2.5 rounded-xl border border-slate-800 focus:outline-none focus:border-primary text-sm font-semibold text-slate-200 placeholder-slate-600 transition-all"
+              @blur="validateField('dienThoai')"
+              @input="errors.dienThoai = ''"
+              class="w-full bg-slate-950 px-3 py-2.5 rounded-xl border focus:outline-none text-sm font-semibold text-slate-200 placeholder-slate-600 transition-all"
+              :class="errors.dienThoai ? 'border-red-500/80 focus:border-red-500' : 'border-slate-800 focus:border-primary'"
             />
+            <span v-if="errors.dienThoai" class="text-[10px] text-red-500 font-semibold mt-1 block leading-relaxed">
+              {{ errors.dienThoai }}
+            </span>
           </div>
         </div>
 
@@ -76,8 +100,14 @@
               v-model="ngaySinh" 
               type="date" 
               required 
-              class="w-full bg-slate-950 px-3 py-2.5 rounded-xl border border-slate-800 focus:outline-none focus:border-primary text-sm font-semibold text-slate-200 transition-all"
+              @blur="validateField('ngaySinh')"
+              @input="errors.ngaySinh = ''"
+              class="w-full bg-slate-950 px-3 py-2.5 rounded-xl border focus:outline-none text-sm font-semibold text-slate-200 transition-all"
+              :class="errors.ngaySinh ? 'border-red-500/80 focus:border-red-500' : 'border-slate-800 focus:border-primary'"
             />
+            <span v-if="errors.ngaySinh" class="text-[10px] text-red-500 font-semibold mt-1 block">
+              {{ errors.ngaySinh }}
+            </span>
           </div>
           <!-- Giới tính -->
           <div class="space-y-1.5">
@@ -86,9 +116,9 @@
               v-model="gioiTinh" 
               class="w-full bg-slate-950 px-3 py-2.5 rounded-xl border border-slate-800 focus:outline-none focus:border-primary text-sm font-semibold text-slate-200 transition-all"
             >
-              <option value="Nam" class="bg-slate-900 text-slate-200">Nam</option>
-              <option value="Nữ" class="bg-slate-900 text-slate-200">Nữ</option>
-              <option value="Khác" class="bg-slate-900 text-slate-200">Khác</option>
+              <option value="NAM" class="bg-slate-900 text-slate-200">Nam</option>
+              <option value="NU" class="bg-slate-900 text-slate-200">Nữ</option>
+              <option value="KHAC" class="bg-slate-900 text-slate-200">Khác</option>
             </select>
           </div>
         </div>
@@ -99,7 +129,6 @@
           <input 
             v-model="diachi" 
             type="text" 
-            required 
             placeholder="Số 1 Lý Tự Trọng, Cần Thơ" 
             class="w-full bg-slate-950 px-3 py-2.5 rounded-xl border border-slate-800 focus:outline-none focus:border-primary text-sm font-semibold text-slate-200 placeholder-slate-600 transition-all"
           />
@@ -113,8 +142,14 @@
             type="password" 
             required 
             placeholder="Tối thiểu 6 ký tự" 
-            class="w-full bg-slate-950 px-3 py-2.5 rounded-xl border border-slate-800 focus:outline-none focus:border-primary text-sm font-semibold text-slate-200 placeholder-slate-600 transition-all"
+            @blur="validateField('password')"
+            @input="errors.password = ''"
+            class="w-full bg-slate-950 px-3 py-2.5 rounded-xl border focus:outline-none text-sm font-semibold text-slate-200 placeholder-slate-600 transition-all"
+            :class="errors.password ? 'border-red-500/80 focus:border-red-500' : 'border-slate-800 focus:border-primary'"
           />
+          <span v-if="errors.password" class="text-[10px] text-red-500 font-semibold mt-1 block">
+            {{ errors.password }}
+          </span>
         </div>
 
         <button 
@@ -149,14 +184,102 @@ const ten = ref('');
 const email = ref('');
 const dienThoai = ref('');
 const ngaySinh = ref('');
-const gioiTinh = ref('Nam');
+const gioiTinh = ref('NAM');
 const diachi = ref('');
 const password = ref('');
 const error = ref('');
 const loading = ref(false);
 
+const errors = ref({
+  hoLot: '',
+  ten: '',
+  email: '',
+  dienThoai: '',
+  ngaySinh: '',
+  password: ''
+});
+
+const validateField = (field) => {
+  errors.value[field] = '';
+  
+  if (field === 'hoLot') {
+    if (!hoLot.value.trim()) {
+      errors.value.hoLot = 'Họ lót là bắt buộc';
+    }
+  }
+  
+  if (field === 'ten') {
+    if (!ten.value.trim()) {
+      errors.value.ten = 'Tên độc giả là bắt buộc';
+    }
+  }
+  
+  if (field === 'email') {
+    if (!email.value.trim()) {
+      errors.value.email = 'Email là bắt buộc';
+    } else {
+      const emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,})+$/;
+      if (!emailRegex.test(email.value)) {
+        errors.value.email = 'Email không hợp lệ';
+      }
+    }
+  }
+  
+  if (field === 'dienThoai') {
+    if (!dienThoai.value.trim()) {
+      errors.value.dienThoai = 'Số điện thoại là bắt buộc';
+    } else {
+      const phoneRegex = /^0[0-9]{9}$/;
+      if (!phoneRegex.test(dienThoai.value)) {
+        errors.value.dienThoai = 'Số điện thoại phải bắt đầu bằng số 0 và có đúng 10 chữ số';
+      }
+    }
+  }
+  
+  if (field === 'ngaySinh') {
+    if (!ngaySinh.value) {
+      errors.value.ngaySinh = 'Ngày sinh là bắt buộc';
+    } else {
+      const birthDate = new Date(ngaySinh.value);
+      const now = new Date();
+      const minDate = new Date();
+      minDate.setFullYear(now.getFullYear() - 150);
+      
+      if (birthDate > now) {
+        errors.value.ngaySinh = 'Ngày sinh không thể là ngày trong tương lai';
+      } else if (birthDate < minDate) {
+        errors.value.ngaySinh = 'Ngày sinh không được vượt quá 150 năm so với hiện tại';
+      }
+    }
+  }
+
+  
+  if (field === 'password') {
+    if (!password.value) {
+      errors.value.password = 'Mật khẩu là bắt buộc';
+    } else if (password.value.length < 6) {
+      errors.value.password = 'Mật khẩu phải có tối thiểu 6 ký tự';
+    }
+  }
+};
+
 const handleRegister = async () => {
   error.value = '';
+  
+  // Validate toàn bộ các trường trước khi submit
+  validateField('hoLot');
+  validateField('ten');
+  validateField('email');
+  validateField('dienThoai');
+  validateField('ngaySinh');
+  validateField('password');
+
+  const hasErrors = Object.values(errors.value).some(err => err !== '');
+  if (hasErrors) {
+    error.value = 'Vui lòng kiểm tra lại thông tin điền trong form.';
+    return;
+  }
+
   loading.value = true;
   try {
     const payload = {

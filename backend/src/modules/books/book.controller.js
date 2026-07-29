@@ -106,8 +106,13 @@ const createBookTitle = async (req, res, next) => {
  */
 const getBooks = async (req, res, next) => {
   try {
-    const { q, category, author, publisher, status, page = 1, limit = 10 } = req.query;
-    const filter = { isDeleted: false };
+    const { q, category, author, publisher, status, deleted, page = 1, limit = 10 } = req.query;
+    const filter = {};
+    if (deleted === 'true') {
+      filter.isDeleted = true;
+    } else {
+      filter.isDeleted = false;
+    }
     if (q) {
       const regex = { $regex: String(q), $options: 'i' };
       const [matchedAuthors, matchedCategories, matchedPublishers] = await Promise.all([
@@ -137,7 +142,17 @@ const getBooks = async (req, res, next) => {
 
     const booksWithShelf = await Promise.all(books.map(async (b) => {
       const bObj = b.toObject();
-      const copies = await BookCopy.find({ dauSach: b._id, isDeleted: false, tinhTrang: 'CHO_MUON' });
+      
+      const allCopies = await BookCopy.find({ dauSach: b._id });
+      const copies = allCopies.filter(c => !c.isDeleted && c.tinhTrang === 'CHO_MUON');
+      
+      const copyIds = allCopies.map(c => c._id);
+      const mongoose = require('mongoose');
+      const hasBeenBorrowed = await mongoose.model('BorrowReceipt').exists({
+        'chiTietMuon.sach': { $in: copyIds }
+      });
+      bObj.hasBeenBorrowed = !!hasBeenBorrowed;
+
       let shelfLocationStr = '';
       if (copies.length > 0) {
         const shelfMap = {};
@@ -246,19 +261,35 @@ const getBookById = async (req, res, next) => {
 const updateBookTitle = async (req, res, next) => {
   try {
     const book = await BookTitle.findById(req.params.id);
-    if (!book || book.isDeleted) return resultResponse.err(res, 'Đầu sách không tồn tại', 404);
+    if (!book) return resultResponse.err(res, 'Đầu sách không tồn tại', 404);
 
-    const oldStatus = book.trangThai;
-    const allowedUpdates = ['tenSach', 'namSanXuat', 'giaBia', 'hinhAnh', 'moTa', 'tuKhoa', 'trangThai', 'viTriKe'];
-    allowedUpdates.forEach((f) => { if (req.body[f] !== undefined) book[f] = req.body[f]; });
+    // Nếu đầu sách đã bị xóa mềm, chỉ cho phép khôi phục (isDeleted: false)
+    if (book.isDeleted) {
+      if (req.body.isDeleted === false) {
+        book.isDeleted = false;
+        book.deletedAt = null;
+        book.trangThai = 'ACTIVE';
+        
+        await BookCopy.updateMany(
+          { dauSach: book._id, tinhTrang: 'BAO_TRI', isDeleted: true },
+          { $set: { tinhTrang: 'CHO_MUON', isDeleted: false, deletedAt: null } }
+        );
+      } else {
+        return resultResponse.err(res, 'Đầu sách đã bị xóa mềm', 400);
+      }
+    } else {
+      const oldStatus = book.trangThai;
+      const allowedUpdates = ['tenSach', 'namSanXuat', 'giaBia', 'hinhAnh', 'moTa', 'tuKhoa', 'trangThai', 'viTriKe'];
+      allowedUpdates.forEach((f) => { if (req.body[f] !== undefined) book[f] = req.body[f]; });
 
-    // Nếu khôi phục trạng thái từ DISCONTINUED -> ACTIVE (Mở lại phục vụ)
-    if (oldStatus === 'DISCONTINUED' && book.trangThai === 'ACTIVE') {
-      // Khôi phục các bản sao trước đó bị thu hồi (BAO_TRI / isDeleted)
-      await BookCopy.updateMany(
-        { dauSach: book._id, tinhTrang: 'BAO_TRI', isDeleted: true },
-        { $set: { tinhTrang: 'CHO_MUON', isDeleted: false, deletedAt: null } }
-      );
+      // Nếu khôi phục trạng thái từ DISCONTINUED -> ACTIVE (Mở lại phục vụ)
+      if (oldStatus === 'DISCONTINUED' && book.trangThai === 'ACTIVE') {
+        // Khôi phục các bản sao trước đó bị thu hồi (BAO_TRI / isDeleted)
+        await BookCopy.updateMany(
+          { dauSach: book._id, tinhTrang: 'BAO_TRI', isDeleted: true },
+          { $set: { tinhTrang: 'CHO_MUON', isDeleted: false, deletedAt: null } }
+        );
+      }
     }
 
     await book.save();
@@ -271,7 +302,8 @@ const updateBookTitle = async (req, res, next) => {
  */
 const softDeleteBookTitle = async (req, res, next) => {
   try {
-    const result = await bookService.softDeleteBookTitle(req.params.id);
+    const { mode = 'soft' } = req.query;
+    const result = await bookService.softDeleteBookTitle(req.params.id, { mode });
     return resultResponse.ok(res, result);
   } catch (error) { next(error); }
 };
@@ -560,6 +592,28 @@ const getSearchSuggestions = async (req, res, next) => {
   }
 };
 
+/**
+ * Tạo mới bản sao sách (Staff only)
+ */
+const createBookCopy = async (req, res, next) => {
+  try {
+    const { dauSach, viTriKe, ghiChu } = req.body;
+    if (!dauSach) return resultResponse.err(res, 'Mã đầu sách là bắt buộc', 400);
+
+    const bookTitle = await BookTitle.findById(dauSach);
+    if (!bookTitle || bookTitle.isDeleted || bookTitle.trangThai !== 'ACTIVE') {
+      return resultResponse.err(res, 'Đầu sách không tồn tại hoặc đang ngừng phục vụ', 400);
+    }
+
+    const [newCopy] = await bookService.addBookCopies(dauSach, 1, {
+      viTriKe,
+      ghiChu: ghiChu || 'Thêm bản sao thủ công'
+    });
+
+    return resultResponse.ok(res, newCopy, 201);
+  } catch (error) { next(error); }
+};
+
 module.exports = {
   createCategory,
   getCategories,
@@ -578,6 +632,7 @@ module.exports = {
   getBookCopies,
   updateBookCopy,
   softDeleteBookCopy,
+  createBookCopy,
   // Author
   getAuthors,
   createAuthor,

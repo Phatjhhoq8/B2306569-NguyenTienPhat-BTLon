@@ -108,6 +108,7 @@ test.describe('Discounts API Tests', () => {
         tenKhuyenMai: 'Khuyến mãi hè 2026',
         giaTriGiam: 20000,
         giaTriDonToiThieu: 50000,
+        apDungCho: 'MUON_SACH',
         ngayBatDau: new Date(Date.now() - 24 * 60 * 60 * 1000), // ngày hôm qua (đã bắt đầu)
         ngayKetThuc: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000), // 5 ngày tới
         soLuongMaToiDa: 100
@@ -132,7 +133,8 @@ test.describe('Discounts API Tests', () => {
         headers: { Cookie: readerCookie },
         body: {
           code: createdDiscount.maCode,
-          orderAmount: 60000
+          orderAmount: 60000,
+          apDungCho: 'MUON_SACH'
         }
       });
 
@@ -140,6 +142,21 @@ test.describe('Discounts API Tests', () => {
       assert.strictEqual(res.body.success, true);
       assert.strictEqual(res.body.data.discountAmount, 20000);
       assert.strictEqual(res.body.data.finalAmount, 40000);
+    });
+
+    test('Không cho dùng mã mượn sách cho thanh toán gói hội viên', async () => {
+      const res = await makeRequest('/api/discounts/validate', {
+        method: 'POST',
+        headers: { Cookie: readerCookie },
+        body: {
+          code: createdDiscount.maCode,
+          orderAmount: 60000,
+          apDungCho: 'GOI_HOI_VIEN'
+        }
+      });
+
+      assert.strictEqual(res.status, 500);
+      assert.strictEqual(res.body.success, false);
     });
   });
 

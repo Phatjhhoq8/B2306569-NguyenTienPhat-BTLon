@@ -105,7 +105,7 @@
           <button 
             v-else-if="isPlanActive(plan)"
             @click="subscribe(plan)"
-            class="w-full font-bold py-3 rounded-xl text-xs transition-all bg-emerald-600 hover:bg-emerald-700 text-white flex items-center justify-center space-x-1 shadow-sm active:scale-95"
+            class="w-full font-bold py-3 rounded-xl text-xs transition-all bg-primary hover:bg-primary-dark text-white flex items-center justify-center space-x-1 shadow-sm active:scale-95"
           >
             <Check class="h-4.5 w-4.5 mr-1" />
             <span>Gia hạn gói {{ plan.tenGoi }}</span>
@@ -354,7 +354,7 @@
 
     <!-- Configure and Payment Modal (Claude-style) -->
     <div v-if="activePlan" class="fixed inset-0 bg-slate-900 bg-opacity-65 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-      <div class="bg-white rounded-3xl max-w-5xl w-full p-6 md:p-8 space-y-6 shadow-2xl relative max-h-[95vh] overflow-y-auto font-sans">
+      <div class="checkout-modal-scroll bg-white rounded-3xl max-w-5xl w-full p-6 md:p-8 space-y-6 shadow-2xl relative max-h-[95vh] overflow-y-auto font-sans">
         <button @click="closeCheckout" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 transition-colors">
           <X class="h-6 w-6" />
         </button>
@@ -540,7 +540,7 @@
                       class="w-44 h-44 object-contain bg-white p-2 rounded-xl border border-slate-100"
                     />
                     <div class="mt-2.5 text-[10px] font-bold text-slate-700 space-y-0.5">
-                      <p>Số tiền: {{ formatPrice(activePlan.giaTien) }}</p>
+                      <p>Số tiền: {{ formatPrice(membershipFinalAmount) }}</p>
                       <p>Nội dung: <span class="text-primary uppercase font-mono">DK {{ activePlan.maGoi }} {{ authStore.user?.maDocGia || 'DG00001' }}</span></p>
                     </div>
                   </div>
@@ -587,7 +587,7 @@
           <div class="lg:col-span-5 bg-slate-50 p-6 rounded-3xl border border-slate-200 space-y-6">
             <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wider border-b pb-2">Tóm tắt đơn đăng ký</h3>
             
-            <div class="space-y-4">
+              <div class="space-y-4">
               <!-- Plan Info -->
               <div class="flex justify-between items-start">
                 <div>
@@ -599,6 +599,25 @@
 
               <hr class="border-slate-200" />
 
+              <div class="space-y-2">
+                <label class="text-[10px] font-bold text-slate-500 uppercase">Mã giảm giá</label>
+                <div class="flex gap-2">
+                  <input
+                    v-model="membershipCouponCode"
+                    type="text"
+                    placeholder="KM2026..."
+                    class="flex-grow bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold focus:outline-none focus:border-primary uppercase text-slate-800"
+                  />
+                  <button
+                    @click="applyMembershipCoupon"
+                    class="bg-slate-900 hover:bg-primary text-white font-bold px-3 py-2 text-[10px] rounded-xl transition-all"
+                  >Áp dụng</button>
+                </div>
+                <p v-if="membershipCouponMsg" class="text-[10px] font-semibold" :class="membershipCouponSuccess ? 'text-emerald-600' : 'text-red-600'">
+                  {{ membershipCouponMsg }}
+                </p>
+              </div>
+
               <!-- Price Breakdown -->
               <div class="space-y-2 text-xs font-semibold text-slate-600">
                 <div class="flex justify-between">
@@ -606,13 +625,13 @@
                   <span>{{ formatPrice(activePlan.giaTien) }}</span>
                 </div>
                 <div class="flex justify-between">
-                  <span>Thuế VAT (10%)</span>
-                  <span>{{ formatPrice(activePlan.giaTien * 0.1) }}</span>
+                  <span>Số tiền được giảm</span>
+                  <span class="text-emerald-600">- {{ formatCurrencyAmount(membershipDiscountAmount) }}</span>
                 </div>
                 <hr class="border-slate-200" />
                 <div class="flex justify-between text-slate-900 text-sm font-black pt-1">
                   <span>Tổng tiền thanh toán</span>
-                  <span class="text-primary">{{ formatPrice(activePlan.giaTien * 1.1) }}</span>
+                  <span class="text-primary">{{ formatPrice(membershipFinalAmount) }}</span>
                 </div>
               </div>
             </div>
@@ -638,7 +657,7 @@
                   <span class="font-bold">{{ autoRenew ? 'Chính sách tự động gia hạn' : 'Chính sách từng kỳ' }}</span>
                   <p class="leading-relaxed font-normal text-[11px] text-slate-600" v-if="autoRenew">
                     <span v-if="paymentMethod === 'THE_TIN_DUNG'">
-                      Hệ thống sẽ tự động trừ số tiền {{ formatPrice(activePlan.giaTien * 1.1) }} và gia hạn thêm {{ activePlan.soNgayHieuLuc }} ngày sau mỗi chu kỳ qua Thẻ tín dụng đã liên kết.
+                      Hệ thống sẽ tự động trừ số tiền {{ formatPrice(membershipFinalAmount) }} và gia hạn thêm {{ activePlan.soNgayHieuLuc }} ngày sau mỗi chu kỳ qua Thẻ tín dụng đã liên kết.
                     </span>
                     <span v-else>
                       Hệ thống sẽ gửi thông báo nhắc nhở thanh toán khi gói sắp hết hạn để đảm bảo trải nghiệm không bị gián đoạn.
@@ -743,10 +762,15 @@ const confirmModal = ref(null);
 const showComparison = ref(false);
 
 const plans = ref([]);
+const activeSubs = ref([]);
 const activeSub = ref(null);
 const activePlan = ref(null);
 const subscribing = ref(false);
 const autoRenew = ref(true);
+const membershipCouponCode = ref('');
+const membershipCouponInfo = ref(null);
+const membershipCouponMsg = ref('');
+const membershipCouponSuccess = ref(false);
 
 // Checkout & Credit Card state
 const paymentMethod = ref('THE_TIN_DUNG'); // 'THE_TIN_DUNG' or 'VIETQR'
@@ -802,6 +826,10 @@ const closeCheckout = () => {
   cardNumber.value = '';
   cardExpiry.value = '';
   cardCvc.value = '';
+  membershipCouponCode.value = '';
+  membershipCouponInfo.value = null;
+  membershipCouponMsg.value = '';
+  membershipCouponSuccess.value = false;
 };
 
 const activeLoaiGoi = ref('INDIVIDUAL'); // 'INDIVIDUAL' or 'TEAM'
@@ -817,9 +845,28 @@ const filteredPlans = computed(() => {
 const isHighlightedPlan = (plan) => {
   return plan && plan.khuyenDung === true;
 };
+const isStandardPlan = (plan) => (plan?.tenGoi || '').toLowerCase().normalize('NFC').includes('tiêu chuẩn');
 const formatPrice = (val) => {
   if (val === 0) return 'Miễn phí';
   return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(val || 0);
+};
+
+const formatCurrencyAmount = (val) => {
+  return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(val || 0);
+};
+
+const membershipDiscountAmount = computed(() => membershipCouponInfo.value?.discountAmount || 0);
+
+const membershipFinalAmount = computed(() => {
+  const total = Number(activePlan.value?.giaTien || 0) - membershipDiscountAmount.value;
+  return total > 0 ? total : 0;
+});
+
+const setActiveSubscriptions = (subscriptions = []) => {
+  activeSubs.value = subscriptions
+    .filter(s => s.trangThai === 'DANG_HIEU_LUC' && s.goiDocGia)
+    .sort((a, b) => (b.goiDocGia.giaTien || 0) - (a.goiDocGia.giaTien || 0));
+  activeSub.value = activeSubs.value[0] || subscriptions[0] || null;
 };
 
 const getPlanDescription = (plan) => {
@@ -828,7 +875,7 @@ const getPlanDescription = (plan) => {
   const name = plan.tenGoi.toLowerCase();
   if (name.includes('pro')) return 'Gói cao cấp dành cho sinh viên với nhu cầu mượn sách nhiều và đọc Ebook/Audiobook.';
   if (name.includes('vip')) return 'Gói đặc quyền dành cho người đọc thường xuyên, miễn đặt cọc và hỗ trợ giao sách tận nhà.';
-  if (name.includes('family') || name.includes('gia đình')) return 'Gói dùng chung dành cho gia đình 3-4 người (tối đa 4 tài khoản), tiết kiệm chi phí tối đa.';
+  if (name.includes('family') || name.includes('gia đình')) return 'Gói dùng chung dành cho gia đình tối đa 3 tài khoản, tiết kiệm chi phí tối đa.';
   if (name.includes('enterprise') || name.includes('doanh nghiệp')) return 'Gói quy mô lớn dành cho trường học, doanh nghiệp, thư viện đối tác (tối đa 30 tài khoản).';
   return 'Gói Premium nâng cấp thời hạn và giới hạn mượn.';
 };
@@ -911,7 +958,7 @@ const getPlanGiaHanOnline = (plan) => {
 const getPlanChiaSeNhom = (plan) => {
   const name = (plan.tenGoi || '').toLowerCase().normalize('NFC');
   if (name.includes('enterprise')) return 'Tối đa 30 tài khoản';
-  if (name.includes('family')) return 'Tối đa 4 tài khoản';
+  if (name.includes('family')) return 'Tối đa 3 tài khoản';
   return 'Không hỗ trợ';
 };
 
@@ -956,10 +1003,10 @@ const isPlanActive = (plan) => {
   if (!authStore.isAuthenticated) return false;
   
   if (plan.giaTien === 0) {
-    return !activeSub.value;
+    return activeSubs.value.length === 0 || activeSubs.value.some(sub => isStandardPlan(sub.goiDocGia));
   }
   
-  return activeSub.value && activeSub.value.goiDocGia?._id === plan._id;
+  return activeSubs.value.some(sub => sub.trangThai === 'DANG_HIEU_LUC' && sub.goiDocGia?._id === plan._id);
 };
 
 const subscribe = async (plan) => {
@@ -980,35 +1027,36 @@ const subscribe = async (plan) => {
     return;
   }
 
-  // Lấy thông tin gói Premium đang hoạt động của độc giả
-  const curSub = activeSubs.value.find(s => s.trangThai === 'DANG_HIEU_LUC' && s.goiDocGia && (s.goiDocGia.tenGoi || '').toLowerCase().normalize('NFC').includes('tiêu chuẩn') === false);
-  
-  if (curSub && curSub.goiDocGia) {
-    if (curSub.goiDocGia._id === plan._id) {
-      // 1. Gia hạn gói đang dùng
-      const ok = await confirmModal.value.ask({
-        title: 'Xác nhận gia hạn gói',
-        message: `Bạn đang sử dụng gói "${plan.tenGoi}". Bạn muốn gia hạn thêm ${plan.soNgayHieuLuc} ngày sử dụng với số tiền ${formatPrice(plan.giaTien)}?`,
-        confirmText: 'Gia hạn ngay',
-        cancelText: 'Hủy bỏ'
-      });
-      if (!ok) return;
-    } else if (plan.giaTien > 0) {
-      // 2. Đổi gói mới (Hủy gói cũ)
-      const ok = await confirmModal.value.ask({
-        title: 'Xác nhận đổi gói dịch vụ',
-        message: `Bạn đang sử dụng gói hội viên "${curSub.goiDocGia.tenGoi}". Khi đăng ký gói mới "${plan.tenGoi}", gói hội viên cũ sẽ bị HỦY HOÀN TOÀN và thay thế bằng gói mới. Bạn có chắc chắn muốn tiếp tục?`,
-        confirmText: 'Đồng ý chuyển gói',
-        cancelText: 'Hủy bỏ'
-      });
-      if (!ok) return;
-    }
-  }
-
   activePlan.value = plan;
+  membershipCouponCode.value = '';
+  membershipCouponInfo.value = null;
+  membershipCouponMsg.value = '';
+  membershipCouponSuccess.value = false;
   paymentMethod.value = 'THE_TIN_DUNG';
   billingName.value = authStore.user ? `${authStore.user.hoLot} ${authStore.user.ten}` : '';
   cardName.value = authStore.user ? `${authStore.user.hoLot} ${authStore.user.ten}`.toUpperCase() : '';
+};
+
+const applyMembershipCoupon = async () => {
+  membershipCouponMsg.value = '';
+  membershipCouponSuccess.value = false;
+  membershipCouponInfo.value = null;
+  if (!membershipCouponCode.value.trim() || !activePlan.value) return;
+
+  try {
+    const res = await api.post('/discounts/validate', {
+      code: membershipCouponCode.value.trim().toUpperCase(),
+      orderAmount: activePlan.value.giaTien,
+      apDungCho: 'GOI_HOI_VIEN'
+    });
+    if (res.success) {
+      membershipCouponInfo.value = res.data;
+      membershipCouponSuccess.value = true;
+      membershipCouponMsg.value = `Áp dụng mã thành công! Giảm ${formatPrice(res.data.discountAmount)}`;
+    }
+  } catch (error) {
+    membershipCouponMsg.value = error.message || 'Mã giảm giá không hợp lệ.';
+  }
 };
 
 // VietQR API
@@ -1016,7 +1064,7 @@ const getVietQrUrl = () => {
   if (!activePlan.value) return '';
   const bankId = 'MB';
   const accountNo = '0912345678';
-  const amount = activePlan.value.giaTien;
+  const amount = membershipFinalAmount.value;
   const readerId = authStore.user?.maDocGia || 'DG00001';
   const addInfo = encodeURIComponent(`DK ${activePlan.value.maGoi} ${readerId}`);
   return `https://img.vietqr.io/image/${bankId}-${accountNo}-compact2.png?amount=${amount}&addInfo=${addInfo}`;
@@ -1032,7 +1080,7 @@ const submitCheckout = async () => {
 
   const ok = await confirmModal.value.ask({
     title: 'Xác nhận thanh toán thẻ',
-    message: `Hệ thống sẽ tiến hành mô phỏng thanh toán số tiền ${formatPrice(activePlan.value.giaTien * 1.1)} (đã bao gồm 10% VAT) qua thẻ của bạn. Gói hội viên sẽ được tự động gia hạn. Bạn muốn tiếp tục?`,
+    message: `Hệ thống sẽ tiến hành mô phỏng thanh toán số tiền ${formatPrice(membershipFinalAmount.value)} qua thẻ của bạn. Bạn muốn tiếp tục?`,
     confirmText: 'Xác nhận thanh toán',
     cancelText: 'Hủy bỏ'
   });
@@ -1044,6 +1092,7 @@ const submitCheckout = async () => {
       goiId: activePlan.value._id,
       phuongThucThanhToan: 'THE_TIN_DUNG',
       tuDongGiaHan: autoRenew.value,
+      discountCode: membershipCouponCode.value.trim().toUpperCase() || undefined,
       thongTinThe: {
         soThe: cardNumber.value.replace(/\s+/g, ''),
         tenTrenThe: cardName.value,
@@ -1057,7 +1106,7 @@ const submitCheckout = async () => {
       await authStore.fetchUser();
       const activeRes = await api.get('/memberships/my-subscriptions');
       if (activeRes.success && activeRes.data.length > 0) {
-        activeSub.value = activeRes.data.find(s => s.trangThai === 'DANG_HIEU_LUC') || activeRes.data[0];
+        setActiveSubscriptions(activeRes.data);
       }
       router.push('/profile');
     }
@@ -1073,7 +1122,7 @@ const confirmPayment = async () => {
   
   const ok = await confirmModal.value.ask({
     title: 'Xác nhận thanh toán',
-    message: `Bạn xác nhận đã thực hiện chuyển khoản số tiền ${formatPrice(activePlan.value.giaTien)} để đăng ký gói ${activePlan.value.tenGoi}?`,
+    message: `Bạn xác nhận đã thực hiện chuyển khoản số tiền ${formatPrice(membershipFinalAmount.value)} để đăng ký gói ${activePlan.value.tenGoi}?`,
     confirmText: 'Đã chuyển khoản',
     cancelText: 'Quay lại'
   });
@@ -1084,7 +1133,8 @@ const confirmPayment = async () => {
     const res = await api.post('/memberships/subscribe', { 
       goiId: activePlan.value._id,
       phuongThucThanhToan: 'VIETQR',
-      tuDongGiaHan: autoRenew.value
+      tuDongGiaHan: autoRenew.value,
+      discountCode: membershipCouponCode.value.trim().toUpperCase() || undefined
     });
     if (res.success) {
       toast.show('Đăng ký gói hội viên thành công! Tài khoản của bạn đã được kích hoạt.', 'success');
@@ -1092,7 +1142,7 @@ const confirmPayment = async () => {
       await authStore.fetchUser();
       const activeRes = await api.get('/memberships/my-subscriptions');
       if (activeRes.success && activeRes.data.length > 0) {
-        activeSub.value = activeRes.data.find(s => s.trangThai === 'DANG_HIEU_LUC') || activeRes.data[0];
+        setActiveSubscriptions(activeRes.data);
       }
       router.push('/profile');
     }
@@ -1129,7 +1179,7 @@ const joinFamily = async () => {
       // Nạp lại subscription mới
       const activeRes = await api.get('/memberships/my-subscriptions');
       if (activeRes.success && activeRes.data.length > 0) {
-        activeSub.value = activeRes.data.find(s => s.trangThai === 'DANG_HIEU_LUC') || activeRes.data[0];
+        setActiveSubscriptions(activeRes.data);
       }
       await authStore.fetchUser();
     }
@@ -1173,7 +1223,7 @@ onMounted(async () => {
     try {
       const res = await api.get('/memberships/my-subscriptions');
       if (res.success && res.data.length > 0) {
-        activeSub.value = res.data.find(s => s.trangThai === 'DANG_HIEU_LUC') || res.data[0];
+        setActiveSubscriptions(res.data);
       }
     } catch (error) {
       console.error('Fetch subscriptions error:', error);
@@ -1194,6 +1244,13 @@ onMounted(async () => {
 }
 .scan-laser {
   animation: scan 2.2s infinite linear;
+}
+.checkout-modal-scroll {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.checkout-modal-scroll::-webkit-scrollbar {
+  display: none;
 }
 @keyframes scan {
   0% { top: 10%; opacity: 0; }

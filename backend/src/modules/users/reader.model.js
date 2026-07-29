@@ -43,7 +43,17 @@ const readerSchema = new mongoose.Schema({
   },
   ngaySinh: {
     type: Date,
-    required: [true, 'Ngày sinh là bắt buộc']
+    required: [true, 'Ngày sinh là bắt buộc'],
+    validate: {
+      validator: function(val) {
+        if (!val) return false;
+        const now = new Date();
+        const minDate = new Date();
+        minDate.setFullYear(now.getFullYear() - 150);
+        return val >= minDate && val <= now;
+      },
+      message: 'Ngày sinh không được quá 150 năm trước hoặc là ngày trong tương lai'
+    }
   },
   gioiTinh: {
     type: String,
@@ -55,7 +65,6 @@ const readerSchema = new mongoose.Schema({
   },
   diachi: {
     type: String,
-    required: [true, 'Địa chỉ là bắt buộc'],
     trim: true
   },
   dienThoai: {
@@ -63,7 +72,7 @@ const readerSchema = new mongoose.Schema({
     required: [true, 'Số điện thoại là bắt buộc'],
     unique: true,
     trim: true,
-    match: [/^(0[35789])([0-9]{8})$/, 'Số điện thoại không hợp lệ']
+    match: [/^0[0-9]{9}$/, 'Số điện thoại không hợp lệ']
   },
   trangThai: {
     type: String,

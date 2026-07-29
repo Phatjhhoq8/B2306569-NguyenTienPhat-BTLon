@@ -37,13 +37,15 @@
       "smua",
       "gói",
       "hội",
-      "viên"
+      "viên",
+      "hello"
     ],
     "borrowed_book_ids": [],
     "recent_queries": [
       "hi",
-      "tôi muôn smua gói hội viên"
+      "tôi muôn smua gói hội viên",
+      "hello"
     ],
-    "updated_at": "2026-07-29T11:40:23.006114+00:00"
+    "updated_at": "2026-07-29T15:58:53.445697+00:00"
   }
 }

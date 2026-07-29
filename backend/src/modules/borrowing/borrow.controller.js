@@ -8,6 +8,36 @@ const BorrowReceipt = require('./borrowReceipt.model');
 const PenaltyTicket = require('./penaltyTicket.model');
 const borrowService = require('./borrow.service');
 const resultResponse = require('../../utils/resultResponse');
+const discountService = require('../discounts/discount.service');
+const { getEffectiveMembershipPlan } = require('../memberships/membershipPrivileges');
+
+const getSubscriptionPaidAmount = (subscription) => {
+  return subscription?.tongTienThanhToan ?? subscription?.tongTien ?? subscription?.giaGoc ?? 0;
+};
+
+const isChargeableBookTitle = (title) => {
+  const name = (title?.tenSach || '').toLowerCase();
+  const category = (title?.theLoai || '').toString().toLowerCase();
+  return !(name.includes('giáo trình') ||
+    name.includes('bài tập') ||
+    name.includes('sách giáo khoa') ||
+    category.includes('giáo dục') ||
+    category.includes('ngoại ngữ') ||
+    category.includes('khoa học'));
+};
+
+const calculateBorrowFee = async ({ copyIds, readerId, ngayHenTra }) => {
+  const membershipPlan = await getEffectiveMembershipPlan(readerId);
+  if (!membershipPlan) throw new Error('Độc giả không có gói hội viên còn hiệu lực để mượn sách');
+
+  const BookCopy = mongoose.model('BookCopy');
+  const copies = await BookCopy.find({ _id: { $in: copyIds } }).populate('dauSach');
+  const baseFee = copies.reduce((sum, copy) => {
+    return sum + (isChargeableBookTitle(copy.dauSach) ? Number(membershipPlan.phiMuonSachGiay || 0) : 0);
+  }, 0);
+  const borrowDays = Math.ceil((new Date(ngayHenTra).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+  return baseFee * (borrowDays > 0 ? borrowDays : 1);
+};
 
 /**
  * Độc giả đăng ký mượn sách
@@ -18,7 +48,7 @@ const createReceipt = async (req, res, next) => {
       return resultResponse.err(res, 'Chỉ độc giả mới được phép đăng ký mượn sách', 403);
     }
 
-    const { chiTietMuon, ngayHenTra, phiMuon, soTienGiam, tongTienThanhToan } = req.body;
+    const { chiTietMuon, ngayHenTra, discountCode } = req.body;
     if (!chiTietMuon || chiTietMuon.length === 0 || !ngayHenTra) {
       return resultResponse.err(res, 'Thông tin mượn sách và ngày hẹn trả là bắt buộc', 400);
     }
@@ -78,14 +108,27 @@ const createReceipt = async (req, res, next) => {
       });
     }
 
+    const phiMuon = await calculateBorrowFee({
+      copyIds: formattedChiTietMuon.map(item => item.sach),
+      readerId: req.user._id,
+      ngayHenTra
+    });
+    const discountResult = discountCode
+      ? await discountService.applyDiscountCode(discountCode, phiMuon, { consume: true, apDungCho: 'MUON_SACH' })
+      : null;
+    const soTienGiam = discountResult ? discountResult.discountAmount : 0;
+    const tongTienThanhToan = discountResult ? discountResult.finalAmount : phiMuon;
+
     const receipt = await borrowService.createBorrowReceipt({
       docGia: req.user._id,
       chiTietMuon: formattedChiTietMuon,
       ngayMuon: new Date(),
       ngayHenTra,
-      phiMuon: phiMuon || 0,
-      soTienGiam: soTienGiam || 0,
-      tongTienThanhToan: tongTienThanhToan || 0,
+      phiMuon,
+      tongTienTamTinh: phiMuon,
+      maGiamGia: discountResult ? discountResult.discountCode.maCode : '',
+      soTienGiam,
+      tongTienThanhToan,
       trangThai: 'SAN_SANG'
     });
 
@@ -390,7 +433,7 @@ const getFinancialStats = async (req, res, next) => {
         .reduce((sum, p) => sum + (p.soTienPhat || 0), 0);
       const doanhThuHoiVien = subscriptions
         .filter(s => inRange(s.createdAt || s.ngayBatDau))
-        .reduce((sum, s) => sum + (s.tongTien || 0), 0);
+        .reduce((sum, s) => sum + getSubscriptionPaidAmount(s), 0);
 
       return {
         phiMuon,
@@ -415,6 +458,11 @@ const getFinancialStats = async (req, res, next) => {
     const paidReceipts = await BorrowReceipt.find({ trangThai: 'DA_TRA' }).select('tongTienThanhToan tienCoc ngayTraThucTe updatedAt createdAt');
     const tongPhiMuon = paidReceipts.reduce((sum, r) => sum + (r.tongTienThanhToan || 0), 0);
     const soPhieuDaTra = paidReceipts.length;
+    const pendingReceipts = await BorrowReceipt.find({
+      trangThai: { $in: ['SAN_SANG', 'DANG_MUON', 'QUA_HAN'] }
+    }).select('tongTienThanhToan');
+    const phiMuonDangXuLy = pendingReceipts.reduce((sum, r) => sum + (r.tongTienThanhToan || 0), 0);
+    const soPhieuDangXuLyPhi = pendingReceipts.length;
 
     // Tính tổng tiền phạt
     const allPenalties = await PenaltyTicket.find().select('soTienPhat daThanhToan ngayLap updatedAt createdAt');
@@ -427,8 +475,8 @@ const getFinancialStats = async (req, res, next) => {
     // Doanh thu từ gói hội viên (Subscription có trạng thái DANG_HIEU_LUC hoặc HET_HAN — đã mua)
     const allSubs = await Subscription.find({
       trangThai: { $in: ['DANG_HIEU_LUC', 'HET_HAN'] }
-    }).select('tongTien ngayBatDau createdAt');
-    const doanhThuHoiVien = allSubs.reduce((sum, s) => sum + (s.tongTien || 0), 0);
+    }).select('tongTien tongTienThanhToan giaGoc ngayBatDau createdAt');
+    const doanhThuHoiVien = allSubs.reduce((sum, s) => sum + getSubscriptionPaidAmount(s), 0);
     const soGoiDaBan = allSubs.length;
 
     // Tổng tiền cọc đang giữ (phiếu DANG_MUON hoặc QUA_HAN)
@@ -486,7 +534,11 @@ const getFinancialStats = async (req, res, next) => {
         maGoi: sub.goiDocGia.maGoi,
         tenGoi: sub.goiDocGia.tenGoi
       } : null,
-      tongTien: sub.tongTien || 0,
+      giaGoc: sub.giaGoc ?? sub.goiDocGia?.giaTien ?? 0,
+      soTienGiam: sub.soTienGiam || 0,
+      maGiamGia: sub.maGiamGia || '',
+      tongTienThanhToan: getSubscriptionPaidAmount(sub),
+      tongTien: getSubscriptionPaidAmount(sub),
       phuongThucThanhToan: sub.phuongThucThanhToan,
       tuDongGiaHan: sub.tuDongGiaHan,
       ngayBatDau: sub.ngayBatDau,
@@ -555,6 +607,8 @@ const getFinancialStats = async (req, res, next) => {
     return resultResponse.ok(res, {
       tongPhiMuon,
       soPhieuDaTra,
+      phiMuonDangXuLy,
+      soPhieuDangXuLyPhi,
       tongTienPhat,
       tienPhatDaThu,
       tienPhatChuaThu,
@@ -616,11 +670,18 @@ const getMyFinancialStats = async (req, res, next) => {
 
     const tongPhiMuon = paidReceipts.reduce((sum, r) => sum + (r.tongTienThanhToan || 0), 0);
     const soPhieuDaTra = paidReceipts.length;
+    const pendingReceipts = receipts.filter(r => ['SAN_SANG', 'DANG_MUON', 'QUA_HAN'].includes(r.trangThai));
+    const phiMuonDangXuLy = pendingReceipts.reduce((sum, r) => sum + (r.tongTienThanhToan || 0), 0);
+    const soPhieuDangXuLyPhi = pendingReceipts.length;
     const tongTienPhat = penalties.reduce((sum, p) => sum + (p.soTienPhat || 0), 0);
     const tienPhatDaTra = penalties.filter(p => p.daThanhToan).reduce((sum, p) => sum + (p.soTienPhat || 0), 0);
     const tienPhatChuaTra = tongTienPhat - tienPhatDaTra;
-    const doanhThuHoiVien = subscriptions.reduce((sum, s) => sum + (s.tongTien || 0), 0);
-    const soGoiDaMua = subscriptions.length;
+    const doanhThuHoiVien = subscriptions.reduce((sum, s) => sum + getSubscriptionPaidAmount(s), 0);
+    
+    // Chỉ đếm các gói hội viên có trả phí thực tế (> 0)
+    const paidSubscriptions = subscriptions.filter(s => getSubscriptionPaidAmount(s) > 0 || (s.giaGoc && s.giaGoc > 0));
+    const soGoiDaMua = paidSubscriptions.length;
+
     const activeReceipts = receipts.filter(r => ['DANG_MUON', 'QUA_HAN'].includes(r.trangThai));
     const tongTienCoc = activeReceipts.reduce((sum, r) => sum + (r.tienCoc || 0), 0);
     const soPhieuDangMuon = activeReceipts.length;
@@ -629,6 +690,8 @@ const getMyFinancialStats = async (req, res, next) => {
     return resultResponse.ok(res, {
       tongPhiMuon,
       soPhieuDaTra,
+      phiMuonDangXuLy,
+      soPhieuDangXuLyPhi,
       tongTienPhat,
       tienPhatDaTra,
       tienPhatChuaTra,
@@ -639,6 +702,7 @@ const getMyFinancialStats = async (req, res, next) => {
       tongDaChi,
       breakdown: {
         phiMuon: { amount: tongPhiMuon, count: soPhieuDaTra },
+        phiMuonDangXuLy: { amount: phiMuonDangXuLy, count: soPhieuDangXuLyPhi },
         tienPhatDaTra: { amount: tienPhatDaTra, count: penalties.filter(p => p.daThanhToan).length },
         tienPhatChuaTra: { amount: tienPhatChuaTra, count: penalties.filter(p => !p.daThanhToan).length },
         hoiVien: { amount: doanhThuHoiVien, count: soGoiDaMua },

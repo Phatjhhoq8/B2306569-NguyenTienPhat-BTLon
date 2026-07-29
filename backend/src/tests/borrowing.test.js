@@ -237,6 +237,33 @@ test.describe('Borrowing & Penalties API Tests', () => {
       const copy = await BookCopy.findById(testBookCopyId);
       assert.strictEqual(copy.tinhTrang, 'CHO_MUON', 'Sách phải được giải phóng về CHO_MUON');
     });
+
+    test('Độc giả nên xem thống kê tài chính cá nhân thành công', async () => {
+      const res = await makeRequest('/api/borrowing/my-financial-stats', {
+        headers: { Cookie: readerCookie }
+      });
+
+      assert.strictEqual(res.status, 200);
+      assert.strictEqual(res.body.success, true);
+      assert.strictEqual(res.body.data.tongPhiMuon, 20000);
+      assert.strictEqual(res.body.data.soPhieuDaTra, 1);
+      assert.strictEqual(res.body.data.phiMuonDangXuLy, 0);
+      assert.strictEqual(res.body.data.soPhieuDangXuLyPhi, 0);
+    });
+
+    test('Nhân viên nên xem thống kê tài chính hệ thống thành công', async () => {
+      const res = await makeRequest('/api/borrowing/financial-stats', {
+        headers: { Cookie: staffCookie }
+      });
+
+      assert.strictEqual(res.status, 200);
+      assert.strictEqual(res.body.success, true);
+      assert.strictEqual(res.body.data.tongPhiMuon, 20000);
+      assert.strictEqual(res.body.data.soPhieuDaTra, 1);
+      assert.strictEqual(res.body.data.phiMuonDangXuLy, 0);
+      assert.strictEqual(res.body.data.soPhieuDangXuLyPhi, 0);
+      assert.strictEqual(res.body.data.tongDoanhThu, res.body.data.tongPhiMuon + res.body.data.tienPhatDaThu + res.body.data.doanhThuHoiVien);
+    });
   });
 
 });

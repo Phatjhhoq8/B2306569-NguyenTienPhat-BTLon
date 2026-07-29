@@ -33,6 +33,7 @@ router.delete('/books/:id', authMiddleware.authenticate, authMiddleware.authoriz
 
 // ==================== Admin: BookCopy ====================
 router.get('/books/:bookId/copies', authMiddleware.authenticate, authMiddleware.authorize('STAFF'), bookController.getBookCopies);
+router.post('/book-copies', authMiddleware.authenticate, authMiddleware.authorize('STAFF'), bookController.createBookCopy);
 router.put('/book-copies/:id', authMiddleware.authenticate, authMiddleware.authorize('STAFF'), bookController.updateBookCopy);
 router.delete('/book-copies/:id', authMiddleware.authenticate, authMiddleware.authorize('STAFF'), bookController.softDeleteBookCopy);
 

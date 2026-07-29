@@ -41,6 +41,32 @@ const subscriptionSchema = new mongoose.Schema({
     required: true,
     min: [0, 'Tổng tiền không được âm']
   },
+  giaGoc: {
+    type: Number,
+    min: [0, 'Giá gốc không được âm'],
+    default: 0
+  },
+  tienVAT: {
+    type: Number,
+    min: [0, 'Tiền VAT không được âm'],
+    default: 0
+  },
+  maGiamGia: {
+    type: String,
+    trim: true,
+    uppercase: true,
+    default: ''
+  },
+  soTienGiam: {
+    type: Number,
+    min: [0, 'Số tiền giảm không được âm'],
+    default: 0
+  },
+  tongTienThanhToan: {
+    type: Number,
+    min: [0, 'Tổng tiền thanh toán không được âm'],
+    default: 0
+  },
   trangThai: {
     type: String,
     enum: ['DANG_HIEU_LUC', 'HET_HAN', 'HUY'],

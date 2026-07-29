@@ -221,6 +221,22 @@ bookTitleSchema.pre('save', async function(next) {
     this.soLuongKhaDung = 0;
     this.soLuongDangQuanLy = await BookCopy.countDocuments({ dauSach: this._id, isDeleted: false }).session(session);
   }
+
+  // 3. Khôi phục lại soLuongKhaDung và soLuongDangQuanLy khi mở lại phục vụ (ACTIVE)
+  if (this.trangThai === 'ACTIVE') {
+    const activeCopiesCount = await BookCopy.countDocuments({
+      dauSach: this._id,
+      tinhTrang: 'CHO_MUON',
+      isDeleted: false
+    }).session(session);
+    
+    this.soLuongKhaDung = activeCopiesCount;
+    this.soLuongDangQuanLy = await BookCopy.countDocuments({
+      dauSach: this._id,
+      isDeleted: false
+    }).session(session);
+  }
+
   next();
 });
 

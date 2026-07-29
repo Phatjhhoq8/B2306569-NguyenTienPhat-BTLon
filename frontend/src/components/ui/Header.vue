@@ -207,10 +207,6 @@ const isMobileMenuOpen = ref(false);
 const confirmModal = ref(null);
 
 const handleChatClick = () => {
-  if (!authStore.isAuthenticated) {
-    router.push({ name: 'login', query: { redirect: router.currentRoute.value.fullPath, reason: 'agent' } });
-    return;
-  }
   chatStore.toggleChat();
 };
 

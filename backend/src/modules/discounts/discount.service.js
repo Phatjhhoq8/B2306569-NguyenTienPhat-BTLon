@@ -7,7 +7,7 @@ const DiscountCode = require('./discountCode.model');
 
 const normalizeCode = (code) => String(code || '').trim().toUpperCase();
 
-const applyDiscountCode = async (code, orderAmount, { session = null, consume = true } = {}) => {
+const applyDiscountCode = async (code, orderAmount, { session = null, consume = true, apDungCho } = {}) => {
   const maCode = normalizeCode(code);
   const amount = Number(orderAmount || 0);
   const now = new Date();
@@ -17,6 +17,7 @@ const applyDiscountCode = async (code, orderAmount, { session = null, consume = 
 
   const filter = {
     maCode,
+    ...(apDungCho ? { apDungCho } : {}),
     ngayBatDau: { $lte: now },
     ngayKetThuc: { $gte: now },
     giaTriDonToiThieu: { $lte: amount },
@@ -29,7 +30,7 @@ const applyDiscountCode = async (code, orderAmount, { session = null, consume = 
 
   const discountCode = await query.session(session);
   if (!discountCode) {
-    throw new Error('Mã giảm giá không hợp lệ, đã hết hạn, chưa đạt đơn tối thiểu hoặc đã hết lượt sử dụng');
+    throw new Error('Mã giảm giá không hợp lệ, không đúng loại áp dụng, đã hết hạn, chưa đạt đơn tối thiểu hoặc đã hết lượt sử dụng');
   }
 
   const discountAmount = Math.min(discountCode.giaTriGiam, amount);

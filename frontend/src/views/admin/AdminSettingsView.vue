@@ -397,6 +397,7 @@
             <tr class="border-b border-slate-100 text-xs font-bold text-slate-400 uppercase tracking-wider">
               <th class="pb-3">Mã Code</th>
               <th class="pb-3">Tên chiến dịch</th>
+              <th class="pb-3">Áp dụng cho</th>
               <th class="pb-3">Giá trị giảm</th>
               <th class="pb-3">Đơn tối thiểu</th>
               <th class="pb-3">Số lượng tối đa</th>
@@ -409,6 +410,11 @@
             <tr v-for="code in discounts" :key="code._id" class="hover:bg-slate-50/55 transition-colors">
               <td class="py-4 font-mono font-bold text-slate-950 uppercase">{{ code.maCode }}</td>
               <td class="py-4">{{ code.tenKhuyenMai }}</td>
+              <td class="py-4">
+                <span class="text-[10px] font-extrabold px-2 py-1 rounded-full" :class="code.apDungCho === 'GOI_HOI_VIEN' ? 'bg-primary-light text-primary' : 'bg-amber-50 text-amber-700'">
+                  {{ getDiscountScopeLabel(code.apDungCho) }}
+                </span>
+              </td>
               <td class="py-4 text-green-600 font-bold">- {{ formatCurrency(code.giaTriGiam) }}</td>
               <td class="py-4">{{ formatCurrency(code.giaTriDonToiThieu) }}</td>
               <td class="py-4 text-center">{{ code.soLuongMaToiDa }}</td>
@@ -1405,6 +1411,14 @@
             <input v-model="discountForm.tenKhuyenMai" type="text" required placeholder="Giảm giá mượn hè" class="w-full bg-slate-50 px-3 py-2 rounded-xl border border-slate-200 focus:outline-none" />
           </div>
 
+          <div class="space-y-1">
+            <label class="text-xs font-bold text-slate-600 uppercase">Áp dụng cho</label>
+            <select v-model="discountForm.apDungCho" required class="w-full bg-slate-50 px-3 py-2 rounded-xl border border-slate-200 focus:outline-none">
+              <option value="MUON_SACH">Mượn sách</option>
+              <option value="GOI_HOI_VIEN">Gói hội viên</option>
+            </select>
+          </div>
+
           <div class="grid grid-cols-2 gap-4">
             <div class="space-y-1">
               <label class="text-xs font-bold text-slate-600 uppercase">Số tiền giảm (VND)</label>
@@ -1516,6 +1530,7 @@ const discountForm = ref({
   tenKhuyenMai: '',
   giaTriGiam: 10000,
   giaTriDonToiThieu: 50000,
+  apDungCho: 'MUON_SACH',
   soLuongMaToiDa: 100,
   ngayBatDau: '',
   ngayKetThuc: ''
@@ -1528,6 +1543,10 @@ const formatCurrency = (val) => {
 const formatDate = (dateStr) => {
   if (!dateStr) return '';
   return new Date(dateStr).toLocaleDateString('vi-VN');
+};
+
+const getDiscountScopeLabel = (scope) => {
+  return scope === 'GOI_HOI_VIEN' ? 'Gói hội viên' : 'Mượn sách';
 };
 
 const fetchPlans = async () => {
@@ -1623,6 +1642,7 @@ const openDiscountModal = () => {
     tenKhuyenMai: '',
     giaTriGiam: 10000,
     giaTriDonToiThieu: 50000,
+    apDungCho: 'MUON_SACH',
     soLuongMaToiDa: 100,
     ngayBatDau: new Date().toISOString().split('T')[0],
     ngayKetThuc: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
@@ -1635,6 +1655,7 @@ const editDiscount = (code) => {
   discountEditId.value = code._id;
   discountForm.value = {
     ...code,
+    apDungCho: code.apDungCho || 'MUON_SACH',
     ngayBatDau: new Date(code.ngayBatDau).toISOString().split('T')[0],
     ngayKetThuc: new Date(code.ngayKetThuc).toISOString().split('T')[0]
   };

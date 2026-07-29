@@ -755,15 +755,16 @@ test.describe('Backend Core & Concurrency Safety Tests', () => {
       trangThai: 'DANG_HIEU_LUC'
     });
 
-    // 3. Xác thực: cả hai gói vẫn hiệu lực và quyền sử dụng lấy mức tốt nhất từ các gói.
+    // 3. Xác thực: cả hai gói vẫn hiệu lực và quyền sử dụng lấy gói xịn nhất theo giá.
     const updatedFirstSub = await Subscription.findById(firstSub._id);
     assert.strictEqual(updatedFirstSub.trangThai, 'DANG_HIEU_LUC');
     assert.strictEqual(secondSub.trangThai, 'DANG_HIEU_LUC');
 
     const effectivePlan = await getEffectiveMembershipPlan(reader._id);
-    assert.strictEqual(effectivePlan.soSachToiDa, 5, 'Giới hạn số sách phải lấy mức cao nhất giữa các gói');
-    assert.strictEqual(effectivePlan.soNgayMuonToiDa, 14, 'Số ngày mượn phải lấy mức cao nhất giữa các gói');
-    assert.strictEqual(effectivePlan.mienTienCoc, true, 'Nếu một gói miễn tiền cọc thì quyền hiệu lực phải được miễn cọc');
+    assert.strictEqual(effectivePlan._id, vipPlan._id, 'Gói hiệu lực phải là gói có giá cao nhất');
+    assert.strictEqual(effectivePlan.soSachToiDa, vipPlan.soSachToiDa);
+    assert.strictEqual(effectivePlan.soNgayMuonToiDa, vipPlan.soNgayMuonToiDa);
+    assert.strictEqual(effectivePlan.mienTienCoc, vipPlan.mienTienCoc);
   });
 
   test('16. Kiểm tra chặn xóa độc giả đang nợ sách hoặc nợ tiền phạt chưa thanh toán', async () => {

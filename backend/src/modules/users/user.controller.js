@@ -349,7 +349,7 @@ const getStaffs = async (req, res, next) => {
 const createStaff = async (req, res, next) => {
   try {
     const { hoTenNV, matKhau, chucVu, diachi, soDienThoai } = req.body;
-    if (!hoTenNV || !matKhau || !diachi || !soDienThoai) {
+    if (!hoTenNV || !matKhau || !soDienThoai) {
       return resultResponse.err(res, 'Thiếu thông tin bắt buộc', 400);
     }
     const staff = await Staff.create({ hoTenNV, matKhau, chucVu, diachi, soDienThoai, mustChangePassword: true });
@@ -529,8 +529,15 @@ const resetReaderPassword = async (req, res, next) => {
     if (!email || !matKhauMoi) {
       return resultResponse.err(res, 'Email và mật khẩu mới là bắt buộc', 400);
     }
+    if (matKhauMoi.length < 6) {
+      return resultResponse.err(res, 'Mật khẩu mới phải có tối thiểu 6 ký tự', 400);
+    }
 
-    const reader = await Reader.findOne({ email: email.toLowerCase(), isDeleted: false });
+    const reader = await Reader.findOne({ 
+      email: email.toLowerCase().trim(), 
+      isDeleted: false 
+    });
+    
     if (!reader) {
       return resultResponse.err(res, 'Không tìm thấy tài khoản độc giả với email này', 404);
     }
@@ -542,6 +549,79 @@ const resetReaderPassword = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
+};
+
+/**
+ * Lấy mã nhân viên tiếp theo dự kiến (Quản lý only)
+ */
+const getNextStaffCode = async (req, res, next) => {
+  try {
+    const { peekNextCode } = require('../../services/codeService');
+    const code = await peekNextCode('staff');
+    return resultResponse.ok(res, { nextCode: code });
+  } catch (error) { next(error); }
+};
+
+/**
+ * Đổi mật khẩu độc giả ngoài login (cần mật khẩu cũ)
+ */
+const changeReaderPasswordPublic = async (req, res, next) => {
+  try {
+    const { email, matKhauCu, matKhauMoi } = req.body;
+    if (!email || !matKhauCu || !matKhauMoi) {
+      return resultResponse.err(res, 'Email, mật khẩu cũ và mật khẩu mới là bắt buộc', 400);
+    }
+    if (matKhauMoi.length < 6) {
+      return resultResponse.err(res, 'Mật khẩu mới phải có tối thiểu 6 ký tự', 400);
+    }
+
+    const reader = await Reader.findOne({ email: email.toLowerCase().trim(), isDeleted: false });
+    if (!reader) {
+      return resultResponse.err(res, 'Không tìm thấy tài khoản độc giả với email này', 404);
+    }
+
+    const isMatch = await passwordService.verifyPassword(matKhauCu, reader.matKhau);
+    if (!isMatch) {
+      return resultResponse.err(res, 'Mật khẩu cũ không chính xác', 400);
+    }
+
+    reader.matKhau = matKhauMoi;
+    await reader.save();
+
+    return resultResponse.ok(res, { message: 'Đổi mật khẩu độc giả thành công!' });
+  } catch (error) { next(error); }
+};
+
+/**
+ * Đổi mật khẩu nhân viên ngoài login (cần mật khẩu cũ)
+ */
+const changeStaffPasswordPublic = async (req, res, next) => {
+  try {
+    const { maSoNV, matKhauCu, matKhauMoi } = req.body;
+    if (!maSoNV || !matKhauCu || !matKhauMoi) {
+      return resultResponse.err(res, 'Mã số nhân viên, mật khẩu cũ và mật khẩu mới là bắt buộc', 400);
+    }
+    if (matKhauMoi.length < 6) {
+      return resultResponse.err(res, 'Mật khẩu mới phải có tối thiểu 6 ký tự', 400);
+    }
+
+    const staff = await Staff.findOne({ maSoNV: maSoNV.toUpperCase().trim(), isDeleted: false });
+    if (!staff) {
+      return resultResponse.err(res, 'Không tìm thấy tài khoản nhân viên với mã số này', 404);
+    }
+
+    const isMatch = await passwordService.verifyPassword(matKhauCu, staff.matKhau);
+    if (!isMatch) {
+      return resultResponse.err(res, 'Mật khẩu cũ không chính xác', 400);
+    }
+
+    staff.matKhau = matKhauMoi;
+    staff.mustChangePassword = false;
+    staff.passwordChangedAt = new Date();
+    await staff.save();
+
+    return resultResponse.ok(res, { message: 'Đổi mật khẩu nhân viên thành công!' });
+  } catch (error) { next(error); }
 };
 
 module.exports = {
@@ -567,5 +647,8 @@ module.exports = {
   updateStaff,
   softDeleteStaff,
   restoreStaff,
-  getStaffSuggestions
+  getStaffSuggestions,
+  getNextStaffCode,
+  changeReaderPasswordPublic,
+  changeStaffPasswordPublic
 };

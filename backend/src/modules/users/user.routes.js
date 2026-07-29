@@ -35,6 +35,18 @@ router.post(
 );
 
 router.post(
+  '/auth/reader/change-password',
+  validateMiddleware.requiredFields(['email', 'matKhauCu', 'matKhauMoi']),
+  userController.changeReaderPasswordPublic
+);
+
+router.post(
+  '/auth/staff/change-password',
+  validateMiddleware.requiredFields(['maSoNV', 'matKhauCu', 'matKhauMoi']),
+  userController.changeStaffPasswordPublic
+);
+
+router.post(
   '/auth/logout',
   authMiddleware.authenticate,
   userController.logout
@@ -81,6 +93,7 @@ router.delete('/admin/readers/:id', authMiddleware.authenticate, authMiddleware.
 router.post('/admin/readers/:id/restore', authMiddleware.authenticate, authMiddleware.authorize('STAFF'), userController.restoreReader);
 
 // ==================== ADMIN: Quản lý Nhân viên ====================
+router.get('/admin/staffs/next-code', authMiddleware.authenticate, authMiddleware.authorizeRootAdmin, userController.getNextStaffCode);
 router.get('/admin/staffs/search-suggestions', authMiddleware.authenticate, authMiddleware.authorizeRootAdmin, userController.getStaffSuggestions);
 router.get('/admin/staffs', authMiddleware.authenticate, authMiddleware.authorizeRootAdmin, userController.getStaffs);
 router.post('/admin/staffs', authMiddleware.authenticate, authMiddleware.authorizeRootAdmin, userController.createStaff);

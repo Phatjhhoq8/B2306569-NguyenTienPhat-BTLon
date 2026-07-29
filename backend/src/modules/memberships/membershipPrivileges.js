@@ -1,39 +1,30 @@
-const getBetterMin = (current, next, fallback = 0) => {
-  if (current === undefined || current === null) {
-    return next === undefined || next === null ? fallback : next;
-  }
-  const nextValue = next === undefined || next === null ? fallback : next;
-  return Math.min(current, nextValue);
+const toPlainPlan = (planDoc) => (planDoc && planDoc.toObject ? planDoc.toObject() : planDoc);
+
+const getPlanRank = (planDoc) => {
+  const plan = toPlainPlan(planDoc) || {};
+  return [
+    Number(plan.giaTien) || 0,
+    Number(plan.soSachToiDa) || 0,
+    Number(plan.soNgayMuonToiDa) || 0,
+    plan.mienTienCoc ? 1 : 0,
+    plan.choPhepGiaHanOnline ? 1 : 0
+  ];
 };
 
-const mergePlans = (plans) => {
-  if (!plans.length) return null;
-
-  const effectivePlan = plans.reduce((best, planDoc) => {
-    const plan = planDoc.toObject ? planDoc.toObject() : planDoc;
-    return {
-      ...best,
-      tenGoi: best.tenGoi ? `${best.tenGoi} + ${plan.tenGoi}` : plan.tenGoi,
-      soSachToiDa: Math.max(best.soSachToiDa || 0, plan.soSachToiDa || 0),
-      soNgayMuonToiDa: Math.max(best.soNgayMuonToiDa || 0, plan.soNgayMuonToiDa || 0),
-      mienTienCoc: Boolean(best.mienTienCoc || plan.mienTienCoc),
-      choPhepGiaHanOnline: Boolean(best.choPhepGiaHanOnline || plan.choPhepGiaHanOnline),
-      quayNhanUuTien: Boolean(best.quayNhanUuTien || plan.quayNhanUuTien),
-      chiaSeNhomGiaDinh: Boolean(best.chiaSeNhomGiaDinh || plan.chiaSeNhomGiaDinh),
-      docEbookKhongGioiHan: Boolean(best.docEbookKhongGioiHan || plan.docEbookKhongGioiHan),
-      giaoSachTanNha: Boolean(best.giaoSachTanNha || plan.giaoSachTanNha),
-      workshopDocQuyen: Boolean(best.workshopDocQuyen || plan.workshopDocQuyen),
-      phiMuonSachGiay: getBetterMin(best.phiMuonSachGiay, plan.phiMuonSachGiay, 0),
-      phiPhatTreHan: getBetterMin(best.phiPhatTreHan, plan.phiPhatTreHan, 5000),
-      tienDatCoc: getBetterMin(best.tienDatCoc, plan.tienDatCoc, 0)
-    };
-  }, {});
-
-  if (effectivePlan.mienTienCoc) {
-    effectivePlan.tienDatCoc = 0;
+const comparePlanRank = (left, right) => {
+  const leftRank = getPlanRank(left);
+  const rightRank = getPlanRank(right);
+  for (let index = 0; index < leftRank.length; index++) {
+    if (leftRank[index] !== rightRank[index]) return leftRank[index] - rightRank[index];
   }
+  return 0;
+};
 
-  return effectivePlan;
+const getBestPlan = (plans) => {
+  if (!plans.length) return null;
+  const bestPlan = [...plans].sort((a, b) => comparePlanRank(b, a))[0];
+  const plainPlan = toPlainPlan(bestPlan);
+  return plainPlan && plainPlan.mienTienCoc ? { ...plainPlan, tienDatCoc: 0 } : plainPlan;
 };
 
 const getActiveSubscriptions = async (readerId, options = {}) => {
@@ -53,8 +44,28 @@ const getActiveSubscriptions = async (readerId, options = {}) => {
   return query;
 };
 
+const getActiveAndSharedSubscriptions = async (readerId, options = {}) => {
+  const Subscription = require('./subscription.model');
+  const now = options.now || new Date();
+  let query = Subscription.find({
+    $or: [
+      { docGia: readerId },
+      { nguoiDuocMoi: readerId }
+    ],
+    trangThai: 'DANG_HIEU_LUC',
+    ngayBatDau: { $lte: now },
+    ngayKetThuc: { $gte: now }
+  }).populate('goiDocGia');
+
+  if (options.session) {
+    query = query.session(options.session);
+  }
+
+  return query;
+};
+
 const getEffectiveMembershipPlan = async (readerId, options = {}) => {
-  const subscriptions = await getActiveSubscriptions(readerId, options);
+  const subscriptions = await getActiveAndSharedSubscriptions(readerId, options);
   let plans = subscriptions.map((sub) => sub.goiDocGia).filter(Boolean);
   
   if (plans.length === 0) {
@@ -69,11 +80,14 @@ const getEffectiveMembershipPlan = async (readerId, options = {}) => {
     }
   }
   
-  return mergePlans(plans);
+  return getBestPlan(plans);
 };
 
 module.exports = {
   getActiveSubscriptions,
+  getActiveAndSharedSubscriptions,
   getEffectiveMembershipPlan,
-  mergePlans
+  getBestPlan,
+  comparePlanRank,
+  mergePlans: getBestPlan
 };

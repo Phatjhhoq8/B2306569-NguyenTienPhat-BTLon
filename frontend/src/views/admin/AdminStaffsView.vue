@@ -149,18 +149,35 @@
 
         <form class="space-y-4 text-sm" @submit.prevent="saveStaff">
           <div class="space-y-1">
+            <label class="text-xs font-bold text-slate-600 uppercase">Mã số nhân viên (Tài khoản đăng nhập)</label>
+            <input v-model="form.maSoNV" type="text" disabled class="w-full bg-slate-100 px-3 py-2 rounded-xl border border-slate-200 focus:outline-none text-slate-550 font-bold font-mono cursor-not-allowed" />
+          </div>
+
+          <div class="space-y-1">
             <label class="text-xs font-bold text-slate-600 uppercase">Họ và tên</label>
             <input v-model="form.hoTenNV" type="text" required placeholder="Nguyễn Văn A" class="w-full bg-slate-50 px-3 py-2 rounded-xl border border-slate-200 focus:outline-none" />
           </div>
 
           <div class="space-y-1">
             <label class="text-xs font-bold text-slate-600 uppercase">Số điện thoại</label>
-            <input v-model="form.soDienThoai" type="text" required placeholder="0912345678" class="w-full bg-slate-50 px-3 py-2 rounded-xl border border-slate-200 focus:outline-none" />
+            <input 
+              v-model="form.soDienThoai" 
+              type="text" 
+              required 
+              placeholder="0912345678" 
+              @blur="validatePhone"
+              @input="errors.soDienThoai = ''"
+              class="w-full bg-slate-50 px-3 py-2 rounded-xl border focus:outline-none" 
+              :class="errors.soDienThoai ? 'border-red-500/80 focus:border-red-500' : 'border-slate-200'"
+            />
+            <span v-if="errors.soDienThoai" class="text-[10px] text-red-500 font-semibold mt-1 block">
+              {{ errors.soDienThoai }}
+            </span>
           </div>
 
           <div class="space-y-1">
             <label class="text-xs font-bold text-slate-600 uppercase">Địa chỉ</label>
-            <input v-model="form.diachi" type="text" required placeholder="Ninh Kiều, Cần Thơ" class="w-full bg-slate-50 px-3 py-2 rounded-xl border border-slate-200 focus:outline-none" />
+            <input v-model="form.diachi" type="text" placeholder="Ninh Kiều, Cần Thơ" class="w-full bg-slate-50 px-3 py-2 rounded-xl border border-slate-200 focus:outline-none" />
           </div>
 
           <div class="grid grid-cols-2 gap-4">
@@ -232,12 +249,32 @@ const resetFilters = () => {
 };
 
 const form = ref({
+  maSoNV: '',
   hoTenNV: '',
   soDienThoai: '',
   diachi: '',
   chucVu: 'THU_THU',
   matKhau: ''
 });
+
+const errors = ref({
+  soDienThoai: ''
+});
+
+const validatePhone = () => {
+  const phone = form.value.soDienThoai?.trim();
+  if (!phone) {
+    errors.value.soDienThoai = 'Số điện thoại là bắt buộc';
+    return false;
+  }
+  const phoneRegex = /^0[0-9]{9}$/;
+  if (!phoneRegex.test(phone)) {
+    errors.value.soDienThoai = 'Số điện thoại phải có đúng 10 số và bắt đầu bằng số 0';
+    return false;
+  }
+  errors.value.soDienThoai = '';
+  return true;
+};
 
 let searchTimeout = null;
 const fetchStaffSuggestions = () => {
@@ -308,10 +345,12 @@ const fetchStaffs = async () => {
   }
 };
 
-const openAddModal = () => {
+const openAddModal = async () => {
   isEdit.value = false;
   editId.value = null;
+  errors.value.soDienThoai = '';
   form.value = {
+    maSoNV: 'Đang tải...',
     hoTenNV: '',
     soDienThoai: '',
     diachi: '',
@@ -319,12 +358,26 @@ const openAddModal = () => {
     matKhau: ''
   };
   showModal.value = true;
+
+  try {
+    const res = await api.get('/admin/staffs/next-code');
+    if (res.success) {
+      form.value.maSoNV = res.data.nextCode;
+    } else {
+      form.value.maSoNV = 'NVxxx';
+    }
+  } catch (error) {
+    console.error('Fetch next staff code error:', error);
+    form.value.maSoNV = 'NVxxx';
+  }
 };
 
 const openEditModal = (staff) => {
   isEdit.value = true;
   editId.value = staff._id;
+  errors.value.soDienThoai = '';
   form.value = {
+    maSoNV: staff.maSoNV,
     hoTenNV: staff.hoTenNV,
     soDienThoai: staff.soDienThoai,
     diachi: staff.diachi,
@@ -335,6 +388,10 @@ const openEditModal = (staff) => {
 };
 
 const saveStaff = async () => {
+  if (!validatePhone()) {
+    toast.show('Thông tin số điện thoại không hợp lệ, vui lòng kiểm tra lại', 'error');
+    return;
+  }
   const ok = await confirmModal.value.ask({ message: 'Bạn có chắc chắn muốn lưu (thêm/sửa) thông tin nhân viên này không?' });
   if (!ok) return;
   saving.value = true;

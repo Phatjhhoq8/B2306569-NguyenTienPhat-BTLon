@@ -217,6 +217,15 @@ const formatCurrency = (val) => {
   return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(val || 0);
 };
 
+const formatBorrowDate = (value) => {
+  if (!value) return '';
+  return new Date(value).toLocaleDateString('vi-VN', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
+  });
+};
+
 const getBookBorrowFee = (book, plan) => {
   if (!plan) return 5000;
   
@@ -275,7 +284,7 @@ const tienCoc = computed(() => {
 
 const soTienGiam = computed(() => {
   if (!discountInfo.value) return 0;
-  return discountInfo.value.giaTriGiam || 0;
+  return discountInfo.value.discountAmount || 0;
 });
 
 const tongTienThanhToan = computed(() => {
@@ -346,12 +355,13 @@ const applyCoupon = async () => {
   try {
     const res = await api.post('/discounts/validate', {
       code: couponCode.value.trim().toUpperCase(),
-      orderAmount: phiMuon.value
+      orderAmount: phiMuon.value,
+      apDungCho: 'MUON_SACH'
     });
     if (res.success) {
       discountInfo.value = res.data;
       couponSuccess.value = true;
-      couponMsg.value = `Áp dụng mã giảm giá thành công! Giảm ${formatCurrency(res.data.giaTriGiam)}`;
+      couponMsg.value = `Áp dụng mã giảm giá thành công! Giảm ${formatCurrency(res.data.discountAmount)}`;
     }
   } catch (error) {
     couponMsg.value = error.message || 'Mã giảm giá không hợp lệ.';
@@ -384,7 +394,7 @@ const submitBorrowRequest = async () => {
 
   const ok = await confirmModal.value.ask({
     title: 'Xác nhận đăng ký mượn',
-    message: `Bạn có chắc chắn muốn đăng ký mượn ${selectedCopiesCount.value} bản sách đã chọn này không?`,
+    message: `Bạn có chắc chắn muốn đăng ký mượn ${selectedCopiesCount.value} bản sách đã chọn không?\n\nThời gian mượn dự kiến: ${borrowDaysCount.value} ngày, từ ${formatBorrowDate(new Date())} đến ${formatBorrowDate(ngayHenTra.value)}.`,
     confirmText: 'Đăng ký',
     cancelText: 'Quay lại'
   });
@@ -401,9 +411,7 @@ const submitBorrowRequest = async () => {
     const payload = {
       chiTietMuon,
       ngayHenTra: ngayHenTra.value,
-      phiMuon: phiMuon.value,
-      soTienGiam: soTienGiam.value,
-      tongTienThanhToan: tongTienThanhToan.value,
+      discountCode: couponCode.value.trim().toUpperCase() || undefined,
     };
 
     const res = await api.post('/borrowing/receipts', payload);

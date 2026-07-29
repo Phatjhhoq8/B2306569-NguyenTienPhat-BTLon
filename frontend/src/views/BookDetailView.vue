@@ -520,39 +520,6 @@
       Đầu sách không tồn tại hoặc đã bị xóa.
     </div>
 
-    <!-- Custom Auth Redirect Modal -->
-    <div v-if="showAuthModal" class="fixed inset-0 bg-slate-900 bg-opacity-60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
-      <div class="bg-white rounded-3xl p-6 md:p-8 max-w-sm w-full space-y-6 shadow-2xl relative text-center">
-        <button @click="showAuthModal = false" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
-          <X class="h-6 w-6" />
-        </button>
-
-        <div class="space-y-3">
-          <div class="bg-primary-light text-primary h-12 w-12 rounded-full flex items-center justify-center mx-auto text-xl">
-            <Lock class="h-6 w-6 text-primary" />
-          </div>
-          <h3 class="font-sans text-lg font-bold text-slate-900">Yêu Cầu Đăng Nhập</h3>
-          <p class="text-xs text-slate-500 font-medium leading-relaxed">
-            Vui lòng đăng nhập tài khoản Độc giả để bắt đầu thực hiện mượn sách.
-          </p>
-        </div>
-
-        <div class="flex space-x-3 pt-2">
-          <button 
-            @click="showAuthModal = false"
-            class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-800 font-semibold py-2.5 rounded-xl text-xs transition-colors"
-          >
-            Đóng
-          </button>
-          <button 
-            @click="goToLogin"
-            class="flex-1 bg-primary hover:bg-primary-dark text-white font-semibold py-2.5 rounded-xl text-xs transition-colors shadow-md"
-          >
-            Đăng nhập
-          </button>
-        </div>
-      </div>
-    </div>
     <ConfirmModal ref="confirmModal" />
   </div>
 </template>
@@ -577,7 +544,6 @@ const confirmModal = ref(null);
 
 const book = ref(null);
 const loading = ref(true);
-const showAuthModal = ref(false);
 
 // State cho đánh giá và bình luận
 const userRating = ref(5);
@@ -598,7 +564,15 @@ const likesCount = computed(() => {
 
 const handleLikeToggle = async () => {
   if (!authStore.isAuthenticated) {
-    showAuthModal.value = true;
+    const ok = await confirmModal.value.ask({
+      title: 'Yêu cầu đăng nhập',
+      message: 'Bạn cần đăng nhập tài khoản Độc giả để thực hiện hành động này. Đi đến trang đăng nhập?',
+      confirmText: 'Đăng nhập ngay',
+      cancelText: 'Hủy bỏ'
+    });
+    if (ok) {
+      router.push({ name: 'login', query: { redirect: route.fullPath } });
+    }
     return;
   }
   if (authStore.isStaff) {
@@ -751,11 +725,31 @@ const formatDate = (dateStr) => {
   });
 };
 
+const formatBorrowDate = (value) => {
+  if (!value) return '';
+  return new Date(value).toLocaleDateString('vi-VN', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
+  });
+};
+
 const submitReview = async () => {
   reviewError.value = '';
   reviewSuccess.value = '';
-  submittingReview.value = true;
   const isEdit = isEditingReview.value;
+  const commentPreview = userComment.value.trim()
+    ? `\n\nNội dung: ${userComment.value.trim().slice(0, 160)}${userComment.value.trim().length > 160 ? '...' : ''}`
+    : '\n\nBạn chưa nhập nội dung bình luận kèm theo.';
+  const ok = await confirmModal.value.ask({
+    title: isEdit ? 'Xác nhận cập nhật đánh giá' : 'Xác nhận gửi đánh giá',
+    message: `Bạn muốn ${isEdit ? 'cập nhật' : 'gửi'} đánh giá ${userRating.value}/5 sao cho sách "${book.value.tenSach}"?${commentPreview}`,
+    confirmText: isEdit ? 'Cập nhật đánh giá' : 'Gửi đánh giá',
+    cancelText: 'Xem lại'
+  });
+  if (!ok) return;
+
+  submittingReview.value = true;
   try {
     const res = await api.post(`/books/${book.value._id}/reviews`, {
       soSao: userRating.value,
@@ -803,10 +797,18 @@ const getStatusText = () => {
     : 'Hết sách khả dụng';
 };
 
-const addToCart = () => {
+const addToCart = async () => {
   if (!book.value) return;
   if (!authStore.isAuthenticated) {
-    showAuthModal.value = true;
+    const ok = await confirmModal.value.ask({
+      title: 'Yêu cầu đăng nhập',
+      message: 'Bạn cần đăng nhập tài khoản Độc giả để thực hiện mượn sách. Đi đến trang đăng nhập?',
+      confirmText: 'Đăng nhập ngay',
+      cancelText: 'Hủy bỏ'
+    });
+    if (ok) {
+      router.push({ name: 'login', query: { redirect: route.fullPath } });
+    }
     return;
   }
   if (authStore.isStaff) {
@@ -825,11 +827,6 @@ const clampBorrowQuantity = () => {
 const changeBorrowQuantity = (delta) => {
   borrowQuantity.value += delta;
   clampBorrowQuantity();
-};
-
-const goToLogin = () => {
-  showAuthModal.value = false;
-  router.push({ name: 'login' });
 };
 
 const goToCart = () => {
@@ -859,7 +856,15 @@ const scrollRelated = (direction) => {
 
 const handleQuickBorrow = async () => {
   if (!authStore.isAuthenticated) {
-    showAuthModal.value = true;
+    const ok = await confirmModal.value.ask({
+      title: 'Yêu cầu đăng nhập',
+      message: 'Bạn cần đăng nhập tài khoản Độc giả để thực hiện mượn sách. Đi đến trang đăng nhập?',
+      confirmText: 'Đăng nhập ngay',
+      cancelText: 'Hủy bỏ'
+    });
+    if (ok) {
+      router.push({ name: 'login', query: { redirect: route.fullPath } });
+    }
     return;
   }
   if (authStore.isStaff) {
@@ -873,7 +878,7 @@ const handleQuickBorrow = async () => {
 
   const ok = await confirmModal.value.ask({
     title: 'Xác nhận mượn sách',
-    message: `Bạn có chắc chắn muốn đăng ký mượn ${borrowQuantity.value} bản sách này không?\n\n${book.value.tenSach}`,
+    message: `Bạn có chắc chắn muốn đăng ký mượn ${borrowQuantity.value} bản sách này không?\n\n${book.value.tenSach}\n\nThời gian mượn dự kiến: ${quickBorrowDaysCount.value} ngày, từ ${formatBorrowDate(new Date())} đến ${formatBorrowDate(ngayHenTra.value)}.`,
     confirmText: 'Mượn ngay',
     cancelText: 'Hủy bỏ'
   });

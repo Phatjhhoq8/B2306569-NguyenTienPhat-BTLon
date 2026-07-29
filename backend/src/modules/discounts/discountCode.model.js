@@ -32,6 +32,12 @@ const discountCodeSchema = new mongoose.Schema({
     min: [0, 'Giá trị đơn tối thiểu không được âm'],
     default: 0
   },
+  apDungCho: {
+    type: String,
+    enum: ['GOI_HOI_VIEN', 'MUON_SACH'],
+    required: [true, 'Phạm vi áp dụng mã giảm giá là bắt buộc'],
+    default: 'MUON_SACH'
+  },
   ngayBatDau: {
     type: Date,
     required: [true, 'Ngày bắt đầu là bắt buộc']

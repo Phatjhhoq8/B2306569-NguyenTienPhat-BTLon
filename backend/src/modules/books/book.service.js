@@ -225,7 +225,7 @@ const createBookTitle = async (bookData) => withTransactionFallback(async (sessi
  * - Nếu còn sách đang mượn → chỉ chuyển trangThai sang DISCONTINUED (drain), thu hồi bản sao rảnh
  * - Nếu không còn sách đang mượn → xóa mềm isDeleted = true, thu hồi toàn bộ bản sao
  */
-const softDeleteBookTitle = async (bookTitleId) => withTransactionFallback(async (session) => {
+const softDeleteBookTitle = async (bookTitleId, { mode = 'soft' } = {}) => withTransactionFallback(async (session) => {
   const book = await BookTitle.findById(bookTitleId).session(session);
   if (!book || book.isDeleted) throw new Error('Đầu sách không tồn tại hoặc đã bị xóa');
 
@@ -239,45 +239,31 @@ const softDeleteBookTitle = async (bookTitleId) => withTransactionFallback(async
     'chiTietMuon.sach': { $in: copyIds }
   }).session(session);
 
-  if (!hasBeenBorrowed) {
-    // Chưa từng được mượn -> Xóa cứng đầu sách và toàn bộ bản sao của nó khỏi CSDL
-    await BookTitle.deleteOne({ _id: book._id }).session(session);
-    await BookCopy.deleteMany({ dauSach: book._id }).session(session);
-    return { message: 'Đã xóa cứng đầu sách và tất cả các bản sao khỏi cơ sở dữ liệu (do chưa từng được mượn).', trangThai: 'DELETED' };
-  }
-
-  // Nếu đã từng được mượn -> Tiếp tục kiểm tra xem có bản sao nào đang được mượn tại thời điểm hiện tại không
-  const borrowedCopies = await BookCopy.countDocuments({
-    dauSach: book._id, tinhTrang: 'DA_MUON', isDeleted: false
-  }).session(session);
-
-  if (borrowedCopies > 0) {
-    // Drain strategy: ngừng phục vụ, thu hồi bản sao rảnh ngay
+  if (hasBeenBorrowed || mode === 'soft') {
+    // Sách đã từng được mượn hoặc thủ thư chọn chế độ Xóa mềm
+    book.isDeleted = true;
+    book.deletedAt = new Date();
     book.trangThai = 'DISCONTINUED';
     await book.save({ session });
 
-    // Thu hồi bản sao rảnh (CHO_MUON → BAO_TRI + soft delete)
+    // Thu hồi toàn bộ bản sao (chuyển sang BAO_TRI và soft delete)
     await BookCopy.updateMany(
-      { dauSach: book._id, tinhTrang: 'CHO_MUON', isDeleted: false },
+      { dauSach: book._id, isDeleted: false },
       { $set: { tinhTrang: 'BAO_TRI', isDeleted: true, deletedAt: new Date() } }
     ).session(session);
 
-    return { message: `Đã ngừng phục vụ đầu sách. Còn ${borrowedCopies} bản sao đang mượn sẽ thu hồi khi trả.`, trangThai: 'DISCONTINUED' };
+    return { 
+      message: hasBeenBorrowed 
+        ? 'Đầu sách đã có lịch sử mượn nên hệ thống đã tự động chuyển sang Xóa mềm thành công.'
+        : 'Đã xóa mềm đầu sách và thu hồi toàn bộ bản sao thành công.',
+      trangThai: 'DELETED' 
+    };
   }
 
-  // Không còn sách đang mượn -> xóa mềm hoàn toàn
-  book.isDeleted = true;
-  book.deletedAt = new Date();
-  book.trangThai = 'DISCONTINUED';
-  await book.save({ session });
-
-  // Thu hồi toàn bộ bản sao
-  await BookCopy.updateMany(
-    { dauSach: book._id, isDeleted: false },
-    { $set: { tinhTrang: 'BAO_TRI', isDeleted: true, deletedAt: new Date() } }
-  ).session(session);
-
-  return { message: 'Đã xóa mềm đầu sách và thu hồi toàn bộ bản sao.', trangThai: 'DELETED' };
+  // Chưa từng được mượn và chọn chế độ Xóa cứng -> Xóa cứng hoàn toàn
+  await BookTitle.deleteOne({ _id: book._id }).session(session);
+  await BookCopy.deleteMany({ dauSach: book._id }).session(session);
+  return { message: 'Đã xóa cứng đầu sách và tất cả các bản sao khỏi cơ sở dữ liệu (chưa từng được mượn).', trangThai: 'DELETED' };
 });
 
 module.exports = { createBookTitle, addBookCopies, softDeleteBookTitle };

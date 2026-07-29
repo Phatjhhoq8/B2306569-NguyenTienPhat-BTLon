@@ -71,6 +71,13 @@
             <li class="flex items-center"><MapPin class="h-4 w-4 mr-2 text-primary" /> {{ authStore.user?.diachi }}</li>
             <li class="flex items-center"><Calendar class="h-4 w-4 mr-2 text-primary" /> Sinh ngày: {{ formatDate(authStore.user?.ngaySinh) }}</li>
           </ul>
+          
+          <button 
+            @click="openChangePasswordModal"
+            class="w-full mt-4 bg-primary/10 hover:bg-primary/20 text-primary font-black py-2.5 rounded-xl text-xs transition-colors flex items-center justify-center space-x-1 border border-primary/20"
+          >
+            <Lock class="h-3.5 w-3.5" /> <span>Đổi mật khẩu tài khoản</span>
+          </button>
         </div>
 
         <!-- Membership Active Subscription card -->
@@ -93,6 +100,19 @@
               <span class="text-[10px] uppercase font-bold tracking-widest block opacity-70">Gói hoạt động</span>
               <h4 class="font-bold text-lg text-secondary">{{ sub.goiDocGia?.tenGoi || 'Standard' }}</h4>
               <span class="text-[10px] block opacity-90">Hạn dùng: {{ (sub.goiDocGia?.tenGoi || '').toLowerCase().normalize('NFC').includes('tiêu chuẩn') ? 'Vĩnh viễn' : formatDate(sub.ngayKetThuc) }}</span>
+              <div class="grid grid-cols-2 gap-2 pt-2 text-[10px] font-bold">
+                <div class="rounded-xl bg-white/10 border border-white/10 px-2 py-1.5">
+                  <span class="block text-white/60 uppercase tracking-wide">Giá gốc</span>
+                  <span class="text-white">{{ formatCurrency(getSubscriptionBaseAmount(sub)) }}</span>
+                </div>
+                <div class="rounded-xl bg-white/10 border border-white/10 px-2 py-1.5">
+                  <span class="block text-white/60 uppercase tracking-wide">Đã thanh toán</span>
+                  <span class="text-secondary">{{ formatCurrency(getSubscriptionPaidAmount(sub)) }}</span>
+                </div>
+              </div>
+              <span v-if="sub.maGiamGia || sub.soTienGiam" class="text-[10px] block text-white/80">
+                Mã giảm: <strong>{{ sub.maGiamGia || 'Đã áp dụng' }}</strong> · Giảm {{ formatCurrency(sub.soTienGiam || 0) }}
+              </span>
             </div>
             <ul class="text-xs space-y-1 text-slate-500 font-medium pt-2">
               <li>• Quyền áp dụng: {{ activeSub.goiDocGia?.tenGoi }}</li>
@@ -272,12 +292,17 @@
             <Banknote class="h-5 w-5 mr-2 text-green-600" /> Thống Kê Tài Chính Cá Nhân
           </h2>
 
-          <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          <div class="grid grid-cols-2 lg:grid-cols-5 gap-3">
             <!-- Tiền mượn sách đã trả -->
             <div class="bg-gradient-to-br from-blue-50 to-white border border-blue-100 rounded-2xl p-4 space-y-0.5">
-              <span class="text-[10px] text-blue-400 uppercase font-bold tracking-wider block">Phí mượn sách</span>
+              <span class="text-[10px] text-blue-400 uppercase font-bold tracking-wider block">Phí mượn đã trả</span>
               <p class="text-lg font-black text-blue-700">{{ formatCurrency(myFinancials.tongPhiMuon) }}</p>
               <span class="text-[10px] text-slate-400 font-medium">{{ myFinancials.soPhieuDaTra }} phiếu đã trả</span>
+            </div>
+            <div class="bg-gradient-to-br from-primary-light to-white border border-primary/10 rounded-2xl p-4 space-y-0.5">
+              <span class="text-[10px] text-primary uppercase font-bold tracking-wider block">Phí chờ thanh toán</span>
+              <p class="text-lg font-black text-primary">{{ formatCurrency(myFinancials.phiMuonDangXuLy) }}</p>
+              <span class="text-[10px] text-slate-400 font-medium">{{ myFinancials.soPhieuDangXuLyPhi }} phiếu đang xử lý/mượn</span>
             </div>
             <!-- Tiền phạt -->
             <div class="bg-gradient-to-br from-red-50 to-white border border-red-100 rounded-2xl p-4 space-y-0.5">
@@ -458,7 +483,7 @@
             </div>
 
             <div class="space-y-1">
-              <label class="block text-slate-600 font-bold">Địa chỉ <span class="text-red-500">*</span>:</label>
+              <label class="block text-slate-600 font-bold">Địa chỉ:</label>
               <input 
                 type="text" 
                 v-model="editForm.diachi"
@@ -508,6 +533,74 @@
       </div>
     </Teleport>
 
+    <!-- Change Password Modal -->
+    <Teleport to="body">
+      <div 
+        v-if="isChangePasswordModalOpen" 
+        class="fixed inset-0 bg-slate-900/65 z-[9999] flex items-center justify-center p-4 backdrop-blur-sm transition-all duration-300"
+        @click.self="isChangePasswordModalOpen = false"
+      >
+        <div class="bg-white rounded-3xl max-w-sm w-full p-6 space-y-4 shadow-2xl border border-slate-150 transform scale-100 transition-all duration-300">
+          <div class="flex items-center space-x-3 text-primary">
+            <div class="bg-blue-50 p-2.5 rounded-xl">
+              <Lock class="h-5 w-5 text-primary" />
+            </div>
+            <h3 class="font-sans font-extrabold text-slate-900 text-sm uppercase tracking-wide">
+              Đổi mật khẩu tài khoản
+            </h3>
+          </div>
+
+          <div class="space-y-3 text-xs">
+            <div class="space-y-1">
+              <label class="block text-slate-600 font-bold">Mật khẩu hiện tại <span class="text-red-500">*</span>:</label>
+              <input 
+                type="password" 
+                v-model="passwordForm.matKhauCu"
+                placeholder="••••••"
+                class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm font-semibold text-slate-700 focus:outline-none focus:border-primary"
+              />
+            </div>
+
+            <div class="space-y-1">
+              <label class="block text-slate-600 font-bold">Mật khẩu mới <span class="text-red-500">*</span>:</label>
+              <input 
+                type="password" 
+                v-model="passwordForm.matKhauMoi"
+                placeholder="Tối thiểu 6 ký tự"
+                class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm font-semibold text-slate-700 focus:outline-none focus:border-primary"
+              />
+            </div>
+
+            <div class="space-y-1">
+              <label class="block text-slate-600 font-bold">Xác nhận mật khẩu mới <span class="text-red-500">*</span>:</label>
+              <input 
+                type="password" 
+                v-model="passwordForm.confirmPassword"
+                placeholder="••••••"
+                class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm font-semibold text-slate-700 focus:outline-none focus:border-primary"
+              />
+            </div>
+          </div>
+
+          <div class="flex space-x-3 pt-2">
+            <button 
+              @click="isChangePasswordModalOpen = false"
+              class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-extrabold py-2.5 rounded-xl text-xs transition-colors"
+            >
+              Hủy bỏ
+            </button>
+            <button 
+              @click="submitChangePassword"
+              :disabled="isSubmittingPassword"
+              class="flex-1 bg-primary hover:bg-primary-dark text-white font-extrabold py-2.5 rounded-xl text-xs transition-all shadow-md disabled:opacity-50"
+            >
+              {{ isSubmittingPassword ? 'Đang đổi...' : 'Đổi mật khẩu' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </Teleport>
+
     <!-- Custom Confirm Dialog -->
     <ConfirmModal ref="confirmModal" />
   </div>
@@ -517,7 +610,7 @@
 import { ref, computed, onMounted } from 'vue';
 import { useAuthStore } from '../stores/auth';
 import api from '../services/api';
-import { User, Mail, Phone, MapPin, Calendar, Award, BookOpen, AlertTriangle, Banknote, Edit } from '@lucide/vue';
+import { User, Mail, Phone, MapPin, Calendar, Award, BookOpen, AlertTriangle, Banknote, Edit, Lock } from '@lucide/vue';
 import { useToastStore } from '../stores/toast';
 import ConfirmModal from '../components/ConfirmModal.vue';
 
@@ -537,6 +630,56 @@ const editForm = ref({
   gioiTinh: 'NAM'
 });
 
+// Change Password logic
+const isChangePasswordModalOpen = ref(false);
+const isSubmittingPassword = ref(false);
+const passwordForm = ref({
+  matKhauCu: '',
+  matKhauMoi: '',
+  confirmPassword: ''
+});
+
+const openChangePasswordModal = () => {
+  passwordForm.value = {
+    matKhauCu: '',
+    matKhauMoi: '',
+    confirmPassword: ''
+  };
+  isChangePasswordModalOpen.value = true;
+};
+
+const submitChangePassword = async () => {
+  const { matKhauCu, matKhauMoi, confirmPassword } = passwordForm.value;
+  if (!matKhauCu || !matKhauMoi || !confirmPassword) {
+    toast.show('Vui lòng nhập đầy đủ thông tin!', 'error');
+    return;
+  }
+  if (matKhauMoi.length < 6) {
+    toast.show('Mật khẩu mới phải có tối thiểu 6 ký tự!', 'error');
+    return;
+  }
+  if (matKhauMoi !== confirmPassword) {
+    toast.show('Mật khẩu xác nhận không khớp!', 'error');
+    return;
+  }
+
+  isSubmittingPassword.value = true;
+  try {
+    const res = await api.put('/users/me/password', {
+      matKhauCu,
+      matKhauMoi
+    });
+    if (res.success) {
+      toast.show('Đổi mật khẩu tài khoản thành công!', 'success');
+      isChangePasswordModalOpen.value = false;
+    }
+  } catch (error) {
+    toast.show(error.message || 'Lỗi khi đổi mật khẩu', 'error');
+  } finally {
+    isSubmittingPassword.value = false;
+  }
+};
+
 const openEditProfileModal = () => {
   if (authStore.user) {
     editForm.value = {
@@ -552,7 +695,7 @@ const openEditProfileModal = () => {
 };
 
 const submitEditProfile = async () => {
-  if (!editForm.value.hoLot || !editForm.value.ten || !editForm.value.dienThoai || !editForm.value.diachi) {
+  if (!editForm.value.hoLot || !editForm.value.ten || !editForm.value.dienThoai) {
     toast.show('Vui lòng nhập đầy đủ thông tin bắt buộc!', 'error');
     return;
   }
@@ -669,6 +812,8 @@ const penalties = ref([]);
 const myFinancials = ref({
   tongPhiMuon: 0,
   soPhieuDaTra: 0,
+  phiMuonDangXuLy: 0,
+  soPhieuDangXuLyPhi: 0,
   tongTienPhat: 0,
   tienPhatDaTra: 0,
   tienPhatChuaTra: 0,
@@ -687,12 +832,14 @@ const borrowTimeFilter = ref('');
 
 const getPlanScore = (plan) => {
   if (!plan) return 0;
-  return (plan.soSachToiDa || 0) * 1000 +
+  return (plan.giaTien || 0) * 1000000 +
+    (plan.soSachToiDa || 0) * 1000 +
     (plan.soNgayMuonToiDa || 0) * 100 +
     (plan.mienTienCoc ? 50 : 0) +
-    (plan.choPhepGiaHanOnline ? 30 : 0) +
-    (plan.giaTien || 0) / 100000;
+    (plan.choPhepGiaHanOnline ? 30 : 0);
 };
+
+const isStandardPlan = (plan) => (plan?.tenGoi || '').toLowerCase().normalize('NFC').includes('tiêu chuẩn');
 
 const bestActiveSub = computed(() => {
   return [...activeSubs.value]
@@ -701,24 +848,7 @@ const bestActiveSub = computed(() => {
 });
 
 const activeSub = computed(() => {
-  if (!activeSubs.value.length) return null;
-  const plans = activeSubs.value.map(sub => sub.goiDocGia).filter(Boolean);
-  if (!plans.length) return null;
-
-  const mergedPlan = plans.reduce((best, plan) => ({
-    ...best,
-    tenGoi: best.tenGoi ? `${best.tenGoi} + ${plan.tenGoi}` : plan.tenGoi,
-    soSachToiDa: Math.max(best.soSachToiDa || 0, plan.soSachToiDa || 0),
-    soNgayMuonToiDa: Math.max(best.soNgayMuonToiDa || 0, plan.soNgayMuonToiDa || 0),
-    mienTienCoc: Boolean(best.mienTienCoc || plan.mienTienCoc),
-    choPhepGiaHanOnline: Boolean(best.choPhepGiaHanOnline || plan.choPhepGiaHanOnline),
-    phiMuonSachGiay: Math.min(best.phiMuonSachGiay ?? plan.phiMuonSachGiay ?? 0, plan.phiMuonSachGiay ?? 0),
-    phiPhatTreHan: Math.min(best.phiPhatTreHan ?? plan.phiPhatTreHan ?? 5000, plan.phiPhatTreHan ?? 5000),
-    tienDatCoc: Math.min(best.tienDatCoc ?? plan.tienDatCoc ?? 0, plan.tienDatCoc ?? 0)
-  }), {});
-
-  if (mergedPlan.mienTienCoc) mergedPlan.tienDatCoc = 0;
-  return { goiDocGia: mergedPlan };
+  return bestActiveSub.value;
 });
 
 const cardAutoRenewSub = computed(() => {
@@ -864,6 +994,14 @@ const formatCurrency = (val) => {
   return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(val || 0);
 };
 
+const getSubscriptionBaseAmount = (sub) => {
+  return sub?.giaGoc ?? sub?.goiDocGia?.giaTien ?? sub?.tongTien ?? 0;
+};
+
+const getSubscriptionPaidAmount = (sub) => {
+  return sub?.tongTienThanhToan ?? sub?.tongTien ?? getSubscriptionBaseAmount(sub);
+};
+
 const getReceiptStatusText = (status) => {
   const map = {
     'CHO_DUYET': 'Chờ duyệt',
@@ -930,31 +1068,36 @@ const cancelBorrow = async (receipt) => {
 
 const loadData = async () => {
   try {
-    const [subRes, receiptRes, penaltyRes, financialRes] = await Promise.all([
+    const [subResult, receiptResult, penaltyResult, financialResult] = await Promise.allSettled([
       api.get('/memberships/my-subscriptions'),
       api.get('/borrowing/my-receipts'),
       api.get('/borrowing/my-penalties'),
       api.get('/borrowing/my-financial-stats')
     ]);
+
+    const subRes = subResult.status === 'fulfilled' ? subResult.value : null;
+    const receiptRes = receiptResult.status === 'fulfilled' ? receiptResult.value : null;
+    const penaltyRes = penaltyResult.status === 'fulfilled' ? penaltyResult.value : null;
+    const financialRes = financialResult.status === 'fulfilled' ? financialResult.value : null;
     
-    if (subRes.success) {
+    if (subRes?.success) {
       const rawSubs = (subRes.data || []).filter(s => s.trangThai === 'DANG_HIEU_LUC' && s.goiDocGia);
-      const hasOtherPlan = rawSubs.some(s => (s.goiDocGia?.tenGoi || '').toLowerCase().normalize('NFC') !== 'tiêu chuẩn');
+      const hasOtherPlan = rawSubs.some(s => !isStandardPlan(s.goiDocGia));
       if (hasOtherPlan) {
-        activeSubs.value = rawSubs.filter(s => (s.goiDocGia?.tenGoi || '').toLowerCase().normalize('NFC') !== 'tiêu chuẩn');
+        activeSubs.value = rawSubs.filter(s => !isStandardPlan(s.goiDocGia));
       } else {
         activeSubs.value = rawSubs;
       }
     } else {
       activeSubs.value = [];
     }
-    if (receiptRes.success) {
+    if (receiptRes?.success) {
       receipts.value = receiptRes.data;
     }
-    if (penaltyRes.success) {
+    if (penaltyRes?.success) {
       penalties.value = penaltyRes.data;
     }
-    if (financialRes.success) {
+    if (financialRes?.success) {
       myFinancials.value = financialRes.data;
     }
   } catch (error) {

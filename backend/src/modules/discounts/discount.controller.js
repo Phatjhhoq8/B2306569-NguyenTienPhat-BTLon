@@ -12,7 +12,7 @@ const resultResponse = require('../../utils/resultResponse');
  */
 const createDiscount = async (req, res, next) => {
   try {
-    const { tenKhuyenMai, giaTriGiam, giaTriDonToiThieu, ngayBatDau, ngayKetThuc, soLuongMaToiDa } = req.body;
+    const { tenKhuyenMai, giaTriGiam, giaTriDonToiThieu, apDungCho, ngayBatDau, ngayKetThuc, soLuongMaToiDa } = req.body;
 
     if (!tenKhuyenMai || giaTriGiam === undefined || !ngayBatDau || !ngayKetThuc) {
       return resultResponse.err(res, 'Thiếu thông tin bắt buộc để tạo mã giảm giá', 400);
@@ -22,6 +22,7 @@ const createDiscount = async (req, res, next) => {
       tenKhuyenMai,
       giaTriGiam,
       giaTriDonToiThieu: giaTriDonToiThieu || 0,
+      apDungCho: apDungCho || 'MUON_SACH',
       ngayBatDau,
       ngayKetThuc,
       soLuongMaToiDa: soLuongMaToiDa || 100
@@ -52,12 +53,12 @@ const getDiscounts = async (req, res, next) => {
  */
 const validateDiscount = async (req, res, next) => {
   try {
-    const { code, orderAmount } = req.body;
+    const { code, orderAmount, apDungCho } = req.body;
     if (!code || orderAmount === undefined) {
       return resultResponse.err(res, 'Mã giảm giá và giá trị đơn hàng là bắt buộc', 400);
     }
 
-    const result = await discountService.applyDiscountCode(code, orderAmount, { consume: false });
+    const result = await discountService.applyDiscountCode(code, orderAmount, { consume: false, apDungCho });
     return resultResponse.ok(res, result);
   } catch (error) {
     next(error);
@@ -71,7 +72,7 @@ const updateDiscount = async (req, res, next) => {
   try {
     const discount = await DiscountCode.findById(req.params.id);
     if (!discount) return resultResponse.err(res, 'Không tìm thấy mã giảm giá', 404);
-    const allowedUpdates = ['tenKhuyenMai', 'giaTriGiam', 'giaTriDonToiThieu', 'ngayBatDau', 'ngayKetThuc', 'soLuongMaToiDa'];
+    const allowedUpdates = ['tenKhuyenMai', 'giaTriGiam', 'giaTriDonToiThieu', 'apDungCho', 'ngayBatDau', 'ngayKetThuc', 'soLuongMaToiDa'];
     allowedUpdates.forEach((f) => { if (req.body[f] !== undefined) discount[f] = req.body[f]; });
     await discount.save();
     return resultResponse.ok(res, discount);

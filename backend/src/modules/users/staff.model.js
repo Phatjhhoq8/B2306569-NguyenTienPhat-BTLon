@@ -45,14 +45,13 @@ const staffSchema = new mongoose.Schema({
   },
   diachi: {
     type: String,
-    required: [true, 'Địa chỉ là bắt buộc'],
     trim: true
   },
   soDienThoai: {
     type: String,
     required: [true, 'Số điện thoại là bắt buộc'],
     trim: true,
-    match: [/^(0[35789])([0-9]{8})$/, 'Số điện thoại không hợp lệ']
+    match: [/^0[0-9]{9}$/, 'Số điện thoại phải có đúng 10 số và bắt đầu bằng số 0']
   },
   isDeleted: {
     type: Boolean,

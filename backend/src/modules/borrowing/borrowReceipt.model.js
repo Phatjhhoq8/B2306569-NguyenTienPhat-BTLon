@@ -83,6 +83,22 @@ const borrowReceiptSchema = new mongoose.Schema({
     min: [0, 'Số tiền giảm không được âm'],
     default: 0
   },
+  maGiamGia: {
+    type: String,
+    trim: true,
+    uppercase: true,
+    default: ''
+  },
+  tongTienTamTinh: {
+    type: Number,
+    min: [0, 'Tổng tiền tạm tính không được âm'],
+    default: 0
+  },
+  phuongThucThanhToan: {
+    type: String,
+    enum: ['TAI_QUAY', 'VIETQR', 'THE_TIN_DUNG'],
+    default: 'TAI_QUAY'
+  },
   tongTienThanhToan: {
     type: Number,
     min: [0, 'Tổng tiền thanh toán không được âm'],
@@ -412,6 +428,7 @@ borrowReceiptSchema.pre('save', async function (next) {
     const validBorrowDays = borrowDays > 0 ? borrowDays : 1;
 
     this.phiMuon = totalPhiMuon * validBorrowDays;
+    this.tongTienTamTinh = this.phiMuon;
     const tongTien = this.phiMuon - this.soTienGiam;
     this.tongTienThanhToan = tongTien < 0 ? 0 : tongTien;
   }
@@ -477,6 +494,50 @@ borrowReceiptSchema.pre('save', async function (next) {
           await releaseCopy(item, isCancel);
         }
       }
+    }
+  }
+
+  // Cập nhật lại phí mượn dựa trên ngày trả thực tế nếu sách đã trả sớm
+  if (['DANG_MUON', 'DA_TRA', 'QUA_HAN'].includes(this.trangThai)) {
+    const membershipPlan = await getEffectiveMembershipPlan(this.docGia, { session });
+    if (membershipPlan) {
+      const basePhiMuonPerBook = membershipPlan.phiMuonSachGiay !== undefined ? membershipPlan.phiMuonSachGiay : 0;
+      
+      const originalBorrowDays = Math.ceil(
+        (new Date(this.ngayHenTra).getTime() - new Date(this.ngayMuon || new Date()).getTime()) / (1000 * 60 * 60 * 24)
+      );
+      const validOriginalBorrowDays = originalBorrowDays > 0 ? originalBorrowDays : 1;
+
+      let totalPhiMuon = 0;
+      for (const item of this.chiTietMuon) {
+        let isGiaoTrinh = false;
+        const copyCheck = await BookCopy.findById(item.sach).populate('dauSach').session(session);
+        if (copyCheck && copyCheck.dauSach) {
+          const title = copyCheck.dauSach;
+          isGiaoTrinh = (title.tenSach || '').toLowerCase().includes('giáo trình') ||
+                        (title.tenSach || '').toLowerCase().includes('bài tập') ||
+                        (title.tenSach || '').toLowerCase().includes('sách giáo khoa') ||
+                        (title.theLoai || '').toString().toLowerCase().includes('giáo dục') ||
+                        (title.theLoai || '').toString().toLowerCase().includes('ngoại ngữ') ||
+                        (title.theLoai || '').toString().toLowerCase().includes('khoa học');
+        }
+        
+        if (!isGiaoTrinh) {
+          let borrowDaysForThisBook = validOriginalBorrowDays;
+          if (item.daTraChua && item.ngayTraThucTe) {
+            const diff = Math.ceil(
+              (new Date(item.ngayTraThucTe).getTime() - new Date(this.ngayMuon || new Date()).getTime()) / (1000 * 60 * 60 * 24)
+            );
+            borrowDaysForThisBook = Math.min(Math.max(1, diff), validOriginalBorrowDays);
+          }
+          totalPhiMuon += basePhiMuonPerBook * borrowDaysForThisBook;
+        }
+      }
+      
+      this.phiMuon = totalPhiMuon;
+      this.tongTienTamTinh = this.phiMuon;
+      const tongTien = this.phiMuon - this.soTienGiam;
+      this.tongTienThanhToan = tongTien < 0 ? 0 : tongTien;
     }
   }
 

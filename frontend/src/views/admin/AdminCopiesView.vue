@@ -6,9 +6,18 @@
         <h1 class="font-sans text-3xl font-extrabold text-slate-900">Quản Lý Bản Sao Vật Lý</h1>
         <p class="text-sm text-slate-500 font-medium">Đầu sách: <span class="text-primary font-bold">{{ bookTitle?.tenSach }}</span></p>
       </div>
-      <router-link to="/admin/books" class="text-xs font-semibold text-primary hover:underline flex items-center">
-        <ArrowLeft class="h-4 w-4 mr-1" /> Về Quản lý đầu sách
-      </router-link>
+      <div class="flex items-center space-x-4">
+        <button 
+          v-if="bookTitle?.trangThai === 'ACTIVE'"
+          @click="addCopy"
+          class="bg-primary hover:bg-primary-dark text-white font-extrabold px-4 py-2 rounded-xl text-xs transition-colors shadow-md flex items-center space-x-1"
+        >
+          <Plus class="h-4 w-4" /> <span>Thêm bản sao</span>
+        </button>
+        <router-link to="/admin/books" class="text-xs font-semibold text-primary hover:underline flex items-center">
+          <ArrowLeft class="h-4 w-4 mr-1" /> Về Quản lý đầu sách
+        </router-link>
+      </div>
     </div>
 
     <!-- Copies Table -->
@@ -73,7 +82,7 @@
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import api from '../../services/api';
-import { ArrowLeft } from '@lucide/vue';
+import { ArrowLeft, Plus } from '@lucide/vue';
 import ConfirmModal from '../../components/ConfirmModal.vue';
 import { useToastStore } from '../../stores/toast';
 
@@ -92,6 +101,26 @@ const loadData = async () => {
     }
   } catch (error) {
     console.error('Load copies error:', error);
+  }
+};
+
+const addCopy = async () => {
+  const ok = await confirmModal.value.ask({
+    message: `Bạn có chắc chắn muốn thêm 1 bản sao sách mới cho đầu sách "${bookTitle.value?.tenSach}" không?`
+  });
+  if (!ok) return;
+
+  try {
+    const res = await api.post('/book-copies', {
+      dauSach: bookTitle.value._id,
+      viTriKe: bookTitle.value.viTriKe || 'KE-A1'
+    });
+    if (res.success) {
+      toast.show('Thêm bản sao sách mới thành công!');
+      loadData();
+    }
+  } catch (error) {
+    toast.show(error.message || 'Lỗi khi thêm bản sao mới', 'error');
   }
 };
 

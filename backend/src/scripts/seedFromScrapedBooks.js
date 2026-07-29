@@ -53,14 +53,14 @@ const seedStaff = async () => {
 };
 
 const seedReader = async () => {
-  const existed = await Reader.findOne({ email: 'reader@library.local' });
+  const existed = await Reader.findOne({ email: 'nva@gmail.com' });
   if (existed) return existed;
 
   return Reader.create(deepNormalizeNFC({
     hoLot: 'Nguyễn Văn',
-    ten: 'Độc Giả',
-    email: 'reader@library.local',
-    matKhau: 'reader123',
+    ten: 'A',
+    email: 'nva@gmail.com',
+    matKhau: 'nva123',
     ngaySinh: new Date('2000-01-01'),
     gioiTinh: 'NAM',
     diachi: 'Cần Thơ',
@@ -435,7 +435,7 @@ const run = async () => {
 
   console.log('Seed hoàn tất:', {
     staff: 'NV001 / admin123',
-    reader: 'reader@library.local / reader123',
+    reader: 'nva@gmail.com / nva123',
     books: bookStats
   });
   process.exit(0);

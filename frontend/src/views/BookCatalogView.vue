@@ -396,6 +396,9 @@
           <p class="text-xs font-extrabold text-slate-900 leading-relaxed bg-slate-50 border border-slate-100 rounded-2xl px-3 py-2 max-h-20 overflow-y-auto">
             {{ quickBorrowBook.tenSach }}
           </p>
+          <p class="text-[11px] font-bold text-primary-dark bg-primary-light border border-primary/10 rounded-2xl px-3 py-2 leading-relaxed">
+            Thời gian mượn dự kiến: {{ getBorrowDays(getDefaultReturnDate()) }} ngày, từ {{ formatBorrowDate(new Date()) }} đến {{ formatBorrowDate(getDefaultReturnDate()) }}.
+          </p>
         </div>
 
         <div class="space-y-2">
@@ -442,6 +445,7 @@
         </div>
       </div>
     </div>
+    <ConfirmModal ref="confirmModal" />
   </Teleport>
 </template>
 
@@ -451,6 +455,7 @@ import { useRoute, useRouter } from 'vue-router';
 import api from '../services/api';
 import { Search, BookOpen, Filter, Check, User, ChevronDown, ChevronUp, ShoppingBag } from '@lucide/vue';
 import { useAuthStore } from '../stores/auth';
+import ConfirmModal from '../components/ConfirmModal.vue';
 import { useCartStore } from '../stores/cart';
 import { useToastStore } from '../stores/toast';
 
@@ -459,6 +464,7 @@ const router = useRouter();
 const authStore = useAuthStore();
 const cartStore = useCartStore();
 const toast = useToastStore();
+const confirmModal = ref(null);
 
 const categories = ref([]);
 const authors = ref([]);
@@ -688,9 +694,17 @@ const viewBook = (bookId) => {
 
 const canBorrowBook = (book) => book.trangThai === 'ACTIVE' && Number(book.soLuongKhaDung) > 0;
 
-const ensureReaderCanBorrow = () => {
+const ensureReaderCanBorrow = async () => {
   if (!authStore.isAuthenticated) {
-    router.push({ name: 'login', query: { redirect: route.fullPath } });
+    const ok = await confirmModal.value.ask({
+      title: 'Yêu cầu đăng nhập',
+      message: 'Bạn cần đăng nhập tài khoản Độc giả để thực hiện mượn sách. Đi đến trang đăng nhập?',
+      confirmText: 'Đăng nhập ngay',
+      cancelText: 'Hủy bỏ'
+    });
+    if (ok) {
+      router.push({ name: 'login', query: { redirect: route.fullPath } });
+    }
     return false;
   }
   if (authStore.isStaff) {
@@ -700,8 +714,8 @@ const ensureReaderCanBorrow = () => {
   return true;
 };
 
-const addBookToCart = (book) => {
-  if (!ensureReaderCanBorrow() || !canBorrowBook(book)) return;
+const addBookToCart = async (book) => {
+  if (!(await ensureReaderCanBorrow()) || !canBorrowBook(book)) return;
   cartStore.addBook(book, 1);
   toast.show('Đã thêm sách vào giỏ mượn.', 'success');
 };
@@ -713,8 +727,26 @@ const getDefaultReturnDate = () => {
   return date.toISOString().split('T')[0];
 };
 
+const formatBorrowDate = (value) => {
+  if (!value) return '';
+  return new Date(value).toLocaleDateString('vi-VN', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
+  });
+};
+
+const getBorrowDays = (returnDateValue) => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const returnDate = new Date(returnDateValue);
+  returnDate.setHours(0, 0, 0, 0);
+  const diffDays = Math.ceil((returnDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+  return diffDays > 0 ? diffDays : 1;
+};
+
 const quickBorrow = async (book) => {
-  if (!ensureReaderCanBorrow() || !canBorrowBook(book) || quickBorrowingId.value) return;
+  if (!(await ensureReaderCanBorrow()) || !canBorrowBook(book) || quickBorrowingId.value) return;
   quickBorrowBook.value = book;
   quickBorrowQuantity.value = 1;
 };

@@ -330,12 +330,17 @@ const fetchReaderSubscription = async (readerId) => {
   try {
     const res = await api.get('/memberships/subscriptions');
     if (res.success) {
-      const readerSub = res.data.find(sub => 
-        sub.docGia && 
-        String(sub.docGia._id) === String(readerId) && 
-        sub.trangThai === 'DANG_HIEU_LUC'
-      );
-      activeSub.value = readerSub || null;
+      const readerSubs = res.data
+        .filter(sub => {
+          const ownerId = sub.docGia?._id || sub.docGia;
+          const invitedIds = sub.nguoiDuocMoi || [];
+          return sub.trangThai === 'DANG_HIEU_LUC' && (
+            String(ownerId) === String(readerId) ||
+            invitedIds.some(id => String(id) === String(readerId))
+          );
+        })
+        .sort((a, b) => (b.goiDocGia?.giaTien || 0) - (a.goiDocGia?.giaTien || 0));
+      activeSub.value = readerSubs[0] || null;
     }
   } catch (error) {
     console.error('Fetch reader subscription error:', error);

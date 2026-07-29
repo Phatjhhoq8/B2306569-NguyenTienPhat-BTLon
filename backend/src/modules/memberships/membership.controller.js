@@ -8,6 +8,7 @@ const Subscription = require('./subscription.model');
 const resultResponse = require('../../utils/resultResponse');
 const mongoose = require('mongoose');
 const { getActiveSubscriptions } = require('./membershipPrivileges');
+const discountService = require('../discounts/discount.service');
 
 /**
  * Lấy danh sách gói hội viên
@@ -31,7 +32,7 @@ const subscribePlan = async (req, res, next) => {
       return resultResponse.err(res, 'Chỉ độc giả mới có thể đăng ký gói hội viên', 403);
     }
 
-    const { goiId, phuongThucThanhToan, thongTinThe, tuDongGiaHan } = req.body;
+    const { goiId, phuongThucThanhToan, thongTinThe, tuDongGiaHan, discountCode } = req.body;
     if (!goiId) {
       return resultResponse.err(res, 'ID gói hội viên là bắt buộc', 400);
     }
@@ -45,6 +46,14 @@ const subscribePlan = async (req, res, next) => {
       if (error.codeName !== 'IndexNotFound' && error.code !== 27) throw error;
     });
 
+    const baseAmount = Number(plan.giaTien || 0);
+    const discountResult = discountCode
+      ? await discountService.applyDiscountCode(discountCode, baseAmount, { consume: true, apDungCho: 'GOI_HOI_VIEN' })
+      : null;
+    const soTienGiam = discountResult ? discountResult.discountAmount : 0;
+    const tongTienThanhToan = discountResult ? discountResult.finalAmount : baseAmount;
+    const maGiamGia = discountResult ? discountResult.discountCode.maCode : '';
+
     const ngayBatDau = new Date();
     const existingSubscription = await Subscription.findOne({
       docGia: req.user._id,
@@ -56,7 +65,11 @@ const subscribePlan = async (req, res, next) => {
 
     if (existingSubscription) {
       existingSubscription.ngayKetThuc = new Date(existingSubscription.ngayKetThuc.getTime() + plan.soNgayHieuLuc * 24 * 60 * 60 * 1000);
-      existingSubscription.tongTien = (existingSubscription.tongTien || 0) + plan.giaTien;
+      existingSubscription.giaGoc = (existingSubscription.giaGoc || 0) + baseAmount;
+      existingSubscription.maGiamGia = maGiamGia || existingSubscription.maGiamGia;
+      existingSubscription.soTienGiam = (existingSubscription.soTienGiam || 0) + soTienGiam;
+      existingSubscription.tongTienThanhToan = (existingSubscription.tongTienThanhToan || existingSubscription.tongTien || 0) + tongTienThanhToan;
+      existingSubscription.tongTien = existingSubscription.tongTienThanhToan;
       existingSubscription.phuongThucThanhToan = phuongThucThanhToan || 'VIETQR';
       existingSubscription.tuDongGiaHan = tuDongGiaHan !== undefined ? tuDongGiaHan : (phuongThucThanhToan === 'THE_TIN_DUNG');
       existingSubscription.thongTinThe = phuongThucThanhToan === 'THE_TIN_DUNG' ? thongTinThe : undefined;
@@ -65,18 +78,6 @@ const subscribePlan = async (req, res, next) => {
       return resultResponse.ok(res, existingSubscription, 200);
     }
 
-    // Hủy các gói cũ đang hoạt động khác gói mới đăng ký
-    await Subscription.updateMany(
-      {
-        docGia: req.user._id,
-        goiDocGia: { $ne: plan._id },
-        trangThai: 'DANG_HIEU_LUC'
-      },
-      {
-        $set: { trangThai: 'HUY' }
-      }
-    );
-
     const ngayKetThuc = new Date(ngayBatDau.getTime() + plan.soNgayHieuLuc * 24 * 60 * 60 * 1000);
 
     const subscription = new Subscription({
@@ -84,7 +85,12 @@ const subscribePlan = async (req, res, next) => {
       goiDocGia: plan._id,
       ngayBatDau,
       ngayKetThuc,
-      tongTien: plan.giaTien,
+      giaGoc: baseAmount,
+      tienVAT: 0,
+      maGiamGia,
+      soTienGiam,
+      tongTienThanhToan,
+      tongTien: tongTienThanhToan,
       trangThai: 'DANG_HIEU_LUC',
       phuongThucThanhToan: phuongThucThanhToan || 'VIETQR',
       tuDongGiaHan: tuDongGiaHan !== undefined ? tuDongGiaHan : (phuongThucThanhToan === 'THE_TIN_DUNG'),
@@ -157,6 +163,10 @@ const checkAndUpdateSubscriptions = async (userId) => {
         goiDocGia: sub.goiDocGia._id,
         ngayBatDau,
         ngayKetThuc,
+        giaGoc: sub.goiDocGia.giaTien,
+        tienVAT: 0,
+        soTienGiam: 0,
+        tongTienThanhToan: sub.goiDocGia.giaTien,
         tongTien: sub.goiDocGia.giaTien,
         trangThai: 'DANG_HIEU_LUC',
         phuongThucThanhToan: 'THE_TIN_DUNG',
@@ -192,6 +202,10 @@ const checkAndUpdateAllSubscriptions = async () => {
         goiDocGia: sub.goiDocGia._id,
         ngayBatDau,
         ngayKetThuc,
+        giaGoc: sub.goiDocGia.giaTien,
+        tienVAT: 0,
+        soTienGiam: 0,
+        tongTienThanhToan: sub.goiDocGia.giaTien,
         tongTien: sub.goiDocGia.giaTien,
         trangThai: 'DANG_HIEU_LUC',
         phuongThucThanhToan: 'THE_TIN_DUNG',

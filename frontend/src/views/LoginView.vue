@@ -13,10 +13,10 @@
           </div>
         </div>
         <h2 class="font-sans text-2xl font-extrabold tracking-wide text-white uppercase pt-2">
-          {{ mode === 'login' ? 'ĐĂNG NHẬP ĐỘC GIẢ' : (mode === 'forgot' ? 'QUÊN MẬT KHẨU' : (mode === 'otp' ? 'XÁC NHẬN MÃ OTP' : 'MẬT KHẨU MỚI')) }}
+          {{ mode === 'login' ? 'ĐĂNG NHẬP ĐỘC GIẢ' : (mode === 'forgot' ? 'QUÊN MẬT KHẨU' : (mode === 'otp' ? 'XÁC NHẬN MÃ OTP' : (mode === 'reset' ? 'MẬT KHẨU MỚI' : 'ĐỔI MẬT KHẨU ĐỘC GIẢ'))) }}
         </h2>
         <p class="text-xs text-slate-400 font-medium">
-          {{ mode === 'login' ? 'Truy cập tài khoản để mượn sách và nhận ưu đãi' : (mode === 'forgot' ? 'Nhập email tài khoản để nhận mã xác nhận đổi mật khẩu' : (mode === 'otp' ? 'Nhập mã xác nhận vừa được gửi đến email (mô phỏng)' : 'Thiết lập mật khẩu mới cho tài khoản của bạn')) }}
+          {{ mode === 'login' ? 'Truy cập tài khoản để mượn sách và nhận ưu đãi' : (mode === 'forgot' ? 'Nhập email tài khoản để nhận mã xác nhận đổi mật khẩu' : (mode === 'otp' ? 'Nhập mã xác nhận vừa được gửi đến email (mô phỏng)' : (mode === 'reset' ? 'Thiết lập mật khẩu mới cho tài khoản của bạn' : 'Nhập Email và mật khẩu hiện tại để thay đổi mật khẩu'))) }}
         </p>
       </div>
 
@@ -47,13 +47,23 @@
         <div class="space-y-1.5">
           <div class="flex justify-between items-center">
             <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Mật khẩu</label>
-            <button 
-              type="button"
-              @click="changeMode('forgot')" 
-              class="text-xs text-primary hover:underline font-semibold"
-            >
-              Quên mật khẩu?
-            </button>
+            <div class="flex items-center space-x-2">
+              <button 
+                type="button"
+                @click="changeMode('forgot')" 
+                class="text-xs text-amber-400 hover:text-amber-300 font-bold transition-colors"
+              >
+                Quên mật khẩu?
+              </button>
+              <span class="text-xs text-slate-700">|</span>
+              <button 
+                type="button"
+                @click="changeMode('change')" 
+                class="text-xs text-blue-400 hover:text-blue-300 font-bold transition-colors"
+              >
+                Đổi mật khẩu?
+              </button>
+            </div>
           </div>
           <div class="flex items-center space-x-3 bg-slate-950 px-4 py-3 rounded-xl border border-slate-800 focus-within:border-primary transition-all">
             <Lock class="h-4 w-4 text-slate-500" />
@@ -191,6 +201,85 @@
         </button>
       </form>
 
+      <!-- Change Password Mode (Know Old Password) -->
+      <form v-else-if="mode === 'change'" class="space-y-5" @submit.prevent="handleChangePassword">
+        <!-- Email tài khoản -->
+        <div class="space-y-1.5">
+          <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Email tài khoản</label>
+          <div class="flex items-center space-x-3 bg-slate-950 px-4 py-3 rounded-xl border border-slate-800 focus-within:border-primary transition-all">
+            <Mail class="h-4 w-4 text-slate-500" />
+            <input 
+              v-model="changeEmail" 
+              type="email" 
+              required 
+              placeholder="hung@gmail.com" 
+              class="w-full bg-transparent focus:outline-none text-sm font-semibold text-slate-200 placeholder-slate-600"
+            />
+          </div>
+        </div>
+
+        <!-- Mật khẩu cũ -->
+        <div class="space-y-1.5">
+          <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Mật khẩu cũ</label>
+          <div class="flex items-center space-x-3 bg-slate-950 px-4 py-3 rounded-xl border border-slate-800 focus-within:border-primary transition-all">
+            <Lock class="h-4 w-4 text-slate-500" />
+            <input 
+              v-model="oldPassword" 
+              type="password" 
+              required 
+              placeholder="Nhập mật khẩu cũ của bạn" 
+              class="w-full bg-transparent focus:outline-none text-sm font-semibold text-slate-200 placeholder-slate-600"
+            />
+          </div>
+        </div>
+
+        <!-- Mật khẩu mới -->
+        <div class="space-y-1.5">
+          <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Mật khẩu mới</label>
+          <div class="flex items-center space-x-3 bg-slate-950 px-4 py-3 rounded-xl border border-slate-800 focus-within:border-primary transition-all">
+            <Lock class="h-4 w-4 text-slate-500" />
+            <input 
+              v-model="newPassword" 
+              type="password" 
+              required 
+              placeholder="Tối thiểu 6 ký tự" 
+              class="w-full bg-transparent focus:outline-none text-sm font-semibold text-slate-200 placeholder-slate-600"
+            />
+          </div>
+        </div>
+
+        <!-- Xác nhận mật khẩu mới -->
+        <div class="space-y-1.5">
+          <label class="text-xs font-bold text-slate-400 uppercase tracking-wider">Xác nhận mật khẩu mới</label>
+          <div class="flex items-center space-x-3 bg-slate-950 px-4 py-3 rounded-xl border border-slate-800 focus-within:border-primary transition-all">
+            <Lock class="h-4 w-4 text-slate-500" />
+            <input 
+              v-model="confirmPassword" 
+              type="password" 
+              required 
+              placeholder="Nhập lại mật khẩu mới" 
+              class="w-full bg-transparent focus:outline-none text-sm font-semibold text-slate-200 placeholder-slate-600"
+            />
+          </div>
+        </div>
+
+        <button 
+          type="submit" 
+          :disabled="loading"
+          class="w-full bg-primary hover:bg-primary-dark text-white font-bold py-3.5 rounded-xl transition-all shadow-lg flex items-center justify-center space-x-2 disabled:opacity-50 text-sm tracking-wide"
+        >
+          <span v-if="loading">Đang cập nhật...</span>
+          <span v-else>Đổi mật khẩu</span>
+        </button>
+        <button 
+          type="button" 
+          @click="changeMode('login')"
+          class="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold py-3.5 rounded-xl transition-all text-sm tracking-wide"
+        >
+          Hủy bỏ
+        </button>
+      </form>
+
       <!-- Bottom Links -->
       <div class="flex flex-col items-center space-y-3 pt-4 border-t border-slate-800">
         <div class="text-sm font-semibold text-center">
@@ -206,7 +295,7 @@
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuthStore } from '../stores/auth';
-import { User, Lock, AlertTriangle, Mail } from '@lucide/vue';
+import { User, Lock, AlertTriangle, Mail, Phone } from '@lucide/vue';
 import { useToastStore } from '../stores/toast';
 import api from '../services/api';
 
@@ -214,19 +303,23 @@ const router = useRouter();
 const authStore = useAuthStore();
 const toast = useToastStore();
 
-const mode = ref('login'); // 'login' | 'forgot' | 'otp' | 'reset'
+const mode = ref('login'); // 'login' | 'forgot' | 'otp' | 'reset' | 'change'
 
-const email = ref('');
-const password = ref('');
+const email = ref('nva@gmail.com');
+const password = ref('nva123');
 const error = ref('');
 const loading = ref(false);
 
-// State cho quên mật khẩu
+// State cho quên mật khẩu (OTP)
 const forgotEmail = ref('');
 const generatedOtp = ref('');
 const inputOtp = ref('');
 const newPassword = ref('');
 const confirmPassword = ref('');
+
+// State cho đổi mật khẩu (Mật khẩu cũ)
+const changeEmail = ref('');
+const oldPassword = ref('');
 
 const changeMode = (newMode) => {
   mode.value = newMode;
@@ -234,10 +327,15 @@ const changeMode = (newMode) => {
   if (newMode === 'login') {
     password.value = '';
   } else if (newMode === 'forgot') {
-    forgotEmail.value = email.value;
+    forgotEmail.value = email.value.includes('@') ? email.value : '';
   } else if (newMode === 'otp') {
     inputOtp.value = '';
   } else if (newMode === 'reset') {
+    newPassword.value = '';
+    confirmPassword.value = '';
+  } else if (newMode === 'change') {
+    changeEmail.value = email.value.includes('@') ? email.value : '';
+    oldPassword.value = '';
     newPassword.value = '';
     confirmPassword.value = '';
   }
@@ -318,6 +416,39 @@ const handleResetPassword = async () => {
     }
   } catch (err) {
     error.value = err.message || 'Lỗi khi đặt lại mật khẩu';
+  } finally {
+    loading.value = false;
+  }
+};
+
+const handleChangePassword = async () => {
+  error.value = '';
+  if (!changeEmail.value || !oldPassword.value || !newPassword.value || !confirmPassword.value) {
+    error.value = 'Vui lòng nhập đầy đủ thông tin';
+    return;
+  }
+  if (newPassword.value.length < 6) {
+    error.value = 'Mật khẩu phải có tối thiểu 6 ký tự';
+    return;
+  }
+  if (newPassword.value !== confirmPassword.value) {
+    error.value = 'Mật khẩu xác nhận không khớp!';
+    return;
+  }
+  loading.value = true;
+  try {
+    const res = await api.post('/auth/reader/change-password', {
+      email: changeEmail.value,
+      matKhauCu: oldPassword.value,
+      matKhauMoi: newPassword.value
+    });
+    if (res.success) {
+      toast.show('Đổi mật khẩu độc giả thành công! Vui lòng đăng nhập lại.', 'success');
+      email.value = changeEmail.value;
+      changeMode('login');
+    }
+  } catch (err) {
+    error.value = err.message || 'Lỗi khi đổi mật khẩu';
   } finally {
     loading.value = false;
   }
