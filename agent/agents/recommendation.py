@@ -42,19 +42,19 @@ class RecommendationAgent(BaseAgent):
         context_type = context.get("type")
 
         if context_type == "direct_library_matches":
-            answer = "Minh tim thay mot so sach trong thu vien phu hop voi yeu cau cua ban. Ban co the chon mot hoac nhieu cuon ben duoi."
+            answer = "Mình tìm thấy một số cuốn sách trong thư viện phù hợp với yêu cầu của bạn. Bạn có thể chọn một hoặc nhiều cuốn bên dưới."
         elif context_type == "web_verified_library_matches":
-            answer = "Minh da tim ten tac pham tu mo ta cua ban, doi chieu lai CSDL va thay sach trong thu vien. Ban co the chon sach ben duoi."
+            answer = "Mình đã tìm tên tác phẩm từ mô tả của bạn, đối chiếu lại CSDL và tìm thấy sách trong thư viện. Bạn có thể chọn sách bên dưới."
         elif context_type == "related_alternatives":
             missing_title = context.get("missing_title")
             if missing_title:
-                answer = f"Thu vien hien chua co tac pham '{missing_title}'. Tuy nhien, minh tim duoc mot so sach lien quan trong thu vien de ban tham khao."
+                answer = f"Thư viện hiện chưa có tác phẩm '{missing_title}'. Tuy nhiên, mình tìm thấy một số đầu sách liên quan hiện có tại thư viện để bạn tham khảo."
             else:
-                answer = "Thu vien hien chua co dung tac pham ban mo ta, nhung co mot so sach lien quan de ban tham khao."
+                answer = "Thư viện hiện chưa có đúng tác phẩm bạn mô tả, nhưng có một số đầu sách tương tự rất hay để bạn tham khảo."
         else:
-            answer = "Minh chua tim thay sach phu hop trong thu vien. Neu ban nho them ten nhan vat, boi canh hoac the loai, minh se tim tiep cho ban."
+            answer = "Mình chưa tìm thấy sách phù hợp trong thư viện. Nếu bạn nhớ thêm tên nhân vật, bối cảnh hoặc thể loại, mình sẽ tiếp tục tìm kiếm cho bạn."
             if external:
-                answer = "Minh tim thay mot so tac pham co ve khop mo ta tren web, nhung thu vien hien chua co cac sach nay trong CSDL. Minh chi hien ten va tom tat ngan, khong cho chon muon."
+                answer = "Mình tìm thấy một số tác phẩm phù hợp mô tả trên Internet, nhưng thư viện chưa nhập các sách này về CSDL. Mình chỉ hiện tên và tóm tắt ngắn để bạn tham khảo chứ không cho chọn mượn."
 
         return {
             "draft_answer": answer,

@@ -3,6 +3,7 @@
 
 def get_reader_registration_guidance() -> str:
     return (
-        "De dang ky tai khoan doc gia, ban can chuan bi ho lot, ten, email, mat khau, ngay sinh, dia chi va so dien thoai. "
-        "Hay bam nut Dang ky tren header, dien day du thong tin va xac nhan. Sau khi co tai khoan, ban co the them sach vao gio muon va dang ky goi hoi vien neu can."
+        "Để đăng ký tài khoản độc giả, bạn hãy nhấp vào nút \"Đăng ký\" ở góc trên bên phải màn hình. "
+        "Chuẩn bị các thông tin cá nhân cơ bản gồm: Họ lót, Tên, Email, Mật khẩu, Ngày sinh, Địa chỉ và Số điện thoại. "
+        "Sau khi hoàn tất đăng ký và đăng nhập, bạn có thể tự do mượn sách hoặc nâng cấp lên gói hội viên Premium của thư viện."
     )

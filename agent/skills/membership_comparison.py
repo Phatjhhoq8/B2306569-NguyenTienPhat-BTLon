@@ -1,5 +1,6 @@
 # Chuc nang: Skill doc va so sanh goi hoi vien.
 
+import unicodedata
 from typing import Any, Dict, List
 from tools.get_membership_plans import get_membership_plans
 
@@ -10,39 +11,57 @@ def _format_price(value: Any) -> str:
     except Exception:
         amount = 0
     if amount == 0:
-        return "Mien phi"
+        return "Miễn phí"
     return f"{amount:,} VND".replace(",", ".")
+
+
+def _is_standard_plan(plan: Dict[str, Any]) -> bool:
+    # 1. Kiểm tra giá tiền bằng 0 (gói Tiêu chuẩn miễn phí)
+    if plan.get("giaTien", 0) == 0:
+        return True
+
+    # 2. Kiểm tra tên gói hoặc mã gói
+    name = str(plan.get("tenGoi") or plan.get("name") or "").lower()
+    ma_goi = str(plan.get("maGoi") or plan.get("ma_goi") or "").lower()
+
+    normalized = unicodedata.normalize("NFD", name)
+    without_accents = "".join(char for char in normalized if unicodedata.category(char) != "Mn")
+
+    is_standard_name = "tieu chuan" in without_accents or "standard" in name
+    is_standard_code = "standard" in ma_goi or "goi005" in ma_goi or plan.get("_id") == "GOI005"
+
+    return is_standard_name or is_standard_code
 
 
 def get_plan_pros_cons(plan: Dict[str, Any]) -> Dict[str, List[str]]:
     pros = []
     cons = []
     if plan.get("giaTien", 0) == 0:
-        pros.append("Khong ton chi phi dang ky")
-        cons.append("Han muc muon va tien ich thuong thap hon goi tra phi")
+        pros.append("Không tốn chi phí đăng ký")
+        cons.append("Hạn mức mượn và tiện ích thường thấp hơn các gói trả phí")
     if plan.get("soSachToiDa"):
-        pros.append(f"Muon toi da {plan.get('soSachToiDa')} cuon cung luc")
+        pros.append(f"Mượn tối đa {plan.get('soSachToiDa')} cuốn cùng lúc")
     if plan.get("soNgayMuonToiDa"):
-        pros.append(f"Giu sach toi da {plan.get('soNgayMuonToiDa')} ngay")
+        pros.append(f"Giữ sách tối đa {plan.get('soNgayMuonToiDa')} ngày")
     if plan.get("mienTienCoc"):
-        pros.append("Mien tien coc")
+        pros.append("Miễn tiền đặt cọc")
     else:
-        cons.append("Co the van can tien coc theo quy dinh")
+        cons.append("Có thể vẫn cần đặt cọc theo quy định của gói")
     if plan.get("choPhepGiaHanOnline"):
-        pros.append("Ho tro gia han online")
+        pros.append("Hỗ trợ gia hạn online")
     if plan.get("quayNhanUuTien"):
-        pros.append("Co quay nhan uu tien")
+        pros.append("Được ưu tiên phục vụ tại quầy")
     if plan.get("chiaSeNhomGiaDinh"):
-        pros.append("Ho tro chia se nhom/gia dinh")
+        pros.append("Hỗ trợ chia sẻ nhóm gia đình")
     if plan.get("giaoSachTanNha"):
-        pros.append("Ho tro giao sach tan nha")
+        pros.append("Hỗ trợ giao sách tận nhà")
     if not cons:
-        cons.append("Can can nhac chi phi va nhu cau doc thuc te")
+        cons.append("Cần cân nhắc chi phí và nhu cầu đọc thực tế")
     return {"pros": pros, "cons": cons}
 
 
 def compare_membership_plans() -> Dict[str, Any]:
-    plans = get_membership_plans()
+    plans = [plan for plan in get_membership_plans() if not _is_standard_plan(plan)]
     enriched = []
     recommended = None
     for plan in plans:
@@ -61,7 +80,7 @@ def compare_membership_plans() -> Dict[str, Any]:
         "membership_plans": enriched,
         "plan_comparison": {
             "recommended_plan_id": recommended,
-            "reason": "Goi duoc danh dau khuyen dung hoac goi tra phi phu hop nhat voi nhu cau muon nhieu sach hon.",
+            "reason": "Gói này được đánh giá cao nhờ sự cân bằng tối ưu giữa chi phí và quyền lợi mượn sách.",
             "pros_cons": [{"plan_id": p.get("_id"), **p.get("pros_cons", {})} for p in enriched],
         },
     }

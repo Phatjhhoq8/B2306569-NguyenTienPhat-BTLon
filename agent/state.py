@@ -13,6 +13,17 @@ def merge_list(left: Optional[List[Any]], right: Optional[List[Any]]) -> List[An
     return (left or []) + (right or [])
 
 
+def merge_plans(left: Optional[List[Any]], right: Optional[List[Any]]) -> List[Any]:
+    seen = set()
+    result = []
+    for item in (left or []) + (right or []):
+        plan_id = item.get("_id") or item.get("maGoi")
+        if plan_id and plan_id not in seen:
+            seen.add(plan_id)
+            result.append(item)
+    return result
+
+
 class AgentState(TypedDict, total=False):
     user_id: str
     user_profile: Dict[str, Any]
@@ -35,7 +46,7 @@ class AgentState(TypedDict, total=False):
 
     suggested_books: Annotated[List[Dict[str, Any]], merge_list]
     external_suggestions: Annotated[List[Dict[str, Any]], merge_list]
-    membership_plans: Annotated[List[Dict[str, Any]], merge_list]
+    membership_plans: Annotated[List[Dict[str, Any]], merge_plans]
     plan_comparison: Dict[str, Any]
     ui_action: Dict[str, Any]
     ui_payload: Dict[str, Any]

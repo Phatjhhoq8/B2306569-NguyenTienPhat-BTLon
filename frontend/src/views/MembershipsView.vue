@@ -1249,6 +1249,12 @@ onMounted(async () => {
     const res = await api.get('/memberships/plans');
     if (res.success) {
       plans.value = res.data;
+      if (route.query.plan && route.query.confirm === '1') {
+        const targetPlan = plans.value.find(p => p._id === route.query.plan);
+        if (targetPlan) {
+          subscribe(targetPlan);
+        }
+      }
     }
   } catch (error) {
     console.error('Fetch plans error:', error);

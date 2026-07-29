@@ -7,13 +7,18 @@ from tools.verify_books_in_library import verify_books_in_library
 
 
 def _dedupe_books(books: List[Dict[str, Any]], limit: int = 10, exclude_ids: Optional[List[str]] = None) -> List[Dict[str, Any]]:
-    seen = set()
+    seen_ids = set()
+    seen_titles = set()
     excluded = set(exclude_ids or [])
     output = []
     for book in books:
         book_id = book.get("_id")
-        if book_id and book_id not in seen and book_id not in excluded:
-            seen.add(book_id)
+        title = (book.get("tenSach") or "").strip().lower()
+        if not title:
+            continue
+        if book_id and book_id not in seen_ids and book_id not in excluded and title not in seen_titles:
+            seen_ids.add(book_id)
+            seen_titles.add(title)
             output.append(book)
         if len(output) >= limit:
             break

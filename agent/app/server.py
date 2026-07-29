@@ -24,8 +24,10 @@ def merge_state(current_state: dict, update: dict) -> dict:
     """Gộp state thủ công tương thích với các reducer định nghĩa trong state.py."""
     new_state = dict(current_state)
     for key, val in update.items():
-        if key in ["detected_domains", "suggested_books", "external_suggestions", "membership_plans"]:
-            new_state[key] = (new_state.get(key) or []) + (val or [])
+        if key in ["detected_domains"]:
+            new_state[key] = list(set((new_state.get(key) or []) + (val or [])))
+        elif key in ["suggested_books", "external_suggestions", "membership_plans"]:
+            new_state[key] = val
         elif key in ["domain_outputs", "plan_comparison", "ui_action", "ui_payload"]:
             new_state[key] = {**(new_state.get(key) or {}), **(val or {})}
         else:
