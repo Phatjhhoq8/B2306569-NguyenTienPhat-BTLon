@@ -23,9 +23,6 @@
 
 \renewcommand\theadfont{\bfseries}
 \renewcommand{\arraystretch}{1.25}
-\renewcommand{\contentsname}{Mục lục}
-\renewcommand{\listfigurename}{DANH MỤC HÌNH}
-\renewcommand{\listtablename}{DANH MỤC BẢNG}
 
 \renewcommand{\cfttoctitlefont}{\hfill\Huge\bfseries}
 \renewcommand{\cftaftertoctitle}{\hfill}
@@ -101,6 +98,9 @@
 }
 
 \begin{document}
+\renewcommand{\contentsname}{Mục lục}
+\renewcommand{\listfigurename}{DANH MỤC HÌNH ẢNH}
+\renewcommand{\listtablename}{DANH MỤC BẢNG}
 
 \pagenumbering{gobble}
 \subfile{bia-ngoai}
@@ -119,6 +119,11 @@
 \addcontentsline{toc}{chapter}{TÓM TẮT}
 \subfile{chapters/tom-tat}
 
+\chapter*{ABSTRACT}
+\phantomsection
+\addcontentsline{toc}{chapter}{ABSTRACT}
+\subfile{chapters/abstract}
+
 \clearpage
 \pagestyle{fancy}
 \makeatletter
@@ -129,7 +134,7 @@
 
 \clearpage
 \phantomsection
-\addcontentsline{toc}{chapter}{DANH MỤC HÌNH}
+\addcontentsline{toc}{chapter}{DANH MỤC HÌNH ẢNH}
 \listoffigures
 
 \clearpage
