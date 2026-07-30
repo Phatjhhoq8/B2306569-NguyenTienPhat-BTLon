@@ -25,6 +25,12 @@
 \renewcommand\theadfont{\bfseries}
 \renewcommand{\arraystretch}{1.25}
 
+% Thay đổi dấu chấm tròn đầu dòng (bullet point) mặc định của itemize thành dấu gạch ngang (-) cho cấp 1 và dấu cộng (+) cho cấp 2
+\renewcommand{\labelitemi}{\textendash}
+\renewcommand{\labelitemii}{\textup{+}}
+\renewcommand{\labelitemiii}{\textasteriskcentered}
+\renewcommand{\labelitemiv}{\textperiodcentered}
+
 \renewcommand{\cfttoctitlefont}{\hfill\Huge\bfseries}
 \renewcommand{\cftaftertoctitle}{\hfill}
 \renewcommand{\cftloftitlefont}{\hfill\Huge\bfseries}
