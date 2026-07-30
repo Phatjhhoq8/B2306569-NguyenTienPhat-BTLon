@@ -1,0 +1,881 @@
+\documentclass[../main.tex]{subfiles}
+
+\begin{document}
+
+\setlength{\LTleft}{0pt}
+\setlength{\LTright}{0pt}
+\setlength{\tabcolsep}{4pt}
+
+\section{Phân tích và thiết kế}
+
+\subsection{Sơ đồ use case tổng quát}
+
+Sơ đồ use case tổng quát mô tả các nhóm tác nhân chính của hệ thống CTU eLibrary gồm khách, độc giả, thủ thư và quản lý. Mỗi tác nhân được phân quyền sử dụng những nhóm chức năng khác nhau. Khách chỉ được xem thông tin công khai và đăng ký tài khoản. Độc giả có thể mượn sách, thanh toán, đăng ký hội viên và sử dụng trợ lý AI. Thủ thư quản lý dữ liệu thư viện và xử lý nghiệp vụ mượn trả. Quản lý có thêm quyền quản lý nhân viên.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.95\textwidth]{usecase01.png}
+    \caption{Sơ đồ use case tổng quan chi tiết}
+\end{figure}
+
+\begin{longtable}{|p{1cm}|p{4cm}|p{8cm}|}
+\caption{Danh sách use case trong sơ đồ use case tổng quát}\\
+\hline
+\textbf{STT} & \textbf{Use case} & \textbf{Diễn giải} \\
+\hline
+1 & Xem thông tin hệ thống & Xem các thông tin giới thiệu chung, nội dung trang chủ, liên hệ và thông tin công khai của website. \\
+\hline
+2 & Xem danh mục sách & Truy cập danh sách đầu sách đang được thư viện công khai trên hệ thống. \\
+\hline
+3 & Tìm kiếm sách & Tìm đầu sách theo từ khóa hoặc các tiêu chí lọc. \\
+\hline
+4 & Xem chi tiết sách & Xem mô tả, tác giả, thể loại, nhà xuất bản, trạng thái và số lượng khả dụng của sách. \\
+\hline
+5 & Đăng ký tài khoản & Tạo tài khoản độc giả để sử dụng các chức năng mượn sách. \\
+\hline
+6 & Đăng nhập độc giả & Xác thực tài khoản độc giả để truy cập các chức năng cá nhân. \\
+\hline
+7 & Đăng nhập quản trị & Xác thực tài khoản quản trị để truy cập cổng quản trị. \\
+\hline
+8 & Đăng xuất & Kết thúc phiên đăng nhập hiện tại. \\
+\hline
+9 & Tạo phiếu mượn & Tạo yêu cầu mượn sách từ các sách đã chọn trong giỏ mượn. \\
+\hline
+10 & Gia hạn phiếu mượn & Gửi yêu cầu kéo dài thời gian mượn khi phiếu mượn còn đủ điều kiện. \\
+\hline
+11 & Hủy phiếu mượn & Hủy phiếu mượn khi phiếu chưa được xử lý hoặc còn trong trạng thái cho phép hủy. \\
+\hline
+12 & Đánh giá sách & Gửi đánh giá, nhận xét về sách sau khi sử dụng. \\
+\hline
+13 & Duyệt phiếu mượn & Kiểm tra và duyệt yêu cầu mượn sách của độc giả. \\
+\hline
+14 & Xác nhận nhận sách & Ghi nhận việc độc giả đã đến nhận sách. \\
+\hline
+15 & Xử lý trả sách & Xác nhận sách được trả và cập nhật trạng thái phiếu mượn. \\
+\hline
+16 & Tính khoản phạt & Tự động tính khoản phạt khi phát sinh quá hạn, mất sách hoặc vi phạm khác. \\
+\hline
+17 & Quản lý đầu sách & Quản lý thông tin đầu sách, bản sao sách và trạng thái phục vụ. \\
+\hline
+18 & Quản lý độc giả & Quản lý tài khoản, trạng thái khóa/mở khóa và thông tin độc giả. \\
+\hline
+19 & Quản lý gói hội viên & Quản lý các gói hội viên và quyền lợi tương ứng. \\
+\hline
+20 & Quản lý nhân viên & Tạo, cập nhật, phân quyền, xóa mềm và khôi phục tài khoản nhân viên. \\
+\hline
+21 & Đăng ký gói đọc sách & Đăng ký gói hội viên để mở rộng quyền lợi mượn sách. \\
+\hline
+\end{longtable}
+
+\subsection{Sơ đồ use case khách và xác thực}
+
+Nhóm chức năng khách và xác thực cho phép người dùng truy cập các nội dung công khai, đăng ký tài khoản độc giả, đăng nhập và khôi phục mật khẩu. Đây là nhóm chức năng đầu vào của hệ thống, quyết định người dùng được truy cập vào các chức năng nâng cao hay không.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{usecase02.png}
+    \caption{Sơ đồ use case khách và xác thực}
+\end{figure}
+
+Tác nhân của sơ đồ là \textbf{Khách}. Đây là người dùng chưa đăng nhập, có quyền xem các nội dung công khai và thực hiện đăng ký hoặc đăng nhập tài khoản độc giả.
+
+\begin{longtable}{|p{1cm}|p{4cm}|p{8cm}|}
+\caption{Danh sách use case trong sơ đồ khách và xác thực}\\
+\hline
+\textbf{STT} & \textbf{Use case} & \textbf{Diễn giải} \\
+\hline
+1 & Xem trang chủ & Khách xem thông tin tổng quan, sách nổi bật, quy trình mượn sách và các nội dung giới thiệu chính của hệ thống. \\
+\hline
+2 & Xem giới thiệu & Khách xem thông tin giới thiệu về thư viện, sứ mệnh, lịch sử và các cam kết dịch vụ. \\
+\hline
+3 & Xem liên hệ & Khách xem thông tin liên hệ, địa chỉ, số điện thoại, email và biểu mẫu gửi yêu cầu liên hệ. \\
+\hline
+4 & Xem danh mục sách & Khách truy cập danh sách sách đang được công khai trên website. \\
+\hline
+5 & Bộ lọc sách & Khách lọc sách theo thể loại, tác giả, nhà xuất bản hoặc trạng thái sách. \\
+\hline
+6 & Tìm kiếm sách & Khách nhập từ khóa để tìm sách theo tên hoặc thông tin liên quan. \\
+\hline
+7 & Nhận gợi ý tìm kiếm & Hệ thống đưa ra gợi ý khi khách nhập từ khóa tìm kiếm, giúp rút ngắn thời gian tra cứu. \\
+\hline
+8 & Xem chi tiết sách & Khách xem thông tin chi tiết của một đầu sách, gồm mô tả, tác giả, thể loại, nhà xuất bản và số lượng khả dụng. \\
+\hline
+9 & Xem sách liên quan & Khách xem các sách có cùng thể loại hoặc có liên quan với sách đang xem. \\
+\hline
+10 & Xem gói hội viên & Khách xem danh sách gói hội viên, giá gói và quyền lợi tương ứng. \\
+\hline
+11 & Đăng ký tài khoản độc giả & Khách nhập thông tin cá nhân để tạo tài khoản độc giả. \\
+\hline
+12 & Đăng nhập độc giả & Khách đăng nhập bằng tài khoản độc giả để sử dụng các chức năng cá nhân và mượn sách. \\
+\hline
+\end{longtable}
+
+\subsubsection{Đặc tả use case đăng ký}
+
+\begin{table}[H]
+\centering
+\caption{Đặc tả use case đăng ký tài khoản}
+\begin{tabularx}{\textwidth}{|p{4cm}|X|}
+\hline
+\textbf{Tác nhân} & Khách \\
+\hline
+\textbf{Mô tả} & Cho phép khách tạo tài khoản độc giả để sử dụng các chức năng mượn sách. \\
+\hline
+\textbf{Điều kiện tiên quyết} & Người dùng chưa đăng nhập vào hệ thống. \\
+\hline
+\textbf{Luồng sự kiện chính} & Người dùng mở trang đăng ký, nhập thông tin cá nhân, email, số điện thoại, mật khẩu và gửi yêu cầu. Hệ thống kiểm tra dữ liệu, tạo tài khoản và thông báo đăng ký thành công. \\
+\hline
+\textbf{Luồng rẽ nhánh} & Nếu email hoặc số điện thoại đã tồn tại, hệ thống hiển thị thông báo lỗi và yêu cầu nhập lại. \\
+\hline
+\textbf{Kết quả} & Tài khoản độc giả được tạo trong hệ thống. \\
+\hline
+\end{tabularx}
+\end{table}
+
+\subsubsection{Đặc tả use case đăng nhập}
+
+\begin{table}[H]
+\centering
+\caption{Đặc tả use case đăng nhập}
+\begin{tabularx}{\textwidth}{|p{4cm}|X|}
+\hline
+\textbf{Tác nhân} & Độc giả, thủ thư, quản lý \\
+\hline
+\textbf{Mô tả} & Cho phép người dùng đăng nhập để sử dụng các chức năng theo quyền được cấp. \\
+\hline
+\textbf{Điều kiện tiên quyết} & Người dùng đã có tài khoản hợp lệ. \\
+\hline
+\textbf{Luồng sự kiện chính} & Người dùng nhập email hoặc mã tài khoản quản trị và mật khẩu. Hệ thống kiểm tra thông tin, tạo phiên đăng nhập bằng JWT trong HTTP-only cookie và chuyển người dùng đến giao diện phù hợp. \\
+\hline
+\textbf{Luồng rẽ nhánh} & Nếu thông tin đăng nhập sai hoặc tài khoản bị khóa, hệ thống hiển thị thông báo lỗi. \\
+\hline
+\textbf{Kết quả} & Người dùng đăng nhập thành công và được phân quyền sử dụng hệ thống. \\
+\hline
+\end{tabularx}
+\end{table}
+
+\subsection{Sơ đồ use case độc giả}
+
+Nhóm chức năng độc giả bao gồm quản lý hồ sơ cá nhân, tra cứu sách, đánh giá sách, yêu thích sách, quản lý giỏ mượn, tạo phiếu mượn, thanh toán phiếu mượn cùng các khoản phát sinh, đăng ký gói hội viên và sử dụng trợ lý AI.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{usecase03.png}
+    \caption{Sơ đồ use case độc giả}
+\end{figure}
+
+Tác nhân của sơ đồ là \textbf{Độc giả}. Độc giả là người dùng đã có tài khoản và đã đăng nhập, có thể quản lý thông tin cá nhân, thực hiện mượn sách, thanh toán, đăng ký hội viên và theo dõi các phát sinh trong quá trình sử dụng thư viện.
+
+\begin{longtable}{|p{1cm}|p{4cm}|p{8cm}|}
+\caption{Danh sách use case trong sơ đồ độc giả}\\
+\hline
+\textbf{STT} & \textbf{Use case} & \textbf{Diễn giải} \\
+\hline
+1 & Xem hồ sơ cá nhân & Độc giả xem thông tin tài khoản, thông tin liên hệ và trạng thái sử dụng. \\
+\hline
+2 & Cập nhật hồ sơ cá nhân & Độc giả chỉnh sửa thông tin cá nhân như họ tên, số điện thoại, địa chỉ hoặc thông tin liên hệ. \\
+\hline
+3 & Đổi mật khẩu & Độc giả thay đổi mật khẩu đăng nhập để bảo mật tài khoản. \\
+\hline
+4 & Thêm sách vào giỏ mượn & Độc giả chọn sách từ danh mục hoặc chi tiết sách để đưa vào giỏ mượn. \\
+\hline
+5 & Xem giỏ mượn & Độc giả xem danh sách sách đã chọn, số lượng và chi phí dự kiến. \\
+\hline
+6 & Áp mã giảm giá & Độc giả nhập mã giảm giá hợp lệ để giảm chi phí khi tạo phiếu mượn. \\
+\hline
+7 & Tạo phiếu mượn & Độc giả xác nhận giỏ mượn để tạo phiếu mượn mới. \\
+\hline
+8 & Xem phiếu mượn cá nhân & Độc giả theo dõi danh sách phiếu mượn và trạng thái xử lý từng phiếu. \\
+\hline
+9 & Hủy phiếu mượn & Độc giả hủy phiếu mượn khi phiếu còn trong trạng thái cho phép hủy. \\
+\hline
+10 & Gia hạn phiếu mượn & Độc giả gửi yêu cầu kéo dài thời gian mượn nếu phiếu đủ điều kiện. \\
+\hline
+11 & Đánh giá sách & Độc giả viết đánh giá, bình luận hoặc chấm điểm sách. \\
+\hline
+12 & Xóa đánh giá sách & Độc giả xóa đánh giá của chính mình khi cần chỉnh sửa hoặc không muốn hiển thị nữa. \\
+\hline
+13 & Thích sách & Độc giả đánh dấu yêu thích một đầu sách. \\
+\hline
+14 & Bỏ thích sách & Độc giả hủy trạng thái yêu thích đối với sách đã đánh dấu. \\
+\hline
+15 & Xem gói hội viên & Độc giả xem các gói hội viên đang được cung cấp. \\
+\hline
+16 & Đăng ký gói hội viên & Độc giả chọn và đăng ký một gói hội viên phù hợp. \\
+\hline
+17 & Giả lập thanh toán & Độc giả thực hiện thanh toán mô phỏng cho phiếu mượn hoặc gói hội viên. \\
+\hline
+18 & Tham gia gói gia đình & Độc giả tham gia nhóm hội viên gia đình khi gói hỗ trợ chức năng này. \\
+\hline
+19 & Bật tự động gia hạn & Độc giả bật cơ chế tự động gia hạn gói hội viên. \\
+\hline
+20 & Tắt tự động gia hạn & Độc giả tắt cơ chế tự động gia hạn khi không còn nhu cầu. \\
+\hline
+21 & Xem khoản phạt phát sinh & Độc giả xem khoản phạt được tính kèm trong phiếu mượn khi trả trễ, mất sách hoặc hư hỏng. \\
+\hline
+22 & Thanh toán khoản phát sinh & Độc giả thanh toán khoản phạt cùng với phiếu mượn bằng phương thức mô phỏng. \\
+\hline
+23 & Xem thống kê tài chính cá nhân & Độc giả xem tổng chi phí mượn sách, tiền phạt và các khoản thanh toán cá nhân. \\
+\hline
+24 & Thanh toán bằng QR & Độc giả thanh toán bằng hình thức VietQR mô phỏng. \\
+\hline
+25 & Thanh toán bằng thẻ & Độc giả thanh toán bằng thẻ tín dụng giả lập. \\
+\hline
+\end{longtable}
+
+\subsubsection{Đặc tả use case tìm kiếm sách}
+
+\begin{table}[H]
+\centering
+\caption{Đặc tả chức năng tìm kiếm sách}
+\begin{tabularx}{\textwidth}{|p{4cm}|X|}
+\hline
+\textbf{Tác nhân} & Khách, độc giả \\
+\hline
+\textbf{Mô tả} & Cho phép người dùng tìm sách theo từ khóa và lọc theo thể loại, tác giả, nhà xuất bản hoặc trạng thái. \\
+\hline
+\textbf{Điều kiện tiên quyết} & Người dùng truy cập trang danh mục sách. \\
+\hline
+\textbf{Luồng sự kiện chính} & Người dùng nhập từ khóa hoặc chọn bộ lọc. Hệ thống truy vấn CSDL và hiển thị danh sách sách phù hợp. \\
+\hline
+\textbf{Kết quả} & Danh sách sách phù hợp được hiển thị trên giao diện. \\
+\hline
+\end{tabularx}
+\end{table}
+
+\subsubsection{Đặc tả use case tạo phiếu mượn}
+
+\begin{table}[H]
+\centering
+\caption{Đặc tả chức năng tạo phiếu mượn}
+\begin{tabularx}{\textwidth}{|p{4cm}|X|}
+\hline
+\textbf{Tác nhân} & Độc giả \\
+\hline
+\textbf{Mô tả} & Cho phép độc giả tạo phiếu mượn từ các sách đã chọn trong giỏ mượn. \\
+\hline
+\textbf{Điều kiện tiên quyết} & Độc giả đã đăng nhập và giỏ mượn có ít nhất một sách hợp lệ. \\
+\hline
+\textbf{Luồng sự kiện chính} & Độc giả kiểm tra giỏ mượn, nhập mã giảm giá nếu có, xác nhận tạo phiếu. Hệ thống kiểm tra số lượng sách khả dụng, tính phí, tạo phiếu mượn và cập nhật trạng thái sách. \\
+\hline
+\textbf{Luồng rẽ nhánh} & Nếu sách hết hoặc ngừng phục vụ, hệ thống thông báo để độc giả cập nhật lại giỏ mượn. \\
+\hline
+\textbf{Kết quả} & Phiếu mượn được tạo và chờ thủ thư xử lý. \\
+\hline
+\end{tabularx}
+\end{table}
+
+\subsection{Sơ đồ use case thủ thư quản trị dữ liệu}
+
+Thủ thư chịu trách nhiệm quản lý dữ liệu đầu sách, bản sao sách, tác giả, thể loại, nhà xuất bản và độc giả. Các thao tác quan trọng đều có modal xác nhận và hiển thị thông báo thành công hoặc lỗi.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{usecase04.png}
+    \caption{Sơ đồ use case thủ thư quản trị dữ liệu}
+\end{figure}
+
+Tác nhân của sơ đồ là \textbf{Thủ thư}. Thủ thư sử dụng cổng quản trị để quản lý dữ liệu thư viện và tài khoản độc giả, đảm bảo dữ liệu phục vụ cho chức năng tra cứu và mượn sách luôn chính xác.
+
+\begin{longtable}{|p{1cm}|p{4cm}|p{8cm}|}
+\caption{Danh sách use case trong sơ đồ thủ thư quản trị dữ liệu}\\
+\hline
+\textbf{STT} & \textbf{Use case} & \textbf{Diễn giải} \\
+\hline
+1 & Xem dashboard & Thủ thư xem số liệu tổng quan về sách, độc giả, phiếu mượn và tình hình hoạt động. \\
+\hline
+2 & Xem danh sách đầu sách & Thủ thư xem danh sách các đầu sách đang có trong hệ thống. \\
+\hline
+3 & Tìm kiếm đầu sách & Thủ thư tìm đầu sách theo từ khóa hoặc bộ lọc quản trị. \\
+\hline
+4 & Thêm đầu sách & Thủ thư tạo mới thông tin đầu sách, ảnh bìa, tác giả, thể loại và nhà xuất bản. \\
+\hline
+5 & Sửa đầu sách & Thủ thư cập nhật thông tin của đầu sách đã tồn tại. \\
+\hline
+6 & Xóa mềm đầu sách & Thủ thư xóa mềm đầu sách để ẩn khỏi hệ thống nhưng vẫn giữ dữ liệu. \\
+\hline
+7 & Đổi trạng thái đầu sách & Thủ thư chuyển trạng thái hoạt động hoặc ngừng phục vụ của đầu sách. \\
+\hline
+8 & Xem bản sao sách & Thủ thư xem danh sách bản sao vật lý thuộc một đầu sách. \\
+\hline
+9 & Cập nhật bản sao sách & Thủ thư cập nhật tình trạng hoặc thông tin của từng bản sao sách. \\
+\hline
+10 & Xóa mềm bản sao sách & Thủ thư xóa mềm bản sao không còn phục vụ. \\
+\hline
+11 & Thêm thể loại & Thủ thư thêm thể loại sách mới. \\
+\hline
+12 & Sửa thể loại & Thủ thư cập nhật tên hoặc thông tin thể loại. \\
+\hline
+13 & Xóa thể loại & Thủ thư xóa thể loại không còn sử dụng. \\
+\hline
+14 & Thêm tác giả & Thủ thư thêm thông tin tác giả mới. \\
+\hline
+15 & Sửa tác giả & Thủ thư cập nhật thông tin tác giả. \\
+\hline
+16 & Thêm nhà xuất bản & Thủ thư thêm thông tin nhà xuất bản mới. \\
+\hline
+17 & Sửa nhà xuất bản & Thủ thư cập nhật thông tin nhà xuất bản. \\
+\hline
+18 & Xem danh sách độc giả & Thủ thư xem danh sách tài khoản độc giả trong hệ thống. \\
+\hline
+19 & Tìm kiếm độc giả & Thủ thư tìm độc giả theo từ khóa hoặc thông tin liên hệ. \\
+\hline
+20 & Khóa tài khoản độc giả & Thủ thư khóa tài khoản vi phạm hoặc không đủ điều kiện sử dụng. \\
+\hline
+21 & Mở khóa tài khoản độc giả & Thủ thư mở lại tài khoản độc giả đã bị khóa. \\
+\hline
+22 & Xóa mềm độc giả & Thủ thư xóa mềm tài khoản độc giả khi cần ngừng sử dụng. \\
+\hline
+23 & Khôi phục độc giả & Thủ thư khôi phục tài khoản độc giả đã bị xóa mềm. \\
+\hline
+\end{longtable}
+
+\subsubsection{Đặc tả use case quản lý đầu sách}
+
+\begin{table}[H]
+\centering
+\caption{Đặc tả chức năng quản lý đầu sách}
+\begin{tabularx}{\textwidth}{|p{4cm}|X|}
+\hline
+\textbf{Tác nhân} & Thủ thư, quản lý \\
+\hline
+\textbf{Mô tả} & Cho phép thủ thư thêm mới, cập nhật, xóa mềm, khôi phục và chuyển trạng thái phục vụ của đầu sách. \\
+\hline
+\textbf{Điều kiện tiên quyết} & Thủ thư đã đăng nhập vào cổng quản trị. \\
+\hline
+\textbf{Luồng sự kiện chính} & Thủ thư mở trang quản lý đầu sách, thực hiện thao tác thêm/sửa/xóa/khôi phục. Hệ thống kiểm tra dữ liệu, cập nhật CSDL và hiển thị kết quả. \\
+\hline
+\textbf{Luồng rẽ nhánh} & Nếu đầu sách đang được mượn, hệ thống áp dụng chiến lược ngừng phục vụ để không phát sinh lượt mượn mới. \\
+\hline
+\textbf{Kết quả} & Thông tin đầu sách được cập nhật trong hệ thống. \\
+\hline
+\end{tabularx}
+\end{table}
+
+\subsection{Sơ đồ use case mượn trả và phiếu phạt}
+
+Nhóm chức năng mượn trả là phần nghiệp vụ quan trọng nhất của hệ thống. Sau khi độc giả tạo phiếu mượn, thủ thư có thể duyệt phiếu, xác nhận nhận sách, xử lý trả sách, hủy phiếu và ghi nhận tình trạng trả sách. Nếu phát sinh quá hạn, mất sách hoặc hư hỏng, hệ thống tự động tính khoản phạt để cộng vào thanh toán phiếu mượn.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{usecase05.png}
+    \caption{Sơ đồ use case mượn trả và phiếu phạt}
+\end{figure}
+
+Sơ đồ có hai tác nhân chính là \textbf{Độc giả} và \textbf{Thủ thư}. Độc giả thực hiện các thao tác tạo, theo dõi, hủy, gia hạn phiếu mượn và thanh toán các khoản phát sinh. Thủ thư xử lý nghiệp vụ sau khi phiếu được tạo, bao gồm duyệt phiếu, xác nhận nhận sách, xử lý trả sách và xác nhận thanh toán. Phiếu phạt không có trang tạo riêng mà được hệ thống sinh tự động từ dữ liệu trả sách và trạng thái thanh toán.
+
+\begin{longtable}{|p{1cm}|p{4cm}|p{8cm}|}
+\caption{Danh sách use case trong sơ đồ mượn trả và phiếu phạt}\\
+\hline
+\textbf{STT} & \textbf{Use case} & \textbf{Diễn giải} \\
+\hline
+1 & Chọn sách cần mượn & Chọn sách từ danh mục hoặc chi tiết sách để chuẩn bị tạo phiếu mượn. \\
+\hline
+2 & Kiểm tra tồn kho & Kiểm tra số lượng bản sao còn khả dụng trước khi cho phép tạo phiếu. \\
+\hline
+3 & Kiểm tra hạn mức hội viên & Kiểm tra số lượng sách tối đa hoặc quyền lợi theo gói hội viên của độc giả. \\
+\hline
+4 & Kiểm tra hạn thẻ hội viên & Kiểm tra gói hội viên còn hiệu lực hay đã hết hạn. \\
+\hline
+5 & Tạo phiếu mượn & Xác nhận danh sách sách cần mượn và gửi yêu cầu mượn đến hệ thống. \\
+\hline
+6 & Xem phiếu mượn & Xem thông tin phiếu mượn, ngày mượn, ngày hẹn trả, chi phí và trạng thái xử lý. \\
+\hline
+7 & Hủy phiếu mượn & Hủy phiếu khi phiếu chưa được duyệt hoặc còn đủ điều kiện hủy. \\
+\hline
+8 & Gia hạn phiếu mượn & Gửi yêu cầu gia hạn thời gian mượn sách. \\
+\hline
+9 & Xem danh sách phiếu mượn & Xem toàn bộ phiếu mượn để theo dõi và xử lý nghiệp vụ. \\
+\hline
+10 & Duyệt phiếu mượn & Kiểm tra yêu cầu mượn và xác nhận phiếu hợp lệ. \\
+\hline
+11 & Xác nhận nhận sách & Ghi nhận việc độc giả đã nhận sách tại thư viện. \\
+\hline
+12 & Xử lý trả sách & Cập nhật ngày trả thực tế, tình trạng sách và hoàn tất phiếu mượn. \\
+\hline
+13 & Tính tiền phạt trễ hạn & Tính khoản phạt khi độc giả trả sách sau ngày hẹn trả. \\
+\hline
+14 & Tính tiền phạt mất sách & Tính khoản phạt khi sách bị mất hoặc không thể hoàn trả. \\
+\hline
+15 & Sinh phiếu phạt tự động & Hệ thống tự động sinh phiếu phạt dựa trên lỗi phát sinh trong quá trình mượn trả. \\
+\hline
+16 & Xem khoản phạt trong phiếu mượn & Xem khoản phạt phát sinh và trạng thái thanh toán ngay trong thông tin phiếu mượn. \\
+\hline
+17 & Thanh toán khoản phạt phát sinh & Thực hiện thanh toán khoản phạt cùng với phiếu mượn bằng phương thức mô phỏng. \\
+\hline
+18 & Xác nhận thanh toán phạt & Ghi nhận phiếu phạt đã được thanh toán. \\
+\hline
+19 & Xem thống kê tài chính & Theo dõi doanh thu, khoản phạt và tình trạng thanh toán trong hệ thống. \\
+\hline
+\end{longtable}
+
+\subsubsection{Đặc tả use case xử lý trả sách}
+
+\begin{table}[H]
+\centering
+\caption{Đặc tả chức năng xử lý trả sách}
+\begin{tabularx}{\textwidth}{|p{4cm}|X|}
+\hline
+\textbf{Tác nhân} & Thủ thư, quản lý \\
+\hline
+\textbf{Mô tả} & Cho phép thủ thư xác nhận độc giả đã trả sách và cập nhật trạng thái phiếu mượn. \\
+\hline
+\textbf{Điều kiện tiên quyết} & Phiếu mượn đang ở trạng thái đã nhận sách hoặc đang mượn. \\
+\hline
+\textbf{Luồng sự kiện chính} & Thủ thư chọn phiếu mượn, kiểm tra tình trạng sách, nhập thông tin trả sách. Hệ thống cập nhật ngày trả thực tế, trạng thái phiếu và trạng thái bản sao sách. \\
+\hline
+\textbf{Luồng rẽ nhánh} & Nếu sách trả trễ, mất hoặc hư hỏng, hệ thống tự động tính khoản phạt và ghi nhận vào phiếu mượn để thanh toán. \\
+\hline
+\textbf{Kết quả} & Phiếu mượn được hoàn tất và sách được cập nhật lại trạng thái. \\
+\hline
+\end{tabularx}
+\end{table}
+
+\subsection{Sơ đồ use case hội viên, khuyến mãi và cấu hình}
+
+Hệ thống hỗ trợ gói hội viên để mở rộng quyền lợi mượn sách cho độc giả. Ngoài ra, thủ thư có thể quản lý mã giảm giá và cấu hình nội dung hiển thị của các trang trên website.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{usecase06.png}
+    \caption{Sơ đồ use case hội viên, khuyến mãi và cấu hình}
+\end{figure}
+
+Sơ đồ có hai tác nhân chính là \textbf{Độc giả} và \textbf{Thủ thư}. Độc giả sử dụng các chức năng liên quan đến gói hội viên, mã giảm giá và thanh toán. Thủ thư quản lý gói hội viên, mã giảm giá, danh sách đăng ký gói và cấu hình nội dung các trang public của website.
+
+\begin{longtable}{|p{1cm}|p{4cm}|p{8cm}|}
+\caption{Danh sách use case trong sơ đồ hội viên, khuyến mãi và cấu hình}\\
+\hline
+\textbf{STT} & \textbf{Use case} & \textbf{Diễn giải} \\
+\hline
+1 & Xem danh sách gói hội viên & Xem các gói hội viên hiện có, giá gói và quyền lợi đi kèm. \\
+\hline
+2 & Đăng ký gói hội viên & Chọn gói hội viên và gửi yêu cầu đăng ký. \\
+\hline
+3 & Nâng cấp gói hội viên & Chuyển sang gói hội viên cao hơn khi có nhu cầu mở rộng quyền lợi. \\
+\hline
+4 & Mô phỏng thanh toán & Thanh toán gói hội viên bằng phương thức mô phỏng. \\
+\hline
+5 & Xem đăng ký gói cá nhân & Xem lịch sử và trạng thái các gói hội viên đã đăng ký. \\
+\hline
+6 & Tham gia gói gia đình & Tham gia nhóm hội viên gia đình nếu gói hỗ trợ. \\
+\hline
+7 & Bật tự động gia hạn & Bật tự động gia hạn gói hội viên khi đến hạn. \\
+\hline
+8 & Tắt tự động gia hạn & Tắt cơ chế tự động gia hạn gói hội viên. \\
+\hline
+9 & Áp mã giảm giá & Nhập mã giảm giá khi mượn sách hoặc đăng ký gói. \\
+\hline
+10 & Kiểm tra mã giảm giá & Kiểm tra mã còn hiệu lực, đúng điều kiện và còn lượt sử dụng hay không. \\
+\hline
+11 & Xem tất cả đăng ký gói & Xem danh sách đăng ký hội viên của toàn bộ độc giả. \\
+\hline
+12 & Tạo gói hội viên & Thêm gói hội viên mới với giá và quyền lợi tương ứng. \\
+\hline
+13 & Sửa gói hội viên & Cập nhật thông tin gói hội viên. \\
+\hline
+14 & Xóa gói hội viên & Xóa hoặc ngừng cung cấp gói hội viên. \\
+\hline
+15 & Tạo mã giảm giá & Tạo mã giảm giá mới cho hoạt động mượn sách hoặc hội viên. \\
+\hline
+16 & Sửa mã giảm giá & Cập nhật điều kiện, giá trị hoặc thời gian hiệu lực của mã giảm giá. \\
+\hline
+17 & Xóa mã giảm giá & Xóa hoặc vô hiệu hóa mã giảm giá. \\
+\hline
+18 & Cập nhật trang chủ & Cập nhật nội dung hiển thị trên trang chủ. \\
+\hline
+19 & Cập nhật trang giới thiệu & Cập nhật nội dung giới thiệu về thư viện. \\
+\hline
+20 & Cập nhật trang danh mục & Cập nhật nội dung cấu hình cho trang danh mục sách. \\
+\hline
+21 & Cập nhật trang hội viên & Cập nhật nội dung hiển thị ở trang gói hội viên. \\
+\hline
+22 & Cập nhật trang liên hệ & Cập nhật thông tin liên hệ, địa chỉ và nội dung hỗ trợ. \\
+\hline
+23 & Upload ảnh cấu hình & Tải ảnh cấu hình phục vụ các trang nội dung của website. \\
+\hline
+\end{longtable}
+
+\subsection{Sơ đồ cấu trúc và luồng xử lý trợ lý AI}
+
+Trợ lý AI trong CTU eLibrary được xây dựng nhằm hỗ trợ độc giả tra cứu thông tin sách và nhận tư vấn nhanh trong quá trình sử dụng hệ thống. Tác nhân tương tác trực tiếp với chức năng này là \textbf{Độc giả}. Thông qua cửa sổ chat trên giao diện người dùng, độc giả có thể đặt câu hỏi về sách, thể loại, tác giả, nhà xuất bản, sách liên quan hoặc các gói hội viên đang được cung cấp.
+
+Về cấu trúc, trợ lý AI được tổ chức theo mô hình multi-agent gồm ba tầng. Tầng giao diện là chat widget trên frontend, có nhiệm vụ tiếp nhận câu hỏi, hiển thị lịch sử hội thoại và trả kết quả cho độc giả. Tầng điều phối nằm ở backend, thực hiện chuẩn hóa câu hỏi, xác định mục đích truy vấn, chọn agent phù hợp và tổng hợp kết quả trả lời. Tầng nghiệp vụ gồm các agent chuyên trách như agent trò chuyện thông thường, agent gợi ý sách và agent tư vấn gói hội viên. Mỗi agent chỉ xử lý một nhóm nhiệm vụ nhất định nên hệ thống dễ mở rộng và dễ kiểm soát phạm vi trả lời.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{agent_architecture.png}
+    \caption{Sơ đồ cấu trúc trợ lý AI multi-agent của CTU eLibrary}
+\end{figure}
+
+Về luồng xử lý, khi độc giả gửi câu hỏi, frontend chuyển nội dung hội thoại đến API của backend. Backend phân tích nội dung câu hỏi để xác định người dùng đang cần trò chuyện thông thường, tìm kiếm sách, gợi ý sách hay tư vấn hội viên. Sau đó, bộ điều phối gọi agent phù hợp và sử dụng các công cụ truy vấn dữ liệu như tìm sách theo từ khóa, lấy danh sách thể loại, tác giả, nhà xuất bản hoặc lấy thông tin gói hội viên. Kết quả từ các công cụ được tổng hợp lại thành câu trả lời tự nhiên, sau đó gửi về giao diện chat để hiển thị cho độc giả. Đối với các gợi ý sách, hệ thống chỉ cho phép gợi ý hoặc thêm vào giỏ những sách có mã định danh tồn tại trong cơ sở dữ liệu, nhằm đảm bảo câu trả lời bám sát dữ liệu thật của thư viện.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.95\textwidth,height=0.72\textheight,keepaspectratio]{agent_activity.png}
+    \caption{Sơ đồ luồng hoạt động của trợ lý AI multi-agent}
+\end{figure}
+
+\subsection{Sơ đồ use case quản lý}
+
+Quản lý có toàn bộ quyền của thủ thư và có thêm chức năng quản lý nhân viên. Chức năng này được tách riêng để đảm bảo chỉ người có quyền quản lý mới được tạo, cập nhật hoặc xóa tài khoản nhân viên.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{usecase07.png}
+    \caption{Sơ đồ use case quản lý}
+\end{figure}
+
+Sơ đồ có hai tác nhân là \textbf{Thủ thư} và \textbf{Quản lý}. Quan hệ kế thừa trong sơ đồ thể hiện quản lý có thể sử dụng các chức năng của thủ thư, đồng thời có thêm các quyền riêng để quản lý tài khoản nhân viên.
+
+\begin{longtable}{|p{1cm}|p{4cm}|p{8cm}|}
+\caption{Danh sách use case trong sơ đồ quản lý}\\
+\hline
+\textbf{STT} & \textbf{Use case} & \textbf{Diễn giải} \\
+\hline
+1 & Tra cứu nhân viên & Tìm nhân viên theo từ khóa hoặc thông tin liên quan. \\
+\hline
+2 & Xem danh sách nhân viên & Xem toàn bộ tài khoản nhân viên trong hệ thống. \\
+\hline
+3 & Tạo tài khoản nhân viên & Tạo tài khoản mới cho thủ thư hoặc quản lý. \\
+\hline
+4 & Cập nhật nhân viên & Cập nhật thông tin hồ sơ nhân viên. \\
+\hline
+5 & Phân quyền nhân viên & Gán hoặc thay đổi vai trò của nhân viên trong hệ thống. \\
+\hline
+6 & Xóa mềm nhân viên & Xóa mềm tài khoản nhân viên để ngừng sử dụng nhưng vẫn giữ dữ liệu. \\
+\hline
+7 & Khôi phục nhân viên & Khôi phục tài khoản nhân viên đã bị xóa mềm. \\
+\hline
+8 & Xem dashboard quản trị & Xem thông tin tổng quan của cổng quản trị. \\
+\hline
+9 & Đổi mật khẩu quản lý & Thay đổi mật khẩu của tài khoản quản lý. \\
+\hline
+10 & Sử dụng chức năng thủ thư & Sử dụng toàn bộ chức năng nghiệp vụ mà thủ thư có quyền thực hiện. \\
+\hline
+\end{longtable}
+
+\section{Mô hình cơ sở dữ liệu}
+
+Hệ thống sử dụng MongoDB để lưu trữ dữ liệu. Phần mô hình cơ sở dữ liệu được mô tả theo đúng các thực thể trong ERD. Các tên collection và thuộc tính trong bảng dưới đây được giữ theo đúng từ ngữ thể hiện trong sơ đồ ERD.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{erd.png}
+    \caption{Mô hình cơ sở dữ liệu của hệ thống CTU eLibrary}
+\end{figure}
+
+\subsection{Danh sách collection chính theo ERD}
+
+\begin{longtable}{|p{1cm}|p{4.8cm}|p{7.2cm}|}
+\caption{Danh sách collection trong cơ sở dữ liệu theo ERD}\\
+\hline
+\textbf{STT} & \textbf{Collection} & \textbf{Diễn giải} \\
+\hline
+1 & \texttt{NHA\_XUAT\_BAN} & Lưu thông tin nhà xuất bản. \\
+\hline
+2 & \texttt{SACH} & Lưu thông tin từng quyển sách/bản sao sách cụ thể. \\
+\hline
+3 & \texttt{PHIEU\_MUON} & Lưu thông tin phiếu mượn của độc giả. \\
+\hline
+4 & \texttt{NHANVIEN} & Lưu thông tin nhân viên và vai trò xử lý nghiệp vụ. \\
+\hline
+5 & \texttt{DOC\_GIA} & Lưu thông tin tài khoản độc giả. \\
+\hline
+6 & \texttt{TAC\_GIA} & Lưu thông tin tác giả. \\
+\hline
+7 & \texttt{THE\_LOAI} & Lưu thông tin thể loại sách. \\
+\hline
+8 & \texttt{CHI\_TIET\_PHIEU\_MUON} & Lưu chi tiết sách trong từng phiếu mượn. \\
+\hline
+9 & \texttt{DAU\_SACH} & Lưu thông tin đầu sách, số lượng, giá bìa, hình ảnh và đánh giá. \\
+\hline
+10 & \texttt{PHIEU\_PHAT} & Lưu thông tin phiếu phạt phát sinh từ quá trình mượn trả. \\
+\hline
+11 & \texttt{MA\_GIAM\_GIA} & Lưu thông tin mã giảm giá và điều kiện sử dụng. \\
+\hline
+12 & \texttt{GOI\_DOC\_GIA} & Lưu thông tin gói đọc giả và quyền lợi của gói. \\
+\hline
+13 & \texttt{DANG\_KY\_GOI} & Lưu thông tin đăng ký gói của độc giả. \\
+\hline
+\end{longtable}
+
+\subsection{Mô tả thuộc tính các collection theo ERD}
+
+\begingroup
+\footnotesize
+\begin{longtable}{|p{5.7cm}|p{2.4cm}|p{5.2cm}|}
+\caption{Collection \texttt{NHA\_XUAT\_BAN}}\\
+\hline
+\textbf{Thuộc tính} & \textbf{Kiểu dữ liệu} & \textbf{Ghi chú} \\
+\hline
+maNXB & TXT & Khóa chính \\
+\hline
+tenNXB & TXT &  \\
+\hline
+diachi & TXT &  \\
+\hline
+soDienThoai & TXT &  \\
+\hline
+\end{longtable}
+
+\begin{longtable}{|p{5.7cm}|p{2.4cm}|p{5.2cm}|}
+\caption{Collection \texttt{SACH}}\\
+\hline
+\textbf{Thuộc tính} & \textbf{Kiểu dữ liệu} & \textbf{Ghi chú} \\
+\hline
+maSach & TXT & Khóa chính \\
+\hline
+viTriKe & TXT &  \\
+\hline
+tinhTrang & TXT &  \\
+\hline
+ngayNhap & D &  \\
+\hline
+ghiChu & TXT &  \\
+\hline
+isDeleted & BL &  \\
+\hline
+deletedAt & DT &  \\
+\hline
+\end{longtable}
+
+\begin{longtable}{|p{5.7cm}|p{2.4cm}|p{5.2cm}|}
+\caption{Collection \texttt{PHIEU\_MUON}}\\
+\hline
+\textbf{Thuộc tính} & \textbf{Kiểu dữ liệu} & \textbf{Ghi chú} \\
+\hline
+maPhieu & TXT & Khóa chính \\
+\hline
+ngayMuon & D &  \\
+\hline
+ngayHenTra & D &  \\
+\hline
+ngayTraThucTe & D &  \\
+\hline
+tienCoc & F &  \\
+\hline
+phiMuon & F &  \\
+\hline
+tongTienThanhToan & F &  \\
+\hline
+trangThai & TXT &  \\
+\hline
+soTienGiam & F &  \\
+\hline
+\end{longtable}
+
+\begin{longtable}{|p{5.7cm}|p{2.4cm}|p{5.2cm}|}
+\caption{Collection \texttt{NHANVIEN}}\\
+\hline
+\textbf{Thuộc tính} & \textbf{Kiểu dữ liệu} & \textbf{Ghi chú} \\
+\hline
+maSoNV & TXT & Khóa chính \\
+\hline
+hoTenNV & TXT &  \\
+\hline
+matKhau & TXT &  \\
+\hline
+chucVu & TXT &  \\
+\hline
+diachi & TXT &  \\
+\hline
+soDienThoai & TXT &  \\
+\hline
+isDeleted & BL &  \\
+\hline
+deletedAt & DT &  \\
+\hline
+\end{longtable}
+
+\begin{longtable}{|p{5.7cm}|p{2.4cm}|p{5.2cm}|}
+\caption{Collection \texttt{DOC\_GIA}}\\
+\hline
+\textbf{Thuộc tính} & \textbf{Kiểu dữ liệu} & \textbf{Ghi chú} \\
+\hline
+maDocGia & TXT & Khóa chính \\
+\hline
+hoLot & TXT &  \\
+\hline
+ten & TXT &  \\
+\hline
+ngaySinh & D &  \\
+\hline
+gioiTinh & BL &  \\
+\hline
+diachi & TXT &  \\
+\hline
+dienThoai & TXT &  \\
+\hline
+email & TXT &  \\
+\hline
+matKhau & TXT &  \\
+\hline
+trangThai & TXT &  \\
+\hline
+isDeleted & BL &  \\
+\hline
+deletedAt & DT &  \\
+\hline
+\end{longtable}
+
+\begin{longtable}{|p{5.7cm}|p{2.4cm}|p{5.2cm}|}
+\caption{Collection \texttt{TAC\_GIA}}\\
+\hline
+\textbf{Thuộc tính} & \textbf{Kiểu dữ liệu} & \textbf{Ghi chú} \\
+\hline
+maTacGia & TXT & Khóa chính \\
+\hline
+tenTacGia & TXT &  \\
+\hline
+ngaySinh & D &  \\
+\hline
+\end{longtable}
+
+\begin{longtable}{|p{5.7cm}|p{2.4cm}|p{5.2cm}|}
+\caption{Collection \texttt{THE\_LOAI}}\\
+\hline
+\textbf{Thuộc tính} & \textbf{Kiểu dữ liệu} & \textbf{Ghi chú} \\
+\hline
+maTheLoai & TXT & Khóa chính \\
+\hline
+tenTheLoai & TXT &  \\
+\hline
+moTa & TXT &  \\
+\hline
+\end{longtable}
+
+\begin{longtable}{|p{5.7cm}|p{2.4cm}|p{5.2cm}|}
+\caption{Collection \texttt{CHI\_TIET\_PHIEU\_MUON}}\\
+\hline
+\textbf{Thuộc tính} & \textbf{Kiểu dữ liệu} & \textbf{Ghi chú} \\
+\hline
+tinhTrangLucMuon & TXT &  \\
+\hline
+tinhTrangSauMuon & TXT &  \\
+\hline
+daTraChua & BL &  \\
+\hline
+ngayTraThucTe & D &  \\
+\hline
+\end{longtable}
+
+\begin{longtable}{|p{5.7cm}|p{2.4cm}|p{5.2cm}|}
+\caption{Collection \texttt{DAU\_SACH}}\\
+\hline
+\textbf{Thuộc tính} & \textbf{Kiểu dữ liệu} & \textbf{Ghi chú} \\
+\hline
+maDauSach & TXT & Khóa chính \\
+\hline
+namSanXuat & D &  \\
+\hline
+tongSoLuongQuanLy & I &  \\
+\hline
+tenSach & TXT &  \\
+\hline
+tongSoLuongKhaDung & I &  \\
+\hline
+giaBia & F &  \\
+\hline
+hinhAnh & TXT &  \\
+\hline
+soLuotMuon & I &  \\
+\hline
+binhLuan & TXT &  \\
+\hline
+rating & F &  \\
+\hline
+soLuotDanhGia & I &  \\
+\hline
+trangThai & TXT &  \\
+\hline
+isDeleted & BL &  \\
+\hline
+yeuThich & TXT &  \\
+\hline
+deletedAt & DT &  \\
+\hline
+\end{longtable}
+
+\begin{longtable}{|p{5.7cm}|p{2.4cm}|p{5.2cm}|}
+\caption{Collection \texttt{PHIEU\_PHAT}}\\
+\hline
+\textbf{Thuộc tính} & \textbf{Kiểu dữ liệu} & \textbf{Ghi chú} \\
+\hline
+maPhieuPhat & TXT & Khóa chính \\
+\hline
+lyDoPhat & TXT &  \\
+\hline
+soTienPhat & F &  \\
+\hline
+ngayLap & DT &  \\
+\hline
+daThanhToan & BL &  \\
+\hline
+\end{longtable}
+
+\begin{longtable}{|p{5.7cm}|p{2.4cm}|p{5.2cm}|}
+\caption{Collection \texttt{MA\_GIAM\_GIA}}\\
+\hline
+\textbf{Thuộc tính} & \textbf{Kiểu dữ liệu} & \textbf{Ghi chú} \\
+\hline
+maCode & TXT & Khóa chính \\
+\hline
+tenKhuyenMai & TXT &  \\
+\hline
+giaTriGiam & F &  \\
+\hline
+giaTriDonToiThieu & F &  \\
+\hline
+ngayBatDau & DT &  \\
+\hline
+ngayKetThuc & DT &  \\
+\hline
+soLuotDaDung & I &  \\
+\hline
+soLuongMaToiDa & I &  \\
+\hline
+\end{longtable}
+
+\begin{longtable}{|p{5.7cm}|p{2.4cm}|p{5.2cm}|}
+\caption{Collection \texttt{GOI\_DOC\_GIA}}\\
+\hline
+\textbf{Thuộc tính} & \textbf{Kiểu dữ liệu} & \textbf{Ghi chú} \\
+\hline
+maGoi & TXT & Khóa chính \\
+\hline
+tenGoi & TXT &  \\
+\hline
+giaTien & F &  \\
+\hline
+soNgayHieuLuc & I &  \\
+\hline
+soSachToiDa & I &  \\
+\hline
+soNgayMuonToiDa & I &  \\
+\hline
+mienTienCoc & BL &  \\
+\hline
+nguoiDuocMoi & TXT &  \\
+\hline
+\end{longtable}
+
+\begin{longtable}{|p{5.7cm}|p{2.4cm}|p{5.2cm}|}
+\caption{Collection \texttt{DANG\_KY\_GOI}}\\
+\hline
+\textbf{Thuộc tính} & \textbf{Kiểu dữ liệu} & \textbf{Ghi chú} \\
+\hline
+maDangKy & TXT & Khóa chính \\
+\hline
+ngayBatDau & DT &  \\
+\hline
+ngayKetThuc & DT &  \\
+\hline
+tongTien & F &  \\
+\hline
+trangThai & TXT &  \\
+\hline
+\end{longtable}
+\endgroup
+
+\end{document}

@@ -1,5 +1,16 @@
 <template>
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+    <!-- Nút quay lại trang trước -->
+    <div class="flex items-center">
+      <button 
+        @click="router.back()" 
+        class="flex items-center space-x-2 text-slate-500 hover:text-primary font-bold text-sm bg-white hover:bg-slate-50 border border-slate-200 px-4 py-2 rounded-2xl shadow-sm transition-all"
+      >
+        <ChevronLeft class="h-4 w-4" />
+        <span>Quay lại</span>
+      </button>
+    </div>
+
     <div v-if="book" class="grid grid-cols-1 lg:grid-cols-12 gap-8">
       
       <!-- Cột trái: Thông tin tác phẩm & Bình luận (8/12) -->

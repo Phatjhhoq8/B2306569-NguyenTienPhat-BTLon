@@ -450,8 +450,8 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch, computed } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { ref, onMounted, watch, computed, nextTick } from 'vue';
+import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router';
 import api from '../services/api';
 import { Search, BookOpen, Filter, Check, User, ChevronDown, ChevronUp, ShoppingBag } from '@lucide/vue';
 import { useAuthStore } from '../stores/auth';
@@ -465,6 +465,12 @@ const authStore = useAuthStore();
 const cartStore = useCartStore();
 const toast = useToastStore();
 const confirmModal = ref(null);
+
+onBeforeRouteLeave((to, from) => {
+  if (to.name === 'book-detail') {
+    sessionStorage.setItem('catalog_scroll_y', window.scrollY);
+  }
+});
 
 const categories = ref([]);
 const authors = ref([]);
@@ -680,6 +686,18 @@ const fetchBooks = async () => {
       books.value = booksData;
       totalCount.value = res.data.totalCount;
       totalPages.value = Math.ceil(totalCount.value / limit);
+
+      // Phục hồi vị trí cuộn sau khi DOM render xong
+      nextTick(() => {
+        const savedScroll = sessionStorage.getItem('catalog_scroll_y');
+        if (savedScroll) {
+          window.scrollTo({
+            top: parseInt(savedScroll, 10),
+            behavior: 'auto'
+          });
+          sessionStorage.removeItem('catalog_scroll_y');
+        }
+      });
     }
   } catch (error) {
     console.error('Catalog fetch error:', error);

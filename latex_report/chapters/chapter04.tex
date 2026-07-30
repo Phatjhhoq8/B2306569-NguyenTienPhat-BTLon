@@ -1,0 +1,292 @@
+\documentclass[../main.tex]{subfiles}
+
+\begin{document}
+
+\section{Giao diện người dùng}
+
+\subsection{Giao diện trang chủ}
+
+Trang chủ là màn hình đầu tiên khi người dùng truy cập hệ thống. Giao diện hiển thị thông tin giới thiệu thư viện, sách nổi bật, thanh tìm kiếm nhanh và các liên kết đến danh mục sách, gói hội viên, giới thiệu và liên hệ.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{trangchu.png}
+    \caption{Giao diện trang chủ người dùng}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{trangchu1.png}
+    \caption{Khu vực giới thiệu và sách nổi bật trên trang chủ}
+\end{figure}
+
+\subsection{Giao diện đăng ký tài khoản}
+
+Giao diện đăng ký cho phép khách nhập các thông tin cần thiết như họ tên, email, số điện thoại, địa chỉ, ngày sinh, giới tính và mật khẩu. Sau khi đăng ký thành công, người dùng có thể đăng nhập để sử dụng các chức năng của độc giả.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{dangky.png}
+    \caption{Giao diện đăng ký tài khoản}
+\end{figure}
+
+\subsection{Giao diện đăng nhập}
+
+Hệ thống có giao diện đăng nhập dành cho độc giả và giao diện đăng nhập dành cho nhân viên. Độc giả đăng nhập bằng email và mật khẩu. Nhân viên đăng nhập bằng mã số nhân viên và mật khẩu để vào cổng quản trị.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{dangnhap.png}
+    \caption{Giao diện đăng nhập}
+\end{figure}
+
+\subsection{Giao diện danh mục sách}
+
+Trang danh mục sách hiển thị danh sách đầu sách có phân trang. Người dùng có thể tìm kiếm theo từ khóa, lọc theo thể loại, tác giả, nhà xuất bản và trạng thái sách. Mỗi sách hiển thị ảnh bìa, tên sách, thông tin cơ bản, đánh giá và số lượng còn lại.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{danhmucsach.png}
+    \caption{Giao diện danh mục sách}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{danhmucsach1.png}
+    \caption{Giao diện bộ lọc và danh sách đầu sách}
+\end{figure}
+
+\subsection{Giao diện chi tiết sách}
+
+Trang chi tiết sách hiển thị đầy đủ thông tin của một đầu sách như tên sách, tác giả, thể loại, nhà xuất bản, năm xuất bản, giá bìa, mô tả, số lượng khả dụng và đánh giá của độc giả. Tại đây, độc giả có thể thích sách, viết đánh giá hoặc thêm sách vào giỏ mượn.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{chitiet.png}
+    \caption{Giao diện chi tiết sách}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{chitiet1.png}
+    \caption{Khu vực đánh giá và thông tin liên quan của sách}
+\end{figure}
+
+\subsection{Giao diện giỏ mượn}
+
+Giỏ mượn hiển thị danh sách sách mà độc giả đã chọn. Người dùng có thể thay đổi số lượng, xóa từng sách, xóa toàn bộ giỏ mượn, nhập mã giảm giá và xác nhận tạo phiếu mượn. Dữ liệu giỏ mượn được lưu bằng \texttt{localStorage} để tránh mất dữ liệu khi tải lại trang.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{giomuon.png}
+    \caption{Giao diện giỏ mượn và tạo phiếu mượn}
+\end{figure}
+
+\subsection{Giao diện phiếu mượn cá nhân}
+
+Trang phiếu mượn cá nhân cho phép độc giả theo dõi các phiếu đã tạo, trạng thái xử lý, ngày mượn, ngày hẹn trả, tổng tiền và các thao tác như hủy, gia hạn hoặc thanh toán theo điều kiện của từng phiếu.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{giaodienphieumuoncanhan.png}
+    \caption{Giao diện phiếu mượn cá nhân}
+\end{figure}
+
+\subsection{Giao diện gói hội viên}
+
+Trang gói hội viên hiển thị các gói đang có trong hệ thống, giá tiền, thời hạn, số sách tối đa được mượn, số ngày mượn tối đa và các quyền lợi đi kèm. Độc giả có thể đăng ký gói và thanh toán bằng mô phỏng thẻ tín dụng hoặc VietQR.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{goihoivien.png}
+    \caption{Giao diện gói hội viên}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{sosanhgoi.png}
+    \caption{Giao diện so sánh các gói hội viên}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{thanhtoanqr.png}
+    \caption{Giao diện thanh toán bằng VietQR mô phỏng}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\textwidth]{thanhtoanthe.png}
+    \caption{Giao diện thanh toán bằng thẻ mô phỏng}
+\end{figure}
+
+\subsection{Giao diện trợ lý AI}
+
+Trợ lý AI được hiển thị dưới dạng widget chat trên giao diện người dùng. Độc giả có thể hỏi về sách theo tên, tác giả, thể loại, nội dung, nhân vật hoặc tâm trạng đọc. Trợ lý trả về gợi ý sách phù hợp và hỗ trợ thêm sách vào giỏ mượn khi sách có trong thư viện.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{trolyai.png}
+    \caption{Giao diện trợ lý AI}
+\end{figure}
+
+\section{Giao diện quản trị viên}
+
+\subsection{Giao diện dashboard quản trị}
+
+Dashboard quản trị hiển thị tổng quan số lượng sách, độc giả, phiếu mượn và thống kê tài chính. Từ dashboard, nhân viên có thể điều hướng nhanh đến các chức năng quản lý đầu sách, mượn trả, tài chính, độc giả, nhân viên, mã giảm giá và cấu hình hệ thống.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{dashboard.png}
+    \caption{Giao diện dashboard quản trị}
+\end{figure}
+
+\subsection{Giao diện quản lý đầu sách}
+
+Trang quản lý đầu sách cho phép nhân viên xem danh sách đầu sách, tìm kiếm, thêm mới, cập nhật, xóa mềm, khôi phục và chuyển trạng thái phục vụ. Khi thêm hoặc sửa đầu sách, nhân viên nhập các thông tin như tên sách, tác giả, thể loại, nhà xuất bản, năm xuất bản, giá bìa, số lượng và ảnh bìa.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{qlydausach.png}
+    \caption{Giao diện quản lý đầu sách}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{themdausach.png}
+    \caption{Giao diện thêm đầu sách}
+\end{figure}
+
+\subsection{Giao diện quản lý bản sao sách}
+
+Trang quản lý bản sao sách hiển thị danh sách từng cuốn sách vật lý thuộc một đầu sách. Nhân viên có thể thêm bản sao mới, cập nhật vị trí kệ, tình trạng sách và xóa mềm bản sao khi cần.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{bansaosach.png}
+    \caption{Giao diện quản lý bản sao sách}
+\end{figure}
+
+\subsection{Giao diện xử lý mượn trả}
+
+Giao diện xử lý mượn trả cho phép nhân viên xem toàn bộ phiếu mượn, duyệt phiếu, xác nhận độc giả đã nhận sách, xử lý trả sách, hủy phiếu và cập nhật trạng thái thanh toán.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{muontra.png}
+    \caption{Giao diện xử lý mượn trả}
+\end{figure}
+
+\subsection{Giao diện thống kê tài chính}
+
+Trang tài chính hiển thị doanh thu từ phiếu mượn, khoản phạt phát sinh và các khoản thanh toán gói hội viên. Nhân viên có thể lọc thống kê theo khoảng thời gian để theo dõi tình hình hoạt động của hệ thống.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{thongketaichinh.png}
+    \caption{Giao diện thống kê tài chính}
+\end{figure}
+
+\subsection{Giao diện quản lý độc giả}
+
+Trang quản lý độc giả hiển thị danh sách tài khoản độc giả, hỗ trợ tìm kiếm, xem chi tiết, khóa hoặc mở khóa tài khoản, xóa mềm và khôi phục độc giả.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{quanlydocgia.png}
+    \caption{Giao diện quản lý độc giả}
+\end{figure}
+
+\subsection{Giao diện quản lý nhân viên}
+
+Chức năng quản lý nhân viên chỉ dành cho tài khoản quản lý. Giao diện cho phép xem danh sách nhân viên, tạo nhân viên mới, cập nhật thông tin, xóa mềm, khôi phục và phân biệt vai trò thủ thư hoặc quản lý.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{quanlynhanvien.png}
+    \caption{Giao diện quản lý nhân viên}
+\end{figure}
+
+\subsection{Giao diện quản lý mã giảm giá và cấu hình website}
+
+Nhân viên có thể tạo mã giảm giá, cập nhật thời hạn, giá trị giảm, điều kiện đơn tối thiểu và số lượt sử dụng. Ngoài ra, hệ thống còn có trang cấu hình nội dung cho trang chủ, giới thiệu, danh mục, gói hội viên và liên hệ.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{cauhinhmagiamgia.png}
+    \caption{Giao diện quản lý mã giảm giá}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{cauhinhquanlygoi.png}
+    \caption{Giao diện quản lý gói hội viên}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\textwidth]{cauhinhgiaodien.png}
+    \caption{Giao diện cấu hình nội dung website}
+\end{figure}
+
+\section{Triển khai ứng dụng}
+
+\subsection{Cấu trúc thư mục dự án}
+
+Mã nguồn hệ thống được tổ chức thành các phần chính gồm backend, frontend, latex\_report, report và agent. Trong đó, thư mục backend chứa mã nguồn dịch vụ API, cơ sở dữ liệu MongoDB và các script nạp/crawler dữ liệu sách. Thư mục frontend chứa mã nguồn giao diện ứng dụng Vue 3. Thư mục latex\_report chứa mã nguồn báo cáo LaTeX cùng các tệp thiết kế hệ thống như sơ đồ cơ sở dữ liệu (database\_schema.md, erd.cdm) và sơ đồ use case. Thư mục report chứa các báo cáo phát triển tính năng chi tiết theo quy định, và thư mục agent chứa tài liệu cùng máy chủ hỗ trợ trợ lý AI.
+
+Dữ liệu sách minh họa của hệ thống được tổng hợp từ các nguồn tham khảo công khai như Fahasa, CellphoneS và Shopee. Các nguồn này được dùng để tham khảo thông tin sách, hình ảnh bìa, mô tả, giá bìa và cách trình bày sản phẩm, từ đó xây dựng dữ liệu mẫu phù hợp cho chức năng tra cứu và mượn sách trong CTU eLibrary.
+
+\begin{figure}[H]
+\dirtree{%
+.1 B2306569-NguyenTienPhat-BTLon/.
+.2 .agents/\DTcomment{Thư mục quy tắc phát triển dự án}.
+.2 agent/\DTcomment{Máy chủ phục vụ trợ lý AI}.
+.2 backend/\DTcomment{Dịch vụ API Node.js, Express.js \& MongoDB}.
+.3 src/.
+.4 config/\DTcomment{Cấu hình kết nối DB \& hệ thống}.
+.4 middlewares/\DTcomment{Middleware xác thực, phân quyền \& bắt lỗi}.
+.4 models/\DTcomment{Định nghĩa các Mongoose Schemas}.
+.4 modules/\DTcomment{Mã nguồn các chức năng nghiệp vụ}.
+.4 scripts/\DTcomment{Các script seed dữ liệu và crawler sách}.
+.4 tests/\DTcomment{Kiểm thử tích hợp hệ thống}.
+.2 frontend/\DTcomment{Giao diện Vue 3, Vite \& Tailwind CSS}.
+.3 src/.
+.4 components/\DTcomment{Các UI components dùng chung}.
+.4 router/\DTcomment{Cấu hình phân tuyến trang web}.
+.4 stores/\DTcomment{Pinia store quản lý state auth, cart}.
+.4 views/\DTcomment{Các trang màn hình giao diện}.
+.2 latex\_report/\DTcomment{Tài liệu báo cáo LaTeX và file thiết kế CSDL, Use Case}.
+.2 report/\DTcomment{Các file markdown báo cáo tính năng}.
+}
+\caption{Cấu trúc thư mục chính của dự án}
+\end{figure}
+
+\subsection{Quy trình cài đặt và chạy hệ thống}
+
+Để chạy hệ thống ở môi trường cục bộ, cần cài đặt Node.js và MongoDB. Backend được khởi động tại cổng \texttt{3000}, frontend chạy bằng Vite tại cổng \texttt{5173}. Dữ liệu mẫu có thể được nạp bằng lệnh seed trong backend.
+
+\begin{table}[H]
+\centering
+\caption{Các lệnh chạy hệ thống}
+\begin{tabularx}{\textwidth}{|p{4cm}|X|}
+\hline
+\textbf{Thành phần} & \textbf{Lệnh thực hiện} \\
+\hline
+Cài đặt backend & \texttt{cd backend} và \texttt{npm install} \\
+\hline
+Nạp dữ liệu mẫu & \texttt{npm run seed} \\
+\hline
+Chạy backend & \texttt{npm run dev} \\
+\hline
+Cài đặt frontend & \texttt{cd frontend} và \texttt{npm install} \\
+\hline
+Chạy frontend & \texttt{npm run dev} \\
+\hline
+Chạy kiểm thử backend & \texttt{npm test} \\
+\hline
+\end{tabularx}
+\end{table}
+
+\end{document}

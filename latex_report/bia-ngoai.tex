@@ -1,0 +1,43 @@
+\documentclass[main.tex]{subfiles}
+
+\begin{document}
+\begin{titlepage}
+\begin{tikzpicture}[remember picture,overlay]
+    \coordinate (A) at ([xshift=1.65cm,yshift=-1.25cm]current page.north west);
+    \coordinate (B) at ([xshift=-1.65cm,yshift=1.25cm]current page.south east);
+    \coordinate (C) at ([xshift=1.75cm,yshift=-1.35cm]current page.north west);
+    \coordinate (D) at ([xshift=-1.75cm,yshift=1.35cm]current page.south east);
+    \draw[blue!45!black,line width=1.3pt] (A) rectangle (B);
+    \draw[blue!45!black,line width=1.05pt] (C) rectangle (D);
+
+    \draw[blue!45!black,line width=0.9pt] ([xshift=-0.12cm,yshift=0.12cm]A) rectangle ++(0.34cm,-0.34cm);
+    \draw[blue!45!black,line width=0.9pt] ([xshift=-0.22cm,yshift=0.12cm]A -| B) rectangle ++(0.34cm,-0.34cm);
+    \draw[blue!45!black,line width=0.9pt] ([xshift=-0.12cm,yshift=0.22cm]A |- B) rectangle ++(0.34cm,-0.34cm);
+    \draw[blue!45!black,line width=0.9pt] ([xshift=-0.22cm,yshift=0.22cm]B) rectangle ++(0.34cm,-0.34cm);
+\end{tikzpicture}
+\begin{center}
+\vspace*{-0.15cm}
+
+{\fontsize{15}{18}\selectfont\bfseries\boldmath ĐẠI HỌC CẦN THƠ\\[0.12cm]}
+{\fontsize{14}{17}\selectfont\bfseries\boldmath \makebox[\textwidth][c]{TRƯỜNG CÔNG NGHỆ THÔNG TIN \& TRUYỀN THÔNG}\\[1.05cm]}
+
+\includegraphics[width=0.20\textwidth]{logo.png}\\[1.6cm]
+
+{\Large\bfseries\boldmath BÁO CÁO PHÁT TRIỂN ỨNG DỤNG WEB\\[1.6cm]}
+
+{\large\bfseries\boldmath Đề tài\\[0.5cm]}
+{\Large\bfseries\boldmath XÂY DỰNG HỆ THỐNG MƯỢN SÁCH ONLINE\\[0.2cm] CTU ELIBRARY}
+\\[3.2cm]
+
+\begin{tabular}{p{0.45\textwidth}p{0.42\textwidth}}
+    \textbf{Giáo viên hướng dẫn} & \textbf{Sinh viên thực hiện} \\[0.4cm]
+    ThS Nguyễn Minh Trung & Tên: Nguyễn Tiến Phát \\[0.3cm]
+    & MSSV: B2306569
+\end{tabular}
+\\[4cm]
+
+\textbf{Cần Thơ, tháng 07 năm 2026}
+
+\end{center}
+\end{titlepage}
+\end{document}

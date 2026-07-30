@@ -1,0 +1,149 @@
+\documentclass[../main.tex]{subfiles}
+
+\begin{document}
+
+\section{Mô tả bài toán}
+
+CTU eLibrary là hệ thống mượn sách online phục vụ cho hoạt động thư viện. Hệ thống cho phép khách truy cập xem thông tin công khai, tra cứu sách và đăng ký tài khoản. Sau khi đăng nhập, độc giả có thể thêm sách vào giỏ mượn, tạo phiếu mượn, theo dõi trạng thái mượn trả, thanh toán các khoản phí và đăng ký gói hội viên.
+
+Đối với nhân viên thư viện, hệ thống cung cấp các chức năng quản lý dữ liệu sách, độc giả và nghiệp vụ mượn trả. Nhân viên có thể thêm, cập nhật, xóa mềm hoặc khôi phục đầu sách, quản lý bản sao sách vật lý, duyệt phiếu mượn, xác nhận độc giả đã nhận sách và xử lý trả sách. Khi phát sinh trả trễ, mất sách hoặc hư hỏng, hệ thống tự động tính khoản phạt và ghi nhận vào thanh toán của phiếu mượn. Đối với quản lý, hệ thống bổ sung quyền quản lý danh sách nhân viên.
+
+Hệ thống còn hỗ trợ các chức năng mở rộng như mã giảm giá, gói hội viên, thống kê tài chính, cấu hình nội dung website và trợ lý AI. Các chức năng này giúp hệ thống phù hợp hơn với nhu cầu vận hành thực tế thay vì chỉ dừng lại ở chức năng mượn trả đơn giản.
+
+\section{Yêu cầu bài toán}
+
+\subsection{Đối với khách chưa đăng nhập}
+
+\begin{itemize}
+    \item Xem trang chủ, trang giới thiệu và trang liên hệ.
+    \item Xem danh mục sách, chi tiết sách, danh sách thể loại, tác giả và nhà xuất bản.
+    \item Tìm kiếm sách theo từ khóa.
+    \item Xem thông tin các gói hội viên.
+    \item Đăng ký tài khoản độc giả hoặc đăng nhập vào hệ thống.
+\end{itemize}
+
+\subsection{Đối với độc giả}
+
+\begin{itemize}
+    \item Cập nhật thông tin cá nhân và đổi mật khẩu.
+    \item Tìm kiếm, lọc và xem chi tiết sách.
+    \item Thích hoặc bỏ thích sách, viết đánh giá và bình luận sách.
+    \item Thêm sách vào giỏ mượn, cập nhật số lượng và xóa sách khỏi giỏ mượn.
+    \item Tạo phiếu mượn, xem trạng thái phiếu mượn, hủy phiếu mượn theo điều kiện và gia hạn phiếu mượn.
+    \item Thanh toán phiếu mượn, khoản phạt phát sinh và gói hội viên.
+    \item Xem thống kê tài chính cá nhân.
+    \item Sử dụng trợ lý AI để tìm sách và tư vấn gói hội viên.
+\end{itemize}
+
+\subsection{Đối với thủ thư}
+
+\begin{itemize}
+    \item Quản lý đầu sách, bản sao sách, tác giả, thể loại và nhà xuất bản.
+    \item Quản lý độc giả, khóa hoặc mở khóa tài khoản độc giả.
+    \item Xem, duyệt, hủy, gia hạn và xử lý trả sách cho phiếu mượn.
+    \item Xử lý trả sách và kiểm tra khoản phạt được hệ thống tính tự động.
+    \item Theo dõi thống kê tài chính.
+    \item Quản lý gói hội viên, mã giảm giá và nội dung website.
+\end{itemize}
+
+\subsection{Đối với quản lý}
+
+\begin{itemize}
+    \item Có toàn bộ quyền của thủ thư.
+    \item Xem danh sách nhân viên.
+    \item Tạo, cập nhật, xóa mềm và khôi phục nhân viên.
+    \item Phân biệt vai trò thủ thư và quản lý.
+\end{itemize}
+
+\section{Ngôn ngữ lập trình và công cụ liên quan}
+
+\subsection{Vue.js}
+
+Vue.js là một framework JavaScript mã nguồn mở dùng để xây dựng giao diện người dùng và các ứng dụng web một trang. Vue.js hoạt động theo hướng component, cho phép chia giao diện thành nhiều thành phần nhỏ, mỗi thành phần có phần hiển thị, dữ liệu và xử lý riêng. Cách tổ chức này giúp mã nguồn dễ đọc, dễ bảo trì và thuận tiện khi mở rộng chức năng.
+
+Trong đề tài, Vue 3 được sử dụng để xây dựng các màn hình như trang chủ, danh mục sách, chi tiết sách, giỏ mượn, hồ sơ độc giả và trang quản trị. Vue Router đảm nhiệm việc điều hướng giữa các trang, còn Pinia hỗ trợ quản lý trạng thái đăng nhập, thông tin người dùng và dữ liệu giỏ mượn trên frontend.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.35\textwidth]{vuejs.png}
+    \caption{Vue.js}
+\end{figure}
+
+\subsection{Node.js và Express.js}
+
+Node.js là môi trường thực thi JavaScript phía server, cho phép chạy mã JavaScript bên ngoài trình duyệt. Nhờ cơ chế xử lý bất đồng bộ, Node.js phù hợp để xây dựng các ứng dụng web cần xử lý nhiều yêu cầu vào ra như truy vấn cơ sở dữ liệu, đọc ghi tập tin và giao tiếp API. Express.js là một framework web chạy trên Node.js, cung cấp các công cụ đơn giản để xây dựng route, middleware và API.
+
+Trong CTU eLibrary, Node.js và Express.js được sử dụng để xây dựng backend theo mô hình client--server. Express.js đảm nhiệm việc tiếp nhận yêu cầu từ frontend, xử lý middleware xác thực và phân quyền, kết nối đến các service nghiệp vụ, trả về dữ liệu JSON và phục vụ tài nguyên upload như ảnh bìa sách.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.45\textwidth]{nodejs_express.png}
+    \caption{Node.js và Express.js}
+\end{figure}
+
+\subsection{MongoDB và Mongoose}
+
+MongoDB là hệ quản trị cơ sở dữ liệu NoSQL, lưu trữ dữ liệu dưới dạng document thay vì các bảng quan hệ truyền thống. Dữ liệu trong MongoDB có cấu trúc linh hoạt, phù hợp với các ứng dụng cần thay đổi mô hình dữ liệu trong quá trình phát triển. Mongoose là thư viện hỗ trợ làm việc với MongoDB trong Node.js, cho phép định nghĩa schema, kiểm tra dữ liệu và thao tác với collection thông qua model.
+
+Trong đề tài, MongoDB và Mongoose được sử dụng để lưu trữ các nhóm dữ liệu như đầu sách, bản sao sách, tác giả, thể loại, độc giả, phiếu mượn, phiếu phạt, mã giảm giá và đăng ký gói hội viên. Việc định nghĩa schema bằng Mongoose giúp dữ liệu có cấu trúc rõ ràng hơn và hỗ trợ tốt cho việc kiểm tra tính hợp lệ trước khi lưu vào cơ sở dữ liệu.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.45\textwidth]{mongo_mongoose.png}
+    \caption{MongoDB và Mongoose}
+\end{figure}
+
+\subsection{Tailwind CSS}
+
+Tailwind CSS là framework CSS theo hướng utility-first, cung cấp nhiều lớp tiện ích có sẵn để định nghĩa giao diện trực tiếp trong mã HTML hoặc template. Thay vì viết nhiều file CSS riêng, lập trình viên có thể kết hợp các lớp như màu sắc, kích thước, khoảng cách, căn chỉnh, bo góc và hiệu ứng để xây dựng giao diện nhanh chóng. Tailwind CSS cũng hỗ trợ thiết kế responsive, giúp giao diện thích ứng với nhiều kích thước màn hình.
+
+Trong đề tài, Tailwind CSS được sử dụng để thiết kế giao diện trang public và trang quản trị. Công cụ này hỗ trợ xây dựng các thành phần như nút bấm, bảng dữ liệu, thẻ thông tin, modal, form nhập liệu và bố cục responsive cho máy tính cũng như thiết bị di động.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.40\textwidth]{tailwind.png}
+    \caption{Tailwind CSS}
+\end{figure}
+
+\subsection{Visual Studio Code}
+
+Visual Studio Code là trình soạn thảo mã nguồn miễn phí do Microsoft phát triển, được sử dụng phổ biến trong lập trình web và phát triển phần mềm. Công cụ này hỗ trợ nhiều ngôn ngữ lập trình, có hệ thống tiện ích mở rộng phong phú và tích hợp các chức năng cần thiết như terminal, gợi ý mã, định dạng mã và quản lý mã nguồn với Git.
+
+Trong quá trình thực hiện đề tài, Visual Studio Code được sử dụng làm môi trường soạn thảo chính cho frontend, backend và báo cáo. Nhờ khả năng hỗ trợ tốt cho JavaScript, Vue.js, Node.js và Git, công cụ này giúp việc viết mã, kiểm thử, chỉnh sửa và quản lý thư mục dự án thuận tiện hơn.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.30\textwidth]{vscode.png}
+    \caption{Visual Studio Code}
+\end{figure}
+
+\section{Bảng tổng hợp yêu cầu chức năng}
+
+\begin{longtable}{|p{1cm}|p{4cm}|p{8cm}|}
+\caption{Bảng tổng hợp chức năng chính của hệ thống CTU eLibrary}\\
+\hline
+\textbf{STT} & \textbf{Nhóm chức năng} & \textbf{Mô tả} \\
+\hline
+1 & Xác thực và phân quyền & Đăng ký, đăng nhập, đăng xuất, đổi mật khẩu, quên mật khẩu, bảo vệ route và phân quyền theo vai trò. \\
+\hline
+2 & Danh mục sách & Tra cứu sách, lọc theo thể loại, tác giả, nhà xuất bản, xem trạng thái còn sách và chi tiết đầu sách. \\
+\hline
+3 & Giỏ mượn và phiếu mượn & Thêm sách vào giỏ mượn, tạo phiếu mượn, hủy, gia hạn, thanh toán và theo dõi trạng thái phiếu. \\
+\hline
+4 & Quản lý sách & Quản lý đầu sách, bản sao sách, tác giả, thể loại, nhà xuất bản, ảnh bìa và số lượng khả dụng. \\
+\hline
+5 & Quản lý độc giả & Xem danh sách độc giả, tìm kiếm, khóa/mở khóa, xóa mềm và khôi phục độc giả. \\
+\hline
+6 & Quản lý nhân viên & Chỉ quản lý được tạo, cập nhật, xóa mềm, khôi phục nhân viên và phân quyền chức vụ. \\
+\hline
+7 & Khoản phạt & Tự động tính khoản phạt khi trả trễ, mất sách hoặc hư hỏng và ghi nhận vào thanh toán phiếu mượn. \\
+\hline
+8 & Tài chính & Thống kê doanh thu từ phiếu mượn, phiếu phạt và theo dõi tình trạng thanh toán. \\
+\hline
+9 & Hội viên và khuyến mãi & Quản lý gói hội viên, đăng ký gói, thanh toán gói và áp dụng mã giảm giá. \\
+\hline
+10 & Trợ lý AI & Tư vấn tìm sách, gợi ý sách, tư vấn gói hội viên và hỗ trợ thêm sách vào giỏ mượn. \\
+\hline
+\end{longtable}
+
+\end{document}

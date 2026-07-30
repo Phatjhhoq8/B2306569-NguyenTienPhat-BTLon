@@ -1,0 +1,67 @@
+\documentclass[../main.tex]{subfiles}
+
+\begin{document}
+
+\section{Đặt vấn đề}
+
+Trong bối cảnh chuyển đổi số diễn ra mạnh mẽ, việc ứng dụng công nghệ thông tin vào hoạt động thư viện trở thành yêu cầu cần thiết nhằm nâng cao hiệu quả quản lý và chất lượng phục vụ độc giả. Đối với mô hình quản lý truyền thống, các nghiệp vụ như lưu trữ thông tin sách, kiểm tra tình trạng bản sao, lập phiếu mượn, theo dõi hạn trả, xử lý phiếu phạt và tổng hợp doanh thu thường phụ thuộc nhiều vào thao tác thủ công. Khi số lượng đầu sách, độc giả và giao dịch mượn trả tăng lên, cách quản lý này dễ phát sinh sai sót, gây mất thời gian tra cứu và khó đảm bảo tính nhất quán của dữ liệu.
+
+Song song với nhu cầu quản lý của thư viện, độc giả ngày càng mong muốn được tiếp cận thông tin sách nhanh chóng và thuận tiện hơn. Thay vì phải đến trực tiếp thư viện để kiểm tra sách, độc giả cần có thể tra cứu danh mục, xem chi tiết sách, thêm sách vào giỏ mượn, tạo phiếu mượn, theo dõi trạng thái xử lý và thực hiện thanh toán các khoản phí ngay trên hệ thống. Về phía nhân viên thư viện, một công cụ quản trị tập trung cũng cần thiết để hỗ trợ quản lý sách, bản sao sách, độc giả, phiếu mượn, phiếu phạt, tài chính, gói hội viên, mã giảm giá và nội dung hiển thị trên website.
+
+Xuất phát từ thực tế trên, đề tài ``Xây dựng hệ thống mượn sách online - CTU eLibrary'' được thực hiện nhằm xây dựng một website hỗ trợ hoạt động mượn sách trực tuyến, phục vụ đồng thời cho độc giả và bộ phận quản trị thư viện. Hệ thống hướng đến việc số hóa các nghiệp vụ chính trong quá trình mượn trả sách, đồng thời bổ sung các chức năng mở rộng như quản lý hội viên, áp dụng mã giảm giá, thống kê tài chính, cấu hình nội dung website và trợ lý AI hỗ trợ tư vấn sách. Qua đó, đề tài góp phần mô phỏng một hệ thống thư viện điện tử có khả năng vận hành thuận tiện, minh bạch và phù hợp với nhu cầu sử dụng trong môi trường học tập.
+
+\section{Mục tiêu đề tài}
+
+Đề tài hướng đến việc xây dựng một hệ thống web quản lý mượn sách có thể vận hành trong môi trường thử nghiệm, đáp ứng các mục tiêu chính sau:
+
+\begin{itemize}
+    \item Xây dựng giao diện người dùng để khách và độc giả có thể tra cứu sách, xem chi tiết sách, đăng ký tài khoản, đăng nhập và tạo phiếu mượn.
+    \item Xây dựng giỏ mượn sách, hỗ trợ lưu tạm bằng \texttt{localStorage}, cập nhật số lượng sách và áp dụng mã giảm giá khi tạo phiếu mượn.
+    \item Xây dựng cổng quản trị cho nhân viên và quản lý thư viện, hỗ trợ quản lý đầu sách, bản sao sách, độc giả, nhân viên, phiếu mượn, phiếu phạt, tài chính, gói hội viên, mã giảm giá và cấu hình website.
+    \item Triển khai cơ chế xác thực và phân quyền theo vai trò, đảm bảo người dùng chỉ truy cập được các chức năng phù hợp.
+    \item Thiết kế cơ sở dữ liệu MongoDB phục vụ lưu trữ dữ liệu thư viện, có cơ chế sinh mã tự động và hỗ trợ xóa mềm ở các đối tượng cần thiết.
+    \item Tích hợp trợ lý AI để hỗ trợ độc giả tìm sách, gợi ý sách và tư vấn gói hội viên.
+\end{itemize}
+
+\section{Đối tượng và phạm vi nghiên cứu}
+
+Đối tượng sử dụng của hệ thống gồm bốn nhóm chính:
+
+\begin{itemize}
+    \item \textbf{Khách:} người chưa đăng nhập, có thể xem trang chủ, danh mục sách, chi tiết sách, gói hội viên, trang giới thiệu và liên hệ.
+    \item \textbf{Độc giả:} người dùng đã có tài khoản, có thể mượn sách, quản lý giỏ mượn, theo dõi phiếu mượn, phiếu phạt, thanh toán và sử dụng trợ lý AI.
+    \item \textbf{Thủ thư:} người vận hành nghiệp vụ thư viện, quản lý sách, bản sao sách, độc giả, phiếu mượn, phiếu phạt, tài chính và nội dung website.
+    \item \textbf{Quản lý:} có toàn bộ quyền của nhân viên và thêm quyền quản lý danh sách nhân viên.
+\end{itemize}
+
+Phạm vi đề tài tập trung vào xây dựng hệ thống web phục vụ hoạt động mượn sách online trong môi trường cục bộ. Các chức năng thanh toán được triển khai ở mức mô phỏng, bao gồm thanh toán bằng thẻ tín dụng giả lập và VietQR. Việc gửi email thực tế, tích hợp cổng thanh toán thật và triển khai trên hạ tầng production chưa nằm trong phạm vi chính của đề tài.
+
+\section{Phương pháp thực hiện}
+
+Quá trình thực hiện đề tài được tiến hành theo các bước sau:
+
+\begin{itemize}
+    \item Khảo sát nghiệp vụ mượn sách, trả sách, quản lý đầu sách, quản lý độc giả và quản lý nhân viên trong thư viện.
+    \item Phân tích yêu cầu chức năng theo từng nhóm người dùng.
+    \item Thiết kế sơ đồ use case, mô hình cơ sở dữ liệu và cấu trúc API.
+    \item Xây dựng backend bằng Node.js, Express.js và MongoDB.
+    \item Xây dựng frontend bằng Vue 3, Vite, Pinia, Vue Router và Tailwind CSS.
+    \item Kiểm thử các chức năng chính như đăng nhập, quản lý sách, tạo phiếu mượn, xử lý trả sách, thanh toán và phân quyền.
+\end{itemize}
+
+\section{Các chức năng chính}
+
+Hệ thống CTU eLibrary được xây dựng với các nhóm chức năng chính như sau:
+
+\begin{itemize}
+    \item \textbf{Chức năng chung:} trang chủ, giới thiệu, liên hệ, danh mục sách, chi tiết sách, thông báo thao tác, modal xác nhận và giao diện responsive.
+    \item \textbf{Xác thực và phân quyền:} đăng ký, đăng nhập, đăng xuất, đổi mật khẩu, quên mật khẩu, bảo vệ route và phân quyền theo vai trò.
+    \item \textbf{Chức năng độc giả:} cập nhật hồ sơ, tìm kiếm sách, lọc sách, yêu thích sách, đánh giá sách, quản lý giỏ mượn, tạo phiếu mượn, hủy hoặc gia hạn phiếu mượn, thanh toán phí và đăng ký gói hội viên.
+    \item \textbf{Quản lý sách:} quản lý đầu sách, bản sao sách, tác giả, thể loại, nhà xuất bản, ảnh bìa, số lượng sách và trạng thái phục vụ.
+    \item \textbf{Mượn trả sách:} duyệt phiếu mượn, xác nhận nhận sách, xử lý trả sách, tính phí mượn, tiền cọc, giảm giá và phiếu quá hạn.
+    \item \textbf{Quản lý tài chính:} thống kê doanh thu từ phiếu mượn, phiếu phạt, trạng thái thanh toán và chi phí cá nhân của độc giả.
+    \item \textbf{Gói hội viên và mã giảm giá:} đăng ký gói, so sánh quyền lợi, thanh toán gói, quản lý mã giảm giá và áp dụng giảm giá khi mượn sách.
+    \item \textbf{Trợ lý AI:} tư vấn tìm sách, gợi ý sách trong thư viện, gợi ý sách liên quan, tư vấn gói hội viên và hỗ trợ thêm sách vào giỏ mượn.
+\end{itemize}
+
+\end{document}

@@ -1,0 +1,54 @@
+\documentclass[../main.tex]{subfiles}
+
+\begin{document}
+
+\section{Kết quả đạt được}
+
+Sau quá trình thực hiện, đề tài đã xây dựng được hệ thống CTU eLibrary với các nhóm chức năng chính phục vụ cho cả độc giả và bộ phận quản trị thư viện. Về phía người dùng, hệ thống hỗ trợ xem thông tin công khai, tìm kiếm sách, xem chi tiết sách, đăng ký, đăng nhập, quản lý giỏ mượn, tạo phiếu mượn, theo dõi trạng thái phiếu, thanh toán, xem khoản phạt phát sinh trong phiếu mượn, đăng ký gói hội viên và sử dụng trợ lý AI.
+
+Về phía quản trị, hệ thống hỗ trợ nhân viên quản lý đầu sách, bản sao sách, tác giả, thể loại, nhà xuất bản, độc giả, phiếu mượn, phiếu phạt, tài chính, gói hội viên, mã giảm giá và cấu hình nội dung website. Đối với tài khoản quản lý, hệ thống bổ sung chức năng quản lý nhân viên và phân quyền theo vai trò.
+
+Về mặt kỹ thuật, hệ thống đã xây dựng được backend bằng Node.js và Express.js, frontend bằng Vue 3 và Vite, cơ sở dữ liệu MongoDB thông qua Mongoose. Cơ chế xác thực JWT kết hợp HTTP-only cookie giúp bảo vệ phiên đăng nhập. Các route được bảo vệ theo trạng thái đăng nhập và vai trò người dùng. Hệ thống cũng có bộ kiểm thử backend cho các nghiệp vụ chính như xác thực, sách, mượn trả, hội viên, mã giảm giá, cấu hình và xử lý cạnh tranh.
+
+\section{Ưu điểm}
+
+\begin{itemize}
+    \item Hệ thống tách riêng giao diện người dùng và cổng quản trị, giúp mỗi nhóm người dùng sử dụng đúng chức năng cần thiết.
+    \item Cơ sở dữ liệu được thiết kế theo nhiều collection rõ ràng, phù hợp với nghiệp vụ thư viện.
+    \item Có cơ chế sinh mã tự động cho các đối tượng như đầu sách, độc giả, nhân viên, phiếu mượn, phiếu phạt và mã giảm giá.
+    \item Hỗ trợ xóa mềm và khôi phục ở các đối tượng quan trọng, hạn chế mất dữ liệu khi thao tác nhầm.
+    \item Có phân quyền giữa độc giả, nhân viên và quản lý.
+    \item Có chức năng mở rộng như gói hội viên, mã giảm giá, thống kê tài chính và trợ lý AI.
+    \item Giao diện được xây dựng responsive, phù hợp sử dụng trên máy tính và thiết bị di động.
+\end{itemize}
+
+\section{Hạn chế}
+
+Do thời gian thực hiện đề tài có giới hạn, hệ thống vẫn còn một số hạn chế sau:
+
+\begin{itemize}
+    \item Chức năng thanh toán mới dừng ở mức mô phỏng, chưa tích hợp cổng thanh toán thật.
+    \item Chưa triển khai chức năng gửi email tự động cho các sự kiện như đăng ký tài khoản, quên mật khẩu, nhắc hạn trả sách hoặc thông báo phiếu phạt.
+    \item Trợ lý AI mới hỗ trợ ở mức tư vấn và gợi ý, chưa có khả năng thực hiện đầy đủ các thao tác thay người dùng.
+    \item Hệ thống chủ yếu được kiểm thử trong môi trường cục bộ, chưa triển khai trên máy chủ thật để đánh giá tải lớn.
+    \item Một số báo cáo thống kê còn có thể mở rộng thêm biểu đồ và xuất file.
+\end{itemize}
+
+\section{Hướng phát triển}
+
+Trong thời gian tới, hệ thống có thể tiếp tục phát triển theo các hướng sau:
+
+\begin{itemize}
+    \item Tích hợp cổng thanh toán thật để xử lý phí mượn, phiếu phạt và đăng ký gói hội viên.
+    \item Bổ sung gửi email hoặc thông báo tự động khi phiếu mượn sắp đến hạn, quá hạn hoặc phát sinh phiếu phạt.
+    \item Mở rộng trợ lý AI để hỗ trợ nhiều ngữ cảnh hơn, ghi nhớ sở thích đọc tốt hơn và đề xuất sách chính xác hơn.
+    \item Bổ sung chức năng xuất báo cáo tài chính, báo cáo mượn trả và báo cáo thống kê sách phổ biến.
+    \item Triển khai hệ thống lên server thật, cấu hình HTTPS, sao lưu dữ liệu và giám sát hoạt động.
+    \item Xây dựng ứng dụng di động hoặc giao diện PWA để độc giả sử dụng thuận tiện hơn.
+\end{itemize}
+
+\section{Kết luận}
+
+Đề tài ``Xây dựng hệ thống mượn sách online - CTU eLibrary'' đã hoàn thành các chức năng chính theo mục tiêu đề ra. Hệ thống hỗ trợ quá trình tra cứu, mượn, trả và quản lý sách trên nền tảng web, đồng thời bổ sung các chức năng quản trị, tài chính, hội viên và trợ lý AI. Kết quả đạt được là nền tảng để tiếp tục hoàn thiện và mở rộng hệ thống trong các giai đoạn sau.
+
+\end{document}
