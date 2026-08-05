@@ -33,55 +33,60 @@
       "TL002"
     ],
     "favorite_authors": [
-      "TG0002"
+      "TG0002",
+      "TG0004",
+      "TG0008",
+      "TG0007"
     ],
     "favorite_keywords": [
-      "hội",
-      "viên",
-      "nào",
+      "tình",
+      "thị",
+      "trấn",
+      "tặng",
+      "kèm",
+      "arya",
+      "bàn",
+      "bên",
+      "thỉnh",
+      "thoảng",
+      "trêu",
+      "ghẹo",
+      "vấn",
+      "gói",
+      "tôi",
       "mật",
       "tối",
       "thượng",
       "the",
       "secret",
       "secrets",
-      "vip",
-      "với",
-      "pro",
-      "khác",
-      "nhau",
-      "thế",
       "bìa",
+      "hội",
+      "viên",
       "cứng",
-      "gợi",
-      "cuốn",
-      "hoàng",
+      "đầy",
       "muốn",
-      "tìm",
+      "đọc",
       "truyện",
-      "ngắn",
-      "mèo",
-      "máy",
-      "màu",
-      "xanh",
-      "tương",
-      "lại"
+      "doraemon"
     ],
     "borrowed_book_ids": [
-      "DS00001"
+      "DS00001",
+      "DS00002",
+      "DS00003"
     ],
     "recent_queries": [
-      "tôi muốn đọc sach văn học",
-      "sách bí mật",
-      "doraemon",
-      "sach doraemon",
       "tư vấn cho mình nên chọn gói hội viên nào",
       "gói VIP với gói Pro khác nhau thế nào",
       "Gợi ý cho mình cuốn Hoàng Tử Bé",
       "Mình muốn tìm đọc truyện Doraemon ngắn",
       "tìm doraemon truyện ngắn",
-      "truyện mèo máy màu xanh từ tương lại là truyện gì"
+      "truyện mèo máy màu xanh từ tương lại là truyện gì",
+      "tư vấn gói cho tôi",
+      "gói hội viên",
+      "đầy đủ",
+      "tôi muốn đọc truyện doraemon"
     ],
-    "updated_at": "2026-07-29T18:49:29.705672+00:00"
+    "updated_at": "2026-08-05T01:38:55.409011+00:00"
   }
 }

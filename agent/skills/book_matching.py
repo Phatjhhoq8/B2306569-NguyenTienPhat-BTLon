@@ -56,6 +56,23 @@ def find_books_for_query(
 ) -> Dict[str, Any]:
     enriched_query = " ".join(part for part in [query, preference_context] if part).strip()
 
+    # Bước 1: Ưu tiên tuyệt đối tìm kiếm sách trong CSDL thư viện nội bộ trước
+    library_books = search_books(q=enriched_query or query, limit=limit)
+    if not library_books and preference_context:
+        library_books = search_books(q=query, limit=limit)
+    
+    # Nếu tìm thấy sách trong thư viện, trả về kết quả ngay lập tức
+    if library_books:
+        return {
+            "suggested_books": _dedupe_books(library_books, limit, borrowed_book_ids),
+            "external_suggestions": [],
+            "suggestion_context": {
+                "type": "direct_library_matches",
+                "lookup_mode": lookup_mode
+            },
+        }
+
+    # Bước 2: Chỉ khi CSDL thư viện trống, mới thực hiện Fallback tìm kiếm ngoài Web
     if lookup_mode == "description_discovery":
         web_candidates = web_search_books(query, max_results=5)
         candidates = _dedupe_candidates(web_candidates + _candidates_from_titles(possible_book_titles or []), limit=8)
@@ -78,16 +95,6 @@ def find_books_for_query(
                 "lookup_mode": lookup_mode,
                 "missing_title": (missing or candidates or [{}])[0].get("title"),
             },
-        }
-
-    library_books = search_books(q=enriched_query or query, limit=limit)
-    if not library_books and preference_context:
-        library_books = search_books(q=query, limit=limit)
-    if library_books:
-        return {
-            "suggested_books": _dedupe_books(library_books, limit, borrowed_book_ids),
-            "external_suggestions": [],
-            "suggestion_context": {"type": "direct_library_matches"},
         }
 
     web_candidates = web_search_books(query, max_results=5)
