@@ -4,9 +4,9 @@ Lý do tạo: Cung cấp hướng dẫn đầy đủ từ cài đặt database, 
 Link tham chiếu: guideline.md, database_schema.md
 -->
 
-# BOOKLAB — Hệ Thống Mượn Sách Online
+# CTU eLibrary — Hệ Thống Mượn Sách Online
 
-BOOKLAB là hệ thống mượn sách online hoàn chỉnh, bao gồm ứng dụng Web Độc giả (Public Website) và Cổng Quản trị (Admin/Librarian Portal). Dự án được thiết kế theo kiến trúc Modular, tích hợp cơ chế tự sinh mã an toàn, xử lý tranh chấp mượn trùng (Race Condition), Drain Strategy khi ngừng phục vụ sách và giả lập thanh toán quét mã QR động.
+CTU eLibrary là hệ thống mượn sách online hoàn chỉnh, bao gồm ứng dụng Web Độc giả (Public Website) và Cổng Quản trị (Admin/Librarian Portal). Dự án được thiết kế theo kiến trúc Modular, tích hợp cơ chế tự sinh mã an toàn, xử lý tranh chấp mượn trùng (Race Condition), Drain Strategy khi ngừng phục vụ sách và giả lập thanh toán quét mã QR động.
 
 ---
 
@@ -104,6 +104,124 @@ Sau khi chạy lệnh `npm run seed` ở Bước 2, bạn đăng nhập bằng c
 | :--- | :--- | :--- | :--- |
 | **Quản trị (Admin Portal)** | `NV001` (Mã số nhân viên) | `admin123` | Quyền `QUAN_LY` (Thao tác toàn bộ hệ thống) |
 | **Độc giả (Public Site)** | `reader@library.local` | `reader123` | Tài khoản độc giả thông thường (có thể tự đăng ký mới) |
+
+---
+
+## 📡 Danh Sách API Hệ Thống
+
+Tất cả các API được mount dưới tiền tố `/api`. Dưới đây là bảng danh sách các API hoàn chỉnh của hệ thống chia theo phân hệ:
+
+### 1. Phân Hệ Xác Thực & Quản Lý Tài Khoản (`/api/auth` & `/api/users`)
+
+| Method | Endpoint | Quyền Truy Cập | Chức Năng |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/auth/reader/register` | Public | Đăng ký tài khoản độc giả mới |
+| `POST` | `/auth/reader/login` | Public | Đăng nhập độc giả |
+| `POST` | `/auth/staff/login` | Public | Đăng nhập nhân viên / quản lý |
+| `POST` | `/auth/reader/reset-password` | Public | Khôi phục mật khẩu độc giả |
+| `POST` | `/auth/reader/change-password` | Public | Thay đổi mật khẩu độc giả (ngoài trang chủ) |
+| `POST` | `/auth/staff/change-password` | Public | Thay đổi mật khẩu nhân viên (ngoài trang quản trị) |
+| `POST` | `/auth/logout` | Authenticated | Đăng xuất khỏi hệ thống (xóa cookie) |
+| `GET` | `/auth/me` | Authenticated | Lấy thông tin tài khoản hiện tại |
+| `GET` | `/users/me` | Authenticated | Lấy thông tin cá nhân độc giả đang đăng nhập |
+| `PUT` | `/users/me` | Authenticated | Cập nhật thông tin cá nhân độc giả |
+| `PUT` | `/users/me/password` | Authenticated | Độc giả đổi mật khẩu cá nhân |
+| `PUT` | `/staff/me/password` | STAFF | Nhân viên đổi mật khẩu cá nhân |
+
+### 2. Quản Lý Độc Giả & Nhân Viên (Dành Cho Admin - `/api/admin`)
+
+| Method | Endpoint | Quyền Truy Cập | Chức Năng |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/admin/readers/search-suggestions` | STAFF | Gợi ý tìm kiếm độc giả khi gõ từ khóa |
+| `GET` | `/admin/readers` | STAFF | Lấy danh sách độc giả (phân trang, lọc, tìm kiếm) |
+| `GET` | `/admin/readers/:id` | STAFF | Xem chi tiết thông tin độc giả |
+| `POST` | `/admin/readers/:id/toggle-status` | STAFF | Khóa / Kích hoạt lại tài khoản độc giả |
+| `DELETE` | `/admin/readers/:id` | STAFF | Xóa mềm tài khoản độc giả |
+| `POST` | `/admin/readers/:id/restore` | STAFF | Khôi phục tài khoản độc giả đã bị xóa mềm |
+| `GET` | `/admin/staffs/next-code` | Root Admin (`QUAN_LY`) | Lấy mã số nhân viên tự động tiếp theo |
+| `GET` | `/admin/staffs/search-suggestions` | Root Admin (`QUAN_LY`) | Gợi ý tìm kiếm nhân viên |
+| `GET` | `/admin/staffs` | Root Admin (`QUAN_LY`) | Lấy danh sách nhân viên |
+| `POST` | `/admin/staffs` | Root Admin (`QUAN_LY`) | Tạo mới tài khoản nhân viên |
+| `PUT` | `/admin/staffs/:id` | Root Admin (`QUAN_LY`) | Cập nhật thông tin nhân viên |
+| `DELETE` | `/admin/staffs/:id` | Root Admin (`QUAN_LY`) | Xóa mềm tài khoản nhân viên |
+| `POST` | `/admin/staffs/:id/restore` | Root Admin (`QUAN_LY`) | Khôi phục nhân viên đã bị xóa mềm |
+
+### 3. Phân Hệ Sách & Danh Mục (`/api/books` & `/api/categories`...)
+
+| Method | Endpoint | Quyền Truy Cập | Chức Năng |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/books` | Public | Lấy danh sách đầu sách (phân trang, lọc, tìm kiếm) |
+| `GET` | `/books/search-suggestions` | Public | Gợi ý từ khóa tìm kiếm sách |
+| `GET` | `/books/:id` | Public | Lấy chi tiết thông tin một đầu sách |
+| `GET` | `/categories` | Public | Lấy danh sách toàn bộ các thể loại sách |
+| `GET` | `/authors` | Public | Lấy danh sách toàn bộ các tác giả |
+| `GET` | `/publishers` | Public | Lấy danh sách toàn bộ các nhà xuất bản |
+| `POST` | `/books/:id/reviews` | READER | Gửi đánh giá & bình luận về sách |
+| `DELETE` | `/books/:id/reviews` | READER | Xóa đánh giá của mình đã viết |
+| `POST` | `/books/:id/like-toggle` | READER | Thích / Bỏ thích đầu sách |
+| `POST` | `/categories` | STAFF | Tạo mới thể loại sách |
+| `PUT` | `/categories/:id` | STAFF | Cập nhật tên/thông tin thể loại sách |
+| `DELETE` | `/categories/:id` | STAFF | Xóa thể loại sách |
+| `POST` | `/books` | STAFF | Tạo mới đầu sách (BookTitle) |
+| `PUT` | `/books/:id` | STAFF | Cập nhật thông tin đầu sách |
+| `DELETE` | `/books/:id` | STAFF | Xóa mềm đầu sách |
+| `GET` | `/books/:bookId/copies` | STAFF | Lấy danh sách tất cả bản sao (BookCopy) của đầu sách |
+| `POST` | `/book-copies` | STAFF | Thêm bản sao sách mới |
+| `PUT` | `/book-copies/:id` | STAFF | Cập nhật mã bản sao, tình trạng hoặc vị trí sách |
+| `DELETE` | `/book-copies/:id` | STAFF | Xóa mềm bản sao sách |
+| `POST` | `/authors` | STAFF | Tạo mới tác giả |
+| `PUT` | `/authors/:id` | STAFF | Cập nhật thông tin tác giả |
+| `POST` | `/publishers` | STAFF | Tạo mới nhà xuất bản |
+| `PUT` | `/publishers/:id` | STAFF | Cập nhật thông tin nhà xuất bản |
+
+### 4. Phân Hệ Mượn Trả & Phiếu Phạt (`/api/borrowing`)
+
+| Method | Endpoint | Quyền Truy Cập | Chức Năng |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/borrowing/receipts` | READER | Đăng ký mượn sách mới (tạo Phiếu Mượn) |
+| `GET` | `/borrowing/my-receipts` | READER | Lấy danh sách phiếu mượn cá nhân độc giả |
+| `GET` | `/borrowing/receipts` | STAFF | Xem toàn bộ phiếu mượn hệ thống (lọc theo trạng thái) |
+| `GET` | `/borrowing/receipts/:id` | Authenticated | Xem chi tiết thông tin một phiếu mượn |
+| `POST` | `/borrowing/receipts/:id/approve` | STAFF | Duyệt phiếu mượn (để nhân viên chuẩn bị sách) |
+| `POST` | `/borrowing/receipts/:id/pickup` | STAFF | Xác nhận độc giả đã đến nhận sách thực tế |
+| `POST` | `/borrowing/receipts/:id/return` | STAFF | Xác nhận độc giả trả sách (và kiểm tra hạn trả) |
+| `POST` | `/borrowing/receipts/:id/renew` | READER | Gia hạn thêm thời gian mượn sách |
+| `POST` | `/borrowing/receipts/:id/cancel` | Authenticated | Hủy yêu cầu mượn sách (khi chưa nhận sách) |
+| `POST` | `/borrowing/receipts/:id/pay` | Authenticated | Thanh toán tiền đặt cọc/chi phí của phiếu mượn |
+| `GET` | `/borrowing/penalties` | STAFF | Lấy danh sách toàn bộ phiếu phạt trong hệ thống |
+| `POST` | `/borrowing/penalties` | STAFF | Tạo phiếu phạt thủ công (ví dụ: mất sách, hỏng sách) |
+| `GET` | `/borrowing/my-penalties` | READER | Xem danh sách phiếu phạt của độc giả hiện tại |
+| `POST` | `/borrowing/penalties/:id/pay` | STAFF, READER | Thanh toán số tiền phạt của phiếu phạt |
+| `GET` | `/borrowing/my-financial-stats` | READER | Xem thống kê số tiền đã đóng/phạt cá nhân |
+| `GET` | `/borrowing/financial-stats` | STAFF | Xem tổng hợp doanh thu đặt cọc, thu phí phạt toàn hệ thống |
+
+### 5. Phân Hệ Hội Viên VIP (`/api/memberships`)
+
+| Method | Endpoint | Quyền Truy Cập | Chức Năng |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/memberships/plans` | Public | Lấy danh sách các gói cước VIP/Hội viên |
+| `POST` | `/memberships/subscribe` | READER | Đăng ký gói VIP (gửi yêu cầu thanh toán) |
+| `GET` | `/memberships/my-subscriptions` | READER | Xem thông tin gói hội viên đang hoạt động của mình |
+| `POST` | `/memberships/join-family` | READER | Dùng mã mời để gia nhập nhóm Family gói VIP |
+| `POST` | `/memberships/cancel-auto-renew` | READER | Hủy tự động gia hạn gói VIP |
+| `POST` | `/memberships/enable-auto-renew` | READER | Bật lại tự động gia hạn gói VIP |
+| `GET` | `/memberships/subscriptions` | STAFF | Xem danh sách tất cả các độc giả đăng ký VIP |
+| `POST` | `/memberships/plans` | STAFF | Tạo mới một gói hội viên |
+| `PUT` | `/memberships/plans/:id` | STAFF | Cập nhật thông tin gói hội viên |
+| `DELETE` | `/memberships/plans/:id` | STAFF | Xóa gói hội viên |
+
+### 6. Phân Hệ Khuyến Mãi & Cấu Hình Hệ Thống (`/api/discounts` & `/api/settings`)
+
+| Method | Endpoint | Quyền Truy Cập | Chức Năng |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/discounts` | STAFF | Tạo mã giảm giá mới |
+| `GET` | `/discounts` | STAFF | Lấy danh sách tất cả mã giảm giá hệ thống |
+| `PUT` | `/discounts/:id` | STAFF | Cập nhật thông tin mã giảm giá |
+| `DELETE` | `/discounts/:id` | STAFF | Xóa mã giảm giá |
+| `POST` | `/discounts/validate` | READER | Kiểm tra & áp dụng mã giảm giá khi đăng ký gói VIP |
+| `GET` | `/settings/:key` | Public | Lấy thông tin cấu hình giao diện/hệ thống theo key |
+| `PUT` | `/settings/:key` | STAFF | Cập nhật thông tin cấu hình hệ thống theo key |
+| `POST` | `/settings/upload-image` | STAFF | Tải ảnh cấu hình hệ thống (Base64) |
 
 ---
 
