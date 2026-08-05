@@ -83,7 +83,7 @@ def find_books_for_query(
         if found_from_web:
             return {
                 "suggested_books": _dedupe_books(found_from_web, limit, borrowed_book_ids),
-                "external_suggestions": missing[:3],
+                "external_suggestions": [],
                 "suggestion_context": {"type": "web_verified_library_matches", "lookup_mode": lookup_mode},
             }
 
@@ -105,7 +105,7 @@ def find_books_for_query(
     if found_from_web:
         return {
             "suggested_books": _dedupe_books(found_from_web, limit, borrowed_book_ids),
-            "external_suggestions": missing[:3],
+            "external_suggestions": [],
             "suggestion_context": {"type": "web_verified_library_matches"},
         }
 
