@@ -118,12 +118,14 @@ const renewBorrowReceipt = async (receiptId, newDueDate) => withTransaction(asyn
     throw new Error(`Ngày gia hạn vượt quá số ngày mượn tối đa của gói thẻ (${membershipPlan.soNgayMuonToiDa} ngày)`);
   }
 
-  // Tính phí dịch vụ gia hạn phát sinh thêm (1% giá bìa sách cho mỗi ngày gia hạn thêm)
+  // Tính phí dịch vụ gia hạn phát sinh thêm (1% giá mượn sách giấy cho mỗi ngày gia hạn thêm)
   const oldDueDate = new Date(receipt.ngayHenTra);
   const ngayMuon = new Date(receipt.ngayMuon);
   const newBorrowDays = Math.ceil((dueDate.getTime() - ngayMuon.getTime()) / (1000 * 60 * 60 * 24));
   const oldBorrowDays = Math.ceil((oldDueDate.getTime() - ngayMuon.getTime()) / (1000 * 60 * 60 * 24));
   const extraDays = newBorrowDays - oldBorrowDays > 0 ? newBorrowDays - oldBorrowDays : 0;
+  
+  const basePhiMuonPerBook = membershipPlan.phiMuonSachGiay !== undefined ? membershipPlan.phiMuonSachGiay : 0;
   
   const BookCopy = mongoose.model('BookCopy');
   let currentRenewServiceFee = 0;
@@ -138,9 +140,8 @@ const renewBorrowReceipt = async (receiptId, newDueDate) => withTransaction(asyn
                            (title.theLoai || '').toString().toLowerCase().includes('ngoại ngữ') ||
                            (title.theLoai || '').toString().toLowerCase().includes('khoa học');
       if (!isGiaoTrinh) {
-        const bookPrice = title.giaBia || 50000;
-        const renewFeeRate = 0.01; // 1% giá bìa sách cho mỗi ngày gia hạn thêm
-        currentRenewServiceFee += renewFeeRate * bookPrice * extraDays;
+        const renewFeeRate = 0.20; // 20% giá mượn sách giấy cho mỗi ngày gia hạn thêm
+        currentRenewServiceFee += basePhiMuonPerBook * renewFeeRate * extraDays;
       }
     }
   }
