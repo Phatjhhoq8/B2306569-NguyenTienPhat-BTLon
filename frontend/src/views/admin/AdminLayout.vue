@@ -130,23 +130,24 @@ watch(() => route.path, () => {
 });
 
 const menuItems = computed(() => {
-  const items = [
-    { name: 'admin-dashboard', label: 'Dashboard', icon: LayoutDashboard, to: '/admin' },
-    { name: 'admin-books', label: 'Quản lý Đầu sách', icon: BookMarked, to: '/admin/books' },
-    { name: 'admin-borrowing', label: 'Mượn / Trả Sách', icon: GitCompare, to: '/admin/borrowing' },
-    { name: 'admin-finance', label: 'Tài chính', icon: Banknote, to: '/admin/finance' },
-    { name: 'admin-readers', label: 'Quản lý Độc giả', icon: Users, to: '/admin/readers' },
-  ];
-
-  // Chỉ Quản lý (QUAN_LY) mới được phép xem Quản lý Nhân sự
+  // Nếu là Quản lý (chức vụ QUAN_LY), hiển thị đầy đủ các tính năng quản trị
   if (authStore.isAdmin) {
-    items.push({ name: 'admin-staffs', label: 'Quản lý Nhân viên', icon: UserCheck, to: '/admin/staffs' });
+    return [
+      { name: 'admin-dashboard', label: 'Dashboard', icon: LayoutDashboard, to: '/admin' },
+      { name: 'admin-books', label: 'Quản lý Đầu sách', icon: BookMarked, to: '/admin/books' },
+      { name: 'admin-borrowing', label: 'Mượn / Trả Sách', icon: GitCompare, to: '/admin/borrowing' },
+      { name: 'admin-finance', label: 'Tài chính', icon: Banknote, to: '/admin/finance' },
+      { name: 'admin-readers', label: 'Quản lý Độc giả', icon: Users, to: '/admin/readers' },
+      { name: 'admin-staffs', label: 'Quản lý Nhân viên', icon: UserCheck, to: '/admin/staffs' },
+      { name: 'admin-settings', label: 'Cấu hình & Mã giảm', icon: Settings, to: '/admin/settings' },
+    ];
   }
 
-  // Thêm Gói & mã giảm giá ở cuối
-  items.push({ name: 'admin-settings', label: 'Cấu hình & Mã giảm', icon: Settings, to: '/admin/settings' });
-
-  return items;
+  // Nếu là Thủ thư (chức vụ THU_THU), chỉ hiển thị Quản lý đầu sách và Mượn / Trả sách
+  return [
+    { name: 'admin-books', label: 'Quản lý Đầu sách', icon: BookMarked, to: '/admin/books' },
+    { name: 'admin-borrowing', label: 'Mượn / Trả Sách', icon: GitCompare, to: '/admin/borrowing' },
+  ];
 });
 
 const handleLogout = async () => {

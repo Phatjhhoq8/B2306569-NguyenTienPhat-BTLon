@@ -158,7 +158,7 @@ router.beforeEach(async (to, from, next) => {
 
   // 1. Chỉ dành cho khách chưa đăng nhập
   if (to.meta.guestOnly && isLoggedIn) {
-    return next(isStaff ? { name: mustChangePassword ? 'admin-change-password' : 'admin-dashboard' } : { name: 'home' });
+    return next(isStaff ? { name: mustChangePassword ? 'admin-change-password' : (isAdmin ? 'admin-dashboard' : 'admin-books') } : { name: 'home' });
   }
 
   // 2. Yêu cầu quyền Độc giả
@@ -178,6 +178,11 @@ router.beforeEach(async (to, from, next) => {
   // 4. Yêu cầu quyền Quản lý (Admin) cấp cao
   if (to.meta.requiresAdmin && (!isLoggedIn || !isAdmin)) {
     return next({ name: 'admin-dashboard' });
+  }
+
+  // Tự động chuyển hướng Thủ thư (Staff nhưng không phải Admin) sang trang Quản lý sách khi truy cập Dashboard
+  if (to.name === 'admin-dashboard' && isStaff && !isAdmin) {
+    return next({ name: 'admin-books' });
   }
 
   next();

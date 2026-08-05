@@ -118,12 +118,15 @@ const renewBorrowReceipt = async (receiptId, newDueDate) => withTransaction(asyn
     throw new Error(`Ngày gia hạn vượt quá số ngày mượn tối đa của gói thẻ (${membershipPlan.soNgayMuonToiDa} ngày)`);
   }
 
-  // Tính phí gia hạn phát sinh thêm
-  const extraDays = Math.round((dueDate.getTime() - new Date(receipt.ngayHenTra).getTime()) / (1000 * 60 * 60 * 24));
-  const basePhiMuonPerBook = membershipPlan.phiMuonSachGiay !== undefined ? membershipPlan.phiMuonSachGiay : 0;
+  // Tính phí dịch vụ gia hạn phát sinh thêm (1% giá bìa sách cho mỗi ngày gia hạn thêm)
+  const oldDueDate = new Date(receipt.ngayHenTra);
+  const ngayMuon = new Date(receipt.ngayMuon);
+  const newBorrowDays = Math.ceil((dueDate.getTime() - ngayMuon.getTime()) / (1000 * 60 * 60 * 24));
+  const oldBorrowDays = Math.ceil((oldDueDate.getTime() - ngayMuon.getTime()) / (1000 * 60 * 60 * 24));
+  const extraDays = newBorrowDays - oldBorrowDays > 0 ? newBorrowDays - oldBorrowDays : 0;
   
   const BookCopy = mongoose.model('BookCopy');
-  let chargeableBooksCount = 0;
+  let currentRenewServiceFee = 0;
   for (const item of receipt.chiTietMuon) {
     const copyCheck = await BookCopy.findById(item.sach).populate('dauSach').session(session);
     if (copyCheck && copyCheck.dauSach) {
@@ -135,15 +138,14 @@ const renewBorrowReceipt = async (receiptId, newDueDate) => withTransaction(asyn
                            (title.theLoai || '').toString().toLowerCase().includes('ngoại ngữ') ||
                            (title.theLoai || '').toString().toLowerCase().includes('khoa học');
       if (!isGiaoTrinh) {
-        chargeableBooksCount++;
+        const bookPrice = title.giaBia || 50000;
+        const renewFeeRate = 0.01; // 1% giá bìa sách cho mỗi ngày gia hạn thêm
+        currentRenewServiceFee += renewFeeRate * bookPrice * extraDays;
       }
     }
   }
 
-  const extraFee = extraDays * basePhiMuonPerBook * chargeableBooksCount;
-  receipt.phiMuon = (receipt.phiMuon || 0) + extraFee;
-  receipt.tongTienThanhToan = (receipt.tongTienThanhToan || 0) + extraFee;
-
+  receipt.phiGiaHan = (receipt.phiGiaHan || 0) + currentRenewServiceFee;
   receipt.ngayHenTra = dueDate;
   if (receipt.trangThai === 'QUA_HAN') receipt.trangThai = 'DANG_MUON';
   await receipt.save({ session });

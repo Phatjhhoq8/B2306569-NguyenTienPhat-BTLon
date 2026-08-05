@@ -78,6 +78,11 @@ const borrowReceiptSchema = new mongoose.Schema({
     min: [0, 'Phí mượn không được âm'],
     default: 0
   },
+  phiGiaHan: {
+    type: Number,
+    min: [0, 'Phí gia hạn không được âm'],
+    default: 0
+  },
   soTienGiam: {
     type: Number,
     min: [0, 'Số tiền giảm không được âm'],
@@ -534,7 +539,7 @@ borrowReceiptSchema.pre('save', async function (next) {
         }
       }
       
-      this.phiMuon = totalPhiMuon;
+      this.phiMuon = totalPhiMuon + (this.phiGiaHan || 0);
       this.tongTienTamTinh = this.phiMuon;
       const tongTien = this.phiMuon - this.soTienGiam;
       this.tongTienThanhToan = tongTien < 0 ? 0 : tongTien;

@@ -218,9 +218,9 @@ test.describe('Borrowing & Penalties API Tests', () => {
       const updatedDate = new Date(res.body.data.ngayHenTra);
       assert.strictEqual(updatedDate.getDate(), ngayHenTraMoi.getDate());
 
-      // Phí mượn gốc: 2,000 * 7 ngày = 14,000. Phí gia hạn thêm: 2,000 * 3 ngày = 6,000. Tổng: 20,000.
-      assert.strictEqual(res.body.data.phiMuon, 20000);
-      assert.strictEqual(res.body.data.tongTienThanhToan, 20000);
+      // Phí mượn gốc: 2,000 * 7 ngày = 14,000. Phí gia hạn thêm: (2,000 + 1% * 60,000 giá bìa) * 4 ngày = 10,400. Tổng: 24,400.
+      assert.strictEqual(res.body.data.phiMuon, 24400);
+      assert.strictEqual(res.body.data.tongTienThanhToan, 24400);
     });
 
     test('Nhân viên (Staff) không được phép gia hạn phiếu mượn (403)', async () => {
@@ -270,7 +270,7 @@ test.describe('Borrowing & Penalties API Tests', () => {
 
       assert.strictEqual(res.status, 200);
       assert.strictEqual(res.body.success, true);
-      assert.strictEqual(res.body.data.tongPhiMuon, 20000);
+      assert.strictEqual(res.body.data.tongPhiMuon, 4400);
       assert.strictEqual(res.body.data.soPhieuDaTra, 1);
       assert.strictEqual(res.body.data.phiMuonDangXuLy, 0);
       assert.strictEqual(res.body.data.soPhieuDangXuLyPhi, 0);
@@ -286,7 +286,7 @@ test.describe('Borrowing & Penalties API Tests', () => {
 
       assert.strictEqual(res.status, 200);
       assert.strictEqual(res.body.success, true);
-      assert.strictEqual(res.body.data.tongPhiMuon, 20000);
+      assert.strictEqual(res.body.data.tongPhiMuon, 4400);
       assert.strictEqual(res.body.data.soPhieuDaTra, 1);
       assert.strictEqual(res.body.data.phiMuonDangXuLy, 0);
       assert.strictEqual(res.body.data.soPhieuDangXuLyPhi, 0);
